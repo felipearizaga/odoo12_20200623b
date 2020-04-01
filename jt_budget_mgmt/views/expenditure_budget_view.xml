@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for expenditure budget model -->
+        <record id="expenditure_budget_search_view" model="ir.ui.view">
+            <field name="name">expenditure.budget.search.view</field>
+            <field name="model">expenditure.budget</field>
+            <field name="arch" type="xml">
+                <search string="Expenditure Budget">
+                    <field name="budget_name"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Budget name" name='budget_name' context="{'group_by':'budget_name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for expenditure budget model -->
+        <record id="expenditure_budget_form_view" model="ir.ui.view">
+            <field name="name">expenditure.budget.form.view</field>
+            <field name="model">expenditure.budget</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight"/>
+                        <button name="confirm" type="object" string="Confirm" class="oe_highlight"/>
+                        <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/>
+                        <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/>
+                    </header>
+                    <sheet>
+                        <div>
+                            <span class="o_form_label">Budget name</span>
+                            <h1>
+                                <field name="budget_name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="responsible_id"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
+                                <field name="total_budget"/>
+                                <field name="record_number"/>
+                                <field name="import_record_number"/>
+                            </group>        
+                            <group>
+                                <label for="from_date"/>
+                                <div>
+                                    <field name="from_date" class="oe_inline"/> - 
+                                    <field name="to_date" class="oe_inline"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Expenditure Budget Lines">
+                                <field name="line_ids">
+                                    <tree>
+                                        <field name="code"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+                                        <field name="approved"/>
+                                        <field name="allocated"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="code"/>
+                                            <field name="start_date"/>
+                                            <field name="end_date"/>
+                                            <field name="approved"/>
+                                            <field name="allocated"/>
+                                            <field name="expenditure_budget_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- tree view for expenditure budget model -->
+        <record id="expenditure_budget_tree_view" model="ir.ui.view">
+            <field name="name">expenditure.budget.tree.view</field>
+            <field name="model">expenditure.budget</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="budget_name"/>
+                    <field name="responsible_id"/>
+                    <field name="total_budget"/>
+                    <field name="record_number"/>
+                    <field name="import_record_number"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- action for expenditure budget views -->
+        <record id="action_expenditure_budget" model="ir.actions.act_window">
+            <field name="name">Expenditure Budget</field>
+            <field name="res_model">expenditure.budget</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="expenditure_budget_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

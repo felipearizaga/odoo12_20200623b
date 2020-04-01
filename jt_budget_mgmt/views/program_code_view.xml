@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for program code model -->
+        <record id="program_code_search_view" model="ir.ui.view">
+            <field name="name">program.code.search.view</field>
+            <field name="model">program.code</field>
+            <field name="arch" type="xml">
+                <search string="Program code">
+                    <field name="program_code"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Program code" name='program_code' context="{'group_by':'program_code'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for program code model -->
+        <record id="program_code_form_view" model="ir.ui.view">
+            <field name="name">program.code.form.view</field>
+            <field name="model">program.code</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="year_id"/>
+                                <field name="program_id"/>
+                                <field name="description_id"/>
+                                <field name="sub_program_id"/>
+                                <field name="sub_program_name_id"/>
+                                <field name="unit_id"/>
+                                <field name="dependency_name_id"/>
+                                <field name="sub_dependency_id"/>
+                                <field name="sub_dependency_name_id"/>
+                                <field name="expenditure_item_id"/>
+                                <field name="expenditure_item_name_id"/>
+                                <field name="check_digit_id"/>
+                                <field name="resource_origin_id"/>
+                                <field name="resource_origin_name_id"/>
+                                <field name="institutional_activity_id"/>
+                                <field name="institutional_activity_name_id"/>
+                                <field name="budget_program_conversion_id"/>
+                                <field name="activity_id"/>
+                            </group>
+                            <group>
+                                <field name="conversion_item_id"/>
+                                <field name="conversion_item_name_id"/>
+                                <field name="expense_type_id"/>
+                                <field name="expense_type_name_id"/>
+                                <field name="location_id"/>
+                                <field name="state_id"/>
+                                <field name="portfolio_id"/>
+                                <field name="portfolio_name_id"/>
+                                <field name="project_type_id"/>
+                                <field name="project_type_identifier_id"/>
+                                <field name="project_number_id"/>
+                                <field name="stage_id"/>
+                                <field name="agreement_type_id"/>
+                                <field name="agreement_number_id"/>
+                                <field name="agreement_number_description_id"/>
+                                <field name="program_code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- tree view for program code model -->
+        <record id="program_code_tree_view" model="ir.ui.view">
+            <field name="name">program.code.tree.view</field>
+            <field name="model">program.code</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="program_code"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- action for program code views -->
+        <record id="action_program_code" model="ir.actions.act_window">
+            <field name="name">Program Code</field>
+            <field name="res_model">program.code</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="program_code_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

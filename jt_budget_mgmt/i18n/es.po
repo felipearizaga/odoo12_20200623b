@@ -1,0 +1,1939 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_budget_mgmt
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-01 06:34+0000\n"
+"PO-Revision-Date: 2020-04-01 06:34+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__00
+msgid "00"
+msgstr "00"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__01
+msgid "01"
+msgstr "01"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__02
+msgid "02"
+msgstr "02"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__03
+msgid "03"
+msgstr "03"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__04
+msgid "04"
+msgstr "04"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_revenue__05
+msgid "05"
+msgstr "05"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1900
+msgid "1900"
+msgstr "1900"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1901
+msgid "1901"
+msgstr "1901"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1902
+msgid "1902"
+msgstr "1902"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1903
+msgid "1903"
+msgstr "1903"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1904
+msgid "1904"
+msgstr "1904"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1905
+msgid "1905"
+msgstr "1905"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1906
+msgid "1906"
+msgstr "1906"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1907
+msgid "1907"
+msgstr "1907"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1908
+msgid "1908"
+msgstr "1908"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1909
+msgid "1909"
+msgstr "1909"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1910
+msgid "1910"
+msgstr "1910"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1911
+msgid "1911"
+msgstr "1911"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1912
+msgid "1912"
+msgstr "1912"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1913
+msgid "1913"
+msgstr "1913"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1914
+msgid "1914"
+msgstr "1914"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1915
+msgid "1915"
+msgstr "1915"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1916
+msgid "1916"
+msgstr "1916"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1917
+msgid "1917"
+msgstr "1917"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1918
+msgid "1918"
+msgstr "1918"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1919
+msgid "1919"
+msgstr "1919"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1920
+msgid "1920"
+msgstr "1920"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1921
+msgid "1921"
+msgstr "1921"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1922
+msgid "1922"
+msgstr "1922"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1923
+msgid "1923"
+msgstr "1923"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1924
+msgid "1924"
+msgstr "1924"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1925
+msgid "1925"
+msgstr "1925"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1926
+msgid "1926"
+msgstr "1926"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1927
+msgid "1927"
+msgstr "1927"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1928
+msgid "1928"
+msgstr "1928"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1929
+msgid "1929"
+msgstr "1929"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1930
+msgid "1930"
+msgstr "1930"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1931
+msgid "1931"
+msgstr "1931"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1932
+msgid "1932"
+msgstr "1932"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1933
+msgid "1933"
+msgstr "1933"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1934
+msgid "1934"
+msgstr "1934"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1935
+msgid "1935"
+msgstr "1935"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1936
+msgid "1936"
+msgstr "1936"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1937
+msgid "1937"
+msgstr "1937"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1938
+msgid "1938"
+msgstr "1938"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1939
+msgid "1939"
+msgstr "1939"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1940
+msgid "1940"
+msgstr "1940"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1941
+msgid "1941"
+msgstr "1941"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1942
+msgid "1942"
+msgstr "1942"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1943
+msgid "1943"
+msgstr "1943"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1944
+msgid "1944"
+msgstr "1944"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1945
+msgid "1945"
+msgstr "1945"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1946
+msgid "1946"
+msgstr "1946"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1947
+msgid "1947"
+msgstr "1947"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1948
+msgid "1948"
+msgstr "1948"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1949
+msgid "1949"
+msgstr "1949"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1950
+msgid "1950"
+msgstr "1950"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1951
+msgid "1951"
+msgstr "1951"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1952
+msgid "1952"
+msgstr "1952"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1953
+msgid "1953"
+msgstr "1953"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1954
+msgid "1954"
+msgstr "1954"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1955
+msgid "1955"
+msgstr "1955"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1956
+msgid "1956"
+msgstr "1956"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1957
+msgid "1957"
+msgstr "1957"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1958
+msgid "1958"
+msgstr "1958"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1959
+msgid "1959"
+msgstr "1959"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1960
+msgid "1960"
+msgstr "1960"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1961
+msgid "1961"
+msgstr "1961"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1962
+msgid "1962"
+msgstr "1962"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1963
+msgid "1963"
+msgstr "1963"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1964
+msgid "1964"
+msgstr "1964"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1965
+msgid "1965"
+msgstr "1965"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1966
+msgid "1966"
+msgstr "1966"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1967
+msgid "1967"
+msgstr "1967"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1968
+msgid "1968"
+msgstr "1968"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1969
+msgid "1969"
+msgstr "1969"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1970
+msgid "1970"
+msgstr "1970"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1971
+msgid "1971"
+msgstr "1971"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1972
+msgid "1972"
+msgstr "1972"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1973
+msgid "1973"
+msgstr "1973"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1974
+msgid "1974"
+msgstr "1974"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1975
+msgid "1975"
+msgstr "1975"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1976
+msgid "1976"
+msgstr "1976"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1977
+msgid "1977"
+msgstr "1977"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1978
+msgid "1978"
+msgstr "1978"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1979
+msgid "1979"
+msgstr "1979"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1980
+msgid "1980"
+msgstr "1980"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1981
+msgid "1981"
+msgstr "1981"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1982
+msgid "1982"
+msgstr "1982"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1983
+msgid "1983"
+msgstr "1983"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1984
+msgid "1984"
+msgstr "1984"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1985
+msgid "1985"
+msgstr "1985"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1986
+msgid "1986"
+msgstr "1986"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1987
+msgid "1987"
+msgstr "1987"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1988
+msgid "1988"
+msgstr "1988"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1989
+msgid "1989"
+msgstr "1989"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1990
+msgid "1990"
+msgstr "1990"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1991
+msgid "1991"
+msgstr "1991"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1992
+msgid "1992"
+msgstr "1992"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1993
+msgid "1993"
+msgstr "1993"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1994
+msgid "1994"
+msgstr "1994"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1995
+msgid "1995"
+msgstr "1995"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1996
+msgid "1996"
+msgstr "1996"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1997
+msgid "1997"
+msgstr "1997"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1998
+msgid "1998"
+msgstr "1998"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__1999
+msgid "1999"
+msgstr "1999"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2000
+msgid "2000"
+msgstr "2000"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2001
+msgid "2001"
+msgstr "2001"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2002
+msgid "2002"
+msgstr "2002"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2003
+msgid "2003"
+msgstr "2003"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2004
+msgid "2004"
+msgstr "2004"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2005
+msgid "2005"
+msgstr "2005"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2006
+msgid "2006"
+msgstr "2006"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2007
+msgid "2007"
+msgstr "2007"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2008
+msgid "2008"
+msgstr "2008"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2009
+msgid "2009"
+msgstr "2009"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2010
+msgid "2010"
+msgstr "2010"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2011
+msgid "2011"
+msgstr "2011"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2012
+msgid "2012"
+msgstr "2012"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2013
+msgid "2013"
+msgstr "2013"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2014
+msgid "2014"
+msgstr "2014"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2015
+msgid "2015"
+msgstr "2015"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2016
+msgid "2016"
+msgstr "2016"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2017
+msgid "2017"
+msgstr "2017"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2018
+msgid "2018"
+msgstr "2018"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2019
+msgid "2019"
+msgstr "2019"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__year__year__2020
+msgid "2020"
+msgstr "2020"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "<span class=\"o_form_label\">Budget name</span>"
+msgstr "<span class = \ "o_form_label \"> Nombre del presupuesto </span>"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__code
+msgid "Abbreviation for program code"
+msgstr "Abreviatura para el código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__code
+msgid "Abbreviation of the program code"
+msgstr "Abreviatura del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__code
+msgid "Abbreviation of the programmatic code"
+msgstr "Abreviatura del código programático"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.reject_form_view
+msgid "Accept"
+msgstr "Aceptar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__code
+msgid "Acronym for program code"
+msgstr "Acrónimo de código de programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__code
+msgid "Acronym of the programmatic code"
+msgstr "Acrónimo del código programático"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__activity
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__activity_id
+msgid "Activity"
+msgstr "Actividad"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_agreement_number
+#: model:ir.model,name:jt_budget_mgmt.model_agreement_number
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_agreement_number
+msgid "Agreement Number"
+msgstr "Numero de acuerdo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__agreement_number_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_number_search_view
+msgid "Agreement number"
+msgstr "Numero de acuerdo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__agreement_number_description_id
+msgid "Agreement number description"
+msgstr "Descripción del número de acuerdo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__agreement_type_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_search_view
+msgid "Agreement type"
+msgstr "Tipo de acuerdo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__allocated
+msgid "Allocated"
+msgstr "Asignado"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Approve"
+msgstr "Aprobar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__approved
+msgid "Approved"
+msgstr "Aprobado"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.reject_form_view
+msgid "Are you sure you want to delete this record?"
+msgstr "¿Seguro que quieres eliminar este registro?"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_budget_program_conversion
+#: model:ir.model,name:jt_budget_mgmt.model_budget_program_conversion
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget_program_conversion
+msgid "Budget Program Conversion"
+msgstr "Programa de conversión de presupuesto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__budget_name
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_search_view
+msgid "Budget name"
+msgstr "Nombre del presupuesto"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.budget_program_conversion_search_view
+msgid "Budget program conversion"
+msgstr "Programa de conversión de presupuesto"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_budgets
+msgid "Budgets"
+msgstr "Presupuestos"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_line_form_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.reject_form_view
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__check_digit_id
+msgid "Check digit"
+msgstr "Comprobar dígito"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_number_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.budget_program_conversion_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.departure_conversion_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expense_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.geographic_location_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.key_wallet_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_number_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.stage_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.verifying_digit_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.year_search_view
+msgid "Code"
+msgstr "Código"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_code_structure
+#: model:ir.model,name:jt_budget_mgmt.model_code_structure
+msgid "Code Structure"
+msgstr "Estructura del código"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.code_structure_search_view
+msgid "Code structure"
+msgstr "Estructura de código"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget_config
+msgid "Configurations"
+msgstr "Configuraciones"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__confirm
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__conversion_item_name_id
+msgid "Conversion item name"
+msgstr "Nombre del elemento de conversión"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__budget_program_conversion_id
+msgid "Conversion of budgetary program"
+msgstr "Conversión del programa presupuestario"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_departure_conversion
+#: model:ir.model,name:jt_budget_mgmt.model_departure_conversion
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_departure_conversion
+msgid "Conversion with Departure"
+msgstr "Conversión con salida"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__conversion_item_id
+msgid "Conversion with item"
+msgstr "Conversión con artículo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__create_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__create_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.departure_conversion_search_view
+msgid "Departure conversion"
+msgstr "Conversión de salida"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_dependency
+#: model:ir.model,name:jt_budget_mgmt.model_dependency
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__dependency
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__dependency_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__dependency_id
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_dependency
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.dependency_search_view
+msgid "Dependency"
+msgstr "Dependencia"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__dependency_name_id
+msgid "Dependency name"
+msgstr "Nombre de dependencia"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__desc
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__desc
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__desc
+msgid "Description"
+msgstr "Descripción"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__description
+msgid "Description of program code"
+msgstr "Descripción del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__description
+msgid "Description of the program code"
+msgstr "Descripción del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__description
+msgid "Description of the programmatic code"
+msgstr "Descripción del código programático"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__designation
+msgid "Designation"
+msgstr "Designacion"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__display_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__done
+msgid "Done"
+msgstr "Hecho"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__draft
+msgid "Draft"
+msgstr "Sequía"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__service
+msgid "Education Servicess"
+msgstr "Servicios de educación"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__end_date
+msgid "End date"
+msgstr "Fecha final"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__entity
+msgid "Entity"
+msgstr "Entidad"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_expenditure_budget
+#: model:ir.model,name:jt_budget_mgmt.model_expenditure_budget
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__expenditure_budget_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_search_view
+msgid "Expenditure Budget"
+msgstr "Presupuesto de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model,name:jt_budget_mgmt.model_expenditure_budget_line
+msgid "Expenditure Budget Line"
+msgstr "Línea de presupuesto de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__line_ids
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Expenditure Budget Lines"
+msgstr "Líneas presupuestarias de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_expenditure_budget
+msgid "Expenditure budget"
+msgstr "Presupuesto de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__expenditure_item_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_item_search_view
+msgid "Expenditure item"
+msgstr "Artículo de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__expenditure_item_name_id
+msgid "Expenditure item name"
+msgstr "Nombre del artículo de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__expenditure_key
+msgid "Expenditure key"
+msgstr "Clave de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__expense_type_id
+msgid "Expenditure type"
+msgstr "Tipo de gasto"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_expense_type
+#: model:ir.model,name:jt_budget_mgmt.model_expense_type
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_expense_type
+msgid "Expense Type"
+msgstr "Tipo de gasto"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expense_type_search_view
+msgid "Expense type"
+msgstr "Tipo de gasto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__expense_type_name_id
+msgid "Expense type name"
+msgstr "Nombre del tipo de gasto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__income
+msgid "Extraordinary Income"
+msgstr "Ingreso extraordinario"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__subsidy
+msgid "Federal Subsidy"
+msgstr "Subsidio Federal"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__federal_item
+msgid "Federal item"
+msgstr "Artículo federal"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__federal_name
+msgid "Federal name"
+msgstr "Nombre federal"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__financial
+msgid "Financial"
+msgstr "Financiero"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_geographic_location
+#: model:ir.model,name:jt_budget_mgmt.model_geographic_location
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_geographic_location
+msgid "Geographic Location"
+msgstr "Ubicación geográfica"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__location_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.geographic_location_search_view
+msgid "Geographic location"
+msgstr "Ubicación geográfica"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_number_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.budget_program_conversion_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.code_structure_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.departure_conversion_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.dependency_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_item_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expense_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.geographic_location_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.institutional_activity_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.key_wallet_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_number_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_type_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.resource_origin_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.stage_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_dependency_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_program_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.verifying_digit_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.year_search_view
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__id
+msgid "ID"
+msgstr "CARNÉ DE IDENTIDAD"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__project_type_identifier_id
+msgid "Identifier"
+msgstr "Identificador"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_line_form_view
+msgid "Import"
+msgstr "Importar"
+
+#. module: jt_budget_mgmt
+#: model:ir.model,name:jt_budget_mgmt.model_import_line
+msgid "Import Line"
+msgstr "Línea de importación"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_import_line
+msgid "Import line"
+msgstr "Línea de importación"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Import lines"
+msgstr "Importar lineas"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_institutional_activity
+#: model:ir.model,name:jt_budget_mgmt.model_institutional_activity
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_institutional_activity
+msgid "Institutional Activity"
+msgstr "Actividad institucional"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__institutional_activity_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.institutional_activity_search_view
+msgid "Institutional activity"
+msgstr "Actividad institucional"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__institutional_activity_name_id
+msgid "Institutional activity name"
+msgstr "Nombre de actividad institucional"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__item
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__item
+msgid "Item"
+msgstr "Articulo"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_expenditure_item
+#: model:ir.model,name:jt_budget_mgmt.model_expenditure_item
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_expenditure_item
+msgid "Item of Expenditure"
+msgstr "Partida de gastos"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_key_wallet
+#: model:ir.model,name:jt_budget_mgmt.model_key_wallet
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_key_wallet
+msgid "Key Wallet"
+msgstr "Billetera clave"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__key_revenue
+msgid "Key own revenue"
+msgstr "Ingresos propios clave"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__portfolio_id
+msgid "Key portfolio"
+msgstr "Portafolio clave"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.key_wallet_search_view
+msgid "Key wallet"
+msgstr "Billetera clave"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit____last_update
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__write_uid
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expense_type__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_number__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_reject__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__write_date
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización en"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__name
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.dependency_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_item_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.institutional_activity_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.resource_origin_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_dependency_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_program_search_view
+msgid "Name"
+msgstr "Nombre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__name_key
+msgid "Name key"
+msgstr "Clave de nombre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__budget_name
+msgid "Name of the budget"
+msgstr "Nombre del presupuesto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__name
+msgid "Name sub dependency"
+msgstr "Subdependencia de nombre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__name
+msgid "Name sub program"
+msgstr "Subprograma de nombre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__name
+msgid "Name text"
+msgstr "Nombre de texto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__number
+msgid "Number"
+msgstr "Número"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__import_record_number
+msgid "Number of imported records"
+msgstr "Cantidad de registros importados"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__record_number
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__record_number
+msgid "Number of records"
+msgstr "Numero de registros"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_resource_origin
+#: model:ir.model,name:jt_budget_mgmt.model_resource_origin
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_resource_origin
+msgid "Origin of the Resource"
+msgstr "Origen del recurso"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__resource_origin_id
+msgid "Origin of the resource"
+msgstr "Origen del recurso"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__other
+msgid "Other Products"
+msgstr "Otros productos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_resource_origin__own_revenue
+msgid "Own revenue"
+msgstr "Ingresos propios"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__pp_shcp
+msgid "PP SHCP"
+msgstr "PP SHCP"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__from_date
+msgid "Period"
+msgstr "Período"
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/budget_program_conversion.py:0
+#, python-format
+msgid "Please enter first digit as letter and last 3 digits as numbers."
+msgstr "Ingrese el primer dígito como letra y los últimos 3 dígitos como números."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__portfolio_key
+msgid "Portfolio key"
+msgstr "Clave de cartera"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__portfolio_name_id
+msgid "Portfolio name"
+msgstr "Nombre de la cartera"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_code_structure__position_priority
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.code_structure_search_view
+msgid "Position priority"
+msgstr "Prioridad de puesto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__pp_unam
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__pp_unam
+msgid "Pp UNAM"
+msgstr "Pp UNAM"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__previous
+msgid "Previous"
+msgstr "Anterior"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Previous budget"
+msgstr "Presupuesto anterior"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_program
+#: model:ir.model,name:jt_budget_mgmt.model_program
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__program_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_search_view
+msgid "Program"
+msgstr "Programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_program_code
+#: model:ir.model,name:jt_budget_mgmt.model_program_code
+msgid "Program Code"
+msgstr "Código de programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__code
+msgid "Program Code Acronym"
+msgstr "Programa Código Acrónimo"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__description
+msgid "Program Code Description"
+msgstr "Descripción del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__program_code
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_program_code
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
+msgid "Program code"
+msgstr "Código de programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__code
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__code
+msgid "Program code acronym"
+msgstr "Acrónimo del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_dependency__description
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__description
+msgid "Program code description"
+msgstr "Descripción del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__description_id
+msgid "Program description"
+msgstr "Descripción del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_code_struct_and_order
+msgid "Programmatic Code Structure and Order"
+msgstr "Código programático estructura y orden"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_struct_and_catalog
+msgid "Programmatic Structure and Catalogs"
+msgstr "Estructura programática y catálogos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__code
+msgid "Programmatic code acronym"
+msgstr "Acrónimo de código programático"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_code_catalog
+msgid "Programmatic code catalogs"
+msgstr "Catálogos de códigos programáticos"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__description
+msgid "Programmatic code description"
+msgstr "Descripción del código programático"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_program
+msgid "Programs"
+msgstr "Programas"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_project_number
+#: model:ir.model,name:jt_budget_mgmt.model_project_number
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_project_number
+msgid "Project Number"
+msgstr "Número de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_project_type
+#: model:ir.model,name:jt_budget_mgmt.model_project_type
+msgid "Project Type"
+msgstr "Tipo de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__project_number_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_number_search_view
+msgid "Project number"
+msgstr "Número de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__project_type_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.project_type_search_view
+msgid "Project type"
+msgstr "Tipo de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_reject
+#: model:ir.model,name:jt_budget_mgmt.model_reject
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+msgid "Reject"
+msgstr "Rechazar"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.resource_origin_search_view
+msgid "Resource origin"
+msgstr "Origen del recurso"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__resource_origin_name_id
+msgid "Resource origin name"
+msgstr "Nombre de origen del recurso"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__responsible_id
+msgid "Responsible"
+msgstr "Responsable"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__own_revenue__pef
+msgid "Returns Reassignment PEF"
+msgstr "Reasignación de devoluciones PEF"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_budget_settings
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget_settings
+msgid "Settings"
+msgstr "Configuraciones"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__code
+msgid "Sigla of the program code"
+msgstr "Sigla del código del programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_stage
+#: model:ir.model,name:jt_budget_mgmt.model_stage
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__stage_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.stage_search_view
+msgid "Stage"
+msgstr "Escenario"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_stage
+msgid "Stages"
+msgstr "Etapas"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__start_date
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__state
+msgid "State"
+msgstr "Estado"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__state_key
+msgid "State key"
+msgstr "Clave de estado"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_geographic_location__state_name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__state_id
+msgid "State name"
+msgstr "Nombre del Estado"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__sub_dependency_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_dependency__sub_dependency
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__sub_dependency_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_dependency_search_view
+msgid "Sub dependency"
+msgstr "Sub dependencia"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__sub_dependency_name_id
+msgid "Sub dependency name"
+msgstr "Sub nombre de dependencia"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__sub_program_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__sub_program
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__sub_program
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_program_search_view
+msgid "Sub program"
+msgstr "Subprograma"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__sub_program_name_id
+msgid "Sub program name"
+msgstr "Nombre del subprograma"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__sub_unit
+msgid "Sub unit"
+msgstr "Subunidad"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_sub_dependency
+#: model:ir.model,name:jt_budget_mgmt.model_sub_dependency
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_sub_dependency
+msgid "Sub-Dependency"
+msgstr "Subdependencia"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_sub_program
+#: model:ir.model,name:jt_budget_mgmt.model_sub_program
+msgid "Sub-Program"
+msgstr "Subprograma"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_sub_program
+msgid "Sub-Programs"
+msgstr "Subprogramas"
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/program.py:0
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The Pp UNAM size must be two."
+msgstr "El tamaño de Pp UNAM debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/budget_program_conversion.py:0
+#: code:addons/jt_budget_mgmt/models/departure_conversion.py:0
+#, python-format
+msgid "The code size must be five."
+msgstr "El tamaño del código debe ser cinco."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/year.py:0
+#, python-format
+msgid "The code size must be four."
+msgstr "El tamaño del código debe ser cuatro."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/stage.py:0
+#, python-format
+msgid "The code size must be one."
+msgstr "El tamaño del código debe ser uno."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/dependency.py:0
+#: code:addons/jt_budget_mgmt/models/expenditure_item.py:0
+#, python-format
+msgid "The code size must be three."
+msgstr "El tamaño del código debe ser tres."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/agreement_number.py:0
+#: code:addons/jt_budget_mgmt/models/agreement_type.py:0
+#: code:addons/jt_budget_mgmt/models/expense_type.py:0
+#: code:addons/jt_budget_mgmt/models/geographic_location.py:0
+#: code:addons/jt_budget_mgmt/models/institutional_activity.py:0
+#: code:addons/jt_budget_mgmt/models/key_wallet.py:0
+#: code:addons/jt_budget_mgmt/models/program.py:0
+#: code:addons/jt_budget_mgmt/models/project_number.py:0
+#: code:addons/jt_budget_mgmt/models/project_type.py:0
+#: code:addons/jt_budget_mgmt/models/resource_origin.py:0
+#: code:addons/jt_budget_mgmt/models/sub_dependency.py:0
+#: code:addons/jt_budget_mgmt/models/sub_program.py:0
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The code size must be two."
+msgstr "El tamaño del código debe ser dos."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_dependency_dependency
+msgid "The dependency must be unique."
+msgstr "La dependencia debe ser única."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/dependency.py:0
+#, python-format
+msgid "The dependency size must be three."
+msgstr "El tamaño de la dependencia debe ser tres."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/key_wallet.py:0
+#, python-format
+msgid "The entity size must be two."
+msgstr "El tamaño de la entidad debe ser dos."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_expense_type_expenditure_key
+msgid "The expenditure key must be unique."
+msgstr "La clave de gastos debe ser única."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/expense_type.py:0
+#, python-format
+msgid "The expenditure key size must be two."
+msgstr "El tamaño de la clave de gastos debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/departure_conversion.py:0
+#, python-format
+msgid "The federal item size must be five."
+msgstr "El tamaño del artículo federal debe ser cinco."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/expenditure_item.py:0
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The item size must be three."
+msgstr "El tamaño del artículo debe ser tres."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_institutional_activity_number
+msgid "The number must be unique."
+msgstr "El número debe ser único."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/institutional_activity.py:0
+#, python-format
+msgid "The number size must be five."
+msgstr "El tamaño del número debe ser cinco."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_key_wallet_portfolio_key
+msgid "The portfolio key must be unique."
+msgstr "La clave de cartera debe ser única."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/key_wallet.py:0
+#, python-format
+msgid "The portfolio key size must be four."
+msgstr "El tamaño de la clave de la cartera debe ser cuatro."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/budget_program_conversion.py:0
+#, python-format
+msgid "The pp shcp size must be four."
+msgstr "El tamaño de pp shcp debe ser cuatro."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_program_pp_unam
+msgid "The pp unam must be unique."
+msgstr "El pp unam debe ser único."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_budget_program_conversion_pp_shcp
+msgid "The pp_shcp must be unique."
+msgstr "El pp_shcp debe ser único."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_geographic_location_state_key
+msgid "The state key must be unique."
+msgstr "La clave de estado debe ser única."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/geographic_location.py:0
+#, python-format
+msgid "The state key size must be two."
+msgstr "El tamaño de la clave de estado debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/sub_dependency.py:0
+#, python-format
+msgid "The sub dependency size must be two."
+msgstr "El tamaño de la dependencia secundaria debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/sub_program.py:0
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The sub program size must be two."
+msgstr "El tamaño del subprograma debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The sub unit size must be two."
+msgstr "El tamaño de la unidad secundaria debe ser dos."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The unit size must be three."
+msgstr "El tamaño de la unidad debe ser tres."
+
+#. module: jt_budget_mgmt
+#: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
+#, python-format
+msgid "The verifying digit size must be two."
+msgstr "El tamaño del dígito de verificación debe ser dos."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_year_year
+msgid "The year must be unique."
+msgstr "El año debe ser único."
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__to_date
+msgid "To Date"
+msgstr "Hasta la fecha"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__total_budget
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__total_budget
+msgid "Total budget"
+msgstr "Presupuesto total"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_agreement_type
+#: model:ir.model,name:jt_budget_mgmt.model_agreement_type
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_agreement_type
+msgid "Type of Agreement"
+msgstr "Tipo de acuerdo"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_project_type
+msgid "Type of Project"
+msgstr "Tipo de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__exercise_type
+msgid "Type of exercise"
+msgstr "Tipo de ejercicio"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_key_wallet__project_type
+msgid "Type of program or project"
+msgstr "Tipo de programa o proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget
+msgid "UNAM Budget"
+msgstr "Presupuesto de la UNAM"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__unit_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__unit
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__validate
+msgid "Validate"
+msgstr "Validar"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_verifying_digit
+#: model:ir.model,name:jt_budget_mgmt.model_verifying_digit
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_verifying_digit
+msgid "Verifying Digit"
+msgstr "Verificando Dígito"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__verifying_digit
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.verifying_digit_search_view
+msgid "Verifying digit"
+msgstr "Dígito de verificación"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.action_year
+#: model:ir.model,name:jt_budget_mgmt.model_year
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__year_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_year__year
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.year_search_view
+msgid "Year"
+msgstr "Año"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.menu_year
+msgid "Years"
+msgstr "Años"

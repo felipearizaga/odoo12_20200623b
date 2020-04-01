@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for departure conversion model -->
+        <record id="departure_conversion_search_view" model="ir.ui.view">
+            <field name="name">departure.conversion.search.view</field>
+            <field name="model">departure.conversion</field>
+            <field name="arch" type="xml">
+                <search string="Departure conversion">
+                    <field name="code"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for departure conversion model -->
+    	<record id="departure_conversion_form_view" model="ir.ui.view">
+            <field name="name">departure.conversion.form.view</field>
+            <field name="model">departure.conversion</field>
+            <field name="arch" type="xml">
+            	<form>
+            		<sheet>
+	            		<group>
+	            			<field name="code"/>
+                            <field name="description"/>
+                            <field name="federal_item"/>
+                            <field name="federal_name"/>
+	            		</group>
+	            	</sheet>
+            	</form>
+            </field>
+        </record>
+
+        <!-- tree view for departure conversion model -->
+    	<record id="departure_conversion_tree_view" model="ir.ui.view">
+            <field name="name">departure.conversion.tree.view</field>
+            <field name="model">departure.conversion</field>
+            <field name="arch" type="xml">
+            	<tree>
+            		<field name="code"/>
+                    <field name="description"/>
+                    <field name="federal_item"/>
+                    <field name="federal_name"/>
+            	</tree>
+            </field>
+        </record>
+
+        <!-- action for departure conversion views -->
+        <record id="action_departure_conversion" model="ir.actions.act_window">
+            <field name="name">Conversion with Departure</field>
+            <field name="res_model">departure.conversion</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="departure_conversion_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for expenditure item model -->
+        <record id="expenditure_item_search_view" model="ir.ui.view">
+            <field name="name">expenditure.item.search.view</field>
+            <field name="model">expenditure.item</field>
+            <field name="arch" type="xml">
+                <search string="Expenditure item">
+                    <field name="name"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for expenditure item model -->
+    	<record id="expenditure_item_form_view" model="ir.ui.view">
+            <field name="name">expenditure.item.form.view</field>
+            <field name="model">expenditure.item</field>
+            <field name="arch" type="xml">
+            	<form>
+            		<sheet>
+	            		<group>
+	            			<field name="code"/>
+                            <field name="description"/>
+                            <field name="item"/>
+                            <field name="exercise_type"/>
+                            <field name="name"/>
+	            		</group>
+	            	</sheet>
+            	</form>
+            </field>
+        </record>
+
+        <!-- tree view for expenditure item model -->
+    	<record id="expenditure_item_tree_view" model="ir.ui.view">
+            <field name="name">expenditure.item.tree.view</field>
+            <field name="model">expenditure.item</field>
+            <field name="arch" type="xml">
+            	<tree>
+            		<field name="code"/>
+                    <field name="description"/>
+                    <field name="item"/>
+                    <field name="exercise_type"/>
+                    <field name="name"/>
+            	</tree>
+            </field>
+        </record>
+
+        <!-- action for expenditure item views -->
+        <record id="action_expenditure_item" model="ir.actions.act_window">
+            <field name="name">Item of Expenditure</field>
+            <field name="res_model">expenditure.item</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="expenditure_item_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>
