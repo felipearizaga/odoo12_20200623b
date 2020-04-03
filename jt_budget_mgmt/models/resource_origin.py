@@ -20,31 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields
 
 
 class ResourceOrigin(models.Model):
 
     _name = 'resource.origin'
     _description = 'Origin of the Resource'
-    _rec_name = 'name'
+    _rec_name = 'key_origin'
 
-    code = fields.Char(string='Acronym of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
-    key_revenue = fields.Selection(
+    key_origin = fields.Selection(
         [('00', '00'), ('01', '01'), ('02', '02'), ('03', '03'), ('04', '04'),
-         ('05', '05')], string='Key own revenue')
-    own_revenue = fields.Selection([('subsidy', 'Federal Subsidy'),
-                                    ('income', 'Extraordinary Income'),
-                                    ('service', 'Education Servicess'),
-                                    ('financial', 'Financial'),
-                                    ('other', 'Other Products'),
-                                    ('pef', 'Returns Reassignment PEF')],
-                                   string='Own revenue')
-    name = fields.Text(string='Name')
+         ('05', '05')], string='Key origin of the resource')
+    desc = fields.Selection([('subsidy', 'Federal Subsidy'),
+                             ('income', 'Extraordinary Income'),
+                             ('service', 'Education Services'),
+                             ('financial', 'Financial'),
+                             ('other', 'Other Products'),
+                             ('pef', 'Returns Reassignment PEF')],
+                            string='Description of origin of the resource')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    _sql_constraints = [('key_origin', 'unique(key_origin)', 'The key origin must be unique.')]

@@ -28,18 +28,14 @@ class SubDependency(models.Model):
 
     _name = 'sub.dependency'
     _description = 'Sub-Dependency'
-    _rec_name = 'name'
+    _rec_name = 'sub_dependency'
 
-    code = fields.Char(string='Program code acronym')
-    description = fields.Text(string='Program code description')
     dependency_id = fields.Many2one('dependency', string='Dependency')
     sub_dependency = fields.Integer(string='Sub dependency')
-    name = fields.Text(string='Name sub dependency')
+    description = fields.Text(string='Sub dependency description')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    _sql_constraints = [('sub_dependency_dependency_id', 'unique(sub_dependency,dependency_id)',
+                         'The sub dependency must be unique per dependency')]
 
     @api.constrains('sub_dependency')
     def _check_sub_dependency(self):

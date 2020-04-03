@@ -36,10 +36,10 @@ from . import expense_type
 from . import geographic_location
 from . import key_wallet
 from . import project_type
-from . import project_number
+#from . import project_number
 from . import stage
 from . import agreement_type
-from . import agreement_number
+#from . import agreement_number
 from . import program_code
 from . import expenditure_budget
 from . import adequacies

@@ -28,30 +28,15 @@ class Program(models.Model):
 
     _name = 'program'
     _description = 'Program'
-    _rec_name = 'code'
+    _rec_name = 'key_unam'
 
-    code = fields.Char(string='Program code acronym')
-    description = fields.Text(string='Description of the programmatic code')
-    pp_unam = fields.Integer(string='Pp UNAM')
-    desc = fields.Text(string='Description')
+    key_unam = fields.Integer(string='Key UNAM')
+    desc_key_unam = fields.Text(string='Description Key UNAM')
 
-    _sql_constraints = [('pp_unam', 'unique(pp_unam)', 'The pp unam must be unique.')]
+    _sql_constraints = [('key_unam', 'unique(key_unam)',
+                         'The key unam must be unique.')]
 
-    # @api.depends('pp_unam', 'description')
-    # def name_get(self):
-    #     result = []
-    #     if self.env.context.get('params').get('model') == 'program.code':
-    #         for record in self:
-    #             name = record.pp_unam
-    #             result.append((record.id, name))
-    #     return result
-
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
-
-    @api.constrains('pp_unam')
-    def _check_pp_unam(self):
-        if self.pp_unam and not len(str(self.pp_unam)) == 2:
-            raise ValidationError(_('The Pp UNAM size must be two.'))
+    @api.constrains('key_unam')
+    def _check_key_unam(self):
+        if self.key_unam and not len(str(self.key_unam)) == 2:
+            raise ValidationError(_('The key UNAM size must be two.'))

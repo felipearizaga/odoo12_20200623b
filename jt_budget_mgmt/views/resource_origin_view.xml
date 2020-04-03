@@ -7,9 +7,9 @@
             <field name="model">resource.origin</field>
             <field name="arch" type="xml">
                 <search string="Resource origin">
-                    <field name="name"/>
+                    <field name="key_origin"/>
                     <group expand="1" string="Group By">
-                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                        <filter string="Key origin" name='key_origin' context="{'group_by':'key_origin'}"/>
                     </group>
                 </search>
             </field>
@@ -23,11 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
-                            <field name="key_revenue"/>
-                            <field name="own_revenue"/>
-                            <field name="name"/>
+	            			<field name="key_origin"/>
+                            <field name="desc"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -40,11 +37,8 @@
             <field name="model">resource.origin</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="key_revenue"/>
-                    <field name="own_revenue"/>
-                    <field name="name"/>
+            		<field name="key_origin"/>
+                    <field name="desc"/>
             	</tree>
             </field>
         </record>

@@ -28,22 +28,14 @@ class DepartureConversion(models.Model):
 
     _name = 'departure.conversion'
     _description = 'Conversion with Departure'
-    _rec_name = 'code'
+    _rec_name = 'federal_part'
 
-    code = fields.Char(string='Acronym of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
-    federal_item = fields.Integer(string='Federal item')
-    federal_name = fields.Text(string='Federal name')
-    # item_id = fields.Many2one('', string='Item')
-    # exercise_type_id = fields.Many2one('', string='Execrcise type')
-    # item_name_id = fields.Many2one('', string='Item name')
+    federal_part = fields.Integer(string='Federal part')
+    federal_part_desc = fields.Text(string='Federal part description')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 5:
-            raise ValidationError(_('The code size must be five.'))
+    _sql_constraints = [('federal_part', 'unique(federal_part)', 'The federal part must be unique.')]
 
-    @api.constrains('federal_item')
-    def _check_federal_item(self):
-        if self.federal_item and not len(str(self.federal_item)) == 5:
-            raise ValidationError(_('The federal item size must be five.'))
+    @api.constrains('federal_part')
+    def _check_federal_part(self):
+        if self.federal_part and not len(str(self.federal_part)) == 5:
+            raise ValidationError(_('The federal part size must be five.'))

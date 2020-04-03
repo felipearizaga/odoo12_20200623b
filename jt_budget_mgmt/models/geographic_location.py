@@ -28,20 +28,13 @@ class GeographicLocation(models.Model):
 
     _name = 'geographic.location'
     _description = 'Geographic Location'
-    _rec_name = 'code'
+    _rec_name = 'state_key'
 
-    code = fields.Char(string='Abbreviation of the program code')
-    description = fields.Text(string='Description of the program code')
     state_key = fields.Integer(string='State key')
     state_name = fields.Text(string='State name')
 
     _sql_constraints = [('state_key', 'unique(state_key)',
                          'The state key must be unique.')]
-
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
 
     @api.constrains('state_key')
     def _check_state_key(self):

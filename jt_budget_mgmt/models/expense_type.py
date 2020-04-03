@@ -28,22 +28,17 @@ class ExpenseType(models.Model):
 
     _name = 'expense.type'
     _description = 'Expense Type'
-    _rec_name = 'code'
+    _rec_name = 'key_expenditure_type'
 
-    code = fields.Char(string='Abbreviation of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
-    expenditure_key = fields.Integer(string='Expenditure key')
-    designation = fields.Text(string='Designation')
+    key_expenditure_type = fields.Integer(string='Key expenditure type')
+    description_expenditure_type = fields.Text(
+        string='Description expenditure type')
 
-    _sql_constraints = [('expenditure_key', 'unique(expenditure_key)',
-                         'The expenditure key must be unique.')]
+    _sql_constraints = [('key_expenditure_type', 'unique(key_expenditure_type)',
+                         'The key expenditure type must be unique.')]
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
-
-    @api.constrains('expenditure_key')
-    def _check_expenditure_key(self):
-        if self.expenditure_key and not len(str(self.expenditure_key)) == 2:
-            raise ValidationError(_('The expenditure key size must be two.'))
+    @api.constrains('key_expenditure_type')
+    def _check_key_expenditure_type(self):
+        if self.key_expenditure_type and not len(str(self.key_expenditure_type)) == 2:
+            raise ValidationError(
+                _('The key expenditure type size must be two.'))

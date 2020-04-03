@@ -28,48 +28,41 @@ class VerifyingDigit(models.Model):
 
     _name = 'verifying.digit'
     _description = 'Verifying Digit'
-    _rec_name = 'code'
+    _rec_name = 'check'
 
-    code = fields.Char(string='Sigla of the program code')
-    description = fields.Text(string='Description of the program code')
-    pp_unam = fields.Integer(string='Pp UNAM')
-    sub_program = fields.Integer(string='Sub program')
-    unit = fields.Integer(string='Unit')
-    sub_unit = fields.Integer(string='Sub unit')
-    item = fields.Integer(string='Item')
-    verifying_digit = fields.Integer(string='Verifying digit')
+    unam_key_id = fields.Many2one('program', string='UNAM key')
+    sub_program_id = fields.Many2one('sub.program', string='Sub program')
+    dependency_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependency_id = fields.Many2one('sub.dependency', string='Sub dependency')
+    item_id = fields.Many2one('expenditure.item', string='Item')
+    check = fields.Integer(string='Check')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    @api.constrains('unam_key_id')
+    def _check_unam_key_id(self):
+        if self.unam_key_id and not len(str(self.unam_key_id)) == 2:
+            raise ValidationError(_('The UNAM key size must be two.'))
 
-    @api.constrains('pp_unam')
-    def _check_pp_unam(self):
-        if self.pp_unam and not len(str(self.pp_unam)) == 2:
-            raise ValidationError(_('The Pp UNAM size must be two.'))
-
-    @api.constrains('sub_program')
-    def _check_sub_program(self):
-        if self.sub_program and not len(str(self.sub_program)) == 2:
+    @api.constrains('sub_program_id')
+    def _check_sub_program_id(self):
+        if self.sub_program_id and not len(str(self.sub_program_id)) == 2:
             raise ValidationError(_('The sub program size must be two.'))
 
-    @api.constrains('unit')
-    def _check_unit(self):
-        if self.unit and not len(str(self.unit)) == 3:
-            raise ValidationError(_('The unit size must be three.'))
+    @api.constrains('dependency_id')
+    def _check_dependency_id(self):
+        if self.dependency_id and not len(str(self.dependency_id.dependency)) == 3:
+            raise ValidationError(_('The dependency size must be three.'))
 
-    @api.constrains('sub_unit')
-    def _check_sub_unit(self):
-        if self.sub_unit and not len(str(self.sub_unit)) == 2:
-            raise ValidationError(_('The sub unit size must be two.'))
+    @api.constrains('sub_dependency_id')
+    def _check_sub_dependency_id(self):
+        if self.sub_dependency_id and not len(str(self.sub_dependency_id)) == 2:
+            raise ValidationError(_('The sub dependency size must be two.'))
 
-    @api.constrains('item')
-    def _check_item(self):
-        if self.item and not len(str(self.item)) == 3:
+    @api.constrains('item_id')
+    def _check_item_id(self):
+        if self.item_id and not len(str(self.item_id.item)) == 3:
             raise ValidationError(_('The item size must be three.'))
 
-    @api.constrains('verifying_digit')
-    def _check_verifying_digit(self):
-        if self.verifying_digit and not len(str(self.verifying_digit)) == 2:
-            raise ValidationError(_('The verifying digit size must be two.'))
+    @api.constrains('check')
+    def _check_check(self):
+        if self.check and not len(str(self.check)) == 2:
+            raise ValidationError(_('The check size must be two.'))

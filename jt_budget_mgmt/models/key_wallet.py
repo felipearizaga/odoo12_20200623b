@@ -28,30 +28,16 @@ class KeyWallet(models.Model):
 
     _name = 'key.wallet'
     _description = 'Key Wallet'
-    _rec_name = 'code'
+    _rec_name = 'wallet_password'
 
-    code = fields.Char(string='Acronym of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
-    portfolio_key = fields.Integer(string='Portfolio key')
-    name_key = fields.Text(string='Name key')
-    desc = fields.Text(string='Description')
-    entity = fields.Integer(string='Entity')
-    project_type = fields.Text(string='Type of program or project')
+    wallet_password = fields.Integer(string='Wallet password')
+    wallet_password_name = fields.Text(string='Wallet password name')
+    wallet_password_desc = fields.Text(string='Wallet password description')
 
-    _sql_constraints = [('portfolio_key', 'unique(portfolio_key)',
-                         'The portfolio key must be unique.')]
+    _sql_constraints = [('wallet_password', 'unique(wallet_password)',
+                         'The wallet password must be unique.')]
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
-
-    @api.constrains('portfolio_key')
-    def _check_portfolio_key(self):
-        if self.portfolio_key and not len(str(self.portfolio_key)) == 4:
-            raise ValidationError(_('The portfolio key size must be four.'))
-
-    @api.constrains('entity')
-    def _check_entity(self):
-        if self.entity and not len(str(self.entity)) == 2:
-            raise ValidationError(_('The entity size must be two.'))
+    @api.constrains('wallet_password')
+    def _check_wallet_password(self):
+        if self.wallet_password and not len(str(self.wallet_password)) == 4:
+            raise ValidationError(_('The wallet password size must be four.'))

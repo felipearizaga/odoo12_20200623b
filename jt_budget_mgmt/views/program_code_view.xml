@@ -54,11 +54,11 @@
                                 <field name="portfolio_name_id"/>
                                 <field name="project_type_id"/>
                                 <field name="project_type_identifier_id"/>
-                                <field name="project_number_id"/>
+                                <!-- <field name="project_number_id"/> -->
                                 <field name="stage_id"/>
                                 <field name="agreement_type_id"/>
-                                <field name="agreement_number_id"/>
-                                <field name="agreement_number_description_id"/>
+                                <!-- <field name="agreement_number_id"/>
+                                <field name="agreement_number_description_id"/> -->
                                 <field name="program_code"/>
                             </group>
                         </group>

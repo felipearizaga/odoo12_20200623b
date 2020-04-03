@@ -28,19 +28,12 @@ class InstitutionalActivity(models.Model):
 
     _name = 'institutional.activity'
     _description = 'Institutional Activity'
-    _rec_name = 'name'
+    _rec_name = 'number'
 
-    code = fields.Char(string='Program code acronym')
-    description = fields.Text(string='Description of program code')
-    number = fields.Integer(string='Number')
-    name = fields.Text(string='Name')
+    number = fields.Integer(string='Institutional activity number')
+    description = fields.Text(string='Description')
 
     _sql_constraints = [('number', 'unique(number)', 'The number must be unique.')]
-
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
 
     @api.constrains('number')
     def _check_number(self):

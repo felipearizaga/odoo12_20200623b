@@ -7,9 +7,9 @@
             <field name="model">institutional.activity</field>
             <field name="arch" type="xml">
                 <search string="Institutional activity">
-                    <field name="name"/>
+                    <field name="number"/>
                     <group expand="1" string="Group By">
-                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                        <filter string="Number" name='number' context="{'group_by':'number'}"/>
                     </group>
                 </search>
             </field>
@@ -23,10 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
+	            			<field name="number"/>
                             <field name="description"/>
-                            <field name="number"/>
-                            <field name="name"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -39,10 +37,8 @@
             <field name="model">institutional.activity</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
+            		<field name="number"/>
                     <field name="description"/>
-                    <field name="number"/>
-                    <field name="name"/>
             	</tree>
             </field>
         </record>

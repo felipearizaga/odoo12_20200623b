@@ -72,7 +72,7 @@
     <menuitem id="menu_project_type" name="Type of Project" parent="jt_budget_mgmt.menu_code_catalog" sequence="15" action="jt_budget_mgmt.action_project_type"/>
 
     <!-- menu for project number -->
-    <menuitem id="menu_project_number" name="Project Number" parent="jt_budget_mgmt.menu_code_catalog" sequence="16" action="jt_budget_mgmt.action_project_number"/>
+    <!-- <menuitem id="menu_project_number" name="Project Number" parent="jt_budget_mgmt.menu_code_catalog" sequence="16" action="jt_budget_mgmt.action_project_number"/> -->
 
     <!-- menu for stage -->
     <menuitem id="menu_stage" name="Stages" parent="jt_budget_mgmt.menu_code_catalog" sequence="17" action="jt_budget_mgmt.action_stage"/>
@@ -81,7 +81,7 @@
     <menuitem id="menu_agreement_type" name="Type of Agreement" parent="jt_budget_mgmt.menu_code_catalog" sequence="18" action="jt_budget_mgmt.action_agreement_type"/>
 
     <!-- menu for agreement number -->
-    <menuitem id="menu_agreement_number" name="Agreement Number" parent="jt_budget_mgmt.menu_code_catalog" sequence="19" action="jt_budget_mgmt.action_agreement_number"/>
+    <!-- <menuitem id="menu_agreement_number" name="Agreement Number" parent="jt_budget_mgmt.menu_code_catalog" sequence="19" action="jt_budget_mgmt.action_agreement_number"/> -->
 
     <!-- menu for settings -->
     <menuitem id="menu_budget_settings" name="Settings" parent="jt_budget_mgmt.menu_budget_config" sequence="30" action="jt_budget_mgmt.action_budget_settings"/>

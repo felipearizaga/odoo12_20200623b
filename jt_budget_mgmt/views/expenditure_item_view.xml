@@ -7,9 +7,9 @@
             <field name="model">expenditure.item</field>
             <field name="arch" type="xml">
                 <search string="Expenditure item">
-                    <field name="name"/>
+                    <field name="item"/>
                     <group expand="1" string="Group By">
-                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                        <filter string="Item" name='item' context="{'group_by':'item'}"/>
                     </group>
                 </search>
             </field>
@@ -23,11 +23,15 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
-                            <field name="item"/>
+	            			<field name="item"/>
                             <field name="exercise_type"/>
-                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="unam_account_id"/>
+                            <field name="shcp_id"/>
+                            <field name="desc_id"/>
+                            <!-- <field name="cog_id"/>
+                            <field name="cog_desc_id"/>
+                            <field name="assigned_account_id"/> -->
 	            		</group>
 	            	</sheet>
             	</form>
@@ -40,11 +44,15 @@
             <field name="model">expenditure.item</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="item"/>
+            		<field name="item"/>
                     <field name="exercise_type"/>
-                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="unam_account_id"/>
+                    <field name="shcp_id"/>
+                    <field name="desc_id"/>
+                    <!-- <field name="cog_id"/>
+                    <field name="cog_desc_id"/>
+                    <field name="assigned_account_id"/> -->
             	</tree>
             </field>
         </record>

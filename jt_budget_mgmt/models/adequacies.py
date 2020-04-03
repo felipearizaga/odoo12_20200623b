@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class Adequacies(models.Model):
@@ -46,6 +46,20 @@ class Adequacies(models.Model):
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.onchange('adequacies_lines_ids')
+    def imported_record_count(self):
+        self.imported_record_number = len(self.adequacies_lines_ids)
+
+    def import_lines(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'import.adequacies.line',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
 
     def confirm(self):
         self.state = 'confirmed'

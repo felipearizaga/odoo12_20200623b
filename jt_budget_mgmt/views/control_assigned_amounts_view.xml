@@ -34,6 +34,7 @@
                                 <field name="folio"/>
                                 <field name="import_file"/>
                                 <field name="budget_id"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
                                 <field name="made_by_id"/>
                                 <field name="observations"/>
                             </group>

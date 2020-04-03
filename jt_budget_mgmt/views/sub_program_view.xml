@@ -7,9 +7,9 @@
             <field name="model">sub.program</field>
             <field name="arch" type="xml">
                 <search string="Sub program">
-                    <field name="name"/>
+                    <field name="unam_key_id"/>
                     <group expand="1" string="Group By">
-                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                        <filter string="UNAM key" name='unam_key_id' context="{'group_by':'unam_key_id'}"/>
                     </group>
                 </search>
             </field>
@@ -23,12 +23,9 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
+	            			<field name="unam_key_id"/>
                             <field name="sub_program"/>
-                            <field name="dependency_id"/>
-                            <field name="sub_dependency_id"/>
-                            <field name="name"/>
+                            <field name="desc"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -41,12 +38,9 @@
             <field name="model">sub.program</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
+            		<field name="unam_key_id"/>
                     <field name="sub_program"/>
-                    <field name="dependency_id"/>
-                    <field name="sub_dependency_id"/>
-                    <field name="name"/>
+                    <field name="desc"/>
             	</tree>
             </field>
         </record>

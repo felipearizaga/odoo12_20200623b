@@ -28,22 +28,21 @@ class ProjectType(models.Model):
 
     _name = 'project.type'
     _description = 'Project Type'
-    _rec_name = 'code'
+    _rec_name = 'project_type_id'
 
-    code = fields.Char(string='Acronym for program code')
-    description = fields.Text(string='Description of program code')
-    # project_type_id = fields.Many2one('', string='Project type identifier')
-    # desc_id = fields.Many2one('', string='Description')
+    project_type_id = fields.Many2one('project.project', string='Project type identifier')
+    desc = fields.Text(string='Description')
+    number = fields.Integer(string='Number')
 
-    # _sql_constraints = [('project_type_id', 'unique(project_type_id)',
-    #                      'The project type must be unique.')]
+    _sql_constraints = [('project_type_id', 'unique(project_type_id)',
+                         'The project type must be unique.')]
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    @api.constrains('project_type_id')
+    def _check_project_type_id(self):
+        if self.project_type_id and not len(self.project_type_id) == 2:
+            raise ValidationError(_('The project type size must be two.'))
 
-    # @api.constrains('project_type_id')
-    # def _check_project_type_id(self):
-    #     if self.project_type_id and not len(str(self.project_type_id)) == 2:
-    #         raise ValidationError(_('The project type size must be two.'))
+    @api.constrains('number')
+    def _check_number(self):
+        if self.number and not len(str(self.number)) == 6:
+            raise ValidationError(_('The number size must be six.'))

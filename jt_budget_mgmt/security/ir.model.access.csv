@@ -15,10 +15,8 @@ access_expense_type,expense_type,model_expense_type,base.group_user,1,1,1,1
 access_geographic_location,geographic_location,model_geographic_location,base.group_user,1,1,1,1
 access_key_wallet,key_wallet,model_key_wallet,base.group_user,1,1,1,1
 access_project_type,project_type,model_project_type,base.group_user,1,1,1,1
-access_project_number,project_number,model_project_number,base.group_user,1,1,1,1
 access_stage,stage,model_stage,base.group_user,1,1,1,1
 access_agreement_type,agreement_type,model_agreement_type,base.group_user,1,1,1,1
-access_agreement_number,agreement_number,model_agreement_number,base.group_user,1,1,1,1
 access_program_code,program_code,model_program_code,base.group_user,1,1,1,1
 access_expenditure_budget,expenditure_budget,model_expenditure_budget,base.group_user,1,1,1,1
 access_expenditure_budget_line,expenditure_budget_line,model_expenditure_budget_line,base.group_user,1,1,1,1

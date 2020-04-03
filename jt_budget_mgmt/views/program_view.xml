@@ -7,9 +7,9 @@
             <field name="model">program</field>
             <field name="arch" type="xml">
                 <search string="Program">
-                    <field name="code"/>
+                    <field name="key_unam"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="Key UNAM" name='key_unam' context="{'group_by':'key_unam'}"/>
                     </group>
                 </search>
             </field>
@@ -23,10 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
-                            <field name="pp_unam"/>
-                            <field name="desc"/>
+	            			<field name="key_unam"/>
+                            <field name="desc_key_unam"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -39,10 +37,8 @@
             <field name="model">program</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="pp_unam"/>
-                    <field name="desc"/>
+            		<field name="key_unam"/>
+                    <field name="desc_key_unam"/>
             	</tree>
             </field>
         </record>

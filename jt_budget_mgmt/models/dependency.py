@@ -28,19 +28,12 @@ class Dependency(models.Model):
 
     _name = 'dependency'
     _description = 'Dependency'
-    _rec_name = 'name'
+    _rec_name = 'dependency'
 
-    code = fields.Char(string='Program code acronym')
-    description = fields.Text(string='Program code description')
     dependency = fields.Integer(string='Dependency')
-    name = fields.Text(string='Name')
+    description = fields.Text(string='Dependency description')
 
     _sql_constraints = [('dependency', 'unique(dependency)', 'The dependency must be unique.')]
-
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 3:
-            raise ValidationError(_('The code size must be three.'))
 
     @api.constrains('dependency')
     def _check_dependency(self):

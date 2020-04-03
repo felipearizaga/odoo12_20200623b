@@ -7,9 +7,9 @@
             <field name="model">sub.dependency</field>
             <field name="arch" type="xml">
                 <search string="Sub dependency">
-                    <field name="name"/>
+                    <field name="sub_dependency"/>
                     <group expand="1" string="Group By">
-                        <filter string="Name" name='name' context="{'group_by':'name'}"/>
+                        <filter string="Sub dependency" name='sub_dependency' context="{'group_by':'sub_dependency'}"/>
                     </group>
                 </search>
             </field>
@@ -23,11 +23,9 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
                             <field name="dependency_id"/>
                             <field name="sub_dependency"/>
-                            <field name="name"/>
+                            <field name="description"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -40,11 +38,9 @@
             <field name="model">sub.dependency</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="dependency_id"/>
+            		<field name="dependency_id"/>
                     <field name="sub_dependency"/>
-                    <field name="name"/>
+                    <field name="description"/>
             	</tree>
             </field>
         </record>

@@ -24,6 +24,7 @@
             		<sheet>
 	            		<group>
 	            			<field name="position_priority"/>
+                            <field name="section"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -37,6 +38,7 @@
             <field name="arch" type="xml">
             	<tree>
             		<field name="position_priority"/>
+                    <field name="section"/>
             	</tree>
             </field>
         </record>

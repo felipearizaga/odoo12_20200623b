@@ -653,7 +653,7 @@ msgstr "2020"
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
 msgid "<span class=\"o_form_label\">Budget name</span>"
-msgstr "<span class = \ "o_form_label \"> Nombre del presupuesto </span>"
+msgstr "<span class=\"o_form_label\">Nombre del presupuesto</span>"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_number__code

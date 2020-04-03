@@ -29,28 +29,21 @@ class BudgetProgramConversion(models.Model):
 
     _name = 'budget.program.conversion'
     _description = 'Budget Program Conversion'
-    _rec_name = 'code'
+    _rec_name = 'shcp'
 
-    code = fields.Char(string='Abbreviation of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
-    # pp_unam_id = fields.Many2one('', string='Pp UNAM')
-    desc = fields.Text(string='Description')
-    pp_shcp = fields.Char(string='PP SHCP')
-    activity = fields.Text(string='Activity')
+    unam_key_id = fields.Many2one('program', string='Key UNAM')
+    desc = fields.Many2one('program', string='Description of key UNAM')
+    shcp = fields.Char(string='Conversion of SHCP program')
+    description = fields.Text(string='Description conversion of SHCP program')
 
-    _sql_constraints = [('pp_shcp', 'unique(pp_shcp)',
-                         'The pp_shcp must be unique.')]
+    _sql_constraints = [('shcp', 'unique(shcp)',
+                         'The shcp must be unique.')]
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 5:
-            raise ValidationError(_('The code size must be five.'))
-
-    @api.constrains('pp_shcp')
-    def _check_pp_shcp(self):
-        if self.pp_shcp and not len(self.pp_shcp) == 4:
-            raise ValidationError(_('The pp shcp size must be four.'))
-        if self.pp_shcp and len(self.pp_shcp) == 4:
+    @api.constrains('shcp')
+    def _check_shcp(self):
+        if self.shcp and not len(self.shcp) == 4:
+            raise ValidationError(_('The shcp size must be four.'))
+        if self.shcp and len(self.shcp) == 4:
             if not (re.match("[A-Z]{1}\d{3}", self.pp_shcp.upper())):
                 raise UserError(
-                    _('Please enter first digit as letter and last 3 digits as numbers.'))
+                    _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))

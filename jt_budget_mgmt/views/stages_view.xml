@@ -7,9 +7,9 @@
             <field name="model">stage</field>
             <field name="arch" type="xml">
                 <search string="Stage">
-                    <field name="code"/>
+                    <field name="stage_id"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="Stage" name='stage_id' context="{'group_by':'stage_id'}"/>
                     </group>
                 </search>
             </field>
@@ -23,8 +23,8 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="code"/>
-                            <field name="description"/>
+                            <field name="stage_id"/>
+                            <field name="desc"/>
                         </group>
                     </sheet>
                 </form>
@@ -37,8 +37,8 @@
             <field name="model">stage</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="code"/>
-                    <field name="description"/>
+                    <field name="stage_id"/>
+                    <field name="desc"/>
                 </tree>
             </field>
         </record>

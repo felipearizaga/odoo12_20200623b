@@ -28,20 +28,14 @@ class SubProgram(models.Model):
 
     _name = 'sub.program'
     _description = 'Sub-Program'
-    _rec_name = 'name'
+    _rec_name = 'unam_key_id'
 
-    code = fields.Char(string='Programmatic code acronym')
-    description = fields.Text(string='Programmatic code description')
-    # pp_unam_id = fields.Many2one('', string='Pp UNAM')
+    unam_key_id = fields.Many2one('program', string='UNAM key')
     sub_program = fields.Integer(string='Sub program')
-    dependency_id = fields.Many2one('dependency', string='Dependency')
-    sub_dependency_id = fields.Many2one('sub.dependency', string='Sub dependency')
-    name = fields.Text(string='Name sub program')
+    desc = fields.Text(string='Sub program description')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    _sql_constraints = [('sub_program_unam_key_id', 'unique(sub_program,unam_key_id)',
+                         'The sub program must be unique per UNAM key')]
 
     @api.constrains('sub_program')
     def _check_sub_program(self):

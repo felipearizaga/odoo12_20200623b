@@ -32,6 +32,7 @@
                             <group>
                                 <field name="folio"/>
                                 <field name="budget_id"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>

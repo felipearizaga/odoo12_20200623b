@@ -7,9 +7,9 @@
             <field name="model">agreement.type</field>
             <field name="arch" type="xml">
                 <search string="Agreement type">
-                    <field name="code"/>
+                    <field name="number"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="Number" name='number' context="{'group_by':'number'}"/>
                     </group>
                 </search>
             </field>
@@ -23,8 +23,9 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="code"/>
-                            <field name="description"/>
+                            <field name="type_id"/>
+                            <field name="name"/>
+                            <field name="number"/>
                         </group>
                     </sheet>
                 </form>
@@ -37,8 +38,9 @@
             <field name="model">agreement.type</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="code"/>
-                    <field name="description"/>
+                    <field name="type_id"/>
+                    <field name="name"/>
+                    <field name="number"/>
                 </tree>
             </field>
         </record>

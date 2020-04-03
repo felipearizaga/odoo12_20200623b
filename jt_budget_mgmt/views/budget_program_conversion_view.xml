@@ -7,9 +7,9 @@
             <field name="model">budget.program.conversion</field>
             <field name="arch" type="xml">
                 <search string="Budget program conversion">
-                    <field name="code"/>
+                    <field name="shcp"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="SHCP" name='shcp' context="{'group_by':'shcp'}"/>
                     </group>
                 </search>
             </field>
@@ -23,11 +23,10 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
+	            			<field name="unam_key_id"/>
                             <field name="desc"/>
-                            <field name="pp_shcp"/>
-                            <field name="activity"/>
+                            <field name="shcp"/>
+                            <field name="description"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -40,11 +39,10 @@
             <field name="model">budget.program.conversion</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
+            		<field name="unam_key_id"/>
                     <field name="desc"/>
-                    <field name="pp_shcp"/>
-                    <field name="activity"/>
+                    <field name="shcp"/>
+                    <field name="description"/>
             	</tree>
             </field>
         </record>

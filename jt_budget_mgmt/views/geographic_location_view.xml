@@ -7,9 +7,9 @@
             <field name="model">geographic.location</field>
             <field name="arch" type="xml">
                 <search string="Geographic location">
-                    <field name="code"/>
+                    <field name="state_key"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="State key" name='state_key' context="{'group_by':'state_key'}"/>
                     </group>
                 </search>
             </field>
@@ -23,8 +23,6 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
                             <field name="state_key"/>
                             <field name="state_name"/>
 	            		</group>
@@ -39,8 +37,6 @@
             <field name="model">geographic.location</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
                     <field name="state_key"/>
                     <field name="state_name"/>
             	</tree>

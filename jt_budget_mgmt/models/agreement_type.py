@@ -28,22 +28,22 @@ class AgreementType(models.Model):
 
     _name = 'agreement.type'
     _description = 'Type of Agreement'
-    _rec_name = 'code'
+    _rec_name = 'number'
 
-    code = fields.Char(string='Acronym for program code')
-    description = fields.Text(string='Description of program code')
-    # type_id = fields.Many2one('', string='Identifier type of agreement')
-    # desc_id = fields.Many2one('', string='Description')
+    type_id = fields.Many2one(
+        'project.project', string='Agreement type identifier')
+    name = fields.Text(string='Name')
+    number = fields.Text(string='Number')
 
-    # _sql_constraints = [('type_id', 'unique(type_id)',
-    #                      'The type must be unique.')]
+    _sql_constraints = [('number', 'unique(number)',
+                         'The number must be unique.')]
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 2:
-            raise ValidationError(_('The code size must be two.'))
+    @api.constrains('type_id')
+    def _check_type_id(self):
+        if self.type_id and not len(self.type_id) == 2:
+            raise ValidationError(_('The type size must be two.'))
 
-    # @api.constrains('type_id')
-    # def _check_type_id(self):
-    #     if self.type_id and not len(str(self.type_id)) == 2:
-    #         raise ValidationError(_('The type size must be two.'))
+    @api.constrains('number')
+    def _check_number(self):
+        if self.number and not len(self.number) == 6:
+            raise ValidationError(_('The number size must be six.'))

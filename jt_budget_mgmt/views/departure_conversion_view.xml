@@ -7,9 +7,9 @@
             <field name="model">departure.conversion</field>
             <field name="arch" type="xml">
                 <search string="Departure conversion">
-                    <field name="code"/>
+                    <field name="federal_part"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="Federal part" name='federal_part' context="{'group_by':'federal_part'}"/>
                     </group>
                 </search>
             </field>
@@ -23,10 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
-                            <field name="federal_item"/>
-                            <field name="federal_name"/>
+                            <field name="federal_part"/>
+                            <field name="federal_part_desc"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -39,10 +37,8 @@
             <field name="model">departure.conversion</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="federal_item"/>
-                    <field name="federal_name"/>
+            		<field name="federal_part"/>
+                    <field name="federal_part_desc"/>
             	</tree>
             </field>
         </record>

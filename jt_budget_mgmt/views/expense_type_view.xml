@@ -7,9 +7,9 @@
             <field name="model">expense.type</field>
             <field name="arch" type="xml">
                 <search string="Expense type">
-                    <field name="code"/>
+                    <field name="key_expenditure_type"/>
                     <group expand="1" string="Group By">
-                        <filter string="Code" name='code' context="{'group_by':'code'}"/>
+                        <filter string="Key expenditure type" name='key_expenditure_type' context="{'group_by':'key_expenditure_type'}"/>
                     </group>
                 </search>
             </field>
@@ -23,10 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
-                            <field name="description"/>
-                            <field name="expenditure_key"/>
-                            <field name="designation"/>
+	            			<field name="key_expenditure_type"/>
+                            <field name="description_expenditure_type"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -39,10 +37,8 @@
             <field name="model">expense.type</field>
             <field name="arch" type="xml">
             	<tree>
-            		<field name="code"/>
-                    <field name="description"/>
-                    <field name="expenditure_key"/>
-                    <field name="designation"/>
+            		<field name="key_expenditure_type"/>
+                    <field name="description_expenditure_type"/>
             	</tree>
             </field>
         </record>

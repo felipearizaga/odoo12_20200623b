@@ -75,15 +75,15 @@ class ProgramCode(models.Model):
     project_type_id = fields.Many2one('project.type', string='Project type')
     project_type_identifier_id = fields.Many2one(
         'project.type', string='Identifier')
-    project_number_id = fields.Many2one(
-        'project.number', string='Project number')
+    # project_number_id = fields.Many2one(
+    #     'project.number', string='Project number')
     # identifier_id = fields.Many2one('project.type', string='Identifier')
     stage_id = fields.Many2one('stage', string='Stage')
     # identifier_id = fields.Many2one('project.type', string='Identifier')
     agreement_type_id = fields.Many2one(
         'agreement.type', string='Agreement type')
     # identifier_id = fields.Many2one('project.type', string='Identifier')
-    agreement_number_id = fields.Many2one(
-        'agreement.number', string='Agreement number')
-    agreement_number_description_id = fields.Many2one('agreement.number', string='Agreement number description')
+    # agreement_number_id = fields.Many2one(
+    #     'agreement.number', string='Agreement number')
+    # agreement_number_description_id = fields.Many2one('agreement.number', string='Agreement number description')
     program_code = fields.Char(string='Program code')

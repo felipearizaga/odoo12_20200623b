@@ -45,6 +45,16 @@ class ControlAssignedAmounts(models.Model):
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
 
+    def import_lines(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'import.assigned.amount.line',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+
     def confirm(self):
         self.state = 'process'
 

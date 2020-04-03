@@ -28,23 +28,19 @@ class ExpenditureItem(models.Model):
 
     _name = 'expenditure.item'
     _description = 'Item of Expenditure'
-    _rec_name = 'name'
+    _rec_name = 'item'
 
-    code = fields.Char(string='Acronym of the programmatic code')
-    description = fields.Text(string='Description of the programmatic code')
     item = fields.Integer(string='Item')
-    exercise_type = fields.Selection([('r', 'R'), ('c', 'C'), ('d', 'D')], string='Type of exercise')
-    name = fields.Text(string='Name text')
-    # shcp_id = fields.Many2one('', string='Expenditure Item SHCP')
-    # desc_id = fields.Many2one('', string='Description of spending item')
+    exercise_type = fields.Selection([('r', 'R'), ('c', 'C'), ('d', 'D')], string='Exercise type')
+    description = fields.Text(string='Item description')
+    unam_account_id = fields.Many2one('account.account', string='UNAM account')
+    shcp_id = fields.Many2one('account.account', string='Expenditure Item SHCP')
+    desc_id = fields.Many2one('account.account', string='Description of expenditure item of SHCP')
     # cog_id = fields.Many2one('', string='COG CONAC')
     # cog_desc_id = fields.Many2one('', string='Description of COG CONAC')
-    # account_id = fields.Many2one('', string='Accounting account assigned')
+    # assigned_account_id = fields.Many2one('', string='Assigned account')
 
-    @api.constrains('code')
-    def _check_code(self):
-        if self.code and not len(self.code) == 3:
-            raise ValidationError(_('The code size must be three.'))
+    _sql_constraints = [('item', 'unique(item)', 'The item must be unique.')]
 
     @api.constrains('item')
     def _check_item(self):
