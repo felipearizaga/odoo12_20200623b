@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for adequacies model -->
+        <record id="adequacies_search_view" model="ir.ui.view">
+            <field name="name">adequacies.search.view</field>
+            <field name="model">adequacies</field>
+            <field name="arch" type="xml">
+                <search string="Adequacies">
+                    <field name="folio"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Folio" name='folio' context="{'group_by':'folio'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for adequacies model -->
+        <record id="adequacies_form_view" model="ir.ui.view">
+            <field name="name">adequacies.form.view</field>
+            <field name="model">adequacies</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" states='draft'/>
+                        <button name="accept" type="object" string="Accept" class="oe_highlight" states='confirmed'/>
+                        <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirmed'/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,accepted,rejected"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="folio"/>
+                                <field name="budget_id"/>
+                                <field name="reason" states='rejected'/>
+                                <field name="record_number"/>
+                                <field name="imported_record_number"/>
+                            </group>        
+                            <group>
+                                <label for="from_date"/>
+                                <div>
+                                    <field name="from_date" class="oe_inline"/> - 
+                                    <field name="to_date" class="oe_inline"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Adequacies Lines">
+                                <field name="adequacies_lines_ids">
+                                    <tree>
+                                       <field name="program"/> 
+                                       <field name="line_type"/>
+                                       <field name="amount"/>
+                                       <field name="creation_type"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="program"/> 
+                                            <field name="line_type"/>
+                                            <field name="amount"/>
+                                            <field name="creation_type"/>
+                                            <field name="adequacies_id" invisible="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- tree view for adequacies model -->
+        <record id="adequacies_tree_view" model="ir.ui.view">
+            <field name="name">adequacies.tree.view</field>
+            <field name="model">adequacies</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="folio"/>
+                    <field name="budget_id"/>
+                    <field name="reason"/>
+                    <field name="record_number"/>
+                    <field name="imported_record_number"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- action for adequacies views -->
+        <record id="action_adequacies" model="ir.actions.act_window">
+            <field name="name">Adequacies</field>
+            <field name="res_model">adequacies</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="adequacies_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

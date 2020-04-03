@@ -15,7 +15,7 @@
 
 
     <!-- menu for configurations -->
-    <menuitem id="menu_budget_config" name="Configurations" parent="jt_budget_mgmt.menu_budget" sequence="2"/>
+    <menuitem id="menu_budget_config" name="Configurations" parent="jt_budget_mgmt.menu_budget" sequence="4"/>
 
     <!-- menu for structure and catalog -->
     <menuitem id="menu_struct_and_catalog" name="Programmatic Structure and Catalogs" parent="jt_budget_mgmt.menu_budget_config" sequence="1"/>
@@ -94,4 +94,16 @@
 
     <!-- menu for expenditure budget -->
     <menuitem id="menu_expenditure_budget" name="Expenditure budget" parent="jt_budget_mgmt.menu_budgets" sequence="2" action="jt_budget_mgmt.action_expenditure_budget"/>
+
+    <!-- menu for modifications -->
+    <menuitem id="menu_modifications" name="Modifications" parent="jt_budget_mgmt.menu_budget" sequence="2"/>
+
+    <!-- menu for adequacies -->
+    <menuitem id="menu_adequacies" name="Adequacies" parent="jt_budget_mgmt.menu_modifications" sequence="1" action="jt_budget_mgmt.action_adequacies"/>
+
+    <!-- menu for budget control -->
+    <menuitem id="menu_budget_control" name="Budget Control" parent="jt_budget_mgmt.menu_budget" sequence="3"/>
+
+    <!-- menu for control of assigned amounts -->
+    <menuitem id="menu_control_assigned_amounts" name="Control of assigned amounts" parent="jt_budget_mgmt.menu_budget_control" sequence="1" action="jt_budget_mgmt.action_control_assigned_amounts"/>
 </odoo>

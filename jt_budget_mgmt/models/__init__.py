@@ -42,3 +42,5 @@ from . import agreement_type
 from . import agreement_number
 from . import program_code
 from . import expenditure_budget
+from . import adequacies
+from . import control_assigned_amounts

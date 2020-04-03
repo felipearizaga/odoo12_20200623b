@@ -34,6 +34,8 @@
         'security/ir.model.access.csv',
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',
+        'views/control_assigned_amounts_view.xml',
+        'views/adequacies_view.xml',
         'views/expenditure_budget_view.xml',
         'views/program_code_view.xml',
         'views/agreement_number_view.xml',

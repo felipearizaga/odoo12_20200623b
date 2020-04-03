@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class ExpenditureBudget(models.Model):
@@ -35,13 +35,21 @@ class ExpenditureBudget(models.Model):
     to_date = fields.Date()
     total_budget = fields.Float(string='Total budget')
     record_number = fields.Integer(string='Number of records')
-    import_record_number = fields.Integer(string='Number of imported records')
+    import_record_number = fields.Integer(
+        string='Number of imported records', readonly=True)
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
         string='Expenditure Budget Lines')
     state = fields.Selection([('draft', 'Draft'), ('previous', 'Previous'),
                               ('confirm', 'Confirm'), ('validate', 'Validate'),
                               ('done', 'Done')], default='draft', required=True, string='State')
+
+    @api.onchange('line_ids')
+    def import_record_count(self):
+        if self.line_ids:
+            self.import_record_number = len(self.line_ids)
+        else:
+            self.import_record_number = 0
 
     def import_lines(self):
         return {
