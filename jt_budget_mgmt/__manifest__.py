@@ -32,10 +32,12 @@
     'depends': ['account', 'project'],
     'data': [
         'security/ir.model.access.csv',
+        'wizard/import_standardization_line_view.xml',
         'wizard/import_assigned_amount_line_view.xml',
         'wizard/import_adequacies_line_view.xml',
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',
+        'views/standardization_view.xml',
         'views/control_assigned_amounts_view.xml',
         'views/adequacies_view.xml',
         'views/expenditure_budget_view.xml',

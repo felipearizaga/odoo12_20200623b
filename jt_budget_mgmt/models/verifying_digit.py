@@ -39,12 +39,12 @@ class VerifyingDigit(models.Model):
 
     @api.constrains('unam_key_id')
     def _check_unam_key_id(self):
-        if self.unam_key_id and not len(str(self.unam_key_id)) == 2:
+        if self.unam_key_id and not len(str(self.unam_key_id.key_unam)) == 2:
             raise ValidationError(_('The UNAM key size must be two.'))
 
     @api.constrains('sub_program_id')
     def _check_sub_program_id(self):
-        if self.sub_program_id and not len(str(self.sub_program_id)) == 2:
+        if self.sub_program_id and not len(str(self.sub_program_id.unam_key_id.key_unam)) == 2:
             raise ValidationError(_('The sub program size must be two.'))
 
     @api.constrains('dependency_id')
@@ -54,7 +54,7 @@ class VerifyingDigit(models.Model):
 
     @api.constrains('sub_dependency_id')
     def _check_sub_dependency_id(self):
-        if self.sub_dependency_id and not len(str(self.sub_dependency_id)) == 2:
+        if self.sub_dependency_id and not len(str(self.sub_dependency_id.sub_dependency)) == 2:
             raise ValidationError(_('The sub dependency size must be two.'))
 
     @api.constrains('item_id')

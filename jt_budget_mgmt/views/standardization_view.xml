@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- search view for standardization model -->
+        <record id="standardization_search_view" model="ir.ui.view">
+            <field name="name">standardization.search.view</field>
+            <field name="model">standardization</field>
+            <field name="arch" type="xml">
+                <search string="Re-standardization">
+                    <field name="folio"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Folio" name='folio' context="{'group_by':'folio'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- form view for standardization model -->
+    	<record id="standardization_form_view" model="ir.ui.view">
+            <field name="name">standardization.form.view</field>
+            <field name="model">standardization</field>
+            <field name="arch" type="xml">
+            	<form>
+                    <header>
+                        <!-- <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/> -->
+                    </header>
+            		<sheet>
+	            		<group>
+                            <group>
+    	            			<field name="folio"/>
+                                <field name="file"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
+                                <field name="record_number"/>
+                                <field name="imported_record_number"/>
+                                <field name="observations"/>
+                            </group>
+	            		</group>
+                        <notebook>
+                            <page string="Standardization Lines">
+                                <field name="line_ids">
+                                    <tree>
+                                        <field name="folio"/>
+                                        <field name="code_id"/>
+                                        <field name="budget_id"/>
+                                        <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="origin_id"/>
+                                        <field name="quarter"/>
+                                        <field name="stage_id"/>
+                                        <field name="reason"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="folio"/>
+                                            <field name="code_id"/>
+                                            <field name="budget_id"/>
+                                            <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <field name="origin_id"/>
+                                            <field name="quarter"/>
+                                            <field name="stage_id"/>
+                                            <field name="reason"/>
+                                            <field name="standardization_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+	            	</sheet>
+            	</form>
+            </field>
+        </record>
+
+        <!-- tree view for standardization model -->
+    	<record id="standardization_tree_view" model="ir.ui.view">
+            <field name="name">standardization.tree.view</field>
+            <field name="model">standardization</field>
+            <field name="arch" type="xml">
+            	<tree>
+            		<field name="folio"/>
+                    <field name="file"/>
+                    <field name="record_number"/>
+                    <field name="imported_record_number"/>
+                    <field name="observations"/>
+            	</tree>
+            </field>
+        </record>
+
+        <!-- action for standardization views -->
+        <record id="action_standardization" model="ir.actions.act_window">
+            <field name="name">Re-standardization</field>
+            <field name="res_model">standardization</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="standardization_tree_view"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>

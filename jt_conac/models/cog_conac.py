@@ -20,24 +20,14 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api, _
 
 
-class ResourceOrigin(models.Model):
+class COGCONAC(models.Model):
+    _name = 'cog.conac'
+    _description = 'COA CONAC'
 
-    _name = 'resource.origin'
-    _description = 'Origin of the Resource'
-    _rec_name = 'key_origin'
-
-    key_origin = fields.Selection(
-        [('0', '00'), ('1', '01'), ('2', '02'), ('3', '03'), ('4', '04'),
-         ('5', '05')], string='Key origin of the resource')
-    desc = fields.Selection([('subsidy', 'Federal Subsidy'),
-                             ('income', 'Extraordinary Income'),
-                             ('service', 'Education Services'),
-                             ('financial', 'Financial'),
-                             ('other', 'Other Products'),
-                             ('pef', 'Returns Reassignment PEF')],
-                            string='Description of origin of the resource')
-
-    _sql_constraints = [('key_origin', 'unique(key_origin)', 'The key origin must be unique.')]
+    chapter = fields.Char(string='Chapter', size=4)
+    name = fields.Char(string='Name')
+    heading = fields.Char(string='Heading', size=3)
+    concept = fields.Char(string='Concept')

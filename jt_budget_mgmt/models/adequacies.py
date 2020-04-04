@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class Adequacies(models.Model):
@@ -29,14 +29,21 @@ class Adequacies(models.Model):
     _description = 'Adequacies'
     _rec_name = 'folio'
 
+    def _get_count(self):
+        for record in self:
+            record.record_number = len(record.adequacies_lines_ids)
+            record.imported_record_number = len(
+                record.adequacies_lines_ids.filtered(lambda l: l.imported == True))
+
     folio = fields.Integer(string='Folio')
     budget_id = fields.Many2one('expenditure.budget', string='Budget')
     from_date = fields.Date(string='Observations')
     to_date = fields.Date()
     reason = fields.Text(string='Reason for rejection')
-    record_number = fields.Integer(string='Number of records')
+    record_number = fields.Integer(
+        string='Number of records', compute='_get_count')
     imported_record_number = fields.Integer(
-        string='Number of records imported.')
+        string='Number of records imported.', compute='_get_count')
     state = fields.Selection(
         [('draft', 'Draft'), ('confirmed', 'Confirmed'),
          ('accepted', 'Accepted'), ('rejected', 'Rejected')],
@@ -46,10 +53,6 @@ class Adequacies(models.Model):
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
-
-    @api.onchange('adequacies_lines_ids')
-    def imported_record_count(self):
-        self.imported_record_number = len(self.adequacies_lines_ids)
 
     def import_lines(self):
         return {
@@ -85,3 +88,4 @@ class AdequaciesLines(models.Model):
         [('manual', 'Manual'), ('imported', 'Imported')],
         string='Creation type')
     adequacies_id = fields.Many2one('adequacies', string='Adequacies')
+    imported = fields.Boolean(default=False)

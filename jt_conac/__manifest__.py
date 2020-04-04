@@ -20,24 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
-
-
-class ResourceOrigin(models.Model):
-
-    _name = 'resource.origin'
-    _description = 'Origin of the Resource'
-    _rec_name = 'key_origin'
-
-    key_origin = fields.Selection(
-        [('0', '00'), ('1', '01'), ('2', '02'), ('3', '03'), ('4', '04'),
-         ('5', '05')], string='Key origin of the resource')
-    desc = fields.Selection([('subsidy', 'Federal Subsidy'),
-                             ('income', 'Extraordinary Income'),
-                             ('service', 'Education Services'),
-                             ('financial', 'Financial'),
-                             ('other', 'Other Products'),
-                             ('pef', 'Returns Reassignment PEF')],
-                            string='Description of origin of the resource')
-
-    _sql_constraints = [('key_origin', 'unique(key_origin)', 'The key origin must be unique.')]
+{
+    'name': 'CONAC',
+    'summary': 'CONAC Accounting management',
+    'version': '13.0.0.1.1',
+    'category': 'Accounting',
+    'author': 'Jupical Technologies Pvt. Ltd.',
+    'maintainer': 'Jupical Technologies Pvt. Ltd.',
+    'website': 'http://www.jupical.com',
+    'license': 'AGPL-3',
+    'depends': ['account_accountant', 'l10n_mx_reports'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/coa_conac_view.xml',
+        'views/coa_view.xml',
+        'views/cog_conac_view.xml',
+        'views/menus_actions.xml',
+    ],
+    'application': True,
+    'installable': True,
+    'auto_install': False,
+}

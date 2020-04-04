@@ -101,6 +101,9 @@
     <!-- menu for adequacies -->
     <menuitem id="menu_adequacies" name="Adequacies" parent="jt_budget_mgmt.menu_modifications" sequence="1" action="jt_budget_mgmt.action_adequacies"/>
 
+    <!-- menu for standardization -->
+    <menuitem id="menu_standardization" name="Re-standardization" parent="jt_budget_mgmt.menu_modifications" sequence="2" action="jt_budget_mgmt.action_standardization"/>
+
     <!-- menu for budget control -->
     <menuitem id="menu_budget_control" name="Budget Control" parent="jt_budget_mgmt.menu_budget" sequence="3"/>
 

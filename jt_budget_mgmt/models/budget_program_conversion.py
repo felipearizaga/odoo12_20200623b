@@ -44,6 +44,6 @@ class BudgetProgramConversion(models.Model):
         if self.shcp and not len(self.shcp) == 4:
             raise ValidationError(_('The shcp size must be four.'))
         if self.shcp and len(self.shcp) == 4:
-            if not (re.match("[A-Z]{1}\d{3}", self.pp_shcp.upper())):
+            if not (re.match("[A-Z]{1}\d{3}", self.shcp.upper())):
                 raise UserError(
                     _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))

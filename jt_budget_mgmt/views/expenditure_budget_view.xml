@@ -58,16 +58,19 @@
                                         <field name="code"/>
                                         <field name="start_date"/>
                                         <field name="end_date"/>
-                                        <field name="approved"/>
-                                        <field name="allocated"/>
+                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="currency_id" invisible="1"/>
                                     </tree>
                                     <form>
                                         <group>
                                             <field name="code"/>
                                             <field name="start_date"/>
                                             <field name="end_date"/>
-                                            <field name="approved"/>
-                                            <field name="allocated"/>
+                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
                                         </group>

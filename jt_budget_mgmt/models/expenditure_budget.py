@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class ExpenditureBudget(models.Model):
@@ -29,27 +29,27 @@ class ExpenditureBudget(models.Model):
     _description = 'Expenditure Budget'
     _rec_name = 'budget_name'
 
+    def _get_count(self):
+        for record in self:
+            record.record_number = len(record.line_ids)
+            record.import_record_number = len(
+                record.line_ids.filtered(lambda l: l.imported == True))
+
     budget_name = fields.Text(string='Budget name')
     responsible_id = fields.Many2one('res.users', string='Responsible')
     from_date = fields.Date(string='Period')
     to_date = fields.Date()
     total_budget = fields.Float(string='Total budget')
-    record_number = fields.Integer(string='Number of records')
+    record_number = fields.Integer(
+        string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
-        string='Number of imported records', readonly=True)
+        string='Number of imported records', readonly=True, compute='_get_count')
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
         string='Expenditure Budget Lines')
     state = fields.Selection([('draft', 'Draft'), ('previous', 'Previous'),
                               ('confirm', 'Confirm'), ('validate', 'Validate'),
                               ('done', 'Done')], default='draft', required=True, string='State')
-
-    @api.onchange('line_ids')
-    def import_record_count(self):
-        if self.line_ids:
-            self.import_record_number = len(self.line_ids)
-        else:
-            self.import_record_number = 0
 
     def import_lines(self):
         return {
@@ -87,11 +87,14 @@ class ExpenditureBudgetLine(models.Model):
     code = fields.Char(string='Program code')
     start_date = fields.Date(string='Start date')
     end_date = fields.Date(string='End date')
-    approved = fields.Monetary(string='Approved', currency_field='currency_id')
-    allocated = fields.Monetary(
-        string='Allocated', currency_field='currency_id')
-    # available = fields.(string='Available')
+    authorized = fields.Monetary(
+        string='Authorized', currency_field='currency_id')
+    assigned = fields.Monetary(
+        string='Assigned', currency_field='currency_id')
+    available = fields.Monetary(
+        string='Available', currency_field='currency_id')
     expenditure_budget_id = fields.Many2one(
         'expenditure.budget', string='Expenditure Budget')
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.user.company_id.currency_id)
+    imported = fields.Boolean(default=False)

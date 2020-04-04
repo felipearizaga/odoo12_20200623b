@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="menu_root_conac"
+            name="CONAC"
+            sequence="1"
+            web_icon="jt_conac,static/description/icon.png"
+        />
+
+        <menuitem
+            id="menu_overview_conac"
+            name="Overview"
+            parent="jt_conac.menu_root_conac"
+            sequence="1"
+            action="account.open_account_journal_dashboard_kanban"
+        />
+
+        <!-- Change action -->
+        <menuitem
+            id="menu_accounting_conac"
+            name="Accounting"
+            parent="jt_conac.menu_root_conac"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_miscelleneous"
+            name="Miscellaneous"
+            parent="jt_conac.menu_accounting_conac"
+            sequence="0"
+        />
+
+        <menuitem
+            id="menu_journal_entry"
+            name="Journal Entries"
+            parent="jt_conac.menu_miscelleneous"
+            action="account.action_move_journal_line"
+            sequence="0"
+        />
+
+        <menuitem
+            id="menu_reporting_conac"
+            name="Reporting"
+            parent="jt_conac.menu_root_conac"
+            sequence="3"
+        />
+
+        <menuitem
+            id="menu_child_reporting_conac"
+            name="Reporting"
+            parent="jt_conac.menu_reporting_conac"
+            sequence="0"
+        />
+
+        <menuitem
+            id="menu_coa_report"
+            name="COA CONAC"
+            parent="jt_conac.menu_child_reporting_conac"
+            sequence="0"
+            action="l10n_mx_reports.action_coa"
+        />
+
+        <!-- <record id="trial_balance_report_action" model="ir.actions.client">
+            <field name="name">Consolidated Balance</field>
+            <field name="tag">account_report</field>
+            <field name="context" eval="{'model': 'account.consolidation.trial_balance_report'}"/>
+        </record> -->
+
+        <menuitem
+            id="menu_configuration_conac"
+            name="Configuration"
+            parent="jt_conac.menu_root_conac"
+            sequence="40"
+            action="account.open_account_journal_dashboard_kanban"
+            groups="base.group_system,base.group_erp_manager"
+        />
+
+        <menuitem
+            id="menu_accounting_conf_conac"
+            name="Accounting"
+            parent="jt_conac.menu_configuration_conac"
+            sequence="0"
+        />
+
+        <menuitem
+            id="menu_coa_conac_conac"
+            name="Chart Of Accounts CONAC"
+            parent="jt_conac.menu_accounting_conf_conac"
+            sequence="0"
+            action="jt_conac.action_coa_conac_view"
+        />
+
+        <menuitem
+            id="menu_coa_conac"
+            name="Chart Of Accounts"
+            parent="jt_conac.menu_accounting_conf_conac"
+            sequence="1"
+            action="jt_conac.action_coa_view"
+        />
+
+        <menuitem
+            id="menu_cog_conac"
+            name="COG CONAC"
+            parent="jt_conac.menu_accounting_conf_conac"
+            sequence="2"
+            action="jt_conac.action_view_cog_conac"
+        />
+
+        <menuitem
+            id="menu_journals_conac"
+            name="Journals"
+            parent="jt_conac.menu_accounting_conf_conac"
+            sequence="9"
+            action="account.action_account_journal_form"
+        />
+
+        <menuitem
+            id="menu_currency_conac"
+            name="Currencies"
+            parent="jt_conac.menu_accounting_conf_conac"
+            sequence="10"
+            action="base.action_currency_form"
+        />
+    </data>
+</odoo>

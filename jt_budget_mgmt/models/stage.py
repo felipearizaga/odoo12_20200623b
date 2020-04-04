@@ -35,5 +35,5 @@ class Stage(models.Model):
 
     @api.constrains('stage_id')
     def _check_stage_id(self):
-        if self.stage_id and not len(str(self.stage_id)) == 2:
+        if self.stage_id and not len(self.stage_id.name) == 2:
             raise ValidationError(_('The stage size must be two.'))

@@ -27,13 +27,12 @@ from xlrd import open_workbook
 from odoo.exceptions import UserError
 
 
-class ImportLine(models.TransientModel):
+class ImportStandardizationLine(models.TransientModel):
 
-    _name = 'import.line'
-    _description = 'Import Line'
+    _name = 'import.standardization.line'
+    _description = 'Import Standardization Line'
 
-    budget_name = fields.Text(string='Name of the budget')
-    total_budget = fields.Float(string='Total budget')
+    folio = fields.Integer(string='Folio')
     record_number = fields.Integer(string='Number of records')
     file = fields.Binary(string='File')
     filename = fields.Char(string='File name')
@@ -42,18 +41,18 @@ class ImportLine(models.TransientModel):
 
     def download_file(self):
         file_path = get_resource_path(
-            'jt_budget_mgmt', 'static/file/import_line', 'import_line.xls')
+            'jt_budget_mgmt', 'static/file/import_line', 'import_standardization_line.xls')
         file = False
         with open(file_path, 'rb') as file_date:
             file = base64.b64encode(file_date.read())
-        self.dwnld_filename = 'import_line.xls'
+        self.dwnld_filename = 'import_standardization_line.xls'
         self.dwnld_file = file
         return {
             'name': 'Download Sample File',
             'view_type': 'form',
             'view_mode': 'form',
             'view_id': False,
-            'res_model': 'import.line',
+            'res_model': 'import.standardization.line',
             'domain': [],
             'type': 'ir.actions.act_window',
             'target': 'new',
@@ -61,13 +60,11 @@ class ImportLine(models.TransientModel):
         }
 
     def import_line(self):
-        budget = self.env['expenditure.budget'].browse(
+        standardization = self.env['standardization'].browse(
             self._context.get('active_ids'))
-        if budget.budget_name != self.budget_name:
-            raise UserError(_('Budget name does not match.'))
-        elif budget.total_budget != self.total_budget:
-            raise UserError(_('Total budget does not match.'))
-        elif budget.record_number != self.record_number:
+        if standardization.folio != self.folio:
+            raise UserError(_('Folio does not match.'))
+        elif standardization.record_number != self.record_number:
             raise UserError(_('Number of records do not match.'))
         elif self.file:
             data = base64.decodestring(self.file)
@@ -87,13 +84,33 @@ class ImportLine(models.TransientModel):
                 result_vals.append(result_dict)
             data = result_vals
             for rec in data:
-                vals = {'code': rec.get('code'),
-                        'start_date': rec.get('start_date'),
-                        'end_date': rec.get('end_date'),
-                        'authorized': rec.get('authorized'),
-                        'assigned': rec.get('assigned'),
-                        'available': rec.get('available'),
-                        'expenditure_budget_id': budget.id,
-                        'imported': True,
-                        }
-                budget.line_ids.create(vals)
+                code = self.env['program.code'].search(
+                    [('program_code', '=', rec.get('code_id'))], limit=1)
+                budget = self.env['expenditure.budget'].search(
+                    [('budget_name', '=', rec.get('budget_id'))], limit=1)
+                key = int(rec.get('origin_id'))
+                origin = self.env['resource.origin'].search(
+                    [('key_origin', '=', str(key))], limit=1)
+                stage = self.env['stage'].search(
+                    [('stage_id.name', '=', rec.get('stage_id'))], limit=1)
+                if not code:
+                    raise UserError(_('Program code not found.'))
+                elif not budget:
+                    raise UserError(_('Budget name not found.'))
+                elif not origin:
+                    raise UserError(_('Origin key not found.'))
+                elif not stage:
+                    raise UserError(_('State name not found.'))
+                else:
+                    vals = {'folio': rec.get('folio'),
+                            'code_id': code.id,
+                            'budget_id': budget.id,
+                            'amount': rec.get('amount'),
+                            'origin_id': origin.id,
+                            'quarter': rec.get('quarter'),
+                            'stage_id': stage.id,
+                            'reason': rec.get('reason'),
+                            'standardization_id': standardization.id,
+                            'imported': True,
+                            }
+                    standardization.line_ids.create(vals)

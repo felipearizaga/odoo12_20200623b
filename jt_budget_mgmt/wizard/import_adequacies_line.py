@@ -92,5 +92,6 @@ class ImportAdequaciesLine(models.TransientModel):
                         'amount': rec.get('amount'),
                         'creation_type': rec.get('creation_type'),
                         'adequacies_id': adequacies.id,
+                        'imported': True,
                         }
                 adequacies.adequacies_lines_ids.create(vals)

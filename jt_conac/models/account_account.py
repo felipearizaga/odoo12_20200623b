@@ -20,24 +20,21 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api, _
 
 
-class ResourceOrigin(models.Model):
+class AccountAccount(models.Model):
+    _inherit = 'account.account'
 
-    _name = 'resource.origin'
-    _description = 'Origin of the Resource'
-    _rec_name = 'key_origin'
+    item = fields.Char(string='Item')
+    application = fields.Char(string='Applicability')
+    flag_coa_conac = fields.Boolean(string="Flag COA CONAC")
 
-    key_origin = fields.Selection(
-        [('0', '00'), ('1', '01'), ('2', '02'), ('3', '03'), ('4', '04'),
-         ('5', '05')], string='Key origin of the resource')
-    desc = fields.Selection([('subsidy', 'Federal Subsidy'),
-                             ('income', 'Extraordinary Income'),
-                             ('service', 'Education Services'),
-                             ('financial', 'Financial'),
-                             ('other', 'Other Products'),
-                             ('pef', 'Returns Reassignment PEF')],
-                            string='Description of origin of the resource')
+    parent_id = fields.Many2one(
+        'account.account', string="CONAC Code", domain="[('flag_coa_conac', '=', True)]")
+    conac_name = fields.Text(string="Name CONAC")
 
-    _sql_constraints = [('key_origin', 'unique(key_origin)', 'The key origin must be unique.')]
+    @api.onchange('parent_id')
+    def _onchange_parent_id(self):
+        if self.parent_id:
+            self.conac_name = self.parent_id.name
