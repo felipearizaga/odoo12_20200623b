@@ -65,7 +65,7 @@
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('account.view_account_list')}),
                 (0, 0, {'view_mode': 'kanban', 'view_id': ref('account.view_account_account_kanban')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('jt_conac.coa_view_form_inh_jt_conac')})]"/>
-            <field name="domain">[('flag_coa_conac', '=', True)]</field>
+            <field name="domain">[('flag_coa_conac', '=', False)]</field>
         </record>
     </data>
 </odoo>

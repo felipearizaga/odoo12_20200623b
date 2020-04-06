@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_stmt_of_fin_postn" model="account.financial.html.report">
+            <field name="name">Statement of Financial Position</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_status_of_activities" model="account.financial.html.report">
+            <field name="name">Status of Activities</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_status_variation_pt" model="account.financial.html.report">
+            <field name="name">State of Variation in the Public Treasury</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_status_an_assets" model="account.financial.html.report">
+            <field name="name">Analytical Status of Assets</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_stmt_debt_liab" model="account.financial.html.report">
+            <field name="name">Analytical Statement of Debt and Other Liabilities</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_stmt_finc_posn" model="account.financial.html.report">
+            <field name="name">Statement of Changes in the Financial Position</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_stmt_cash_flow" model="account.financial.html.report">
+            <field name="name">Statement of cash flows</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_stmt_ana_income" model="account.financial.html.report">
+            <field name="name">Analytical Income Statement</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_state_exp_bdg_ex" model="account.financial.html.report">
+            <field name="name">Analytical Status of the Expenditure Budget Exercise</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <record id="report_state_and_program" model="account.financial.html.report">
+            <field name="name">States and Program Reports</field>
+            <field name="debit_credit" eval="False"/>
+            <field name="date_range" eval="False"/>
+            <field name="analytic" eval="True"/>
+            <field name="unfold_all_filter" eval="True"/>
+            <field name="show_journal_filter" eval="True"/>
+            <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
+        </record>
+
+        <!-- Need to generate sublines using backend tags/groups -->
+
+        <!-- <record id="account_financial_report_total_assets0" model="account.financial.html.report.line">
+            <field name="name">Activo</field>
+            <field name="code">Activo</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas">balance = CA.balance + FA.balance + PNCA.balance</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="0" />
+        </record> -->
+
+        <!-- <record id="account_financial_report_total_assets0" model="account.financial.html.report.line">
+            <field name="name">Activo Circulante</field>
+            <field name="code">ActivoCirculante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas">balance = CA.balance + FA.balance + PNCA.balance</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="0" />
+        </record> -->
+
+        <!-- <record id="account_financial_report_total_assets0" model="account.financial.html.report.line">
+            <field name="name">Activo No Circulante</field>
+            <field name="code">ActivoNoCirculante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas">balance = CA.balance + FA.balance + PNCA.balance</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="0" />
+        </record> -->
+    </data>
+</odoo>

@@ -16,7 +16,8 @@
                            <group>
                                 <!-- New fields/modification for COA CONAC -->
                                 <field name="code" placeholder="name" string="Account Name"/>
-                                <field name="name" string="Genre"/>
+                                <field name="name"/>
+                                <field name="gender"/>
                                 <field name="group_id"/>
                                 <field name="item"/>
                                 <field name="application"/>
@@ -50,7 +51,7 @@
             <field name="arch" type="xml">
             	<tree>
                     <field name="display_name"/>
-                    <field name="name" string="Genre"/>
+                    <field name="gender"/>
                     <field name="group_id"/>
                     <field name="item"/>
                     <field name="application"/>

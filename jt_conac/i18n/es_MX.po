@@ -1,0 +1,286 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * jt_conac
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-04 14:30+0000\n"
+"PO-Revision-Date: 2020-04-04 14:30+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+#: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_form_inh_jt_conac
+msgid "-> Reconcile"
+msgstr "-> Conciliar"
+
+#. module: jt_conac
+#: model:ir.model,name:jt_conac.model_account_account
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+#: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_form_inh_jt_conac
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+msgid "Account Name"
+msgstr "Nombre de la cuenta"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_accounting_conac
+#: model:ir.ui.menu,name:jt_conac.menu_accounting_conf_conac
+msgid "Accounting"
+msgstr "Contabilidad"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_stmt_ana_income
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_11
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_11
+msgid "Analytical Income Statement"
+msgstr "Estado de resultados analíticos"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_stmt_debt_liab
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_8
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_8
+msgid "Analytical Statement of Debt and Other Liabilities"
+msgstr "Estado analítico de deuda y otros pasivos"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_status_an_assets
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_7
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_7
+msgid "Analytical Status of Assets"
+msgstr "Estado analítico de los activos"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_state_exp_bdg_ex
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_12
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_12
+msgid "Analytical Status of the Expenditure Budget Exercise"
+msgstr "Estado analítico del ejercicio de presupuesto de gastos"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_account_account__application
+msgid "Applicability"
+msgstr "Aplicabilidad"
+
+#. module: jt_conac
+#: model:ir.model,name:jt_conac.model_cog_conac
+#: model:ir.ui.menu,name:jt_conac.menu_coa_report
+msgid "COA CONAC"
+msgstr "COA CONAC"
+
+#. module: jt_conac
+#: model:ir.actions.act_window,name:jt_conac.action_view_cog_conac
+#: model:ir.ui.menu,name:jt_conac.menu_cog_conac
+msgid "COG CONAC"
+msgstr "COG CONAC"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_root_conac
+msgid "CONAC"
+msgstr "CONAC"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_account_account__parent_id
+msgid "CONAC Code"
+msgstr "CONAC Código"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__chapter
+msgid "Chapter"
+msgstr "Capítulo"
+
+#. module: jt_conac
+#: model:ir.actions.act_window,name:jt_conac.action_coa_conac_view
+msgid "Chart Of Account CONAC"
+msgstr "Plan de cuenta CONAC"
+
+#. module: jt_conac
+#: model:ir.actions.act_window,name:jt_conac.action_coa_view
+#: model:ir.ui.menu,name:jt_conac.menu_coa_conac
+msgid "Chart Of Accounts"
+msgstr "Catálogo de cuentas"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_coa_conac_conac
+msgid "Chart Of Accounts CONAC"
+msgstr "Plan de Cuentas CONAC"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_search_inh_jt_conac
+msgid "Code CONAC"
+msgstr "Código CONAC"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__concept
+msgid "Concept"
+msgstr "Concepto"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_configuration_conac
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__create_date
+msgid "Created on"
+msgstr "Creado por"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_currency_conac
+msgid "Currencies"
+msgstr "Monedas"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_account_account__flag_coa_conac
+msgid "Flag COA CONAC"
+msgstr "Marcar COA CONAC"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+#: model_terms:ir.ui.view,arch_db:jt_conac.view_list_coa_conac
+msgid "Gender"
+msgstr "Género"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__heading
+msgid "Heading"
+msgstr "Bóveda"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__id
+msgid "ID"
+msgstr "CARNÉ DE IDENTIDAD"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_account_account__item
+msgid "Item"
+msgstr "Articulo"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_journal_entry
+msgid "Journal Entries"
+msgstr "Entradas de diario"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+#: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_form_inh_jt_conac
+msgid "Journal Items"
+msgstr "Artículos de diario"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_journals_conac
+msgid "Journals"
+msgstr "Revistas"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización en"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_miscelleneous
+msgid "Miscellaneous"
+msgstr "Diversa"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_cog_conac__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: jt_conac
+#: model:ir.model.fields,field_description:jt_conac.field_account_account__conac_name
+msgid "Name CONAC"
+msgstr "Nombre CONAC"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_overview_conac
+msgid "Overview"
+msgstr "Visión general"
+
+#. module: jt_conac
+#: model:ir.ui.menu,name:jt_conac.menu_child_reporting_conac
+#: model:ir.ui.menu,name:jt_conac.menu_reporting_conac
+msgid "Reporting"
+msgstr "Informes"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_status_variation_pt
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_6
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_6
+msgid "State of Variation in the Public Treasury"
+msgstr "Estado de variación en la Hacienda Pública"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_stmt_finc_posn
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_9
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_9
+msgid "Statement of Changes in the Financial Position"
+msgstr "Estado de cambios en la posición financiera"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_stmt_of_fin_postn
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_4
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_4
+msgid "Statement of Financial Position"
+msgstr "Estado de situación financiera"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_stmt_cash_flow
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_10
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_10
+msgid "Statement of cash flows"
+msgstr "Estado de flujos de efectivo"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_state_and_program
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_13
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_13
+msgid "States and Program Reports"
+msgstr "Estados e informes del programa"
+
+#. module: jt_conac
+#: model:account.financial.html.report,name:jt_conac.report_status_of_activities
+#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_5
+#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_5
+msgid "Status of Activities"
+msgstr "Estado de las actividades"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_form_inh_jt_conac
+msgid "code"
+msgstr "código"
+
+#. module: jt_conac
+#: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form
+msgid "name"
+msgstr "nombre"

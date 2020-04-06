@@ -27,6 +27,7 @@ class AccountAccount(models.Model):
     _inherit = 'account.account'
 
     item = fields.Char(string='Item')
+    gender = fields.Many2one('account.account', string='Gender', domain="[('flag_coa_conac', '=', True), ('gender', '=', False)]")
     application = fields.Char(string='Applicability')
     flag_coa_conac = fields.Boolean(string="Flag COA CONAC")
 

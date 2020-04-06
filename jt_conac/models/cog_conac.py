@@ -25,7 +25,7 @@ from odoo import models, fields, api, _
 
 class COGCONAC(models.Model):
     _name = 'cog.conac'
-    _description = 'COA CONAC'
+    _description = 'COG CONAC'
 
     chapter = fields.Char(string='Chapter', size=4)
     name = fields.Char(string='Name')

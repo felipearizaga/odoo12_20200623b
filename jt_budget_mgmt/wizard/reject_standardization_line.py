@@ -20,14 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import cog_conac
-from . import account_account
-from . import trial_balance_report
-from . import financial_report_1_5
-# from . import financial_report_4_1
-# from . import financial_report_4_2
-# from . import financial_report_4_3
-# from . import financial_report_4_4
-# from . import financial_report_4_5
-# from . import financial_report_4_6
-# from . import financial_report_4_7
+from odoo import models, fields
+
+
+class RejectStandardizationLine(models.TransientModel):
+
+    _name = 'reject.standardization.line'
+    _description = 'Reject Standardization Line'
+
+    reason = fields.Char(string='Reason for rejection', required=True)
+
+    def reject(self):
+        active_id = self._context.get('parent_id')
+        standardization_id = self.env['standardization'].browse(
+            active_id)
+        lines = standardization_id.line_ids.filtered(
+            lambda l: l.state == 'cancelled' and l.selected == True)
+        for line in lines:
+            line.reason = self.reason
+        return {'type': 'ir.actions.client', 'tag': 'reload'}

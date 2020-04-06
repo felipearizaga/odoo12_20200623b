@@ -109,7 +109,6 @@ class ImportStandardizationLine(models.TransientModel):
                             'origin_id': origin.id,
                             'quarter': rec.get('quarter'),
                             'stage_id': stage.id,
-                            'reason': rec.get('reason'),
                             'standardization_id': standardization.id,
                             'imported': True,
                             }
