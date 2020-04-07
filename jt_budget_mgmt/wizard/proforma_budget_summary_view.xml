@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="summary_backend" name="widget summary" inherit_id="web.assets_common">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="jt_budget_mgmt/static/src/js/proforma_budget_summary_report_widget.js"></script>
+            </xpath>
+        </template>
+
+    	<!-- form view for proforma budget summary model -->
+        <record id="proforma_budget_summary_form_view" model="ir.ui.view">
+            <field name="name">proforma.budget.summary.form.view</field>
+            <field name="model">proforma.budget.summary</field>
+            <field name="arch" type="xml">
+                <form>
+                	<footer>
+                        <button string="Print Report" name="print_report" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    	<!-- action for proforma budget summary views -->
+    	<record id="action_proforma_budget_summary" model="ir.actions.act_window">
+            <field name="name">Proforma budget summary</field>
+            <field name="res_model">proforma.budget.summary</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>
+
+

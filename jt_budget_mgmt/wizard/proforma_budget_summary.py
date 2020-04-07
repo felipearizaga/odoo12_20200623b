@@ -20,30 +20,20 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import code_structure
-from . import year
-from . import program
-from . import sub_program
-from . import dependency
-from . import sub_dependency
-from . import expenditure_item
-from . import verifying_digit
-from . import resource_origin
-from . import institutional_activity
-from . import budget_program_conversion
-from . import departure_conversion
-from . import expense_type
-from . import geographic_location
-from . import key_wallet
-from . import project_type
-#from . import project_number
-from . import stage
-from . import agreement_type
-#from . import agreement_number
-from . import program_code
-from . import expenditure_budget
-from . import adequacies
-from . import control_assigned_amounts
-from . import standardization
-from . import calendar_assigned_amounts
-from . import control_amounts_received
+from odoo import models
+
+
+class ProformaBudgetSummary(models.TransientModel):
+
+    _name = 'proforma.budget.summary'
+    _description = 'Proforma budget summary'
+
+    def print_report(self):
+        summary = self.env['proforma.budget.summary'].browse([])
+        datas = {
+            'doc_model': 'proforma.budget.summary',
+            'docs': summary,
+            'data': {'report_type': 'html'},
+        }
+        return self.env.ref('jt_budget_mgmt.summary_report').with_context(
+            self.env.context.copy()).report_action([], data=datas)

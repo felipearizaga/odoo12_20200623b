@@ -33,12 +33,16 @@
     'data': [
         'security/ir.model.access.csv',
         'data/data.xml',
+        'report/proforma_budget_summary_report.xml',
+        'wizard/proforma_budget_summary_view.xml',
         'wizard/reject_standardization_line_view.xml',
         'wizard/import_standardization_line_view.xml',
         'wizard/import_assigned_amount_line_view.xml',
         'wizard/import_adequacies_line_view.xml',
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',
+        'views/control_amounts_received_view.xml',
+        'views/calendar_assigned_amounts_view.xml',
         'views/standardization_view.xml',
         'views/control_assigned_amounts_view.xml',
         'views/adequacies_view.xml',
@@ -65,6 +69,9 @@
         'views/year_view.xml',
         'views/code_structure_view.xml',
         'views/budget_view.xml',
+    ],
+    'qweb': [
+        'static/src/xml/proforma_budget_summary_report_widget.xml',
     ],
 
     'application': False,

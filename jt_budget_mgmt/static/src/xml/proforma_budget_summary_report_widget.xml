@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="summary_report_template">
+		<div class="o_main"></div>
+		<div class="o_control_panel">
+			<ol class="breadcrumb" role="navigation">
+				<li class="breadcrumb-item active">Proforma Budget Summary Report</li>
+			</ol>
+			<div class="o_cp_searchview" role="search"></div>
+			<div class="o_cp_left">
+				<div aria-label="Control panel toolbar" class="o_cp_buttons" role="toolbar">
+                    <button class="btn btn-primary summary_print_pdf" type="button">Print Preview</button>
+                    <button class="btn btn-primary summary_print_xls" type="button">Export (XLSX)</button>
+                </div>
+				<aside class="o_cp_sidebar"></aside>
+			</div>
+			<div class="o_cp_right"></div>
+		</div>
+    </t>
+</templates>
