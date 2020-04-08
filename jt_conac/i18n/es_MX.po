@@ -150,10 +150,6 @@ msgstr "Monedas"
 msgid "Display Name"
 msgstr "Nombre para mostrar"
 
-#. module: jt_conac
-#: model:ir.model.fields,field_description:jt_conac.field_account_account__flag_coa_conac
-msgid "Flag COA CONAC"
-msgstr "Marcar COA CONAC"
 
 #. module: jt_conac
 #: model_terms:ir.ui.view,arch_db:jt_conac.cao_conac_view_form

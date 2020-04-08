@@ -23,13 +23,22 @@
 from odoo import models, fields, api, _
 
 
-class AccountAccount(models.Model):
-    _inherit = 'account.account'
+class COACONAC(models.Model):
+    _name = 'coa.conac'
+    _description = 'COA CONAC'
 
-    coa_conac_id = fields.Many2one('coa.conac', string="CODE CONAC")
-    conac_name = fields.Char(string="Name CONAC")
+    code = fields.Char(string='Code')
+    name = fields.Char(string='CONAC Name')
+    gender = fields.Char(string='Gender')
+    group = fields.Char(string='Group')
+    item = fields.Char(string='Item')
+    applicability = fields.Selection([
+        ('debtor', 'Debtor'),
+        ('creditor', 'Creditor'),
+        ('debtor_creditor', 'Debtor / Creditor')], string='Applicability')
 
-    @api.onchange('coa_conac_id')
-    def _onchange_coa_conac_id(self):
-        if not self.conac_name and self.coa_conac_id:
-            self.conac_name = self.coa_conac_id.name
+    def _compute_display_name(self):
+        for account in self:
+            account.display_name = str(account.code) + ' ' + str(account.name)
+
+    display_name = fields.Char(string='Account Name', compute="_compute_display_name")

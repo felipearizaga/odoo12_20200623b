@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_cog_conac,User: COG CONAC Access,jt_conac.model_cog_conac,base.group_user,1,1,1,1
+access_coa_conac,User: COA CONAC Access,jt_conac.model_coa_conac,base.group_user,1,1,1,1

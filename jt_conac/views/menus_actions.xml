@@ -88,7 +88,7 @@
             name="Chart Of Accounts CONAC"
             parent="jt_conac.menu_accounting_conf_conac"
             sequence="0"
-            action="jt_conac.action_coa_conac_view"
+            action="jt_conac.action_view_coa_conac"
         />
 
         <menuitem

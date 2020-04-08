@@ -8,11 +8,11 @@
             <field name="inherit_id" ref="account.view_account_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="parent_id"/>
                     <field name="conac_name"/>
+                    <field name="coa_conac_id"/>
                 </xpath>
                 <xpath expr="group" position="inside">
-                    <filter string="Code CONAC" name="groupby_conac_name" domain="" context="{'group_by':'parent_id'}"/>
+                    <filter string="Code CONAC" name="groupby_code_conac" domain="" context="{'group_by':'coa_conac_id'}"/>
                 </xpath>
             </field>
         </record>
@@ -21,37 +21,12 @@
         <record id="coa_view_form_inh_jt_conac" model="ir.ui.view">
             <field name="name">cao.account.account.form</field>
             <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
             <field name="arch" type="xml">
-                <form string="Account">
-                   <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button class="oe_stat_button" name="account.action_move_line_select"
-                                string="Journal Items" type="action" icon="fa-bars"/>
-                        </div>
-                       <group>
-                           <group>
-                             <field name="code" placeholder="code"/>
-                             <field name="name"/>
-                             <field name="user_type_id" widget="account_hierarchy_selection"/>
-                             <field name="tax_ids" widget="many2many_tags" domain="[('company_id','=',company_id)]" attrs="{'invisible': [('internal_group', '=', 'off_balance')]}"/>
-                             <field name="tag_ids" widget="many2many_tags" domain="[('applicability', '!=', 'taxes')]" context="{'default_applicability': 'accounts'}" options="{'no_create_edit': True}"/>
-                             <field name="group_id"/>
-                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
-                             <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency"/>
-                             <field name="internal_type" invisible="1" readonly="1"/>
-                             <field name="internal_group" invisible="1" readonly="1"/>
-                             <label for="reconcile" attrs="{'invisible': ['|', ('internal_type','=','liquidity'), ('internal_group', '=', 'off_balance')]}"/>
-                             <div attrs="{'invisible': ['|', ('internal_type','=','liquidity'), ('internal_group', '=', 'off_balance')]}">
-                                <field name="reconcile"/>
-                                <button name="action_open_reconcile" class="oe_link" type="object" string=" -> Reconcile" attrs="{'invisible': [('reconcile', '=', False)]}"/>
-                             </div>
-                             <field name="deprecated"/>
-                             <field name="parent_id"/>
-                             <field name="conac_name"/>
-                           </group>
-                       </group>
-                    </sheet>
-                </form>
+                <xpath expr="//field[@name='deprecated']" position="after">
+                    <field name="coa_conac_id"/>
+                    <field name="conac_name"/>
+                </xpath>
             </field>
         </record>
 
@@ -61,11 +36,6 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.account</field>
             <field name="view_mode">tree,kanban,form</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-                (0, 0, {'view_mode': 'tree', 'view_id': ref('account.view_account_list')}),
-                (0, 0, {'view_mode': 'kanban', 'view_id': ref('account.view_account_account_kanban')}),
-                (0, 0, {'view_mode': 'form', 'view_id': ref('jt_conac.coa_view_form_inh_jt_conac')})]"/>
-            <field name="domain">[('flag_coa_conac', '=', False)]</field>
         </record>
     </data>
 </odoo>

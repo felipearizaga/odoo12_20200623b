@@ -20,6 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from . import coa_conac
 from . import cog_conac
 from . import account_account
 from . import trial_balance_report

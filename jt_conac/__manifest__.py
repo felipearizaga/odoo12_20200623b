@@ -40,6 +40,7 @@
         'data/account_tags.xml',
         'data/financial_report_line.xml',
         'data/financial_reports.xml',
+        'data/coa.conac.csv',
     ],
     'application': True,
     'installable': True,
