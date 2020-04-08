@@ -66,7 +66,7 @@ odoo.define('jt_budget_mgmt.summary_report_widget', function(require) {
                 args: [active_id],
                 context: {'type': 'view'},
             }).then(function (report) {
-                $('.o_account_reports_body').html(report)
+                $('.o_summary_reports_body').html(report)
             });
         },
     });

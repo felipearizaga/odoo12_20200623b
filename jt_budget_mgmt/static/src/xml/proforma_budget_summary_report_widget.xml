@@ -14,7 +14,24 @@
                 </div>
 				<aside class="o_cp_sidebar"></aside>
 			</div>
-			<div class="o_cp_right"></div>
+			<div class="o_cp_right">
+				<div class="btn-group o_search_options position-static" role="search">
+					<div class="btn-group o_dropdown o_account_reports_filter_date">
+						<!-- <t t-call="account_reports.search_template_date_filter"/> -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="o_content">
+			<div>
+				<div class="o_summary_reports_body">
+					<div>
+						<center>
+							<h3>Please go to <b>UNAM Budget >> Reports >> Proforma Budget Summary</b> to print report.</h3>
+						</center>
+					</div>
+				</div>
+			</div>
 		</div>
     </t>
 </templates>

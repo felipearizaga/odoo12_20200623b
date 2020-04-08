@@ -13,21 +13,26 @@
             <field name="model">proforma.budget.summary</field>
             <field name="arch" type="xml">
                 <form>
-                	<footer>
-                        <button string="Print Report" name="print_report" type="object" class="oe_highlight"/>
-                        <button string="Cancel" class="btn btn-default" special="cancel"/>
+                    <div>
+                        <group>
+                            <field name="name" colspan="4" invisible="1"/>
+                            <field name="report" filename="name" colspan="4"/>
+                        </group>
+                    </div>
+                    <footer>
+                        <button string="Cancel" class="oe_link oe_highlight" special="cancel" />
                     </footer>
                 </form>
             </field>
         </record>
 
     	<!-- action for proforma budget summary views -->
-    	<record id="action_proforma_budget_summary" model="ir.actions.act_window">
+        <record id="action_proforma_budget_summary" model="ir.actions.server">
             <field name="name">Proforma budget summary</field>
-            <field name="res_model">proforma.budget.summary</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-            <field name="context">{}</field>
+            <field name="model_id" ref="model_proforma_budget_summary"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="code">action = model.load_report_js()</field>
         </record>
     </data>
 </odoo>
