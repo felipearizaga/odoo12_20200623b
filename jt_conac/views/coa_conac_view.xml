@@ -13,6 +13,7 @@
                     <field name="group"/>
                     <field name="item"/>
                     <field name="applicability"/>
+                    <field name="parent_id"/>
                 </search>
             </field>
         </record>
@@ -35,7 +36,8 @@
                                 <field name="group"/>
                                 <field name="item"/>
                                 <field name="applicability"/>
-                            </group>        
+                                <field name="parent_id"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -55,6 +57,7 @@
                     <field name="group"/>
                     <field name="item"/>
                     <field name="applicability"/>
+                    <field name="parent_id" invisible="1"/>
                 </tree>
             </field>
         </record>

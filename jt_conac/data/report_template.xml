@@ -14,16 +14,16 @@
                 t-att-Anio="year">
                 <t t-foreach="accounts" t-as="account">
                     <catalogocuentas__Ctas
-                        t-att-CodAgrup="account.get('code')"
-                        t-att-NumCta="account.get('number')"
-                        t-att-Desc="account.get('name')"
                         t-att-Nivel="account.get('level')"
+                        t-att-Desc="account.get('name')"
                         t-att-Natur="account.get('nature')"
                         t-att-AccType="account.get('acc_type')"
                         t-att-Gender="account.get('gender')"
                         t-att-Group="account.get('group')"
                         t-att-Item="account.get('item')"
                         />
+                        <!-- t-att-CodAgrup="account.get('code')"
+                        t-att-NumCta="account.get('number')" -->
                 </t>
             </catalogocuentas__Catalogo>
        </template>

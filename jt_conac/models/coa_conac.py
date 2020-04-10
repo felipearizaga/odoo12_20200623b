@@ -26,6 +26,7 @@ from odoo import models, fields, api, _
 class COACONAC(models.Model):
     _name = 'coa.conac'
     _description = 'COA CONAC'
+    _rec_name = 'display_name'
 
     code = fields.Char(string='Code')
     name = fields.Char(string='CONAC Name')
@@ -36,6 +37,7 @@ class COACONAC(models.Model):
         ('debtor', 'Debtor'),
         ('creditor', 'Creditor'),
         ('debtor_creditor', 'Debtor / Creditor')], string='Applicability')
+    parent_id = fields.Many2one('coa.conac', string='Parent')
 
     def _compute_display_name(self):
         for account in self:
