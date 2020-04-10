@@ -36,9 +36,9 @@ class ExpenditureItem(models.Model):
     unam_account_id = fields.Many2one('account.account', string='UNAM account')
     shcp_id = fields.Many2one('account.account', string='Expenditure Item SHCP')
     desc_id = fields.Many2one('account.account', string='Description of expenditure item of SHCP')
-    # cog_id = fields.Many2one('', string='COG CONAC')
-    # cog_desc_id = fields.Many2one('', string='Description of COG CONAC')
-    # assigned_account_id = fields.Many2one('', string='Assigned account')
+    cog_id = fields.Many2one('cog.conac', string='COG CONAC')
+    cog_desc_id = fields.Many2one('cog.conac', string='Description of COG CONAC')
+    assigned_account_id = fields.Many2one('account.account', string='Assigned account')
 
     _sql_constraints = [('item', 'unique(item)', 'The item must be unique.')]
 

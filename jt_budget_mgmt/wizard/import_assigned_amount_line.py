@@ -24,7 +24,7 @@ from odoo import models, fields, _
 import base64
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class ImportAssignedAmountLine(models.TransientModel):
@@ -67,34 +67,37 @@ class ImportAssignedAmountLine(models.TransientModel):
         elif assigned_amount.budget_id != self.budget_id:
             raise UserError(_('Budget does not match.'))
         elif self.file:
-            data = base64.decodestring(self.file)
-            book = open_workbook(file_contents=data or b'')
-            sheet = book.sheet_by_index(0)
-            headers = []
-            for rowx, row in enumerate(map(sheet.row, range(1)), 1):
-                for colx, cell in enumerate(row, 1):
-                    headers.append(cell.value)
-            result_vals = []
-            for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
-                result_dict = {}
-                counter = 0
-                for colx, cell in enumerate(row, 1):
-                    result_dict.update({headers[counter]: cell.value})
-                    counter += 1
-                result_vals.append(result_dict)
-            data = result_vals
-            for rec in data:
-                code = self.env['program.code'].search(
-                    [('program_code', '=', rec.get('code'))], limit=1)
-                if not code:
-                    raise UserError(_('Program code record not found.'))
-                else:
-                    vals = {'code': code.id,
-                            'start_date': rec.get('start_date'),
-                            'end_date': rec.get('end_date'),
-                            'authorized': rec.get('authorized'),
-                            'assigned': rec.get('assigned'),
-                            'available': rec.get('available'),
-                            'assigned_amount_id': assigned_amount.id,
-                            }
-                    assigned_amount.line_ids.create(vals)
+            try:
+                data = base64.decodestring(self.file)
+                book = open_workbook(file_contents=data or b'')
+                sheet = book.sheet_by_index(0)
+                headers = []
+                for rowx, row in enumerate(map(sheet.row, range(1)), 1):
+                    for colx, cell in enumerate(row, 1):
+                        headers.append(cell.value)
+                result_vals = []
+                for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
+                    result_dict = {}
+                    counter = 0
+                    for colx, cell in enumerate(row, 1):
+                        result_dict.update({headers[counter]: cell.value})
+                        counter += 1
+                    result_vals.append(result_dict)
+                data = result_vals
+                for rec in data:
+                    code = self.env['program.code'].search(
+                        [('program_code', '=', rec.get('code'))], limit=1)
+                    if not code:
+                        raise UserError(_('Program code record not found.'))
+                    else:
+                        vals = {'code': code.id,
+                                'start_date': rec.get('start_date'),
+                                'end_date': rec.get('end_date'),
+                                'authorized': rec.get('authorized'),
+                                'assigned': rec.get('assigned'),
+                                'available': rec.get('available'),
+                                'assigned_amount_id': assigned_amount.id,
+                                }
+                        assigned_amount.line_ids.create(vals)
+            except:
+                raise ValidationError("Format Of File Is Not Correct!")

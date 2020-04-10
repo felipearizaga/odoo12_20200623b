@@ -20,7 +20,8 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, _
+from odoo.exceptions import UserError
 
 
 class Standardization(models.Model):
@@ -45,15 +46,15 @@ class Standardization(models.Model):
             record.cancelled_count = len(
                 record.line_ids.filtered(lambda l: l.state == 'cancelled'))
 
-    folio = fields.Integer(string='Folio')
-    file = fields.Binary(string='File')
+    folio = fields.Integer(string='Folio', states={'draft': [('readonly', False)]})
+    file = fields.Binary(string='File', states={'draft': [('readonly', False)]})
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     imported_record_number = fields.Integer(
         string='Number of imported records', compute='_get_count')
-    observations = fields.Text(string='Observations')
+    observations = fields.Text(string='Observations', states={'draft': [('readonly', False)]})
     line_ids = fields.One2many(
-        'standardization.line', 'standardization_id', string='Standardization lines')
+        'standardization.line', 'standardization_id', string='Standardization lines', states={'draft': [('readonly', False)]})
     state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'),
                               ('cancelled', 'Cancelled')], default='draft', required=True, string='State')
     draft_count = fields.Integer(string='Draft', compute='_get_count')
@@ -68,6 +69,9 @@ class Standardization(models.Model):
                          'The folio must be unique.')]
 
     def confirm(self):
+        for line in self.line_ids:
+            if line.amount < 5000:
+                raise UserError(_('Please enter amount greater than or equal to 5000.'))
         self.state = 'confirmed'
 
     def cancel(self):

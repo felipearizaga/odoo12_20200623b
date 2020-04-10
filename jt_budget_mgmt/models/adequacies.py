@@ -35,10 +35,10 @@ class Adequacies(models.Model):
             record.imported_record_number = len(
                 record.adequacies_lines_ids.filtered(lambda l: l.imported == True))
 
-    folio = fields.Integer(string='Folio')
-    budget_id = fields.Many2one('expenditure.budget', string='Budget')
-    from_date = fields.Date(string='Observations')
-    to_date = fields.Date()
+    folio = fields.Integer(string='Folio', states={'draft': [('readonly', False)]})
+    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'draft': [('readonly', False)]})
+    from_date = fields.Date(string='Observations', states={'draft': [('readonly', False)]})
+    to_date = fields.Date(states={'draft': [('readonly', False)]})
     reason = fields.Text(string='Reason for rejection')
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
@@ -49,7 +49,7 @@ class Adequacies(models.Model):
          ('accepted', 'Accepted'), ('rejected', 'Rejected')],
         default='draft', required=True, string='State')
     adequacies_lines_ids = fields.One2many(
-        'adequacies.lines', 'adequacies_id', string='Adequacies Lines')
+        'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'draft': [('readonly', False)]})
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]

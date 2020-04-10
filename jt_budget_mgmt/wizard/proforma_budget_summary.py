@@ -34,11 +34,18 @@ class ProformaBudgetSummary(models.TransientModel):
     report = fields.Binary('Prepared file', readonly=True)
     name = fields.Char('File Name', size=100)
 
+    # def _get_templates(self):
+    #     templates = super(ProformaBudgetSummary, self)._get_templates()
+    #     templates[
+    #         'main_table_header_template'] = 'account_reports.main_table_header'
+    #     templates['main_template'] = 'account_reports.main_template'
+    #     return templates
+
     def generate_report_xls(self):
         fp = BytesIO()
 
         wb1 = xlwt.Workbook(encoding='utf-8')
-        ws1 = wb1.add_sheet('Proforma Budget Summary Report ')
+        ws1 = wb1.add_sheet('Proforma Budget Summary Report')
 
         first_header_content_style = xlwt.easyxf("font: name Helvetica size 100 px, bold 1, height 270; "
                                                  "align: horiz center")

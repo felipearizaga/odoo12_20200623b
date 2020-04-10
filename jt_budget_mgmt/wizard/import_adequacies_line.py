@@ -24,7 +24,7 @@ from odoo import models, fields, _
 import base64
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class ImportAdequaciesLine(models.TransientModel):
@@ -70,28 +70,31 @@ class ImportAdequaciesLine(models.TransientModel):
         elif adequacies.record_number != self.record_number:
             raise UserError(_('Number of records do not match.'))
         elif self.file:
-            data = base64.decodestring(self.file)
-            book = open_workbook(file_contents=data or b'')
-            sheet = book.sheet_by_index(0)
-            headers = []
-            for rowx, row in enumerate(map(sheet.row, range(1)), 1):
-                for colx, cell in enumerate(row, 1):
-                    headers.append(cell.value)
-            result_vals = []
-            for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
-                result_dict = {}
-                counter = 0
-                for colx, cell in enumerate(row, 1):
-                    result_dict.update({headers[counter]: cell.value})
-                    counter += 1
-                result_vals.append(result_dict)
-            data = result_vals
-            for rec in data:
-                vals = {'program': rec.get('program'),
-                        'line_type': rec.get('line_type'),
-                        'amount': rec.get('amount'),
-                        'creation_type': rec.get('creation_type'),
-                        'adequacies_id': adequacies.id,
-                        'imported': True,
-                        }
-                adequacies.adequacies_lines_ids.create(vals)
+            try:
+                data = base64.decodestring(self.file)
+                book = open_workbook(file_contents=data or b'')
+                sheet = book.sheet_by_index(0)
+                headers = []
+                for rowx, row in enumerate(map(sheet.row, range(1)), 1):
+                    for colx, cell in enumerate(row, 1):
+                        headers.append(cell.value)
+                result_vals = []
+                for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
+                    result_dict = {}
+                    counter = 0
+                    for colx, cell in enumerate(row, 1):
+                        result_dict.update({headers[counter]: cell.value})
+                        counter += 1
+                    result_vals.append(result_dict)
+                data = result_vals
+                for rec in data:
+                    vals = {'program': rec.get('program'),
+                            'line_type': rec.get('line_type'),
+                            'amount': rec.get('amount'),
+                            'creation_type': rec.get('creation_type'),
+                            'adequacies_id': adequacies.id,
+                            'imported': True,
+                            }
+                    adequacies.adequacies_lines_ids.create(vals)
+            except:
+                raise ValidationError("Format Of File Is Not Correct!")

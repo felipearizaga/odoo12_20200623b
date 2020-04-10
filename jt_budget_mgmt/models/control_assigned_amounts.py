@@ -29,12 +29,12 @@ class ControlAssignedAmounts(models.Model):
     _description = 'Control of Assigned Amounts'
     _rec_name = 'folio'
 
-    folio = fields.Integer(string='Folio')
-    import_file = fields.Binary(string='File to import')
-    budget_id = fields.Many2one('expenditure.budget', string='Budget')
-    made_by_id = fields.Many2one('res.users', string='Made by')
-    import_date = fields.Date(string='Import date')
-    observations = fields.Text(string='Observations')
+    folio = fields.Integer(string='Folio', states={'draft': [('readonly', False)]})
+    import_file = fields.Binary(string='File to import', states={'draft': [('readonly', False)]})
+    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'draft': [('readonly', False)]})
+    made_by_id = fields.Many2one('res.users', string='Made by', states={'draft': [('readonly', False)]})
+    import_date = fields.Date(string='Import date', states={'draft': [('readonly', False)]})
+    observations = fields.Text(string='Observations', states={'draft': [('readonly', False)]})
     state = fields.Selection([('draft', 'Draft'), ('process', 'In process'),
                               ('validated', 'Validated'),
                               ('rejected', 'Rejected'),

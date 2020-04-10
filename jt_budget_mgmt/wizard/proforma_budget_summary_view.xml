@@ -34,6 +34,12 @@
             <field name="type">ir.actions.server</field>
             <field name="code">action = model.load_report_js()</field>
         </record>
+
+        <!-- <record id="action_proforma_budget_summary" model="ir.actions.client">
+            <field name="name">Proforma budget summary</field>
+            <field name="tag">account_reports</field>
+            <field name="context" eval="{'model': 'jt_budget_mgmt.proforma.budget.summary'}" />
+        </record> -->
     </data>
 </odoo>
 

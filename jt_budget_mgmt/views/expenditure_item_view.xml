@@ -29,9 +29,9 @@
                             <field name="unam_account_id"/>
                             <field name="shcp_id"/>
                             <field name="desc_id"/>
-                            <!-- <field name="cog_id"/>
+                            <field name="cog_id"/>
                             <field name="cog_desc_id"/>
-                            <field name="assigned_account_id"/> -->
+                            <field name="assigned_account_id"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -50,9 +50,9 @@
                     <field name="unam_account_id"/>
                     <field name="shcp_id"/>
                     <field name="desc_id"/>
-                    <!-- <field name="cog_id"/>
+                    <field name="cog_id"/>
                     <field name="cog_desc_id"/>
-                    <field name="assigned_account_id"/> -->
+                    <field name="assigned_account_id"/>
             	</tree>
             </field>
         </record>

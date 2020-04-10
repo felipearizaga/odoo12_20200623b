@@ -20,7 +20,8 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, _
+from odoo.exceptions import UserError
 
 
 class ExpenditureBudget(models.Model):
@@ -35,21 +36,21 @@ class ExpenditureBudget(models.Model):
             record.import_record_number = len(
                 record.line_ids.filtered(lambda l: l.imported == True))
 
-    budget_name = fields.Text(string='Budget name')
-    responsible_id = fields.Many2one('res.users', string='Responsible')
-    from_date = fields.Date(string='Period')
+    responsible_id = fields.Many2one('res.users', string='Responsible', default=lambda self: self.env.user, states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
+    from_date = fields.Date(string='Period', states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
     to_date = fields.Date()
-    total_budget = fields.Float(string='Total budget')
+    total_budget = fields.Float(string='Total budget', states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
         string='Number of imported records', readonly=True, compute='_get_count')
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
-        string='Expenditure Budget Lines')
+        string='Expenditure Budget Lines', states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
     state = fields.Selection([('draft', 'Draft'), ('previous', 'Previous'),
                               ('confirm', 'Confirm'), ('validate', 'Validate'),
                               ('done', 'Done')], default='draft', required=True, string='State')
+    budget_name = fields.Text(string='Budget name', required=True, states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
 
     def import_lines(self):
         return {
@@ -62,7 +63,14 @@ class ExpenditureBudget(models.Model):
         }
 
     def confirm(self):
-        self.state = 'confirm'
+        if self.total_budget <= 0:
+            raise UserError(_('Please enter amount greater than zero.'))
+        elif self.line_ids:
+            for line in self.line_ids:
+                if line.available < 5000:
+                    raise UserError(_('Please enter amount greater than or equal to 5000.'))
+        else:
+            self.state = 'confirm'
 
     def approve(self):
         self.state = 'validate'
