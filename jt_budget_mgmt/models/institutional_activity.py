@@ -37,5 +37,6 @@ class InstitutionalActivity(models.Model):
 
     @api.constrains('number')
     def _check_number(self):
-        if self.number and not len(str(self.number)) == 5:
+        # To check size of the Institutional activity number is exact 5
+        if len(str(self.number)) != 5 and self.number not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The number size must be five.'))

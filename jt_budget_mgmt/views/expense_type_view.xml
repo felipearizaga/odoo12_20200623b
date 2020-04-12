@@ -23,7 +23,7 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="key_expenditure_type"/>
+	            			<field name="key_expenditure_type" required="1"/>
                             <field name="description_expenditure_type"/>
 	            		</group>
 	            	</sheet>

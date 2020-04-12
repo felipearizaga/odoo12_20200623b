@@ -23,7 +23,7 @@
             	<form>
             		<sheet>
 	            		<group>
-                            <field name="state_key"/>
+                            <field name="state_key" required="1"/>
                             <field name="state_name"/>
 	            		</group>
 	            	</sheet>

@@ -37,17 +37,17 @@
                         </div>
                         <group>
                             <group>
-                                <field name="responsible_id"/>
+                                <field name="responsible_id" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
-                                <field name="total_budget"/>
+                                <field name="total_budget" required="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>
                             </group>        
                             <group>
                                 <label for="from_date"/>
                                 <div>
-                                    <field name="from_date" class="oe_inline"/> - 
-                                    <field name="to_date" class="oe_inline"/>
+                                    <field name="from_date" class="oe_inline" required="1"/> - 
+                                    <field name="to_date" class="oe_inline" required="1"/>
                                 </div>
                             </group>
                         </group>
@@ -58,9 +58,9 @@
                                         <field name="code"/>
                                         <field name="start_date"/>
                                         <field name="end_date"/>
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
+                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
+                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                     <form>

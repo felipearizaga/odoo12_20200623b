@@ -41,7 +41,8 @@ class BudgetProgramConversion(models.Model):
 
     @api.constrains('shcp')
     def _check_shcp(self):
-        if self.shcp and not len(self.shcp) == 4:
+        # To check size of the position is exact 2
+        if len(self.shcp) != 4:
             raise ValidationError(_('The shcp size must be four.'))
         if self.shcp and len(self.shcp) == 4:
             if not (re.match("[A-Z]{1}\d{3}", self.shcp.upper())):

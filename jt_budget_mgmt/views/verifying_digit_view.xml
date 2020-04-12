@@ -23,12 +23,12 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="unam_key_id"/>
-                            <field name="sub_program_id"/>
-                            <field name="dependency_id"/>
-                            <field name="sub_dependency_id"/>
-                            <field name="item_id"/>
-                            <field name="check"/>
+	            			<field name="unam_key_id" required="1"/>
+                            <field name="sub_program_id" required="1"/>
+                            <field name="dependency_id" required="1"/>
+                            <field name="sub_dependency_id" required="1"/>
+                            <field name="item_id" required="1"/>
+                            <field name="check" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

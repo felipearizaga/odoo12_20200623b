@@ -37,5 +37,6 @@ class Dependency(models.Model):
 
     @api.constrains('dependency')
     def _check_dependency(self):
-        if self.dependency and not len(str(self.dependency)) == 3:
+        # To check size of the dependancy is exact 3
+        if len(str(self.dependency)) != 3 and self.dependency not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The dependency size must be three.'))

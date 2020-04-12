@@ -23,9 +23,9 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="project_type_id"/>
+	            			<field name="project_type_id" required="1"/>
                             <field name="desc"/>
-                            <field name="number"/>
+                            <field name="number" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

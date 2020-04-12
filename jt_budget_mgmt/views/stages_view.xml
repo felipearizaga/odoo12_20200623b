@@ -23,7 +23,7 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="stage_id"/>
+                            <field name="stage_id" required="1"/>
                             <field name="desc"/>
                         </group>
                     </sheet>

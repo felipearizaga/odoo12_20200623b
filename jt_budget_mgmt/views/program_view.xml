@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="key_unam"/>
-                            <field name="desc_key_unam"/>
+	            			<field name="key_unam" required="1"/>
+                            <field name="desc_key_unam" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

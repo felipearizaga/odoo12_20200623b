@@ -39,10 +39,11 @@ class ProjectType(models.Model):
 
     @api.constrains('project_type_id')
     def _check_project_type_id(self):
-        if self.project_type_id and not len(self.project_type_id.name) == 2:
+        # To check size of the Project type identifier is exact 2
+        if len(self.project_type_id.name) != 2:
             raise ValidationError(_('The project type size must be two.'))
 
     @api.constrains('number')
     def _check_number(self):
-        if self.number and not len(str(self.number)) == 6:
+        if len(str(self.number)) != 6 and self.number not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The number size must be six.'))

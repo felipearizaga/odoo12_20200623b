@@ -40,10 +40,10 @@ class AgreementType(models.Model):
 
     @api.constrains('type_id')
     def _check_type_id(self):
-        if self.type_id and not len(self.type_id.name) == 2:
+        if self.type_id and len(self.type_id.name) != 2:
             raise ValidationError(_('The type size must be two.'))
 
     @api.constrains('number')
     def _check_number(self):
-        if self.number and not len(self.number) == 6:
+        if self.number and len(self.number) != 6:
             raise ValidationError(_('The number size must be six.'))

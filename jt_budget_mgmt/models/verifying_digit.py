@@ -39,30 +39,31 @@ class VerifyingDigit(models.Model):
 
     @api.constrains('unam_key_id')
     def _check_unam_key_id(self):
-        if self.unam_key_id and not len(str(self.unam_key_id.key_unam)) == 2:
+        # To check size of the UNAM Key is exact 2
+        if self.unam_key_id and len(str(self.unam_key_id.key_unam)) != 2 and self.unam_key_id.key_unam not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The UNAM key size must be two.'))
 
     @api.constrains('sub_program_id')
     def _check_sub_program_id(self):
-        if self.sub_program_id and not len(str(self.sub_program_id.unam_key_id.key_unam)) == 2:
+        if self.sub_program_id and len(str(self.sub_program_id.unam_key_id.key_unam)) != 2 and self.sub_program_id.unam_key_id.key_unam not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The sub program size must be two.'))
 
     @api.constrains('dependency_id')
     def _check_dependency_id(self):
-        if self.dependency_id and not len(str(self.dependency_id.dependency)) == 3:
+        if self.dependency_id and len(str(self.dependency_id.dependency)) != 3 and self.dependency_id.dependency not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The dependency size must be three.'))
 
     @api.constrains('sub_dependency_id')
     def _check_sub_dependency_id(self):
-        if self.sub_dependency_id and not len(str(self.sub_dependency_id.sub_dependency)) == 2:
+        if self.sub_dependency_id and len(str(self.sub_dependency_id.sub_dependency)) != 2 and self.sub_dependency_id.sub_dependency not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The sub dependency size must be two.'))
 
     @api.constrains('item_id')
     def _check_item_id(self):
-        if self.item_id and not len(str(self.item_id.item)) == 3:
+        if self.item_id and len(str(self.item_id.item)) != 3 and self.item_id.item not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The item size must be three.'))
 
     @api.constrains('check')
     def _check_check(self):
-        if self.check and not len(str(self.check)) == 2:
+        if self.check and len(str(self.check)) != 2 and self.check not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The check size must be two.'))

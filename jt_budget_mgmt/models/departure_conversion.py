@@ -37,5 +37,6 @@ class DepartureConversion(models.Model):
 
     @api.constrains('federal_part')
     def _check_federal_part(self):
-        if self.federal_part and not len(str(self.federal_part)) == 5:
+        # To check size of the position is exact 2
+        if len(str(self.federal_part)) != 5 and self.federal_part not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The federal part size must be five.'))

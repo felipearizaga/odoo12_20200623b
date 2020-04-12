@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-                            <field name="dependency_id"/>
-                            <field name="sub_dependency"/>
+                            <field name="dependency_id" required="1"/>
+                            <field name="sub_dependency" required="1"/>
                             <field name="description"/>
 	            		</group>
 	            	</sheet>

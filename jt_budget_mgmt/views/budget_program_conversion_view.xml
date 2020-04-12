@@ -23,9 +23,9 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="unam_key_id"/>
-                            <field name="desc"/>
-                            <field name="shcp"/>
+	            			<field name="unam_key_id" required="1"/>
+                            <field name="desc" required="1"/>
+                            <field name="shcp" required="1"/>
                             <field name="description"/>
 	            		</group>
 	            	</sheet>

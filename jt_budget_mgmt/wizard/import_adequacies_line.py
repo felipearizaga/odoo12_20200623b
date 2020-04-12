@@ -65,15 +65,18 @@ class ImportAdequaciesLine(models.TransientModel):
             self._context.get('active_ids'))
         if adequacies.folio != self.folio:
             raise UserError(_('Folio does not match.'))
-        elif adequacies.budget_id != self.budget_id:
-            raise UserError(_('Budget does not match.'))
-        elif adequacies.record_number != self.record_number:
-            raise UserError(_('Number of records do not match.'))
+        # elif adequacies.budget_id != self.budget_id:
+        #     raise UserError(_('Budget does not match.'))
+        # elif adequacies.record_number != self.record_number:
+        #     raise UserError(_('Number of records do not match.'))
         elif self.file:
             try:
                 data = base64.decodestring(self.file)
                 book = open_workbook(file_contents=data or b'')
                 sheet = book.sheet_by_index(0)
+                total_rows = self.record_number + 1
+                if sheet.nrows != total_rows:
+                    raise UserError(_('Number of records do not match with file'))
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                     for colx, cell in enumerate(row, 1):
@@ -96,5 +99,5 @@ class ImportAdequaciesLine(models.TransientModel):
                             'imported': True,
                             }
                     adequacies.adequacies_lines_ids.create(vals)
-            except:
-                raise ValidationError("Format Of File Is Not Correct!")
+            except UserError as e:
+                raise UserError(e)

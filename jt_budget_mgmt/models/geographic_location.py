@@ -38,5 +38,6 @@ class GeographicLocation(models.Model):
 
     @api.constrains('state_key')
     def _check_state_key(self):
-        if self.state_key and not len(str(self.state_key)) == 2:
+        # To check size of the State key is exact 2
+        if len(str(self.state_key)) != 2 and self.state_key not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The state key size must be two.'))

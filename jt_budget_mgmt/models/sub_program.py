@@ -39,5 +39,6 @@ class SubProgram(models.Model):
 
     @api.constrains('sub_program')
     def _check_sub_program(self):
-        if self.sub_program and not len(str(self.sub_program)) == 2:
+        # To check size of the SubProgram is exact 2
+        if len(str(self.sub_program)) != 2 and self.sub_program not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The sub program size must be two.'))

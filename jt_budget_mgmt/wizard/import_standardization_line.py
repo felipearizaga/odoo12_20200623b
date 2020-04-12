@@ -64,13 +64,16 @@ class ImportStandardizationLine(models.TransientModel):
             self._context.get('active_ids'))
         if standardization.folio != self.folio:
             raise UserError(_('Folio does not match.'))
-        elif standardization.record_number != self.record_number:
-            raise UserError(_('Number of records do not match.'))
+        # elif standardization.record_number != self.record_number:
+        #     raise UserError(_('Number of records do not match.'))
         elif self.file:
             try:
                 data = base64.decodestring(self.file)
                 book = open_workbook(file_contents=data or b'')
                 sheet = book.sheet_by_index(0)
+                total_rows = self.record_number + 1
+                if sheet.nrows != total_rows:
+                    raise UserError(_('Number of records do not match with file'))
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                     for colx, cell in enumerate(row, 1):
@@ -114,5 +117,5 @@ class ImportStandardizationLine(models.TransientModel):
                                 'imported': True,
                                 }
                         standardization.line_ids.create(vals)
-            except:
-                raise ValidationError("File format not matched!")
+            except UserError as e:
+                raise UserError(e)

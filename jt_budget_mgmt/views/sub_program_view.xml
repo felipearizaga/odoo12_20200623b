@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="unam_key_id"/>
-                            <field name="sub_program"/>
+	            			<field name="unam_key_id" required="1"/>
+                            <field name="sub_program" required="1"/>
                             <field name="desc"/>
 	            		</group>
 	            	</sheet>

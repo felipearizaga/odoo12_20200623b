@@ -23,9 +23,9 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="code"/>
+	            			<field name="code" required="1"/>
                             <field name="description"/>
-                            <field name="year"/>
+                            <field name="year" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

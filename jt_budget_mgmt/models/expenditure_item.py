@@ -44,5 +44,6 @@ class ExpenditureItem(models.Model):
 
     @api.constrains('item')
     def _check_item(self):
-        if self.item and not len(str(self.item)) == 3:
+        # To check size of the item is exact 2
+        if len(str(self.item)) != 3 and self.item not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The item size must be three.'))

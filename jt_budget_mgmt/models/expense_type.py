@@ -39,6 +39,7 @@ class ExpenseType(models.Model):
 
     @api.constrains('key_expenditure_type')
     def _check_key_expenditure_type(self):
-        if self.key_expenditure_type and not len(str(self.key_expenditure_type)) == 2:
+        # To check size of the Key expenditure type is exact 2
+        if len(str(self.key_expenditure_type)) != 2 and self.key_expenditure_type not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(
                 _('The key expenditure type size must be two.'))

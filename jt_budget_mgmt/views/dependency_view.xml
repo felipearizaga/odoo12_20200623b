@@ -23,7 +23,7 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="dependency"/>
+	            			<field name="dependency" requried="1"/>
                             <field name="description"/>
 	            		</group>
 	            	</sheet>

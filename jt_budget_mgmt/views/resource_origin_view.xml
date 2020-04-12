@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="key_origin"/>
-                            <field name="desc"/>
+	            			<field name="key_origin" required="1"/>
+                            <field name="desc" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

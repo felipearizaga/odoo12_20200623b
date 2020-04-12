@@ -24,14 +24,14 @@
             		<sheet>
 	            		<group>
 	            			<field name="item"/>
-                            <field name="exercise_type"/>
+                            <field name="exercise_type" required="1"/>
                             <field name="description"/>
-                            <field name="unam_account_id"/>
-                            <field name="shcp_id"/>
-                            <field name="desc_id"/>
-                            <field name="cog_id"/>
-                            <field name="cog_desc_id"/>
-                            <field name="assigned_account_id"/>
+                            <field name="unam_account_id" required="1"/>
+                            <field name="shcp_id" required="1"/>
+                            <field name="desc_id" required="1"/>
+                            <field name="cog_id" required="1"/>
+                            <field name="cog_desc_id" required="1"/>
+                            <field name="assigned_account_id" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

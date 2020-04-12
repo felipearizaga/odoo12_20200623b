@@ -39,5 +39,6 @@ class KeyWallet(models.Model):
 
     @api.constrains('wallet_password')
     def _check_wallet_password(self):
-        if self.wallet_password and not len(str(self.wallet_password)) == 4:
+        # To check size of the Wallet password is exact 2
+        if len(str(self.wallet_password)) != 4 and self.wallet_password not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The wallet password size must be four.'))

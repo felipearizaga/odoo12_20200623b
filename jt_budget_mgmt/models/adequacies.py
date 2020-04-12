@@ -83,7 +83,7 @@ class AdequaciesLines(models.Model):
     program = fields.Char(string='Program')
     line_type = fields.Selection(
         [('increase', 'Increase'), ('decrease', 'Decrease')], string='Type')
-    amount = fields.Date(string='Date')
+    amount = fields.Float(string='Amount')
     creation_type = fields.Selection(
         [('manual', 'Manual'), ('imported', 'Imported')],
         string='Creation type')

@@ -87,3 +87,5 @@ class ProgramCode(models.Model):
     #     'agreement.number', string='Agreement number')
     # agreement_number_description_id = fields.Many2one('agreement.number', string='Agreement number description')
     program_code = fields.Char(string='Program code')
+    state = fields.Selection(
+        [('draft', 'Draft'), ('validated', 'Validated')], default='draft', string='Status')

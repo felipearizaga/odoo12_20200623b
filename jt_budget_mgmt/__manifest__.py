@@ -73,7 +73,9 @@
     'qweb': [
         'static/src/xml/proforma_budget_summary_report_widget.xml',
     ],
-
+    'demo': [
+        'demo/demo_code_structure.xml',
+    ],
     'application': False,
     'installable': True,
     'auto_install': False,

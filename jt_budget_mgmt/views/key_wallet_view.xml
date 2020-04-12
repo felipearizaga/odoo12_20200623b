@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="wallet_password"/>
-                            <field name="wallet_password_name"/>
+	            			<field name="wallet_password" required="1"/>
+                            <field name="wallet_password_name" required="1"/>
                             <field name="wallet_password_desc"/>
 	            		</group>
 	            	</sheet>

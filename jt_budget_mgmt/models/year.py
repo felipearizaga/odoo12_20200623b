@@ -34,7 +34,7 @@ class Year(models.Model):
     code = fields.Char(string='Program code acronym')
     description = fields.Text(string='Description of program code')
     year = fields.Selection([(str(num), str(num)) for num in range(
-        1900, (datetime.now().year) + 1)], string='Year')
+        1900, (datetime.now().year) + 100)], string='Year')
 
     _sql_constraints = [('year', 'unique(year)', 'The year must be unique.')]
 

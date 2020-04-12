@@ -20,8 +20,8 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, _
-from odoo.exceptions import UserError
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
 
 
 class ExpenditureBudget(models.Model):
@@ -52,6 +52,28 @@ class ExpenditureBudget(models.Model):
                               ('done', 'Done')], default='draft', required=True, string='State')
     budget_name = fields.Text(string='Budget name', required=True, states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
 
+    def _compute_line_total_budget(self):
+        for budget in self:
+            total = 0
+            for line in budget.line_ids:
+                total += line.assigned
+
+    line_total_budget = fields.Float(string='Line Total Budget', compute='_compute_line_total_budget')
+
+    @api.constrains('total_budget', 'line_ids')
+    def _check_budget(self):
+        total = 0
+        for line in self.line_ids:
+            total += line.assigned
+        if total != self.total_budget:
+            raise ValidationError("Budget amount not match with total lines assigned amount!")
+
+    @api.constrains('from_date', 'to_date')
+    def _check_dates(self):
+        if self.from_date and self.to_date:
+            if self.from_date > self.to_date:
+                raise ValidationError("Please select correct date")
+
     def import_lines(self):
         return {
             'type': 'ir.actions.act_window',
@@ -65,10 +87,10 @@ class ExpenditureBudget(models.Model):
     def confirm(self):
         if self.total_budget <= 0:
             raise UserError(_('Please enter amount greater than zero.'))
-        elif self.line_ids:
-            for line in self.line_ids:
-                if line.available < 5000:
-                    raise UserError(_('Please enter amount greater than or equal to 5000.'))
+        # elif self.line_ids:
+        #     for line in self.line_ids:
+        #         if line.available < 5000:
+        #             raise UserError(_('Please enter amount greater than or equal to 5000.'))
         else:
             self.state = 'confirm'
 

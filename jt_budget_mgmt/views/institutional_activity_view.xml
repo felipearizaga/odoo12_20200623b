@@ -23,7 +23,7 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="number"/>
+	            			<field name="number" required="1"/>
                             <field name="description"/>
 	            		</group>
 	            	</sheet>

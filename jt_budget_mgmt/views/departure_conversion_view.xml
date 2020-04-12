@@ -23,7 +23,7 @@
             	<form>
             		<sheet>
 	            		<group>
-                            <field name="federal_part"/>
+                            <field name="federal_part" required="1"/>
                             <field name="federal_part_desc"/>
 	            		</group>
 	            	</sheet>

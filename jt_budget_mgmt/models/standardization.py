@@ -69,9 +69,9 @@ class Standardization(models.Model):
                          'The folio must be unique.')]
 
     def confirm(self):
-        for line in self.line_ids:
-            if line.amount < 5000:
-                raise UserError(_('Please enter amount greater than or equal to 5000.'))
+        # for line in self.line_ids:
+            # if line.amount < 5000:
+            #     raise UserError(_('Please enter amount greater than or equal to 5000.'))
         self.state = 'confirmed'
 
     def cancel(self):

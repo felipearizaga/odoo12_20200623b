@@ -34,9 +34,10 @@ class Program(models.Model):
     desc_key_unam = fields.Text(string='Description Key UNAM')
 
     _sql_constraints = [('key_unam', 'unique(key_unam)',
-                         'The key unam must be unique.')]
+                         'The key UNAM must be unique.')]
 
     @api.constrains('key_unam')
     def _check_key_unam(self):
-        if self.key_unam and not len(str(self.key_unam)) == 2:
+        # To check size of the UNAM key is exact 2
+        if len(str(self.key_unam)) != 2 and self.key_unam not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The key UNAM size must be two.'))

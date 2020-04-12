@@ -23,8 +23,8 @@
             	<form>
             		<sheet>
 	            		<group>
-	            			<field name="position_priority"/>
-                            <field name="section"/>
+	            			<field name="position_priority" required="1"/>
+                            <field name="section" required="1"/>
 	            		</group>
 	            	</sheet>
             	</form>

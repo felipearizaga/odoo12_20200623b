@@ -39,5 +39,6 @@ class SubDependency(models.Model):
 
     @api.constrains('sub_dependency')
     def _check_sub_dependency(self):
-        if self.sub_dependency and not len(str(self.sub_dependency)) == 2:
+        # To check size of the position is exact 2
+        if len(str(self.sub_dependency)) != 2 and self.sub_dependency not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The sub dependency size must be two.'))

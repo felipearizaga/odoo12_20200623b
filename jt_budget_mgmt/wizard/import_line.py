@@ -65,27 +65,36 @@ class ImportLine(models.TransientModel):
             self._context.get('active_ids'))
         if budget.budget_name != self.budget_name:
             raise UserError(_('Budget name does not match.'))
-        elif budget.total_budget != self.total_budget:
-            raise UserError(_('Total budget does not match.'))
-        elif budget.record_number != self.record_number:
-            raise UserError(_('Number of records do not match.'))
+        # elif budget.total_budget != self.total_budget:
+        #     raise UserError(_('Total budget does not match.'))
+        # elif budget.record_number != self.record_number:
+        #     raise UserError(_('Number of records do not match.'))
         elif self.file:
             try:
                 data = base64.decodestring(self.file)
                 book = open_workbook(file_contents=data or b'')
                 sheet = book.sheet_by_index(0)
+                total_rows = self.record_number + 1
+                if sheet.nrows != total_rows:
+                    raise UserError(_('Number of records do not match with file'))
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
                 result_vals = []
+                total_budget_amount = 0
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
                     result_dict = {}
                     counter = 0
                     for colx, cell in enumerate(row, 1):
                         result_dict.update({headers[counter]: cell.value})
                         counter += 1
+                    if 'assigned' in result_dict:
+                        total_budget_amount += float(result_dict.get('assigned'))
                     result_vals.append(result_dict)
+                if total_budget_amount != self.total_budget:
+                    raise UserError(_('Total Budget not match with assigned amount in file'))
+
                 data = result_vals
                 for rec in data:
                     vals = {'code': rec.get('code'),
@@ -98,5 +107,5 @@ class ImportLine(models.TransientModel):
                             'imported': True,
                             }
                     budget.line_ids.create(vals)
-            except:
-                raise ValidationError("File format not matched!")
+            except UserError as e:
+                raise UserError(e)
