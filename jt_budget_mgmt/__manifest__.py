@@ -33,7 +33,6 @@
     'data': [
         'security/ir.model.access.csv',
         'data/data.xml',
-        'report/proforma_budget_summary_report.xml',
         'wizard/proforma_budget_summary_view.xml',
         'wizard/reject_standardization_line_view.xml',
         'wizard/import_standardization_line_view.xml',
@@ -41,10 +40,7 @@
         'wizard/import_adequacies_line_view.xml',
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
         'views/standardization_view.xml',
-        'views/control_assigned_amounts_view.xml',
         'views/adequacies_view.xml',
         'views/expenditure_budget_view.xml',
         'views/program_code_view.xml',

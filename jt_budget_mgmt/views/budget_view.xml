@@ -107,27 +107,9 @@
     <!-- menu for budget control -->
     <menuitem id="menu_budget_control" name="Budget Control" parent="jt_budget_mgmt.menu_budget" sequence="3"/>
 
-    <!-- menu for control of assigned amounts -->
-    <menuitem id="menu_control_assigned_amounts" name="Control of assigned amounts" parent="jt_budget_mgmt.menu_budget_control" sequence="1" action="jt_budget_mgmt.action_control_assigned_amounts"/>
-
     <!-- menu for reports -->
     <menuitem id="menu_reports" name="Reports" parent="jt_budget_mgmt.menu_budget" sequence="4"/>
 
     <!-- menu for proforma budget summary -->
     <menuitem id="menu_proforma_budget_summary" name="Proforma Budget Summary" parent="jt_budget_mgmt.menu_reports" sequence="1" action="jt_budget_mgmt.action_proforma_budget_summary"/>
-
-    <!-- menu for finance module -->
-    <menuitem name="UNAM Finance" id="menu_finance" web_icon="jt_budget_mgmt,static/description/finance.png" sequence="41"/>
-
-    <!-- menu for finance settings -->
-    <menuitem id="menu_finance_settings" name="Settings" parent="jt_budget_mgmt.menu_finance" sequence="2"/>
-
-    <!-- menu for calendar of assigned amounts -->
-    <menuitem id="menu_calendar_assigned_amounts" name="Calendar of assigned amounts" parent="jt_budget_mgmt.menu_finance_settings" sequence="1" action="jt_budget_mgmt.action_calendar_assigned_amounts"/>
-
-    <!-- menu for revenue budget control -->
-    <menuitem id="menu_revenue_budget_control" name="Revenue budget control" parent="jt_budget_mgmt.menu_finance" sequence="1"/>
-
-    <!-- menu for control of amounts received -->
-    <menuitem id="menu_control_amounts_received" name="Control of amounts received" parent="jt_budget_mgmt.menu_revenue_budget_control" sequence="1" action="jt_budget_mgmt.action_control_amounts_received"/>
 </odoo>

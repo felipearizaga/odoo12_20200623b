@@ -20,27 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import code_structure
-from . import year
-from . import program
-from . import sub_program
-from . import dependency
-from . import sub_dependency
-from . import expenditure_item
-from . import verifying_digit
-from . import resource_origin
-from . import institutional_activity
-from . import budget_program_conversion
-from . import departure_conversion
-from . import expense_type
-from . import geographic_location
-from . import key_wallet
-from . import project_type
-#from . import project_number
-from . import stage
-from . import agreement_type
-#from . import agreement_number
-from . import program_code
-from . import expenditure_budget
-from . import adequacies
-from . import standardization
+from odoo import models, fields
+
+
+class RejectStandardizationLine(models.TransientModel):
+
+    _name = 'reject.standardization.line'
+    _description = 'Reject Standardization Line'
+
+    reason = fields.Char(string='Reason for rejection', required=True)
+
+    def reject(self):
+        active_id = self._context.get('parent_id')
+        standardization_id = self.env['standardization'].browse(
+            active_id)
+        lines = standardization_id.line_ids.filtered(
+            lambda l: l.state == 'cancelled' and l.selected == True)
+        for line in lines:
+            line.reason = self.reason
+        return {'type': 'ir.actions.client', 'tag': 'reload'}

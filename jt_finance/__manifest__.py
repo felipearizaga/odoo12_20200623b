@@ -20,27 +20,23 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import code_structure
-from . import year
-from . import program
-from . import sub_program
-from . import dependency
-from . import sub_dependency
-from . import expenditure_item
-from . import verifying_digit
-from . import resource_origin
-from . import institutional_activity
-from . import budget_program_conversion
-from . import departure_conversion
-from . import expense_type
-from . import geographic_location
-from . import key_wallet
-from . import project_type
-#from . import project_number
-from . import stage
-from . import agreement_type
-#from . import agreement_number
-from . import program_code
-from . import expenditure_budget
-from . import adequacies
-from . import standardization
+{
+    'name': 'UNAM Finance',
+    'summary': 'Finance Management System for UNAM',
+    'version': '13.0.0.1.1',
+    'category': 'Accounting',
+    'author': 'Jupical Technologies Pvt. Ltd.',
+    'maintainer': 'Jupical Technologies Pvt. Ltd.',
+    'website': 'http://www.jupical.com',
+    'license': 'AGPL-3',
+    'depends': ['account', 'project', 'jt_conac'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/control_amounts_received_view.xml',
+        'views/calendar_assigned_amounts_view.xml',
+        'views/control_assigned_amounts_view.xml',
+    ],
+    'application': False,
+    'installable': True,
+    'auto_install': False,
+}
