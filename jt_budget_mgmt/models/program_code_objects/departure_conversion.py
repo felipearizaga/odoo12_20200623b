@@ -20,24 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class DepartureConversion(models.Model):
+
+    _name = 'departure.conversion'
+    _description = 'Conversion with Departure'
+    _rec_name = 'federal_part'
+
+    federal_part = fields.Char(string='Federal part', size=5)
+    federal_part_desc = fields.Text(string='Federal part description')
+
+    _sql_constraints = [('federal_part', 'unique(federal_part)', 'The federal part must be unique.')]
+
+    @api.constrains('federal_part')
+    def _check_federal_part(self):
+        if not str(self.federal_part).isnumeric():
+            raise ValidationError(_('The Institutional activity number must be numeric value'))

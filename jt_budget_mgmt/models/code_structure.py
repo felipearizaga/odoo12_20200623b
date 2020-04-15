@@ -30,7 +30,7 @@ class CodeStructure(models.Model):
     _description = 'Code Structure'
     _rec_name = 'position_priority'
 
-    position_priority = fields.Integer(string='Position priority')
+    position_priority = fields.Char(string='Position priority', size=2)
     section = fields.Selection([
         ('year', 'Year'),
         ('pr', 'Program'),
@@ -53,19 +53,19 @@ class CodeStructure(models.Model):
         ('nc', 'Agreement Number')], string='Section of the Program Code')
 
     _sql_constraints = [
-        ('uniq_section', 'unique (section)', 'The section must be unique!'),
+        ('uniq_position_priority', 'unique(position_priority)', 'The Position priority must be unique!'),
     ]
 
     @api.constrains('position_priority')
     def _check_position_priority(self):
-        # To check size of the position is exact 2
-        if len(str(self.position_priority)) != 2 and self.position_priority not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
-            raise ValidationError(_('The position priority size must be two!'))
-        # To check position value is  (> 0 and < 20)
-        if self.position_priority and (self.position_priority < 1 or self.position_priority > 19):
-            raise ValidationError(_('The position is only between 01-19'))
-        # To check unique position
-        position = self.search(
-            [('position_priority', '=', self.position_priority), ('id', '!=', self.id)], limit=1)
-        if position:
-            raise ValidationError(_('The position must be unique!'))
+        # To check code priority is numeric or string
+        if not str(self.position_priority).isnumeric():
+            raise ValidationError(_('The Position priority must be numeric value'))
+        # To check Position priority value is  (> 0 and < 20)
+        if self.position_priority and (int(self.position_priority) < 1 or int(self.position_priority) > 19):
+            raise ValidationError(_('The Position priority is only between 01-19'))
+        # To check unique section (As constrains not work on selection field)
+        if self.section:
+            section = self.search([('section', '=', self.section), ('id', '!=', self.id)])
+            if section:
+                raise ValidationError(_('The section must be unique!'))

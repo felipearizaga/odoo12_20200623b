@@ -20,24 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class Dependency(models.Model):
+
+    _name = 'dependency'
+    _description = 'Dependency'
+    _rec_name = 'dependency'
+
+    dependency = fields.Char(string='Dependency', size=3)
+    description = fields.Text(string='Dependency description')
+
+    _sql_constraints = [('dependency', 'unique(dependency)', 'The dependency must be unique.')]
+
+    @api.constrains('dependency')
+    def _check_dependency(self):
+        if not str(self.dependency).isnumeric():
+            raise ValidationError(_('The Dependency must be numeric value'))

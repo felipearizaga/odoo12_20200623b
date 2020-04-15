@@ -17,9 +17,9 @@
                         <field name="dwnld_file" filename="dwnld_filename" readonly="1" force_save="1"/>
                     </group>
                 	<footer>
+                        <button string="Import" name="import_line" type="object" class="oe_highlight"/>
                         <button name="download_file" string="Download Sample Format"
                         type="object" class="oe_highlight"/>
-                        <button string="Import" name="import_line" type="object" class="oe_highlight"/>
                         <button string="Cancel" class="btn btn-default" special="cancel"/>
                     </footer>
                 </form>

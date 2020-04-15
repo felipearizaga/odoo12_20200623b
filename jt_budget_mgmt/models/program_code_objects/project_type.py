@@ -20,24 +20,21 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class ProjectType(models.Model):
+
+    _name = 'project.type'
+    _description = 'Project Type'
+    _rec_name = 'project_id'
+
+    project_id = fields.Many2one('project.project', string='Project type identifier')
+    project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
+    desc_stage = fields.Text(string='Description', related="project_id.desc_stage")
+    number = fields.Char(string='Number', related="project_id.number")
+    stage_identifier = fields.Char(string="Stage Identifier", related="project_id.stage_identifier")
+    agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
+    name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
+    number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')

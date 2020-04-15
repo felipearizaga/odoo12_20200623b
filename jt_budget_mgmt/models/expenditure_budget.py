@@ -36,10 +36,14 @@ class ExpenditureBudget(models.Model):
             record.import_record_number = len(
                 record.line_ids.filtered(lambda l: l.imported == True))
 
-    responsible_id = fields.Many2one('res.users', string='Responsible', default=lambda self: self.env.user, states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
-    from_date = fields.Date(string='Period', states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
-    to_date = fields.Date()
-    total_budget = fields.Float(string='Total budget', states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
+    budget_name = fields.Text(string='Budget name', required=True)
+    responsible_id = fields.Many2one('res.users', string='Responsible', default=lambda self: self.env.user)
+
+    # Date Periods
+    from_date = fields.Date(string='From')
+    to_date = fields.Date(string='To')
+
+    total_budget = fields.Float(string='Total budget')
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
@@ -50,13 +54,13 @@ class ExpenditureBudget(models.Model):
     state = fields.Selection([('draft', 'Draft'), ('previous', 'Previous'),
                               ('confirm', 'Confirm'), ('validate', 'Validate'),
                               ('done', 'Done')], default='draft', required=True, string='State')
-    budget_name = fields.Text(string='Budget name', required=True, states={'draft': [('readonly', False)], 'previous': [('readonly', False)]})
 
     def _compute_line_total_budget(self):
         for budget in self:
             total = 0
             for line in budget.line_ids:
                 total += line.assigned
+            budget.line_total_budget = total
 
     line_total_budget = fields.Float(string='Line Total Budget', compute='_compute_line_total_budget')
 
@@ -84,28 +88,28 @@ class ExpenditureBudget(models.Model):
             'target': 'new',
         }
 
-    def confirm(self):
-        if self.total_budget <= 0:
-            raise UserError(_('Please enter amount greater than zero.'))
-        # elif self.line_ids:
-        #     for line in self.line_ids:
-        #         if line.available < 5000:
-        #             raise UserError(_('Please enter amount greater than or equal to 5000.'))
-        else:
-            self.state = 'confirm'
+    # def confirm(self):
+    #     if self.total_budget <= 0:
+    #         raise UserError(_('Please enter amount greater than zero.'))
+    #     # elif self.line_ids:
+    #     #     for line in self.line_ids:
+    #     #         if line.available < 5000:
+    #     #             raise UserError(_('Please enter amount greater than or equal to 5000.'))
+    #     else:
+    #         self.state = 'confirm'
 
-    def approve(self):
-        self.state = 'validate'
+    # def approve(self):
+    #     self.state = 'validate'
 
-    def reject(self):
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'reject',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'views': [(False, 'form')],
-            'target': 'new',
-        }
+    # def reject(self):
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'reject',
+    #         'view_mode': 'form',
+    #         'view_type': 'form',
+    #         'views': [(False, 'form')],
+    #         'target': 'new',
+    #     }
 
 
 class ExpenditureBudgetLine(models.Model):

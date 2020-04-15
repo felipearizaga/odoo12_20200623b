@@ -20,24 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class SubDependency(models.Model):
+
+    _name = 'sub.dependency'
+    _description = 'Sub-Dependency'
+    _rec_name = 'sub_dependency'
+
+    dependency_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependency = fields.Char(string='Sub dependency', size=2)
+    description = fields.Text(string='Sub dependency description')
+
+    _sql_constraints = [('sub_dependency_dependency_id', 'unique(sub_dependency,dependency_id)',
+                         'The sub dependency must be unique per dependency')]
+
+    @api.constrains('sub_dependency')
+    def _check_sub_dependency(self):
+        if not str(self.sub_dependency).isnumeric():
+            raise ValidationError(_('The Sub Dependency must be numeric value'))

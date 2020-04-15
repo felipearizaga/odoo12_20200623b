@@ -20,24 +20,23 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class GeographicLocation(models.Model):
+
+    _name = 'geographic.location'
+    _description = 'Geographic Location'
+    _rec_name = 'state_key'
+
+    state_key = fields.Char(string='State key', size=2)
+    state_name = fields.Text(string='State name')
+
+    _sql_constraints = [('state_key', 'unique(state_key)',
+                         'The state key must be unique.')]
+
+    @api.constrains('state_key')
+    def _check_state_key(self):
+        if not str(self.state_key).isnumeric():
+            raise ValidationError(_('The state key must be numeric value'))

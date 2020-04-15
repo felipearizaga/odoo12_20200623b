@@ -23,10 +23,10 @@
                 <form>
                     <header>
                        <!--  <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight"/> -->
-                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('draft', 'previous'))]}"/>
+                       <!--  <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('draft', 'previous'))]}"/>
                         <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/> -->
                     </header>
                     <sheet>
                         <div>
@@ -90,7 +90,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="budget_name"/>
-                    <field name="responsible_id"/>
+                    <field name="responsible_id" readonly="1"/>
                     <field name="total_budget"/>
                     <field name="record_number"/>
                     <field name="import_record_number"/>
@@ -100,7 +100,7 @@
 
         <!-- action for expenditure budget views -->
         <record id="action_expenditure_budget" model="ir.actions.act_window">
-            <field name="name">Expenditure Budget</field>
+            <field name="name">Expenditure budget</field>
             <field name="res_model">expenditure.budget</field>
             <field name="view_mode">tree,form,search</field>
             <field name="view_id" ref="expenditure_budget_tree_view"/>

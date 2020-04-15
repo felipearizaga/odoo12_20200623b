@@ -4,7 +4,7 @@
     <menuitem
         name="UNAM Finance"
         id="menu_finance"
-        web_icon="jt_finance,static/description/finance.png"
+        web_icon="jt_finance,static/description/icon.png"
         sequence="41"
     />
 

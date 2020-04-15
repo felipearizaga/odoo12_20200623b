@@ -20,72 +20,178 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from datetime import datetime
+from odoo import models, fields, api, _
 
 
 class ProgramCode(models.Model):
 
     _name = 'program.code'
     _description = 'Program Code'
-    _rec_name = 'program_code'
+    # _rec_name = 'program_code'
 
-    year_id = fields.Many2one('year', string='Year')
-    program_id = fields.Many2one('program', string='Program')
-    description_id = fields.Many2one('program', string='Program description')
+    year = fields.Many2one('year.configuration', string='Year (YEAR)')
+
+    # Program Relations
+    program_id = fields.Many2one('program', string='KEY UNAM')
+    desc_program = fields.Text(
+        string='Description KEY UNAM', related="program_id.desc_key_unam")
+
+    # Sub Program Relation
     sub_program_id = fields.Many2one('sub.program', string='Sub program')
-    sub_program_name_id = fields.Many2one(
-        'sub.program', string='Sub program name')
-    unit_id = fields.Many2one('dependency', string='Unit')
-    dependency_name_id = fields.Many2one(
-        'dependency', string='Dependency name')
+    desc_sub_program = fields.Text(
+        string='Sub Program Description', related="sub_program_id.desc")
+
+    # Dependency Relation
+    dependency_id = fields.Many2one('dependency', string='Dependency')
+    desc_dependency = fields.Text(
+        string='Dependency Description', related="dependency_id.description")
+
+    # Sub Dependency Relation
     sub_dependency_id = fields.Many2one(
         'sub.dependency', string='Sub dependency')
-    sub_dependency_name_id = fields.Many2one(
-        'sub.dependency', string='Sub dependency name')
-    expenditure_item_id = fields.Many2one(
-        'expenditure.item', string='Expenditure item')
-    expenditure_item_name_id = fields.Many2one(
-        'expenditure.item', string='Expenditure item name')
-    check_digit_id = fields.Many2one('verifying.digit', string='Check digit')
+    desc_sub_dependency = fields.Text(
+        string='Sub-dependency Description', related="sub_dependency_id.description")
+
+    # Item Relation
+    item_id = fields.Many2one(
+        'expenditure.item', string='Item')
+    desc_item = fields.Text(string='Description of Item',
+                            related="item_id.description")
+
+    def _compute_check_digit(self):
+        dv_obj = self.env['verifying.digit']
+        for pc in self:
+            pc.check_digit = '00'
+            if pc.program_id and pc.sub_program_id and pc.dependency_id and pc.sub_dependency_id and pc.item_id:
+                vd = dv_obj.check_digit_from_codes(
+                    pc.program_id, pc.sub_program_id, pc.dependency_id, pc.sub_dependency_id, pc.item_id)
+                pc.check_digit = vd
+
+    check_digit = fields.Char(
+        string='Check Digit (DV)', size=2, compute="_compute_check_digit")
+
+    # Resource Origin Relation
     resource_origin_id = fields.Many2one(
-        'resource.origin', string='Origin of the resource')
-    resource_origin_name_id = fields.Many2one(
-        'resource.origin', string='Resource origin name')
+        'resource.origin', string='Key Origin resource')
+    desc_resource_origin = fields.Selection([
+        ('subsidy', 'Federal Subsidy'),
+        ('income', 'Extraordinary Income'),
+        ('service', 'Education Services'),
+        ('financial', 'Financial'),
+        ('other', 'Other Products'),
+        ('pef', 'Returns Reassignment PEF')],
+        string='Description Resource Origin', related="resource_origin_id.desc")
+
+    # Institutional Activity Relation
     institutional_activity_id = fields.Many2one(
-        'institutional.activity', string='Institutional activity')
-    institutional_activity_name_id = fields.Many2one(
-        'institutional.activity', string='Institutional activity name')
+        'institutional.activity', string='Institutional Activity Number')
+    desc_institutional_activity = fields.Text(
+        string='Activity Description Institutional', related="institutional_activity_id.description")
+
+    # Budget ProgramConversion Relation
     budget_program_conversion_id = fields.Many2one(
-        'budget.program.conversion', string='Conversion of budgetary program')
-    activity_id = fields.Many2one(
-        'budget.program.conversion', string='Activity')
+        'budget.program.conversion', string='Conversion Program SHCP')
+    desc_budget_program_conversion = fields.Text(
+        string='Description Conversion Program SHCP', related="budget_program_conversion_id.description")
+
+    # Federal Item Relation
     conversion_item_id = fields.Many2one(
-        'departure.conversion', string='Conversion with item')
-    conversion_item_name_id = fields.Many2one(
-        'departure.conversion', string='Conversion item name')
+        'departure.conversion', string='Federal Item')
+    desc_conversion_item = fields.Text(
+        string='Description of Federal Item', related="conversion_item_id.federal_part_desc")
+
+    # Expense Type Relation
     expense_type_id = fields.Many2one(
-        'expense.type', string='Expenditure type')
-    expense_type_name_id = fields.Many2one(
-        'expense.type', string='Expense type name')
+        'expense.type', string='Key Expenditure Type')
+    desc_expense_type = fields.Text(
+        string='Description Expenditure Type', related="expense_type_id.description_expenditure_type")
+
+    # Geographic Location Relation
     location_id = fields.Many2one(
-        'geographic.location', string='Geographic location')
-    state_id = fields.Many2one('geographic.location', string='State name')
+        'geographic.location', string='State Code')
+    desc_location = fields.Text(string='State name', related="location_id.state_name")
+
+    # Wallet Password Relation
     portfolio_id = fields.Many2one('key.wallet', string='Key portfolio')
-    portfolio_name_id = fields.Many2one('key.wallet', string='Portfolio name')
-    project_type_id = fields.Many2one('project.type', string='Project type')
-    project_type_identifier_id = fields.Many2one(
-        'project.type', string='Identifier')
-    # project_number_id = fields.Many2one(
-    #     'project.number', string='Project number')
-    # identifier_id = fields.Many2one('project.type', string='Identifier')
-    stage_id = fields.Many2one('stage', string='Stage')
-    # identifier_id = fields.Many2one('project.type', string='Identifier')
-    agreement_type_id = fields.Many2one(
-        'agreement.type', string='Agreement type')
-    # identifier_id = fields.Many2one('project.type', string='Identifier')
-    # agreement_number_id = fields.Many2one(
-    #     'agreement.number', string='Agreement number')
-    # agreement_number_description_id = fields.Many2one('agreement.number', string='Agreement number description')
-    program_code = fields.Char(string='Program code')
+    name_portfolio = fields.Text(string='Name of Portfolio Key', related="portfolio_id.wallet_password_name")
+
+    # Project Type Relation
+    project_type_id = fields.Many2one('project.type', string='Identifier Type of Project')
+    desc_project_type = fields.Text(string='Description Type of Project', related="project_type_id.desc_stage")
+    project_number = fields.Char(string='Project Number', related='project_type_id.number')
+
+    # Stage Relation
+    stage_id = fields.Many2one('stage', string='Stage Identifier')
+    desc_stage = fields.Text(string='Stage Description', related='stage_id.desc_stage')
+
+    # Agreement Relation
+    agreement_type_id = fields.Many2one('agreement.type', string='Identifier type of Agreement')
+    name_agreement = fields.Text(string='Name type of Agreement', related='agreement_type_id.name_agreement')
+    number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
+
+    def _compute_program_code(self):
+        for pc in self:
+            program_code = ''
+            if pc.year:
+                program_code += str(pc.year.name)
+            if pc.program_id and pc.program_id.key_unam:
+                program_code += str(pc.program_id.key_unam)
+            if pc.sub_program_id and pc.sub_program_id.sub_program:
+                program_code += str(pc.sub_program_id.sub_program)
+            if pc.dependency_id and pc.dependency_id.dependency:
+                program_code += str(pc.dependency_id.dependency)
+            if pc.sub_dependency_id and pc.sub_dependency_id.sub_dependency:
+                program_code += str(pc.sub_dependency_id.sub_dependency)
+            if pc.item_id and pc.item_id.item:
+                program_code += str(pc.item_id.item)
+            if pc.check_digit:
+                program_code += str(pc.check_digit)
+            if pc.resource_origin_id and pc.resource_origin_id.key_origin:
+                program_code += str(pc.resource_origin_id.key_origin)
+            if pc.institutional_activity_id and pc.institutional_activity_id.number:
+                program_code += str(pc.institutional_activity_id.number)
+            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp:
+                program_code += str(pc.budget_program_conversion_id.shcp)
+            if pc.conversion_item_id and pc.conversion_item_id.federal_part:
+                program_code += str(pc.conversion_item_id.federal_part)
+            if pc.expense_type_id and pc.expense_type_id.key_expenditure_type:
+                program_code += str(pc.expense_type_id.key_expenditure_type)
+            if pc.location_id and pc.location_id.state_key:
+                program_code += str(pc.location_id.state_key)
+            if pc.portfolio_id and pc.portfolio_id.wallet_password:
+                program_code += str(pc.portfolio_id.wallet_password)
+
+            # Project Related Fields Data
+            if pc.project_type_id and pc.project_type_id.project_type_identifier:
+                program_code += str(pc.project_type_id.project_type_identifier)
+
+            if pc.project_type_id and pc.project_type_id.number:
+                program_code += str(pc.project_type_id.number)
+
+            if pc.stage_id and pc.stage_id.stage_identifier:
+                program_code += str(pc.stage_id.stage_identifier)
+
+            if pc.agreement_type_id and pc.agreement_type_id.agreement_type:
+                program_code += str(pc.agreement_type_id.agreement_type)
+
+            if pc.agreement_type_id and pc.agreement_type_id.number_agreement:
+                program_code += str(pc.agreement_type_id.number_agreement)
+
+            pc.program_code = program_code
+
+    program_code = fields.Text(string='Programmatic Code', compute="_compute_program_code")
+
     state = fields.Selection(
         [('draft', 'Draft'), ('validated', 'Validated')], default='draft', string='Status')
+
+    @api.model
+    def default_get(self, fields):
+        res = super(ProgramCode, self).default_get(fields)
+        year_str = str(datetime.today().year)
+        year = self.env['year.configuration'].sudo().search([('name', '=', year_str)], limit=1)
+        if not year:
+            year = self.env['year.configuration'].sudo().create({'name': year_str})
+        if year:
+            res['year'] = year.id
+        return res

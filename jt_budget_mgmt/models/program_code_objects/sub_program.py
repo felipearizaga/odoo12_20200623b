@@ -20,24 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class SubProgram(models.Model):
+
+    _name = 'sub.program'
+    _description = 'Sub-Program'
+    _rec_name = 'sub_program'
+
+    unam_key_id = fields.Many2one('program', string='UNAM key')
+    sub_program = fields.Char(string='Sub program', size=2)
+    desc = fields.Text(string='Sub program description')
+
+    _sql_constraints = [('sub_program_unam_key_id', 'unique(sub_program,unam_key_id)',
+                         'The sub program must be unique per UNAM key')]
+
+    @api.constrains('sub_program')
+    def _check_sub_program(self):
+        if not str(self.sub_program).isnumeric():
+            raise ValidationError(_('The Sub Program value must be numeric value'))

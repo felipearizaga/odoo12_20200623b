@@ -21,45 +21,68 @@
             <field name="model">program.code</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
                     <sheet>
                         <group>
+                            <field name="program_code"/>
+                        </group>
+                        <group>
                             <group>
-                                <field name="year_id"/>
-                                <field name="program_id"/>
-                                <field name="description_id"/>
-                                <field name="sub_program_id"/>
-                                <field name="sub_program_name_id"/>
-                                <field name="unit_id"/>
-                                <field name="dependency_name_id"/>
-                                <field name="sub_dependency_id"/>
-                                <field name="sub_dependency_name_id"/>
-                                <field name="expenditure_item_id"/>
-                                <field name="expenditure_item_name_id"/>
-                                <field name="check_digit_id"/>
-                                <field name="resource_origin_id"/>
-                                <field name="resource_origin_name_id"/>
-                                <field name="institutional_activity_id"/>
-                                <field name="institutional_activity_name_id"/>
-                                <field name="budget_program_conversion_id"/>
-                                <field name="activity_id"/>
+                                <field name="year" required="1"/>
+                                
+                                <!-- Program Relation -->
+                                <field name="program_id" required="1"/>
+                                <field name="desc_program"/>
+                                <!-- Sub Program Relation -->
+                                <field name="sub_program_id" required="1"/>
+                                <field name="desc_sub_program"/>
+                                <!-- Dependency Relation -->
+                                <field name="dependency_id" required="1"/>
+                                <field name="desc_dependency"/>
+                                <!-- Sub-Dependency Relation -->
+                                <field name="sub_dependency_id" required="1"/>
+                                <field name="desc_sub_dependency"/>
+                                <!-- Item Relation -->
+                                <field name="item_id" required="1"/>
+                                <field name="desc_item"/>
+                                <!-- Digit Verification -->
+                                <field name="check_digit"/>
+                                <!-- Resource Origin Relation -->
+                                <field name="resource_origin_id" required="1"/>
+                                <field name="desc_resource_origin"/>
+                                <!-- Institutional Activity Relation -->
+                                <field name="institutional_activity_id" required="1"/>
+                                <field name="desc_institutional_activity"/>
+                                <!-- Budget ProgramConversion Relation -->
+                                <field name="budget_program_conversion_id" required="1"/>
+                                <field name="desc_budget_program_conversion"/>
                             </group>
                             <group>
-                                <field name="conversion_item_id"/>
-                                <field name="conversion_item_name_id"/>
-                                <field name="expense_type_id"/>
-                                <field name="expense_type_name_id"/>
-                                <field name="location_id"/>
-                                <field name="state_id"/>
-                                <field name="portfolio_id"/>
-                                <field name="portfolio_name_id"/>
-                                <field name="project_type_id"/>
-                                <field name="project_type_identifier_id"/>
-                                <!-- <field name="project_number_id"/> -->
+                                <!-- Federal Item Relation -->
+                                <field name="conversion_item_id" required="1"/>
+                                <field name="desc_conversion_item"/>
+                                <!-- Expense Type Relation -->
+                                <field name="expense_type_id" required="1"/>
+                                <field name="desc_expense_type"/>
+                                <!-- Geographic Location Relation -->
+                                <field name="location_id" required="1"/>
+                                <field name="desc_location"/>
+                                <!-- Wallet Password Relation -->
+                                <field name="portfolio_id" required="1"/>
+                                <field name="name_portfolio"/>
+                                <!-- Project Type Relation -->
+                                <field name="project_type_id" required="1"/>
+                                <field name="desc_project_type"/>
+                                <field name="project_number"/>
+                                <!-- Stage Relation -->
                                 <field name="stage_id"/>
+                                <field name="desc_stage"/>
+                                <!-- Agreement Relation -->
                                 <field name="agreement_type_id"/>
-                                <!-- <field name="agreement_number_id"/>
-                                <field name="agreement_number_description_id"/> -->
-                                <field name="program_code"/>
+                                <field name="name_agreement"/>
+                                <field name="number_agreement"/>
                             </group>
                         </group>
                     </sheet>

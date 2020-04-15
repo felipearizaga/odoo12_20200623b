@@ -20,24 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'UNAM Finance',
-    'summary': 'Finance Management System for UNAM',
-    'version': '13.0.0.1.1',
-    'category': 'Accounting',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_budget_mgmt'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
-        'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
-        'views/budget_view.xml',
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class KeyWallet(models.Model):
+
+    _name = 'key.wallet'
+    _description = 'Key Wallet'
+    _rec_name = 'wallet_password'
+
+    wallet_password = fields.Char(string='Wallet password', size=4)
+    wallet_password_name = fields.Text(string='Wallet password name')
+    wallet_password_desc = fields.Text(string='Wallet password description')
+
+    _sql_constraints = [('wallet_password', 'unique(wallet_password)',
+                         'The wallet password must be unique.')]
+
+    @api.constrains('wallet_password')
+    def _check_wallet_password(self):
+        if not str(self.wallet_password).isnumeric():
+            raise ValidationError(_('The wallet password must be numeric value'))

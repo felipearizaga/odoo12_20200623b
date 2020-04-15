@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Demo data for Programmatic Code Structure and Orders -->
     <data noupdate="1">
         <record id="code_structure_1" model="code.structure">
             <field name="position_priority">01</field>
