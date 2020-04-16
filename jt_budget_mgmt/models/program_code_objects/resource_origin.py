@@ -31,12 +31,12 @@ class ResourceOrigin(models.Model):
     _rec_name = 'key_origin'
 
     key_origin = fields.Selection([
-        ('0', '00'),
-        ('1', '01'),
-        ('2', '02'),
-        ('3', '03'),
-        ('4', '04'),
-        ('5', '05')], string='Key origin of the resource')
+        ('00', '00'),
+        ('01', '01'),
+        ('02', '02'),
+        ('03', '03'),
+        ('04', '04'),
+        ('05', '05')], string='Key origin of the resource')
     desc = fields.Selection([
         ('subsidy', 'Federal Subsidy'),
         ('income', 'Extraordinary Income'),
@@ -51,17 +51,24 @@ class ResourceOrigin(models.Model):
     @api.constrains('key_origin', 'desc')
     def _check_field_relation(self):
         flag = False
-        if self.key_origin == '0' and self.desc != 'subsidy':
+        if self.key_origin == '00' and self.desc != 'subsidy':
             flag = True
-        elif self.key_origin == '1' and self.desc != 'income':
+        elif self.key_origin == '01' and self.desc != 'income':
             flag = True
-        elif self.key_origin == '2' and self.desc != 'service':
+        elif self.key_origin == '02' and self.desc != 'service':
             flag = True
-        elif self.key_origin == '3' and self.desc != 'financial':
+        elif self.key_origin == '03' and self.desc != 'financial':
             flag = True
-        elif self.key_origin == '4' and self.desc != 'other':
+        elif self.key_origin == '04' and self.desc != 'other':
             flag = True
-        elif self.key_origin == '5' and self.desc != 'pef':
+        elif self.key_origin == '05' and self.desc != 'pef':
             flag = True
         if flag:
             raise ValidationError(_('Please select correct key Origin of the resource!'))
+
+    def unlink(self):
+        for ro in self:
+            program_code = self.env['program.code'].search([('resource_origin_id', '=', ro.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete origin resource which are mapped with program code!')
+        return super(ResourceOrigin, self).unlink()

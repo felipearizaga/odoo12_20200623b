@@ -8,8 +8,10 @@
             <field name="arch" type="xml">
                 <search string="Expenditure Budget">
                     <field name="budget_name"/>
+                    <field name="state"/>
                     <group expand="1" string="Group By">
                         <filter string="Budget name" name='budget_name' context="{'group_by':'budget_name'}"/>
+                        <filter string="Status" name='status_groupby' context="{'group_by':'state'}"/>
                     </group>
                 </search>
             </field>
@@ -22,11 +24,13 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                       <!--  <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight"/> -->
-                       <!--  <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('draft', 'previous'))]}"/>
-                        <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/>
-                        <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/> -->
+                        <button name="validate_and_add_budget_line" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'in_progress')]}"/>
+
+                        <!-- <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight"/> -->
+                        <!-- <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('draft', 'previous'))]}"/> -->
+                        <!-- <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/> -->
+                        <!-- <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/> -->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/>
                     </header>
                     <sheet>
                         <div>
@@ -55,7 +59,7 @@
                             <page string="Expenditure Budget Lines">
                                 <field name="line_ids">
                                     <tree>
-                                        <field name="code"/>
+                                        <field name="program_code_id"/>
                                         <field name="start_date"/>
                                         <field name="end_date"/>
                                         <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
@@ -65,17 +69,29 @@
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="code"/>
-                                            <field name="start_date"/>
-                                            <field name="end_date"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                            <field name="program_code_id" required="1"/>
+                                            <field name="start_date" required="1"/>
+                                            <field name="end_date" required="1"/>
+                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
                                         </group>
                                     </form>
                                 </field>
+                            </page>
+                            <page string='Import Status' attrs="{'invisible': [('budget_file', '=', False)]}">
+                                <group>
+                                    <field name="budget_file"/>
+                                    <field name="import_status"/>
+                                    <field name="failed_row_file"/>
+                                    <field name="failed_rows"/>
+                                    <field name="success_rows"/>
+                                    <field name="failed_row_ids"/>
+                                    <field name="success_row_ids"/>
+                                    <field name="pointer_row"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>

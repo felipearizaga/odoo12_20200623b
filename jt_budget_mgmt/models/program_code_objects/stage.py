@@ -28,7 +28,7 @@ class Stage(models.Model):
 
     _name = 'stage'
     _description = 'Stage'
-    _rec_name = 'project_id'
+    _rec_name = 'stage_identifier'
 
     project_id = fields.Many2one('project.project', string='Stage Identifier')
     desc = fields.Text(string='Description', related="project_id.desc_stage")
@@ -39,3 +39,10 @@ class Stage(models.Model):
     agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
+
+    def unlink(self):
+        for stage in self:
+            program_code = self.env['program.code'].search([('stage_id', '=', stage.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete stage identifier which are mapped with program code!')
+        return super(Stage, self).unlink()

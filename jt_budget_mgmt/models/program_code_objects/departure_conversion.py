@@ -39,3 +39,24 @@ class DepartureConversion(models.Model):
     def _check_federal_part(self):
         if not str(self.federal_part).isnumeric():
             raise ValidationError(_('The Institutional activity number must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(5)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('federal_part') and len(vals.get('federal_part')) != 5:
+            vals['federal_part'] = self.fill_zero(vals.get('federal_part'))
+        return super(DepartureConversion, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('federal_part') and len(vals.get('federal_part')) != 5:
+            vals['federal_part'] = self.fill_zero(vals.get('federal_part'))
+        return super(DepartureConversion, self).write(vals)
+
+    def unlink(self):
+        for conversion in self:
+            program_code = self.env['program.code'].search([('conversion_item_id', '=', conversion.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete conversion item which are mapped with program code!')
+        return super(DepartureConversion, self).unlink()

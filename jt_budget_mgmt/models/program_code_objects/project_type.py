@@ -28,7 +28,7 @@ class ProjectType(models.Model):
 
     _name = 'project.type'
     _description = 'Project Type'
-    _rec_name = 'project_id'
+    _rec_name = 'project_type_identifier'
 
     project_id = fields.Many2one('project.project', string='Project type identifier')
     project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
@@ -38,3 +38,10 @@ class ProjectType(models.Model):
     agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
+
+    def unlink(self):
+        for pro_type in self:
+            program_code = self.env['program.code'].search([('project_type_id', '=', pro_type.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete project type which are mapped with program code!')
+        return super(ProjectType, self).unlink()

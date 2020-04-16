@@ -28,7 +28,8 @@ class ProjectProject(models.Model):
 
     _inherit = 'project.project'
 
-    project_type_identifier = fields.Char(string='Project Type Identifier', size=2)
+    project_type_identifier = fields.Char(
+        string='Project Type Identifier', size=2)
     number = fields.Char(string='Number', size=6)
     stage_identifier = fields.Char(string="Stage Identifier", size=2)
     desc_stage = fields.Text(string='Description Stage')
@@ -48,7 +49,8 @@ class ProjectProject(models.Model):
     @api.constrains('project_type_identifier')
     def _check_project_type_identifier(self):
         if not str(self.project_type_identifier).isnumeric():
-            raise ValidationError(_('The Project Type Identifier must be numeric value'))
+            raise ValidationError(
+                _('The Project Type Identifier must be numeric value'))
 
     @api.constrains('number')
     def _check_number(self):
@@ -58,14 +60,69 @@ class ProjectProject(models.Model):
     @api.constrains('stage_identifier')
     def _check_stage_identifier(self):
         if not str(self.stage_identifier).isnumeric():
-            raise ValidationError(_('The Stage Identifier must be numeric value'))
+            raise ValidationError(
+                _('The Stage Identifier must be numeric value'))
 
     @api.constrains('agreement_type')
     def _check_agreement_type(self):
         if not str(self.agreement_type).isnumeric():
-            raise ValidationError(_('The Agreement Type must be numeric value'))
+            raise ValidationError(
+                _('The Agreement Type must be numeric value'))
 
     @api.constrains('number_agreement')
     def _check_number_agreement(self):
         if not str(self.number_agreement).isnumeric():
-            raise ValidationError(_('The Number Agreement must be numeric value'))
+            raise ValidationError(
+                _('The Number Agreement must be numeric value'))
+
+    def fill_zero(self, code, digit):
+        return str(code).zfill(digit)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('project_type_identifier') and len(vals.get('project_type_identifier')) != 2:
+            vals['project_type_identifier'] = self.fill_zero(
+                vals.get('project_type_identifier'), 2)
+        if vals.get('number') and len(vals.get('number')) != 6:
+            vals['number'] = self.fill_zero(vals.get('number'), 6)
+        if vals.get('stage_identifier') and len(vals.get('stage_identifier')) != 2:
+            vals['stage_identifier'] = self.fill_zero(
+                vals.get('stage_identifier'), 2)
+        if vals.get('agreement_type') and len(vals.get('agreement_type')) != 2:
+            vals['agreement_type'] = self.fill_zero(
+                vals.get('agreement_type'), 2)
+        if vals.get('number_agreement') and len(vals.get('number_agreement')) != 6:
+            vals['number_agreement'] = self.fill_zero(
+                vals.get('number_agreement'), 6)
+        return super(ProjectProject, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('project_type_identifier') and len(vals.get('project_type_identifier')) != 2:
+            vals['project_type_identifier'] = self.fill_zero(
+                vals.get('project_type_identifier'), 2)
+        if vals.get('number') and len(vals.get('number')) != 6:
+            vals['number'] = self.fill_zero(vals.get('number'), 6)
+        if vals.get('stage_identifier') and len(vals.get('stage_identifier')) != 2:
+            vals['stage_identifier'] = self.fill_zero(
+                vals.get('stage_identifier'), 2)
+        if vals.get('agreement_type') and len(vals.get('agreement_type')) != 2:
+            vals['agreement_type'] = self.fill_zero(
+                vals.get('agreement_type'), 2)
+        if vals.get('number_agreement') and len(vals.get('number_agreement')) != 6:
+            vals['number_agreement'] = self.fill_zero(
+                vals.get('number_agreement'), 6)
+        return super(ProjectProject, self).write(vals)
+
+    def name_get(self):
+        result = []
+        for project in self:
+            display_name_field = project.name
+            if self._context.get('display_name_custom'):
+                if self._context.get('display_name_custom') == 'project_type_identifier':
+                    display_name_field = project.project_type_identifier
+                if self._context.get('display_name_custom') == 'stage_identifier':
+                    display_name_field = project.stage_identifier
+                if self._context.get('display_name_custom') == 'agreement_type':
+                    display_name_field = project.agreement_type
+            result.append((project.id, display_name_field))
+        return result

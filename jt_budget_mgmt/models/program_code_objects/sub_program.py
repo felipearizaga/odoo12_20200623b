@@ -41,3 +41,24 @@ class SubProgram(models.Model):
     def _check_sub_program(self):
         if not str(self.sub_program).isnumeric():
             raise ValidationError(_('The Sub Program value must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(2)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('sub_program') and len(vals.get('sub_program')) != 2:
+            vals['sub_program'] = self.fill_zero(vals.get('sub_program'))
+        return super(SubProgram, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('sub_program') and len(vals.get('sub_program')) != 2:
+            vals['sub_program'] = self.fill_zero(vals.get('sub_program'))
+        return super(SubProgram, self).write(vals)
+
+    def unlink(self):
+        for subprogram in self:
+            program_code = self.env['program.code'].search([('sub_program_id', '=', subprogram.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete sub-program which are mapped with program code!')
+        return super(SubProgram, self).unlink()

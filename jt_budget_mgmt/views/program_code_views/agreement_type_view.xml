@@ -56,7 +56,7 @@
             <field name="res_model">agreement.type</field>
             <field name="view_mode">tree,form,search</field>
             <field name="view_id" ref="agreement_type_tree_view"/>
-            <field name="context">{}</field>
+            <field name="context">{'display_name_custom': 'agreement_type'}</field>
         </record>
     </data>
 </odoo>

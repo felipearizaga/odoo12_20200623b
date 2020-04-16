@@ -40,3 +40,24 @@ class GeographicLocation(models.Model):
     def _check_state_key(self):
         if not str(self.state_key).isnumeric():
             raise ValidationError(_('The state key must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(2)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('state_key') and len(vals.get('state_key')) != 2:
+            vals['state_key'] = self.fill_zero(vals.get('state_key'))
+        return super(GeographicLocation, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('state_key') and len(vals.get('state_key')) != 2:
+            vals['state_key'] = self.fill_zero(vals.get('state_key'))
+        return super(GeographicLocation, self).write(vals)
+
+    def unlink(self):
+        for location in self:
+            program_code = self.env['program.code'].search([('location_id', '=', location.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete geographic location item which are mapped with program code!')
+        return super(GeographicLocation, self).unlink()

@@ -11,6 +11,105 @@
             <field name='parent_id' ref='jt_conac.menu_child_reporting_conac'/>
         </record>
 
+        <record id="statement_financial_report0" model="account.financial.html.report.line">
+            <field name="name">Activo</field>
+            <field name="code">Activo</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="0" />
+        </record>
+
+        <record id="statement_financial_report0_1" model="account.financial.html.report.line">
+            <field name="name">Activo Circulante</field>
+            <field name="code">Activo Circulante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report0_total" model="account.financial.html.report.line">
+            <field name="name">Total de Activos Circulantesa</field>
+            <field name="code">Total de Activos Circulantesa</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report0_2" model="account.financial.html.report.line">
+            <field name="name">Activo No Circulante</field>
+            <field name="code">Activo No Circulante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report1" model="account.financial.html.report.line">
+            <field name="name">Pasivo</field>
+            <field name="code">Pasivo</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="2"/>
+            <field name="level" eval="0" />
+        </record>
+
+        <record id="statement_financial_report1_1" model="account.financial.html.report.line">
+            <field name="name">Pasivo Circulante</field>
+            <field name="code">Pasivo Circulante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="2"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report1_2" model="account.financial.html.report.line">
+            <field name="name">Pasivo No Circulante</field>
+            <field name="code">Pasivo No Circulante</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="2"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report2" model="account.financial.html.report.line">
+            <field name="name">Hacienda Pública / Patrimonio</field>
+            <field name="code">Hacienda Pública / Patrimonio</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="3"/>
+            <field name="level" eval="0" />
+        </record>
+
+        <record id="statement_financial_report3_1" model="account.financial.html.report.line">
+            <field name="name">Hacienda Pública/ Patrimonio Contribuido</field>
+            <field name="code">Hacienda Pública/ Patrimonio Contribuido</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="3"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report3_2" model="account.financial.html.report.line">
+            <field name="name">Hacienda Pública/ Patrimonio Generado</field>
+            <field name="code">Hacienda Pública/ Patrimonio Generado</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="3"/>
+            <field name="level" eval="1" />
+        </record>
+
+        <record id="statement_financial_report3_3" model="account.financial.html.report.line">
+            <field name="name">Exceso o Insuficiencia en la Actualización de la Hacienda Pública/ Patrimonio</field>
+            <field name="code">Exceso o Insuficiencia en la Actualización de la Hacienda Pública/ Patrimonio</field>
+            <field name="financial_report_id" ref="report_stmt_of_fin_postn"/>
+            <field name="formulas"></field>
+            <field name="sequence" eval="3"/>
+            <field name="level" eval="1" />
+        </record>
+
         <record id="report_status_of_activities" model="account.financial.html.report">
             <field name="name">Status of Activities</field>
             <field name="debit_credit" eval="False"/>

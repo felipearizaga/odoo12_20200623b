@@ -28,7 +28,7 @@ class ProgramCode(models.Model):
 
     _name = 'program.code'
     _description = 'Program Code'
-    # _rec_name = 'program_code'
+    _rec_name = 'program_code'
 
     year = fields.Many2one('year.configuration', string='Year (YEAR)')
 

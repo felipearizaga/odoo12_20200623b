@@ -42,14 +42,14 @@ class ImportLine(models.TransientModel):
 
     def download_file(self):
         file_path = get_resource_path(
-            'jt_budget_mgmt', 'static/file/import_line', 'import_line.xls')
+            'jt_budget_mgmt', 'static/file/import_line', 'import_line.xlsx')
         file = False
         with open(file_path, 'rb') as file_date:
             file = base64.b64encode(file_date.read())
-        self.dwnld_filename = 'import_line.xls'
+        self.dwnld_filename = 'import_line.xlsx'
         self.dwnld_file = file
         return {
-            'name': 'Download Sample File',
+            'name': 'Download',
             'view_type': 'form',
             'view_mode': 'form',
             'view_id': False,
@@ -65,47 +65,39 @@ class ImportLine(models.TransientModel):
             self._context.get('active_ids'))
         if budget.budget_name != self.budget_name:
             raise UserError(_('Budget name does not match.'))
-        # elif budget.total_budget != self.total_budget:
-        #     raise UserError(_('Total budget does not match.'))
-        # elif budget.record_number != self.record_number:
-        #     raise UserError(_('Number of records do not match.'))
         elif self.file:
             try:
                 data = base64.decodestring(self.file)
                 book = open_workbook(file_contents=data or b'')
                 sheet = book.sheet_by_index(0)
+
                 total_rows = self.record_number + 1
                 if sheet.nrows != total_rows:
                     raise UserError(_('Number of records do not match with file'))
+
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
-                result_vals = []
+
                 total_budget_amount = 0
+                result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
                     result_dict = {}
                     counter = 0
                     for colx, cell in enumerate(row, 1):
                         result_dict.update({headers[counter]: cell.value})
                         counter += 1
-                    if 'assigned' in result_dict:
-                        total_budget_amount += float(result_dict.get('assigned'))
+                    if 'Importe 1a Asignacion' in result_dict:
+                        total_budget_amount += float(result_dict.get('Importe 1a Asignacion'))
                     result_vals.append(result_dict)
                 if total_budget_amount != self.total_budget:
-                    raise UserError(_('Total Budget not match with assigned amount in file'))
+                    raise UserError(_('Total Budget Amount not match with total assigned amount in file'))
 
-                data = result_vals
-                for rec in data:
-                    vals = {'code': rec.get('code'),
-                            'start_date': rec.get('start_date'),
-                            'end_date': rec.get('end_date'),
-                            'authorized': rec.get('authorized'),
-                            'assigned': rec.get('assigned'),
-                            'available': rec.get('available'),
-                            'expenditure_budget_id': budget.id,
-                            'imported': True,
-                            }
-                    budget.line_ids.create(vals)
+                if budget:
+                    budget.write({
+                        'budget_file': self.file,
+                        'import_status': 'in_progress',
+                    })
             except UserError as e:
                 raise UserError(e)

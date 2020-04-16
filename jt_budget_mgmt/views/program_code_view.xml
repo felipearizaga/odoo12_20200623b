@@ -36,13 +36,13 @@
                                 <field name="program_id" required="1"/>
                                 <field name="desc_program"/>
                                 <!-- Sub Program Relation -->
-                                <field name="sub_program_id" required="1"/>
+                                <field name="sub_program_id" required="1" domain="[('unam_key_id', '=', program_id)]" context="{'default_unam_key_id': program_id}"/>
                                 <field name="desc_sub_program"/>
                                 <!-- Dependency Relation -->
                                 <field name="dependency_id" required="1"/>
                                 <field name="desc_dependency"/>
                                 <!-- Sub-Dependency Relation -->
-                                <field name="sub_dependency_id" required="1"/>
+                                <field name="sub_dependency_id" required="1" domain="[('dependency_id', '=', dependency_id)]" context="{'default_dependency_id': dependency_id}"/>
                                 <field name="desc_sub_dependency"/>
                                 <!-- Item Relation -->
                                 <field name="item_id" required="1"/>
@@ -56,7 +56,7 @@
                                 <field name="institutional_activity_id" required="1"/>
                                 <field name="desc_institutional_activity"/>
                                 <!-- Budget ProgramConversion Relation -->
-                                <field name="budget_program_conversion_id" required="1"/>
+                                <field name="budget_program_conversion_id" required="1" domain="[('unam_key_id', '=', program_id)]" context="{'default_unam_key_id': program_id}"/>
                                 <field name="desc_budget_program_conversion"/>
                             </group>
                             <group>
@@ -73,14 +73,14 @@
                                 <field name="portfolio_id" required="1"/>
                                 <field name="name_portfolio"/>
                                 <!-- Project Type Relation -->
-                                <field name="project_type_id" required="1"/>
+                                <field name="project_type_id" required="1" context="{'display_name_custom': 'project_type_identifier'}"/>
                                 <field name="desc_project_type"/>
                                 <field name="project_number"/>
                                 <!-- Stage Relation -->
-                                <field name="stage_id"/>
+                                <field name="stage_id" context="{'display_name_custom': 'stage_identifier'}"/>
                                 <field name="desc_stage"/>
                                 <!-- Agreement Relation -->
-                                <field name="agreement_type_id"/>
+                                <field name="agreement_type_id" context="{'display_name_custom': 'agreement_type'}"/>
                                 <field name="name_agreement"/>
                                 <field name="number_agreement"/>
                             </group>

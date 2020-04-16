@@ -39,3 +39,24 @@ class Dependency(models.Model):
     def _check_dependency(self):
         if not str(self.dependency).isnumeric():
             raise ValidationError(_('The Dependency must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(3)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('dependency') and len(vals.get('dependency')) != 3:
+            vals['dependency'] = self.fill_zero(vals.get('dependency'))
+        return super(Dependency, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('dependency') and len(vals.get('dependency')) != 3:
+            vals['dependency'] = self.fill_zero(vals.get('dependency'))
+        return super(Dependency, self).write(vals)
+
+    def unlink(self):
+        for dependency in self:
+            program_code = self.env['program.code'].search([('dependency_id', '=', dependency.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete dependency which are mapped with program code!')
+        return super(Dependency, self).unlink()

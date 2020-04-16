@@ -41,3 +41,24 @@ class KeyWallet(models.Model):
     def _check_wallet_password(self):
         if not str(self.wallet_password).isnumeric():
             raise ValidationError(_('The wallet password must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(4)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('wallet_password') and len(vals.get('wallet_password')) != 4:
+            vals['wallet_password'] = self.fill_zero(vals.get('wallet_password'))
+        return super(KeyWallet, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('wallet_password') and len(vals.get('wallet_password')) != 4:
+            vals['wallet_password'] = self.fill_zero(vals.get('wallet_password'))
+        return super(KeyWallet, self).write(vals)
+
+    def unlink(self):
+        for key in self:
+            program_code = self.env['program.code'].search([('portfolio_id', '=', key.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete key portfolio item which are mapped with program code!')
+        return super(KeyWallet, self).unlink()

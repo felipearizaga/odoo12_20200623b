@@ -62,7 +62,7 @@ class VerifyingDigit(models.Model):
             result_odd = odd * 7
             result_even = even * 3
             result_odd_even = result_odd + result_even
-            vd = str(result_odd_even)[-2:]
+            vd = '0' + str(result_odd_even)[-1:]
             return vd
 
     def check_digit_from_codes(self, program_id, sub_program_id, dependency_id, sub_dependency_id, item_id):
@@ -86,7 +86,7 @@ class VerifyingDigit(models.Model):
             result_odd = odd * 7
             result_even = even * 3
             result_odd_even = result_odd + result_even
-            vd = str(result_odd_even)[-2:]
+            vd = '0' + str(result_odd_even)[-1:]
             return vd
         else:
             return '00'

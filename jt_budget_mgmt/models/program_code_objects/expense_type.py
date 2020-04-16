@@ -41,3 +41,24 @@ class ExpenseType(models.Model):
     def _check_key_expenditure_type(self):
         if not str(self.key_expenditure_type).isnumeric():
             raise ValidationError(_('The Key expenditure type must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(2)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('key_expenditure_type') and len(vals.get('key_expenditure_type')) != 2:
+            vals['key_expenditure_type'] = self.fill_zero(vals.get('key_expenditure_type'))
+        return super(ExpenseType, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('key_expenditure_type') and len(vals.get('key_expenditure_type')) != 2:
+            vals['key_expenditure_type'] = self.fill_zero(vals.get('key_expenditure_type'))
+        return super(ExpenseType, self).write(vals)
+
+    def unlink(self):
+        for expense in self:
+            program_code = self.env['program.code'].search([('expense_type_id', '=', expense.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete expense type item which are mapped with program code!')
+        return super(ExpenseType, self).unlink()

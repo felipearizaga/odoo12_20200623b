@@ -41,3 +41,24 @@ class SubDependency(models.Model):
     def _check_sub_dependency(self):
         if not str(self.sub_dependency).isnumeric():
             raise ValidationError(_('The Sub Dependency must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(2)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('sub_dependency') and len(vals.get('sub_dependency')) != 2:
+            vals['sub_dependency'] = self.fill_zero(vals.get('sub_dependency'))
+        return super(SubDependency, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('sub_dependency') and len(vals.get('sub_dependency')) != 2:
+            vals['sub_dependency'] = self.fill_zero(vals.get('sub_dependency'))
+        return super(SubDependency, self).write(vals)
+
+    def unlink(self):
+        for subdependency in self:
+            program_code = self.env['program.code'].search([('sub_dependency_id', '=', subdependency.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete sub-dependency which are mapped with program code!')
+        return super(SubDependency, self).unlink()

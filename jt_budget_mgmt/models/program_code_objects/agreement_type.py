@@ -28,7 +28,7 @@ class AgreementType(models.Model):
 
     _name = 'agreement.type'
     _description = 'Type of Agreement'
-    _rec_name = 'number'
+    _rec_name = 'agreement_type'
 
     project_id = fields.Many2one(
         'project.project', string='Agreement type identifier')
@@ -41,3 +41,10 @@ class AgreementType(models.Model):
     agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
+
+    def unlink(self):
+        for agree_type in self:
+            program_code = self.env['program.code'].search([('agreement_type_id', '=', agree_type.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete agreement type which are mapped with program code!')
+        return super(AgreementType, self).unlink()

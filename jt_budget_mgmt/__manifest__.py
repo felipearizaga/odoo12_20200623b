@@ -69,6 +69,7 @@
     ],
     'demo': [
         'demo/demo_code_structure.xml',
+        'demo/demo_year_configuration.xml',
     ],
     'application': False,
     'installable': True,

@@ -79,3 +79,24 @@ class ExpenditureItem(models.Model):
                 self.assigned_account = self.unam_account_id.name
             else:
                 self.assigned_account = False
+
+    def fill_zero(self, code):
+        return str(code).zfill(3)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('item') and len(vals.get('item')) != 3:
+            vals['item'] = self.fill_zero(vals.get('item'))
+        return super(ExpenditureItem, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('item') and len(vals.get('item')) != 3:
+            vals['item'] = self.fill_zero(vals.get('item'))
+        return super(ExpenditureItem, self).write(vals)
+
+    def unlink(self):
+        for item in self:
+            program_code = self.env['program.code'].search([('item_id', '=', item.id)], limit=1)
+            if program_code:
+                raise ValidationError('You can not delete item which are mapped with program code!')
+        return super(ExpenditureItem, self).unlink()
