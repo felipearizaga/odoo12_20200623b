@@ -97,6 +97,7 @@ class ImportLine(models.TransientModel):
                 if budget:
                     budget.write({
                         'budget_file': self.file,
+                        'filename': self.filename,
                         'import_status': 'in_progress',
                     })
             except UserError as e:

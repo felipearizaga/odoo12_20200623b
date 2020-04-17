@@ -42,7 +42,7 @@
                         <group>
                             <group>
                                 <field name="responsible_id" required="1"/>
-                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'draft')]}"/>
                                 <field name="total_budget" required="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>
@@ -59,9 +59,15 @@
                             <page string="Expenditure Budget Lines">
                                 <field name="line_ids">
                                     <tree>
+                                        <field name="imported" invisible="1"/>
                                         <field name="program_code_id"/>
+                                        <field name="dependency_id"/>
+                                        <field name="sub_dependency_id"/>
+                                        <field name="program_id"/>
+                                        <field name="item_id"/>
                                         <field name="start_date"/>
                                         <field name="end_date"/>
+                                        <field name="paid_date"/>
                                         <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
                                         <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
@@ -69,11 +75,17 @@
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="program_code_id" required="1"/>
-                                            <field name="start_date" required="1"/>
-                                            <field name="end_date" required="1"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
-                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                                            <field name="imported" invisible="1"/>
+                                            <field name="program_code_id" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="dependency_id" invisible="1"/>
+                                            <field name="sub_dependency_id" invisible="1"/>
+                                            <field name="program_id" invisible="1"/>
+                                            <field name="item_id" invisible="1"/>
+                                            <field name="start_date" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="end_date" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="paid_date"/>
+                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
@@ -83,14 +95,16 @@
                             </page>
                             <page string='Import Status' attrs="{'invisible': [('budget_file', '=', False)]}">
                                 <group>
-                                    <field name="budget_file"/>
-                                    <field name="import_status"/>
-                                    <field name="failed_row_file"/>
-                                    <field name="failed_rows"/>
-                                    <field name="success_rows"/>
-                                    <field name="failed_row_ids"/>
-                                    <field name="success_row_ids"/>
-                                    <field name="pointer_row"/>
+                                    <field name="budget_file" filename="filename" readonly="1"/>
+                                    <field name="filename" invisible="1"/>
+                                    <field name="fialed_row_filename" invisible="1"/>
+                                    <field name="import_status" readonly="1"/>
+                                    <field name="failed_row_file" attrs="{'invisible': [('failed_rows', '=', 0)]}" readonly="1" string="Failed Rows Tracker" filename="fialed_row_filename"/>
+                                    <field name="failed_rows" string="Total Failed Rows" readonly="1"/>
+                                    <field name="success_rows" string="Total Success Rows" readonly="1"/>
+                                    <field name="failed_row_ids" string="Failed Rows" readonly="1"/>
+                                    <field name="success_row_ids" string="Success Rows" readonly="1"/>
+                                    <field name="pointer_row" string="Next Row To Start" readonly="1"/>
                                 </group>
                             </page>
                         </notebook>

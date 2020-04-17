@@ -37,14 +37,14 @@ class ProjectProject(models.Model):
     name_agreement = fields.Text(string='Name Agreement')
     number_agreement = fields.Char(string='Number Agreement', size=6)
 
-    _sql_constraints = [('uniq_project_type_identifier', 'unique(project_type_identifier)',
-                         'The Project Type Identifier must be unique!')]
+    # _sql_constraints = [('uniq_project_type_identifier', 'unique(project_type_identifier)',
+    #                      'The Project Type Identifier must be unique!')]
 
-    _sql_constraints = [('uniq_number_project', 'unique(number)',
-                         'The number must be unique!')]
+    # _sql_constraints = [('uniq_number_project', 'unique(number)',
+    #                      'The number must be unique!')]
 
-    _sql_constraints = [('uniq_number_agreement', 'unique(number_agreement)',
-                         'The Number Agreement must be unique!')]
+    # _sql_constraints = [('uniq_number_agreement', 'unique(number_agreement)',
+    #                      'The Number Agreement must be unique!')]
 
     @api.constrains('project_type_identifier')
     def _check_project_type_identifier(self):

@@ -21,6 +21,7 @@
 #
 ##############################################################################
 from datetime import datetime
+from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _
 
 
@@ -179,8 +180,10 @@ class ProgramCode(models.Model):
                 program_code += str(pc.agreement_type_id.number_agreement)
 
             pc.program_code = program_code
+            pc.program_code_copy = program_code
 
     program_code = fields.Text(string='Programmatic Code', compute="_compute_program_code")
+    program_code_copy = fields.Text(string='Programmatic Code')
 
     state = fields.Selection(
         [('draft', 'Draft'), ('validated', 'Validated')], default='draft', string='Status')
@@ -194,4 +197,71 @@ class ProgramCode(models.Model):
             year = self.env['year.configuration'].sudo().create({'name': year_str})
         if year:
             res['year'] = year.id
+        return res
+
+    def verify_program_code(self):
+        for pc in self:
+            program_code = ''
+            if pc.year:
+                program_code += str(pc.year.name)
+            if pc.program_id and pc.program_id.key_unam:
+                program_code += str(pc.program_id.key_unam)
+            if pc.sub_program_id and pc.sub_program_id.sub_program:
+                program_code += str(pc.sub_program_id.sub_program)
+            if pc.dependency_id and pc.dependency_id.dependency:
+                program_code += str(pc.dependency_id.dependency)
+            if pc.sub_dependency_id and pc.sub_dependency_id.sub_dependency:
+                program_code += str(pc.sub_dependency_id.sub_dependency)
+            if pc.item_id and pc.item_id.item:
+                program_code += str(pc.item_id.item)
+            if pc.check_digit:
+                program_code += str(pc.check_digit)
+            if pc.resource_origin_id and pc.resource_origin_id.key_origin:
+                program_code += str(pc.resource_origin_id.key_origin)
+            if pc.institutional_activity_id and pc.institutional_activity_id.number:
+                program_code += str(pc.institutional_activity_id.number)
+            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp:
+                program_code += str(pc.budget_program_conversion_id.shcp)
+            if pc.conversion_item_id and pc.conversion_item_id.federal_part:
+                program_code += str(pc.conversion_item_id.federal_part)
+            if pc.expense_type_id and pc.expense_type_id.key_expenditure_type:
+                program_code += str(pc.expense_type_id.key_expenditure_type)
+            if pc.location_id and pc.location_id.state_key:
+                program_code += str(pc.location_id.state_key)
+            if pc.portfolio_id and pc.portfolio_id.wallet_password:
+                program_code += str(pc.portfolio_id.wallet_password)
+
+            # Project Related Fields Data
+            if pc.project_type_id and pc.project_type_id.project_type_identifier:
+                program_code += str(pc.project_type_id.project_type_identifier)
+
+            if pc.project_type_id and pc.project_type_id.number:
+                program_code += str(pc.project_type_id.number)
+
+            if pc.stage_id and pc.stage_id.stage_identifier:
+                program_code += str(pc.stage_id.stage_identifier)
+
+            if pc.agreement_type_id and pc.agreement_type_id.agreement_type:
+                program_code += str(pc.agreement_type_id.agreement_type)
+
+            if pc.agreement_type_id and pc.agreement_type_id.number_agreement:
+                program_code += str(pc.agreement_type_id.number_agreement)
+
+            return program_code
+
+    @api.model
+    def create(self, vals):
+        res = super(ProgramCode, self).create(vals)
+        code = res.verify_program_code()
+        program_code = self.search([('program_code_copy', '=', code), ('id', '!=', res.id)], limit=1)
+        if program_code:
+            raise ValidationError("Program code must be unique")
+        return res
+
+    def write(self, vals):
+        res = super(ProgramCode, self).write(vals)
+        code = self.verify_program_code()
+        program_code = self.search([('program_code_copy', '=', code), ('id', '!=', self.id)], limit=1)
+        if program_code:
+            raise ValidationError("Program code must be unique")
         return res
