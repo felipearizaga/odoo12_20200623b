@@ -73,7 +73,8 @@ class ImportLine(models.TransientModel):
 
                 total_rows = self.record_number + 1
                 if sheet.nrows != total_rows:
-                    raise UserError(_('Number of records do not match with file'))
+                    raise UserError(
+                        _('The number of imported lines is not equal to the number of records'))
 
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
@@ -89,16 +90,20 @@ class ImportLine(models.TransientModel):
                         result_dict.update({headers[counter]: cell.value})
                         counter += 1
                     if 'Importe 1a Asignacion' in result_dict:
-                        total_budget_amount += float(result_dict.get('Importe 1a Asignacion'))
+                        total_budget_amount += float(
+                            result_dict.get('Importe 1a Asignacion'))
                     result_vals.append(result_dict)
+                # print("---------> ", total_budget_amount, self.total_budget)
                 if total_budget_amount != self.total_budget:
-                    raise UserError(_('Total Budget Amount not match with total assigned amount in file'))
+                    raise UserError(
+                        _('The sum of the assigned amounts is not equal to the total of the budget'))
 
                 if budget:
                     budget.write({
                         'budget_file': self.file,
                         'filename': self.filename,
                         'import_status': 'in_progress',
+                        'total_rows': self.record_number,
                     })
             except UserError as e:
                 raise UserError(e)

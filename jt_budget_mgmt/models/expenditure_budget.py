@@ -20,11 +20,9 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import tempfile
 import base64
 import io
 from datetime import datetime
-from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
@@ -54,6 +52,7 @@ class ExpenditureBudget(models.Model):
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
         string='Number of imported records', readonly=True, compute='_get_count')
+    allow_upload = fields.Boolean(string='Allow Update XLS File?')
 
     # Budget Lines
     line_ids = fields.One2many(
@@ -98,6 +97,7 @@ class ExpenditureBudget(models.Model):
     success_row_ids = fields.Text(string='Success Row Ids', default="[]")
     failed_row_ids = fields.Text(string='Failed Row Ids', default="[]")
     pointer_row = fields.Integer(string='Current Pointer Row', default=1)
+    total_rows = fields.Integer(string="Total Rows")
 
     # @api.constrains('total_budget', 'line_ids')
     # def _check_budget(self):
@@ -349,7 +349,7 @@ class ExpenditureBudget(models.Model):
                             project = project1
                 agreement_type = self.env['agreement.type'].search([('project_id', '=', project.id),('number_agreement', '=', validated_agreement_number)], limit=1)
                 if not agreement_type:
-                    agreement_type = self.env['agreement.type'].create({'project_id': project.id, 'number_agreement': validated_agreement_number})
+                    agreement_type = self.env['agreement.type'].create({'project_id': project.id, 'number_agreement': validated_agreement_number, 'agreement_type': agreement_type_str})
                 return agreement_type
 
             validated_number = self.validate_agreement_number(agreement_number, project)
@@ -370,16 +370,19 @@ class ExpenditureBudget(models.Model):
         if len(str(asigned_amount_string)) > 0:
             if asigned_amount_string.isnumeric():
                 return float(asigned_amount_string)
-        return False
+        return "False"
 
     def validate_authorized_amount(self, authorized_amount_string):
         if len(str(authorized_amount_string)) > 0:
             if authorized_amount_string.isnumeric():
                 return float(authorized_amount_string)
-        return False
+        return "False"
 
     def validate_and_add_budget_line(self):
         if self.budget_file:
+            # If user re-scan for failed rows
+            re_scan_failed_rows_ids = eval(self.failed_row_ids)
+
             counter = 0
             cnt = 0
             pointer = self.pointer_row
@@ -396,14 +399,24 @@ class ExpenditureBudget(models.Model):
                     headers.append(cell.value)
 
             result_vals = []
-            lines_to_iterate = self.pointer_row + 100
+            lines_to_iterate = self.pointer_row + 10000
             total_sheet_rows = sheet.nrows - 1
             if total_sheet_rows < lines_to_iterate:
                 lines_to_iterate = total_sheet_rows + 1
             failed_row = ""
-            for rowx, row in enumerate(map(sheet.row, range(self.pointer_row, lines_to_iterate)), 1):
+
+            conditional_list = range(self.pointer_row, lines_to_iterate)
+            if self._context.get('re_scan_failed'):
+                conditional_list = []
+                for row in re_scan_failed_rows_ids:
+                    conditional_list.append(row - 1)
+
+            for rowx, row in enumerate(map(sheet.row, conditional_list), 1):
+                p_code = ''
                 cnt += 1
                 pointer = self.pointer_row + cnt
+                if self._context.get('re_scan_failed'):
+                    pointer = conditional_list[rowx - 1] + 1
 
                 result_dict = {}
                 counter = 0
@@ -417,6 +430,7 @@ class ExpenditureBudget(models.Model):
                 year = self.validate_year(result_dict.get('AÑO', ''))
                 if year:
                     final_dict['year'] = year.id
+                    p_code += year.name
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Year Format\n"
                     failed_row_ids.append(pointer)
@@ -426,6 +440,7 @@ class ExpenditureBudget(models.Model):
                 program = self.validate_program(result_dict.get('Programa', ''))
                 if program:
                     final_dict['program_id'] = program.id
+                    p_code += program.key_unam
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Program(PR) Format\n"
                     failed_row_ids.append(pointer)
@@ -435,6 +450,7 @@ class ExpenditureBudget(models.Model):
                 subprogram = self.validate_subprogram(result_dict.get('SubPrograma', ''), program)
                 if program:
                     final_dict['sub_program_id'] = subprogram.id
+                    p_code += subprogram.sub_program
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
@@ -444,6 +460,7 @@ class ExpenditureBudget(models.Model):
                 dependency = self.validate_dependency(result_dict.get('Dependencia', ''))
                 if dependency:
                     final_dict['dependency_id'] = dependency.id
+                    p_code += dependency.dependency
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -453,6 +470,7 @@ class ExpenditureBudget(models.Model):
                 subdependency = self.validate_subdependency(result_dict.get('SubDependencia', ''), dependency)
                 if subdependency:
                     final_dict['sub_dependency_id'] = subdependency.id
+                    p_code += subdependency.sub_dependency
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -462,15 +480,20 @@ class ExpenditureBudget(models.Model):
                 item = self.validate_item(result_dict.get('Partida', ''), result_dict.get('Cve Ejercicio', ''))
                 if item:
                     final_dict['item_id'] = item.id
+                    p_code += item.item
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Expense Item(PAR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
+                if result_dict.get('Digito Verificador'):
+                    p_code += str(result_dict.get('Digito Verificador'))[:1].replace('.', '').zfill(2)
+
                 # Validate Origin Of Resource
                 origin_resource = self.validate_origin_resource(result_dict.get('Digito Centraliador', ''))
                 if origin_resource:
                     final_dict['resource_origin_id'] = origin_resource.id
+                    p_code += origin_resource.key_origin
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Origin Of Resource(OR) Format\n"
                     failed_row_ids.append(pointer)
@@ -480,6 +503,7 @@ class ExpenditureBudget(models.Model):
                 institutional_activity = self.validate_institutional_activity(result_dict.get('Actividad Institucional', ''))
                 if institutional_activity:
                     final_dict['institutional_activity_id'] = institutional_activity.id
+                    p_code += institutional_activity.number
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Institutional Activity Number(AI) Format\n"
                     failed_row_ids.append(pointer)
@@ -489,6 +513,7 @@ class ExpenditureBudget(models.Model):
                 shcp = self.validate_shcp(result_dict.get('Conversion Programa', ''), program)
                 if shcp:
                     final_dict['budget_program_conversion_id'] = shcp.id
+                    p_code += shcp.shcp
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                     failed_row_ids.append(pointer)
@@ -498,6 +523,7 @@ class ExpenditureBudget(models.Model):
                 conversion_item = self.validate_conversion_item(result_dict.get('Conversion Partida', ''))
                 if conversion_item:
                     final_dict['conversion_item_id'] = conversion_item.id
+                    p_code += conversion_item.federal_part
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid SHCP Games(CONPA) Format\n"
                     failed_row_ids.append(pointer)
@@ -507,6 +533,7 @@ class ExpenditureBudget(models.Model):
                 expense_type = self.validate_expense_type(result_dict.get('Tipo de gasto', ''))
                 if expense_type:
                     final_dict['expense_type_id'] = expense_type.id
+                    p_code += expense_type.key_expenditure_type
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Expense Type(TG) Format\n"
                     failed_row_ids.append(pointer)
@@ -516,6 +543,7 @@ class ExpenditureBudget(models.Model):
                 geo_location = self.validate_geo_location(result_dict.get('Ubicación geografica', ''))
                 if geo_location:
                     final_dict['location_id'] = geo_location.id
+                    p_code += geo_location.state_key
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Geographic Location (UG) Format\n"
                     failed_row_ids.append(pointer)
@@ -525,6 +553,7 @@ class ExpenditureBudget(models.Model):
                 wallet_key = self.validate_wallet_key(result_dict.get('Clave Cartera', ''))
                 if wallet_key:
                     final_dict['portfolio_id'] = wallet_key.id
+                    p_code += wallet_key.wallet_password
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Wallet Key(CC) Format\n"
                     failed_row_ids.append(pointer)
@@ -534,6 +563,7 @@ class ExpenditureBudget(models.Model):
                 project_type = self.validate_project_type(result_dict.get('Tipo de Proyecto', ''))
                 if project_type:
                     final_dict['project_type_id'] = project_type.id
+                    p_code += project_type.project_type_identifier
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Project Type(TP) Format\n"
                     failed_row_ids.append(pointer)
@@ -545,11 +575,14 @@ class ExpenditureBudget(models.Model):
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Project Number Format\n"
                     failed_row_ids.append(pointer)
                     continue
+                else:
+                    p_code += project_number
 
                 # Validation Stage
                 stage = self.validate_stage(result_dict.get('Etapa', ''), project_type.project_id)
                 if stage:
                     final_dict['stage_id'] = stage.id
+                    p_code += stage.stage_identifier
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Stage(E) Format\n"
                     failed_row_ids.append(pointer)
@@ -566,6 +599,8 @@ class ExpenditureBudget(models.Model):
                 agreement_type = self.validate_agreement_type(result_dict.get('Tipo de Convenio', ''), project_type.project_id, result_dict.get('No. de Convenio', ''))
                 if agreement_type:
                     final_dict['agreement_type_id'] = agreement_type.id
+                    p_code += agreement_type.agreement_type
+                    p_code += agreement_number
                 else:
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Agreement Type(TC) Format\n"
                     failed_row_ids.append(pointer)
@@ -573,21 +608,30 @@ class ExpenditureBudget(models.Model):
 
                 # Validation Importe 1a Asignacion
                 asigned_amount = self.validate_asigned_amount(result_dict.get('Importe 1a Asignacion', ''))
-                if not asigned_amount:
+                if asigned_amount == "False":
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Asigned Amount Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Authorized Amount
                 authorized_amount = self.validate_authorized_amount(result_dict.get('Importe Autorizado', ''))
-                if not authorized_amount:
+                if authorized_amount == "False":
                     failed_row += str(list(result_dict.values())) + "------>> Invalid Authorized Amount Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 try:
+                    search_program_code = self.env['program.code'].sudo().search([('program_code_copy', '=', p_code)], limit=1)
+                    if search_program_code:
+                        1 / 0
                     program_code = self.env['program.code'].sudo().create(final_dict)
                     success_row_ids.append(pointer)
+
+                    if self._context.get('re_scan_failed'):
+                        failed_row_ids_eval_refill = eval(self.failed_row_ids)
+                        failed_row_ids_eval_refill.remove(pointer)
+                        self.write({'failed_row_ids': str(failed_row_ids_eval_refill)})
+
                     line_vals = {
                         'program_code_id': program_code.id,
                         'authorized': asigned_amount,
@@ -626,6 +670,21 @@ class ExpenditureBudget(models.Model):
             if pointer == sheet.nrows:
                 vals['import_status'] = 'done'
             self.write(vals)
+
+            if pointer == sheet.nrows and len(failed_row_ids_eval) > 0:
+                self.write({'allow_upload': True})
+
+            if self.failed_row_ids == 0 or len(failed_row_ids_eval) == 0:
+                self.write({'allow_upload': False})
+
+            if len(failed_row_ids) == 0:
+                return{
+                    'effect': {
+                        'fadeout': 'slow',
+                        'message': 'All rows are imported successfully!',
+                        'type': 'rainbow_man',
+                    }
+                }
 
     # def confirm(self):
     #     if self.total_budget <= 0:

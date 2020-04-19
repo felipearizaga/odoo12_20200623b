@@ -126,3 +126,16 @@ class ProjectProject(models.Model):
                     display_name_field = project.agreement_type
             result.append((project.id, display_name_field))
         return result
+
+    def unlink(self):
+        for project in self:
+            project_type = self.env['project.type'].search([('project_id', '=', project.id)], limit=1)
+            if project_type:
+                raise ValidationError('You can not delete project which are mapped with project types!')
+            stage = self.env['stage'].search([('project_id', '=', project.id)], limit=1)
+            if stage:
+                raise ValidationError('You can not delete project which are mapped with stage identifier!')
+            agreement_type = self.env['agreement.type'].search([('project_id', '=', project.id)], limit=1)
+            if agreement_type:
+                raise ValidationError('You can not delete project which are mapped with agreement types!')
+        return super(ProjectProject, self).unlink()
