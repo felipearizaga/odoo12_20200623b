@@ -20,3 +20,7 @@ access_agreement_type,agreement_type,model_agreement_type,base.group_user,1,1,1,
 access_program_code,program_code,model_program_code,base.group_user,1,1,1,1
 access_expenditure_budget,expenditure_budget,model_expenditure_budget,base.group_user,1,1,1,1
 access_expenditure_budget_line,expenditure_budget_line,model_expenditure_budget_line,base.group_user,1,1,1,1
+access_adequacies,adequacies,model_adequacies,base.group_user,1,1,1,1
+access_adequacies_lines,adequacies_lines,model_adequacies_lines,base.group_user,1,1,1,1
+access_standardization,standardization,model_standardization,base.group_user,1,1,1,1
+access_standardization_line,standardization_line,model_standardization_line,base.group_user,1,1,1,1

@@ -210,4 +210,46 @@
         action="action_expenditure_budget"
         sequence="2"
     />
+
+    <!-- menu for modifications -->
+    <menuitem
+        id="menu_modifications"
+        name="Modifications"
+        parent="menu_budget"
+        sequence="2"
+    />
+
+    <!-- menu for adequacies -->
+    <menuitem
+        id="menu_adequacies"
+        name="Adequacies"
+        parent="menu_modifications"
+        action="action_adequacies"
+        sequence="1"
+    />
+
+    <!-- menu for standardization -->
+    <menuitem
+        id="menu_standardization"
+        name="Re-standardization"
+        parent="menu_modifications"
+        action="action_standardization"
+        sequence="2"
+    />
+
+    <!-- menu for reports -->
+    <menuitem
+        id="menu_reports"
+        name="Reports"
+        parent="menu_budget"
+        sequence="4"
+    />
+
+    <!-- menu for proforma budget summary -->
+    <!-- <menuitem
+        id="menu_proforma_budget_summary"
+        name="Proforma Budget Summary"
+        parent="menu_reports"
+        sequence="1"
+        action="action_proforma_budget_summary"/> -->
 </odoo>

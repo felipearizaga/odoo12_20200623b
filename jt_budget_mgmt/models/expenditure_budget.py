@@ -280,7 +280,12 @@ class ExpenditureBudget(models.Model):
                 # Find Project
                 project = self.env['project.project'].sudo().search([('project_type_identifier', '=', project_type_str)], limit=1)
                 if not project:
-                    project = self.env['project.project'].sudo().create({'name': project_type_str, 'project_type_identifier': project_type_str})
+                    project = self.env['project.project'].sudo().create({
+                        'name': "NA",
+                        'project_type_identifier': project_type_str,
+                        'desc_stage': "NA",
+                        'name_agreement': "NA",
+                    })
                 if project:
                     # Find Project Type
                     project_type = self.env['project.type'].search([('project_id', '=', project.id)], limit=1)
@@ -635,13 +640,13 @@ class ExpenditureBudget(models.Model):
 
                     line_vals = {
                         'program_code_id': program_code.id,
-                        'authorized': asigned_amount,
-                        'assigned': authorized_amount,
+                        'authorized': authorized_amount,
+                        'assigned': asigned_amount,
                         'imported': True,
                     }
                     self.write({'line_ids': [(0, 0, line_vals)]})
                 except:
-                    failed_row += str(list(result_dict.values())) + "------>> Row Data Are Not Corrected\n"
+                    failed_row += str(list(result_dict.values())) + "------>> Row Data Are Not Corrected or Duplicated Program Code Found!"
                     failed_row_ids.append(pointer)
 
             failed_row_ids_eval = eval(self.failed_row_ids)
@@ -695,6 +700,8 @@ class ExpenditureBudget(models.Model):
             raise ValidationError("Please add budget lines")
         if total != self.total_budget:
             raise ValidationError("Budget amount not match with total lines assigned amount!")
+        if self.total_rows > 0 and self.success_rows != self.total_rows:
+            raise ValidationError("Please validate all lines or correct failed rows!")
         return True
 
     def previous_budget(self):

@@ -35,6 +35,7 @@
         'security/ir.model.access.csv',
 
         # Data Files
+        'data/data.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',
@@ -60,10 +61,16 @@
         'views/project_project_view.xml',
         'views/program_code_view.xml',
         'views/expenditure_budget_view.xml',
+        'views/adequacies_view.xml',
+        'views/standardization_view.xml',
 
         # Wizard Files
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',
+        'wizard/reject_standardization_line_view.xml',
+        'wizard/import_standardization_line_view.xml',
+        'wizard/import_assigned_amount_line_view.xml',
+        'wizard/import_adequacies_line_view.xml',
 
         # Main Menu File
         'views/budget_menus.xml',
