@@ -63,6 +63,7 @@
 
         # Wizard Files
         'wizard/import_line_view.xml',
+        'wizard/reject_view.xml',
 
         # Main Menu File
         'views/budget_menus.xml',

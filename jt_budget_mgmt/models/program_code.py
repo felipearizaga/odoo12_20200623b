@@ -31,32 +31,32 @@ class ProgramCode(models.Model):
     _description = 'Program Code'
     _rec_name = 'program_code'
 
-    year = fields.Many2one('year.configuration', string='Year (YEAR)')
+    year = fields.Many2one('year.configuration', string='Year (YEAR)', states={'validated': [('readonly', True)]})
 
     # Program Relations
-    program_id = fields.Many2one('program', string='KEY UNAM')
+    program_id = fields.Many2one('program', string='KEY UNAM', states={'validated': [('readonly', True)]})
     desc_program = fields.Text(
         string='Description KEY UNAM', related="program_id.desc_key_unam")
 
     # Sub Program Relation
-    sub_program_id = fields.Many2one('sub.program', string='Sub program')
+    sub_program_id = fields.Many2one('sub.program', string='Sub program', states={'validated': [('readonly', True)]})
     desc_sub_program = fields.Text(
         string='Sub Program Description', related="sub_program_id.desc")
 
     # Dependency Relation
-    dependency_id = fields.Many2one('dependency', string='Dependency')
+    dependency_id = fields.Many2one('dependency', string='Dependency', states={'validated': [('readonly', True)]})
     desc_dependency = fields.Text(
         string='Dependency Description', related="dependency_id.description")
 
     # Sub Dependency Relation
     sub_dependency_id = fields.Many2one(
-        'sub.dependency', string='Sub dependency')
+        'sub.dependency', string='Sub dependency', states={'validated': [('readonly', True)]})
     desc_sub_dependency = fields.Text(
         string='Sub-dependency Description', related="sub_dependency_id.description")
 
     # Item Relation
     item_id = fields.Many2one(
-        'expenditure.item', string='Item')
+        'expenditure.item', string='Item', states={'validated': [('readonly', True)]})
     desc_item = fields.Text(string='Description of Item',
                             related="item_id.description")
 
@@ -74,7 +74,7 @@ class ProgramCode(models.Model):
 
     # Resource Origin Relation
     resource_origin_id = fields.Many2one(
-        'resource.origin', string='Key Origin resource')
+        'resource.origin', string='Key Origin resource', states={'validated': [('readonly', True)]})
     desc_resource_origin = fields.Selection([
         ('subsidy', 'Federal Subsidy'),
         ('income', 'Extraordinary Income'),
@@ -86,48 +86,48 @@ class ProgramCode(models.Model):
 
     # Institutional Activity Relation
     institutional_activity_id = fields.Many2one(
-        'institutional.activity', string='Institutional Activity Number')
+        'institutional.activity', string='Institutional Activity Number', states={'validated': [('readonly', True)]})
     desc_institutional_activity = fields.Text(
         string='Activity Description Institutional', related="institutional_activity_id.description")
 
     # Budget ProgramConversion Relation
     budget_program_conversion_id = fields.Many2one(
-        'budget.program.conversion', string='Conversion Program SHCP')
+        'budget.program.conversion', string='Conversion Program SHCP', states={'validated': [('readonly', True)]})
     desc_budget_program_conversion = fields.Text(
         string='Description Conversion Program SHCP', related="budget_program_conversion_id.description")
 
     # Federal Item Relation
     conversion_item_id = fields.Many2one(
-        'departure.conversion', string='Federal Item')
+        'departure.conversion', string='Federal Item', states={'validated': [('readonly', True)]})
     desc_conversion_item = fields.Text(
         string='Description of Federal Item', related="conversion_item_id.federal_part_desc")
 
     # Expense Type Relation
     expense_type_id = fields.Many2one(
-        'expense.type', string='Key Expenditure Type')
+        'expense.type', string='Key Expenditure Type', states={'validated': [('readonly', True)]})
     desc_expense_type = fields.Text(
         string='Description Expenditure Type', related="expense_type_id.description_expenditure_type")
 
     # Geographic Location Relation
     location_id = fields.Many2one(
-        'geographic.location', string='State Code')
+        'geographic.location', string='State Code', states={'validated': [('readonly', True)]})
     desc_location = fields.Text(string='State name', related="location_id.state_name")
 
     # Wallet Password Relation
-    portfolio_id = fields.Many2one('key.wallet', string='Key portfolio')
+    portfolio_id = fields.Many2one('key.wallet', string='Key portfolio', states={'validated': [('readonly', True)]})
     name_portfolio = fields.Text(string='Name of Portfolio Key', related="portfolio_id.wallet_password_name")
 
     # Project Type Relation
-    project_type_id = fields.Many2one('project.type', string='Identifier Type of Project')
+    project_type_id = fields.Many2one('project.type', string='Identifier Type of Project', states={'validated': [('readonly', True)]})
     desc_project_type = fields.Text(string='Description Type of Project', related="project_type_id.desc_stage")
     project_number = fields.Char(string='Project Number', related='project_type_id.number')
 
     # Stage Relation
-    stage_id = fields.Many2one('stage', string='Stage Identifier')
+    stage_id = fields.Many2one('stage', string='Stage Identifier', states={'validated': [('readonly', True)]})
     desc_stage = fields.Text(string='Stage Description', related='stage_id.desc_stage')
 
     # Agreement Relation
-    agreement_type_id = fields.Many2one('agreement.type', string='Identifier type of Agreement')
+    agreement_type_id = fields.Many2one('agreement.type', string='Identifier type of Agreement', states={'validated': [('readonly', True)]})
     name_agreement = fields.Text(string='Name type of Agreement', related='agreement_type_id.name_agreement')
     number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
 
@@ -265,3 +265,12 @@ class ProgramCode(models.Model):
         if program_code:
             raise ValidationError("Program code must be unique")
         return res
+
+    def unlink(self):
+        for code in self:
+            if code.state == 'validated':
+                raise ValidationError('You can not delete validated program code!')
+            line = self.env['expenditure.budget.line'].search([('program_code_id', '=', code.id)], limit=1)
+            if line:
+                raise ValidationError('You can not delete program code which are mapped with expenditure budgets!')
+        return super(ProgramCode, self).unlink()

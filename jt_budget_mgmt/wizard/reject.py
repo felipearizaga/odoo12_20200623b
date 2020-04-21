@@ -30,12 +30,12 @@ class Reject(models.TransientModel):
 
     def accept(self):
         active_id = self._context.get('active_ids')
-        expenditure_budget_id = self.env['expenditure.budget'].browse(
+        # Remove budget
+        expenditure_budget_id = self.env['expenditure.budget'].sudo().browse(
             active_id)
+        # Remove budget lines
+        lines = self.env['expenditure.budget.line'].sudo().search([('expenditure_budget_id', '=', int(active_id))])
+        lines.unlink()
         expenditure_budget_id.unlink()
+
         return {'type': 'ir.actions.client', 'tag': 'reload'}
-        # return {
-        #     'type': 'ir.actions.act_window',
-        #     'res_model': 'expenditure.budget',
-        #     'view_mode': 'tree',
-        # }

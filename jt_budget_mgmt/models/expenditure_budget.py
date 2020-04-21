@@ -31,6 +31,7 @@ from odoo.exceptions import UserError, ValidationError
 class ExpenditureBudget(models.Model):
 
     _name = 'expenditure.budget'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Expenditure Budget'
     _rec_name = 'budget_name'
 
@@ -40,14 +41,14 @@ class ExpenditureBudget(models.Model):
             record.import_record_number = len(
                 record.line_ids.filtered(lambda l: l.imported == True))
 
-    budget_name = fields.Text(string='Budget name', required=True)
-    responsible_id = fields.Many2one('res.users', string='Responsible', default=lambda self: self.env.user)
+    budget_name = fields.Text(string='Budget name', required=True, tracking=True, states={'validate': [('readonly', True)]})
+    responsible_id = fields.Many2one('res.users', string='Responsible', default=lambda self: self.env.user, tracking=True, states={'validate': [('readonly', True)]})
 
     # Date Periods
-    from_date = fields.Date(string='From')
-    to_date = fields.Date(string='To')
+    from_date = fields.Date(string='From', states={'validate': [('readonly', True)]})
+    to_date = fields.Date(string='To', states={'validate': [('readonly', True)]})
 
-    total_budget = fields.Float(string='Total budget')
+    total_budget = fields.Float(string='Total budget', tracking=True, states={'validate': [('readonly', True)]})
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
@@ -57,14 +58,14 @@ class ExpenditureBudget(models.Model):
     # Budget Lines
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
-        string='Expenditure Budget Lines')
+        string='Expenditure Budget Lines', states={'validate': [('readonly', True)]})
 
     state = fields.Selection([
         ('draft', 'Draft'),
         ('previous', 'Previous'),
         ('confirm', 'Confirm'),
         ('validate', 'Validate'),
-        ('done', 'Done')], default='draft', required=True, string='State')
+        ('done', 'Done')], default='draft', required=True, string='State', tracking=True)
 
     def _compute_failed_rows(self):
         for record in self:
@@ -89,15 +90,15 @@ class ExpenditureBudget(models.Model):
     import_status = fields.Selection([
         ('draft', 'Draft'),
         ('in_progress', 'In Progress'),
-        ('done', 'Completed')], default='draft')
+        ('done', 'Completed')], default='draft', copy=False)
     failed_row_file = fields.Binary(string='Failed Rows File')
     fialed_row_filename = fields.Char(string='File name', default="Failed_Rows.txt")
     failed_rows = fields.Integer(string='Failed Rows', compute="_compute_failed_rows")
     success_rows = fields.Integer(string='Success Rows', compute="_compute_success_rows")
-    success_row_ids = fields.Text(string='Success Row Ids', default="[]")
-    failed_row_ids = fields.Text(string='Failed Row Ids', default="[]")
-    pointer_row = fields.Integer(string='Current Pointer Row', default=1)
-    total_rows = fields.Integer(string="Total Rows")
+    success_row_ids = fields.Text(string='Success Row Ids', default="[]", copy=False)
+    failed_row_ids = fields.Text(string='Failed Row Ids', default="[]", copy=False)
+    pointer_row = fields.Integer(string='Current Pointer Row', default=1, copy=False)
+    total_rows = fields.Integer(string="Total Rows", copy=False)
 
     # @api.constrains('total_budget', 'line_ids')
     # def _check_budget(self):
@@ -686,28 +687,44 @@ class ExpenditureBudget(models.Model):
                     }
                 }
 
-    # def confirm(self):
-    #     if self.total_budget <= 0:
-    #         raise UserError(_('Please enter amount greater than zero.'))
-    #     # elif self.line_ids:
-    #     #     for line in self.line_ids:
-    #     #         if line.available < 5000:
-    #     #             raise UserError(_('Please enter amount greater than or equal to 5000.'))
-    #     else:
-    #         self.state = 'confirm'
+    def verify_data(self):
+        total = sum(self.line_ids.mapped('assigned'))
+        if total <= 0:
+            raise ValidationError("Budget amount should be greater than 0")
+        if len(self.line_ids.ids) == 0:
+            raise ValidationError("Please add budget lines")
+        if total != self.total_budget:
+            raise ValidationError("Budget amount not match with total lines assigned amount!")
+        return True
 
-    # def approve(self):
-    #     self.state = 'validate'
+    def previous_budget(self):
+        self.verify_data()
+        self.write({'state': 'previous'})
 
-    # def reject(self):
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'res_model': 'reject',
-    #         'view_mode': 'form',
-    #         'view_type': 'form',
-    #         'views': [(False, 'form')],
-    #         'target': 'new',
-    #     }
+    def confirm(self):
+        self.verify_data()
+        self.write({'state': 'confirm'})
+
+    def approve(self):
+        self.verify_data()
+        self.line_ids.mapped('program_code_id').write({'state': 'validated'})
+        self.write({'state': 'validate'})
+
+    def reject(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'reject',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+
+    def unlink(self):
+        for budget in self:
+            if budget.state not in ('draft', 'previous'):
+                raise ValidationError('You can not delete processed budget!')
+        return super(ExpenditureBudget, self).unlink()
 
 
 class ExpenditureBudgetLine(models.Model):
