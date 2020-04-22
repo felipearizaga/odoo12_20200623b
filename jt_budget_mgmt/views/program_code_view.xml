@@ -77,10 +77,10 @@
                                 <field name="desc_project_type"/>
                                 <field name="project_number"/>
                                 <!-- Stage Relation -->
-                                <field name="stage_id" context="{'display_name_custom': 'stage_identifier'}"/>
+                                <field name="stage_id" context="{'display_name_custom': 'stage_identifier'}" required="1"/>
                                 <field name="desc_stage"/>
                                 <!-- Agreement Relation -->
-                                <field name="agreement_type_id" context="{'display_name_custom': 'agreement_type'}"/>
+                                <field name="agreement_type_id" context="{'display_name_custom': 'agreement_type'}" required="1"/>
                                 <field name="name_agreement"/>
                                 <field name="number_agreement"/>
                             </group>

@@ -131,6 +131,11 @@ class ProgramCode(models.Model):
     name_agreement = fields.Text(string='Name type of Agreement', related='agreement_type_id.name_agreement')
     number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
 
+    @api.constrains('program_code')
+    def _check_program_code(self):
+        if len(self.program_code) != 60:
+            raise ValidationError('Program code must be 60 characters!')
+
     def _compute_program_code(self):
         for pc in self:
             program_code = ''
@@ -256,15 +261,16 @@ class ProgramCode(models.Model):
         program_code = self.search([('program_code_copy', '=', code), ('id', '!=', res.id)], limit=1)
         if program_code:
             raise ValidationError("Program code must be unique")
+        res.program_code_copy = res
         return res
 
-    def write(self, vals):
-        res = super(ProgramCode, self).write(vals)
-        code = self.verify_program_code()
-        program_code = self.search([('program_code_copy', '=', code), ('id', '!=', self.id)], limit=1)
-        if program_code:
-            raise ValidationError("Program code must be unique")
-        return res
+    # def write(self, vals):
+    #     res = super(ProgramCode, self).write(vals)
+    #     code = self.verify_program_code()
+    #     program_code = self.search([('program_code_copy', '=', code), ('id', '!=', self.id)], limit=1)
+    #     if program_code:
+    #         raise ValidationError("Program code must be unique")
+    #     return res
 
     def unlink(self):
         for code in self:

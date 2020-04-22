@@ -61,26 +61,26 @@ class ImportAdequaciesLine(models.TransientModel):
         }
 
     def import_line(self):
+        self.ensure_one()
         adequacies = self.env['adequacies'].browse(
-            self._context.get('active_ids'))
+            self._context.get('active_id'))
         if adequacies.folio != self.folio:
             raise UserError(_('Folio does not match.'))
-        # elif adequacies.budget_id != self.budget_id:
-        #     raise UserError(_('Budget does not match.'))
-        # elif adequacies.record_number != self.record_number:
-        #     raise UserError(_('Number of records do not match.'))
         elif self.file:
             try:
                 data = base64.decodestring(self.file)
                 book = open_workbook(file_contents=data or b'')
                 sheet = book.sheet_by_index(0)
+
                 total_rows = self.record_number + 1
                 if sheet.nrows != total_rows:
                     raise UserError(_('Number of records do not match with file'))
+
                 headers = []
                 for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
+
                 result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
                     result_dict = {}
@@ -90,14 +90,22 @@ class ImportAdequaciesLine(models.TransientModel):
                         counter += 1
                     result_vals.append(result_dict)
                 data = result_vals
-                for rec in data:
-                    vals = {'program': rec.get('program'),
-                            'line_type': rec.get('line_type'),
-                            'amount': rec.get('amount'),
-                            'creation_type': rec.get('creation_type'),
-                            'adequacies_id': adequacies.id,
-                            'imported': True,
-                            }
-                    adequacies.adequacies_lines_ids.create(vals)
+                if adequacies:
+                    adequacies.write({
+                        'budget_file': self.file,
+                        'filename': self.filename,
+                        'import_status': 'in_progress',
+                        'total_rows': self.record_number,
+                    })
+
+                # for rec in data:
+                #     vals = {'program': rec.get('program'),
+                #             'line_type': rec.get('line_type'),
+                #             'amount': rec.get('amount'),
+                #             'creation_type': rec.get('creation_type'),
+                #             'adequacies_id': adequacies.id,
+                #             'imported': True,
+                #             }
+                #     adequacies.adequacies_lines_ids.create(vals)
             except UserError as e:
                 raise UserError(e)

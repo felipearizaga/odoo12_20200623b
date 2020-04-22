@@ -93,7 +93,7 @@ class ImportLine(models.TransientModel):
                         total_budget_amount += float(
                             result_dict.get('Importe 1a Asignacion'))
                     result_vals.append(result_dict)
-                print("---------> ", total_budget_amount, self.total_budget)
+                # print("---------> ", total_budget_amount, self.total_budget)
                 if total_budget_amount != self.total_budget:
                     raise UserError(
                         _('The sum of the assigned amounts is not equal to the total of the budget'))

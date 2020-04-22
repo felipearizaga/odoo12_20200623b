@@ -22,7 +22,10 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" states='draft'/>
+                        <button name="validate_and_add_budget_line" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'in_progress')]}"/>
+                        <button name="validate_and_add_budget_line" type="object" string="Re-scan Failed Rows" class="oe_highlight" attrs="{'invisible': [('failed_rows', '=', 0), ('allow_upload', '=', False)]}" context="{'re_scan_failed':True}"/>
+
+                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': ['|', ('failed_rows', '>', 0), ('state', '!=', 'draft')]}"/>
                         <button name="accept" type="object" string="Accept" class="oe_highlight" states='confirmed'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirmed'/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,accepted,rejected"/>
@@ -30,9 +33,9 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="folio"/>
-                                <field name="budget_id"/>
-                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
+                                <field name="folio" required="1"/>
+                                <field name="budget_id" required="1"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight" states='draft'/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>
@@ -40,8 +43,8 @@
                             <group>
                                 <label for="from_date"/>
                                 <div>
-                                    <field name="from_date" class="oe_inline"/> - 
-                                    <field name="to_date" class="oe_inline"/>
+                                    <field name="from_date" class="oe_inline" required="1"/> - 
+                                    <field name="to_date" class="oe_inline" required="1"/>
                                 </div>
                             </group>
                         </group>
@@ -49,6 +52,7 @@
                             <page string="Adequacies Lines">
                                 <field name="adequacies_lines_ids">
                                     <tree>
+                                       <field name="imported" invisible="1"/>
                                        <field name="program"/> 
                                        <field name="line_type"/>
                                        <field name="amount"/>
@@ -56,14 +60,37 @@
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="program"/> 
-                                            <field name="line_type"/>
-                                            <field name="amount"/>
-                                            <field name="creation_type"/>
+                                            <field name="imported" invisible="1"/>
                                             <field name="adequacies_id" invisible="1"/>
+                                            <field name="program" required="1" attrs="{'readonly': [('imported', '=', True)]}"/> 
+                                            <field name="line_type" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="amount" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="creation_type" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
                                         </group>
                                     </form>
                                 </field>
+                            </page>
+                            <page string='Import Status' attrs="{'invisible': [('allow_upload', '=', False), ('budget_file', '=', False)]}">
+                                <group>
+                                    <field name="allow_upload" invisible="1"/>
+                                    <field name="budget_file" filename="filename" attrs="{'readonly': [('allow_upload', '!=', True)]}"/>
+                                    <field name="filename" invisible="1"/>
+                                    <field name="fialed_row_filename" invisible="1"/>
+                                    <field name="import_status" readonly="1"/>
+                                    <field name="failed_row_file" attrs="{'invisible': [('failed_rows', '=', 0)]}" readonly="1" string="Failed Rows Tracker" filename="fialed_row_filename"/>
+                                    <field name="total_rows" string="Total Rows" readonly="1"/>
+                                    <field name="failed_rows" string="Total Failed Rows" readonly="1"/>
+                                    <field name="success_rows" string="Total Success Rows" readonly="1"/>
+                                    <field name="pointer_row" string="Next Row To Start" readonly="1" attrs="{'invisible': [('import_status', '=', 'done')]}"/>
+                                </group>
+                            </page>
+                            <page string='Failed/Success Rows' attrs="{'invisible': [ ('allow_upload', '=', False),('budget_file', '=', False)]}">
+                                <group string="Failed Rows" >
+                                    <field name="failed_row_ids" readonly="1" nolabel="1"/>
+                                </group>
+                                <group string="Success Rows">
+                                    <field name="success_row_ids" readonly="1" nolabel="1"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -82,6 +109,27 @@
                     <field name="reason"/>
                     <field name="record_number"/>
                     <field name="imported_record_number"/>
+                    <field name="state" invisible="1"/>
+                    <field name="adequacies_lines_ids" invisible="1"/>
+                    <field name="imported_record_number" invisible="1"/>
+                    <field name="record_number" invisible="1"/>
+                    <field name="reason" invisible="1"/>
+                    <field name="to_date" invisible="1"/>
+                    <field name="from_date" invisible="1"/>
+                    <!-- <field name="total_decreased" invisible="1"/> -->
+                    <!-- <field name="total_increased" invisible="1"/> -->
+                    <field name="allow_upload" invisible="1"/>
+                    <field name="budget_file" invisible="1"/>
+                    <field name="filename" invisible="1"/>
+                    <field name="import_status" invisible="1"/>
+                    <field name="failed_row_file" invisible="1"/>
+                    <field name="fialed_row_filename" invisible="1"/>
+                    <field name="failed_rows" invisible="1"/>
+                    <field name="success_rows" invisible="1"/>
+                    <field name="success_row_ids" invisible="1"/>
+                    <field name="failed_row_ids" invisible="1"/>
+                    <field name="pointer_row" invisible="1"/>
+                    <field name="total_rows" invisible="1"/>
                 </tree>
             </field>
         </record>

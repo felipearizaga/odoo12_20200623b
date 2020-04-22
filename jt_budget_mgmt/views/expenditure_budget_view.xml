@@ -33,7 +33,7 @@
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/>
                     </header>
-                    <sheet attrs="{'readonly': [('state', '=', 'validate')]}">
+                    <sheet>
                         <div>
                             <span class="o_form_label">Budget name</span>
                             <h1>

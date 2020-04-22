@@ -20,23 +20,16 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models
+from odoo import models, fields
 
 
-class Reject(models.TransientModel):
+class ReassignBudgetWiz(models.TransientModel):
 
-    _name = 'reject'
-    _description = 'Reject'
+    _name = 'reassign.budget.wiz'
+    _description = 'Re-assign Budget'
 
-    def accept(self):
-        active_id = self._context.get('active_id')
-        # Remove budget
-        expenditure_budget_id = self.env['expenditure.budget'].sudo().browse(
-            active_id)
-        # Remove budget lines
-        if expenditure_budget_id:
-            lines = self.env['expenditure.budget.line'].sudo().search([('expenditure_budget_id', '=', expenditure_budget_id.id)])
-            lines.unlink()
-            expenditure_budget_id.with_context(from_wizard=True).unlink()
+    start_date = fields.Date(string="Start Date")
+    end_date = fields.Date(string="End Date")
 
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
+    def reassign_budget(self):
+        pass
