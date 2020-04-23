@@ -32,7 +32,7 @@ class ProjectType(models.Model):
 
     project_id = fields.Many2one('project.project', string='Project type identifier')
     project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
-    desc_stage = fields.Text(string='Description', related="project_id.desc_stage")
+    desc_stage = fields.Char(string='Description', related="project_id.name")
     number = fields.Char(string='Number', related="project_id.number")
     stage_identifier = fields.Char(string="Stage Identifier", related="project_id.stage_identifier")
     agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")

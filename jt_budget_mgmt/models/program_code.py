@@ -121,7 +121,7 @@ class ProgramCode(models.Model):
 
     # Project Type Relation
     project_type_id = fields.Many2one('project.type', string='Identifier Type of Project', states={'validated': [('readonly', True)]})
-    desc_project_type = fields.Text(string='Description Type of Project', related="project_type_id.desc_stage")
+    desc_project_type = fields.Char(string='Description Type of Project', related="project_type_id.desc_stage")
     project_number = fields.Char(string='Project Number', related='project_type_id.number')
 
     # Stage Relation

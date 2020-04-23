@@ -34,9 +34,10 @@ class AgreementType(models.Model):
         'project.project', string='Agreement type identifier')
     name = fields.Text(string='Name', related="project_id.name_agreement")
     number = fields.Char(string='Number', related="project_id.number_agreement")
-    project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
+    project_type_identifier = fields.Char(string='Project Type Identifier',
+                                          related="project_id.project_type_identifier")
     desc_stage = fields.Text(string='Description', related="project_id.desc_stage")
-    number = fields.Char(string='Number', related="project_id.number")
+    number = fields.Char(string='Number', related="project_id.number_agreement")
     stage_identifier = fields.Char(string="Stage Identifier", related="project_id.stage_identifier")
     agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
