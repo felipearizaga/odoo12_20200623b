@@ -68,7 +68,6 @@
                                         <field name="item_id"/>
                                         <field name="start_date"/>
                                         <field name="end_date"/>
-                                        <field name="paid_date"/>
                                         <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
                                         <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
@@ -84,7 +83,6 @@
                                             <field name="item_id" invisible="1"/>
                                             <field name="start_date" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
                                             <field name="end_date" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
-                                            <field name="paid_date"/>
                                             <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>

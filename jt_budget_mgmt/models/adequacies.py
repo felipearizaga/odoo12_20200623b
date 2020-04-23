@@ -22,11 +22,10 @@
 ##############################################################################
 import base64
 import io
-import re
 from datetime import datetime
 from xlrd import open_workbook
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class Adequacies(models.Model):
@@ -35,12 +34,14 @@ class Adequacies(models.Model):
     _description = 'Adequacies'
     _rec_name = 'folio'
 
+    # Function calculate total imported and manufal rows
     def _get_count(self):
         for record in self:
             record.record_number = len(record.adequacies_lines_ids)
             record.imported_record_number = len(
                 record.adequacies_lines_ids.filtered(lambda l: l.imported == True))
 
+    # Function to calculate total increase amount and total decrease amount
     def _compute_total_amounts(self):
         for adequacies in self:
             total_decreased = 0
@@ -53,23 +54,35 @@ class Adequacies(models.Model):
             adequacies.total_decreased = float(total_decreased)
             adequacies.total_decreased = float(total_increased)
 
-    total_decreased = fields.Float(string='Total Decreased Amount', compute="_compute_total_amounts")
-    total_increased = fields.Float(string='Total Decreased Amount', compute="_compute_total_amounts")
-    folio = fields.Integer(string='Folio', states={'accepted': [('readonly', True)]})
-    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'accepted': [('readonly', True)]})
-    from_date = fields.Date(string='Observations', states={'accepted': [('readonly', True)]})
-    to_date = fields.Date(states={'accepted': [('readonly', True)]})
+    # Total increased and decreased fields
+    total_decreased = fields.Float(
+        string='Total Decreased Amount', compute="_compute_total_amounts")
+    total_increased = fields.Float(
+        string='Total Decreased Amount', compute="_compute_total_amounts")
+
+    folio = fields.Integer(string='Folio', states={
+                           'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={
+                                'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     reason = fields.Text(string='Reason for rejection')
+
+    # Total imported or manual rows
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     imported_record_number = fields.Integer(
         string='Number of records imported.', compute='_get_count')
+
     state = fields.Selection(
         [('draft', 'Draft'), ('confirmed', 'Confirmed'),
          ('accepted', 'Accepted'), ('rejected', 'Rejected')],
         default='draft', required=True, string='State')
+
+    observation = fields.Text(string='Observation')
+    adaptation_type = fields.Selection(
+        [('compensated', 'Compensated Adjustments'), ('liquid', 'Liquid Adjustments')], default='compensated', states={
+            'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     adequacies_lines_ids = fields.One2many(
-        'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)]})
+        'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
 
     def _compute_failed_rows(self):
         for record in self:
@@ -89,7 +102,7 @@ class Adequacies(models.Model):
             except:
                 pass
 
-    # Import related fields
+    # Import process related fields
     allow_upload = fields.Boolean(string='Allow Update XLS File?')
     budget_file = fields.Binary(string='Uploaded File')
     filename = fields.Char(string='File name')
@@ -114,12 +127,6 @@ class Adequacies(models.Model):
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
-
-    @api.constrains('from_date', 'to_date')
-    def _check_dates(self):
-        if self.from_date and self.to_date:
-            if self.from_date > self.to_date:
-                raise ValidationError("Please select correct date")
 
     def import_lines(self):
         return {
@@ -381,9 +388,9 @@ class Adequacies(models.Model):
                 # Validation Amount
                 amount = budget_obj.validate_asigned_amount(
                     result_dict.get('amount', ''))
-                if amount == "False":
+                if amount == "False" or float(amount) < 10000:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Amount Format\n"
+                        "------>> Invalid Amount Format or Amount Amount should be 10000 or greater than 10000\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -407,7 +414,8 @@ class Adequacies(models.Model):
                             ('sub_dependency_id', '=', subdependency.id),
                             ('item_id', '=', item.id),
                             ('resource_origin_id', '=', origin_resource.id),
-                            ('institutional_activity_id', '=', institutional_activity.id),
+                            ('institutional_activity_id',
+                             '=', institutional_activity.id),
                             ('budget_program_conversion_id', '=', shcp.id),
                             ('conversion_item_id', '=', conversion_item.id),
                             ('expense_type_id', '=', expense_type.id),
@@ -419,7 +427,8 @@ class Adequacies(models.Model):
                             ('state', '=', 'validated'),
                         ], limit=1)
 
-                        budget_line = self.env['expenditure.budget.line'].sudo().search([('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                        budget_line = self.env['expenditure.budget.line'].sudo().search(
+                            [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
                         if not budget_line:
                             1 / 0
 
@@ -431,7 +440,7 @@ class Adequacies(models.Model):
                         failed_row_ids_eval_refill = eval(self.failed_row_ids)
                         failed_row_ids_eval_refill.remove(pointer)
                         self.write({'failed_row_ids': str(
-                            failed_row_ids_eval_refill)})
+                            list(set(failed_row_ids_eval_refill)))})
 
                     line_vals = {
                         'program': program_code.id,
@@ -454,8 +463,8 @@ class Adequacies(models.Model):
                 failed_row_ids_eval.extend(failed_row_ids)
 
             vals = {
-                'failed_row_ids': str(failed_row_ids_eval),
-                'success_row_ids': str(success_row_ids_eval),
+                'failed_row_ids': str(list(set(failed_row_ids_eval))),
+                'success_row_ids': str(list(set(success_row_ids_eval))),
                 'pointer_row': pointer,
             }
 
@@ -496,15 +505,22 @@ class Adequacies(models.Model):
             total_increased = 0
             counter_decreased = 0
             counter_increased = 0
+            if len(self.adequacies_lines_ids.ids) == 0:
+                raise ValidationError("Please select or import any lines!")
             for line in adequacies.adequacies_lines_ids:
+                if line.amount < 10000:
+                    raise ValidationError(
+                        "The total amount of the increases/decreases should be greater than or equal to 10000")
                 if line.line_type == 'decrease':
                     total_decreased += line.amount
                     counter_decreased += 1
                 if line.line_type == 'increase':
                     total_increased += line.amount
                     counter_increased += 1
-            if total_decreased != total_increased:
-                raise ValidationError("The total amount of the increases and the total amount of the decreases must be equal")
+            if self.adaptation_type == 'compensated' and total_decreased != total_increased:
+                if counter_decreased > 0 and counter_increased > 0:
+                    raise ValidationError(
+                        "The total amount of the increases and the total amount of the decreases must be equal")
 
     def confirm(self):
         self.validate_data()
@@ -514,7 +530,8 @@ class Adequacies(models.Model):
         self.validate_data()
         for line in self.adequacies_lines_ids:
             if line.program:
-                budget_line = self.env['expenditure.budget.line'].sudo().search([('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                budget_line = self.env['expenditure.budget.line'].sudo().search(
+                    [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
                 if budget_line:
                     amount = budget_line.assigned
                     if line.line_type == 'decrease':
@@ -528,6 +545,13 @@ class Adequacies(models.Model):
     def reject(self):
         self.state = 'rejected'
 
+    def unlink(self):
+        for adequacies in self:
+            if adequacies.state not in ('draft'):
+                raise ValidationError(
+                    'You can not delete confirmed adjustments!')
+        return super(Adequacies, self).unlink()
+
 
 class AdequaciesLines(models.Model):
 
@@ -535,17 +559,17 @@ class AdequaciesLines(models.Model):
     _description = 'Adequacies Lines'
     _rec_name = ''
 
-    program = fields.Many2one('program.code', string='Program', domain="[('state', '=', 'validated')]")
     line_type = fields.Selection(
         [('increase', 'Increase'), ('decrease', 'Decrease')], string='Type')
     amount = fields.Float(string='Amount')
     creation_type = fields.Selection(
         [('manual', 'Manual'), ('imported', 'Imported')],
-        string='Creation type')
-    adequacies_id = fields.Many2one('adequacies', string='Adequacies', ondelete="cascade")
+        string='Creation type', default='manual')
+    adequacies_id = fields.Many2one(
+        'adequacies', string='Adequacies', ondelete="cascade")
     imported = fields.Boolean(default=False)
+    program = fields.Many2one(
+        'program.code', string='Program', domain="[('state', '=', 'validated'), ('budget_id', '=', parent.budget_id)]")
 
-    _sql_constraints = [
-        ('uniq_program', 'unique(program)',
-         'The Program code must be unique!'),
-    ]
+    _sql_constraints = [('uniq_program_per_adequacies_id', 'unique(program,adequacies_id)',
+                         'The program code must be unique per Adequacies')]

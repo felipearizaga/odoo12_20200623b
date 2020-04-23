@@ -53,8 +53,11 @@ class ExpenditureBudget(models.Model):
     to_date = fields.Date(string='To', states={
                           'validate': [('readonly', True)]})
 
-    total_budget = fields.Float(string='Total budget', tracking=True, states={
-                                'validate': [('readonly', True)]})
+    def _compute_total_budget(self):
+        for budget in self:
+            budget.total_budget = sum(budget.line_ids.mapped('assigned'))
+
+    total_budget = fields.Float(string='Total budget', tracking=True, compute="_compute_total_budget")
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
@@ -112,12 +115,6 @@ class ExpenditureBudget(models.Model):
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
 
-    # @api.constrains('total_budget', 'line_ids')
-    # def _check_budget(self):
-    #     total = sum(self.line_ids.mapped('assigned'))
-    #     if total != self.total_budget:
-    #         raise ValidationError("Budget amount not match with total lines assigned amount! \n Please first import/fill budget lines or compare amount total with file column")
-
     @api.constrains('from_date', 'to_date')
     def _check_dates(self):
         if self.from_date and self.to_date:
@@ -138,7 +135,7 @@ class ExpenditureBudget(models.Model):
     def validate_year(self, year_string):
         if len(str(year_string)) > 3:
             year_str = str(year_string)[:4]
-            if year_str.isnumeric():
+            if str(year_str).isnumeric():
                 year = self.env['year.configuration'].search(
                     [('name', '=', year_str)], limit=1)
                 if not year:
@@ -168,6 +165,8 @@ class ExpenditureBudget(models.Model):
                         {'key_unam': program_str, 'desc_key_unam': 'NA'})
                     flag_created = True
                 return [program, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_subprogram(self, subprogram_string, program):
@@ -189,6 +188,8 @@ class ExpenditureBudget(models.Model):
                         {'unam_key_id': program.id, 'sub_program': subprogram_str, 'desc': 'NA'})
                     flag_created = True
                 return [subprogram, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_dependency(self, dependency_string):
@@ -210,6 +211,8 @@ class ExpenditureBudget(models.Model):
                         {'dependency': dependency_str, 'description': 'NA'})
                     flag_created = True
                 return [dependency, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_subdependency(self, subdependency_string, dependency):
@@ -231,6 +234,8 @@ class ExpenditureBudget(models.Model):
                         {'dependency_id': dependency.id, 'sub_dependency': subdependency_string, 'description': 'NA'})
                     flag_created = True
                 return [subdependency, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_item(self, item_string, typee):
@@ -258,12 +263,14 @@ class ExpenditureBudget(models.Model):
                         {'item': item_str, 'exercise_type': typee, 'description': 'NA'})
                     flag_created = True
                 return [item, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_origin_resource(self, origin_resource_string):
         flag_created = False
         if len(str(origin_resource_string)) > 0:
-            origin_resource_str = str(origin_resource_string).zfill(2)
+            origin_resource_str = str(origin_resource_string).replace('.', '').zfill(2)
 
             desc = 'subsidy'
             if origin_resource_str == '00':
@@ -294,6 +301,8 @@ class ExpenditureBudget(models.Model):
                         {'key_origin': origin_resource_str, 'desc': desc})
                     flag_created = True
                 return [origin_resource, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_institutional_activity(self, institutional_activity_string):
@@ -316,6 +325,8 @@ class ExpenditureBudget(models.Model):
                         {'number': institutional_activity_str, 'description': 'NA'})
                     flag_created = True
                 return [institutional_activity, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_shcp(self, shcp_string, program):
@@ -345,6 +356,8 @@ class ExpenditureBudget(models.Model):
                             {'shcp': shcp_str, 'unam_key_id': program.id, 'desc': 'NA', 'description': 'NA'})
                         flag_created = True
                     return [shcp, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_conversion_item(self, conversion_item_string):
@@ -366,6 +379,8 @@ class ExpenditureBudget(models.Model):
                         {'federal_part': conversion_item_str, 'federal_part_desc': 'NA'})
                     flag_created = True
                 return [conversion_item, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_expense_type(self, expense_type_string):
@@ -387,6 +402,8 @@ class ExpenditureBudget(models.Model):
                         {'key_expenditure_type': expense_type_str, 'description_expenditure_type': 'NA'})
                     flag_created = True
                 return [expense_type, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_geo_location(self, location_string):
@@ -408,6 +425,8 @@ class ExpenditureBudget(models.Model):
                         {'state_key': location_str})
                     flag_created = True
                 return [location, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_wallet_key(self, wallet_key_string):
@@ -429,6 +448,8 @@ class ExpenditureBudget(models.Model):
                         {'wallet_password': wallet_key_str, 'wallet_password_desc': 'NA'})
                     flag_created = True
                 return [wallet_key, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_project_type(self, project_type_string, result_dict):
@@ -468,6 +489,8 @@ class ExpenditureBudget(models.Model):
                             {'project_id': project.id})
                         flag_created = True
                     return [project_type, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_project_number(self, project_number_string, project_type):
@@ -487,6 +510,8 @@ class ExpenditureBudget(models.Model):
                             return project1.number
                 project.number = project_number_str
                 return project_number_str
+        if self._context.get('from_adequacies'):
+            return False
         return False
 
     def validate_stage(self, stage_string, project):
@@ -527,6 +552,8 @@ class ExpenditureBudget(models.Model):
                     project.stage_identifier = stage_str
                     flag_created = True
                 return [stage, flag_created]
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_agreement_type(self, agreement_type_string, project, agreement_number):
@@ -574,6 +601,8 @@ class ExpenditureBudget(models.Model):
             if validated_number:
                 project.number_agreement = validated_number
                 project.agreement_type = agreement_type
+        if self._context.get('from_adequacies'):
+            return False
         return [False, flag_created]
 
     def validate_agreement_number(self, agreement_number_string, project):
@@ -586,13 +615,13 @@ class ExpenditureBudget(models.Model):
 
     def validate_asigned_amount(self, asigned_amount_string):
         if len(str(asigned_amount_string)) > 0:
-            if asigned_amount_string.isnumeric():
+            if str(asigned_amount_string).isnumeric() or type(asigned_amount_string) is float or type(asigned_amount_string) is int:
                 return float(asigned_amount_string)
         return "False"
 
     def validate_authorized_amount(self, authorized_amount_string):
         if len(str(authorized_amount_string)) > 0:
-            if authorized_amount_string.isnumeric():
+            if str(authorized_amount_string).isnumeric() or type(authorized_amount_string) is float or type(authorized_amount_string) is int:
                 return float(authorized_amount_string)
         return "False"
 
@@ -951,7 +980,7 @@ class ExpenditureBudget(models.Model):
                         failed_row_ids_eval_refill = eval(self.failed_row_ids)
                         failed_row_ids_eval_refill.remove(pointer)
                         self.write({'failed_row_ids': str(
-                            failed_row_ids_eval_refill)})
+                            list(set(failed_row_ids_eval_refill)))})
 
                     line_vals = {
                         'program_code_id': program_code.id,
@@ -973,8 +1002,8 @@ class ExpenditureBudget(models.Model):
                 failed_row_ids_eval.extend(failed_row_ids)
 
             vals = {
-                'failed_row_ids': str(failed_row_ids_eval),
-                'success_row_ids': str(success_row_ids_eval),
+                'failed_row_ids': str(list(set(failed_row_ids_eval))),
+                'success_row_ids': str(list(set(success_row_ids_eval))),
                 'pointer_row': pointer,
             }
 
@@ -1033,7 +1062,7 @@ class ExpenditureBudget(models.Model):
 
     def approve(self):
         self.verify_data()
-        self.line_ids.mapped('program_code_id').write({'state': 'validated'})
+        self.line_ids.mapped('program_code_id').write({'state': 'validated', 'budget_id': self.id})
         self.write({'state': 'validate'})
 
     def reject(self):
@@ -1068,7 +1097,6 @@ class ExpenditureBudgetLine(models.Model):
         string='Start date', related="expenditure_budget_id.from_date")
     end_date = fields.Date(
         string='End date', related="expenditure_budget_id.to_date")
-    paid_date = fields.Date(string='Paid Date')
     authorized = fields.Float(
         string='Authorized')
     assigned = fields.Float(

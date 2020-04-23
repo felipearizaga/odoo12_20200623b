@@ -76,20 +76,6 @@ class ImportAdequaciesLine(models.TransientModel):
                 if sheet.nrows != total_rows:
                     raise UserError(_('Number of records do not match with file'))
 
-                headers = []
-                for rowx, row in enumerate(map(sheet.row, range(1)), 1):
-                    for colx, cell in enumerate(row, 1):
-                        headers.append(cell.value)
-
-                result_vals = []
-                for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
-                    result_dict = {}
-                    counter = 0
-                    for colx, cell in enumerate(row, 1):
-                        result_dict.update({headers[counter]: cell.value})
-                        counter += 1
-                    result_vals.append(result_dict)
-                data = result_vals
                 if adequacies:
                     adequacies.write({
                         'budget_file': self.file,
@@ -97,15 +83,5 @@ class ImportAdequaciesLine(models.TransientModel):
                         'import_status': 'in_progress',
                         'total_rows': self.record_number,
                     })
-
-                # for rec in data:
-                #     vals = {'program': rec.get('program'),
-                #             'line_type': rec.get('line_type'),
-                #             'amount': rec.get('amount'),
-                #             'creation_type': rec.get('creation_type'),
-                #             'adequacies_id': adequacies.id,
-                #             'imported': True,
-                #             }
-                #     adequacies.adequacies_lines_ids.create(vals)
             except UserError as e:
                 raise UserError(e)

@@ -35,16 +35,16 @@
                             <group>
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
+                                <field name="adaptation_type" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" states='draft'/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>
                             </group>        
                             <group>
-                                <label for="from_date"/>
+                                <label for="observation"/>
                                 <div>
-                                    <field name="from_date" class="oe_inline" required="1"/> - 
-                                    <field name="to_date" class="oe_inline" required="1"/>
+                                    <field name="observation" class="oe_inline"/>
                                 </div>
                             </group>
                         </group>
@@ -62,10 +62,10 @@
                                         <group>
                                             <field name="imported" invisible="1"/>
                                             <field name="adequacies_id" invisible="1"/>
-                                            <field name="program" required="1" attrs="{'readonly': [('imported', '=', True)]}"/> 
-                                            <field name="line_type" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="program" required="1" attrs="{'readonly': [('imported', '=', True)]}" /> 
+                                            <field name="line_type" required="1"  attrs="{'readonly': [('imported', '=', True)]}"/>
                                             <field name="amount" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
-                                            <field name="creation_type" required="1" attrs="{'readonly': [('imported', '=', True)]}"/>
+                                            <field name="creation_type" required="1" readonly="1"/>
                                         </group>
                                     </form>
                                 </field>
@@ -114,8 +114,6 @@
                     <field name="imported_record_number" invisible="1"/>
                     <field name="record_number" invisible="1"/>
                     <field name="reason" invisible="1"/>
-                    <field name="to_date" invisible="1"/>
-                    <field name="from_date" invisible="1"/>
                     <!-- <field name="total_decreased" invisible="1"/> -->
                     <!-- <field name="total_increased" invisible="1"/> -->
                     <field name="allow_upload" invisible="1"/>

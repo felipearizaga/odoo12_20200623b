@@ -31,6 +31,8 @@ class ProgramCode(models.Model):
     _description = 'Program Code'
     _rec_name = 'program_code'
 
+    budget_id = fields.Many2one('expenditure.budget')
+
     year = fields.Many2one('year.configuration', string='Year (YEAR)', states={'validated': [('readonly', True)]})
 
     # Program Relations
