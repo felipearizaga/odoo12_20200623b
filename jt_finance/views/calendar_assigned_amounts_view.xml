@@ -36,7 +36,10 @@
                                 <field name="line_ids">
                                     <tree>
                                        <field name="date"/>
+                                       <field name="budget_id"/>
+                                       <field name="month"/>
                                        <field name="observations"/>
+                                       <field name="amount_assigned"/>
                                        <field name="amount_deposited"/>
                                        <field name="bank_id"/>
                                        <field name="bank_account_id"/>
@@ -44,7 +47,10 @@
                                     <form>
                                         <group>
                                             <field name="date"/>
+                                            <field name="budget_id"/>
+                                            <field name="month"/>
                                             <field name="observations"/>
+                                            <field name="amount_assigned"/>
                                             <field name="amount_deposited"/>
                                             <field name="bank_id"/>
                                             <field name="bank_account_id"/>

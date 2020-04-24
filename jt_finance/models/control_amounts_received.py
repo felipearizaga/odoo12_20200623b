@@ -31,11 +31,14 @@ class ControlAmountsReceived(models.Model):
 
     folio = fields.Integer(string='Folio')
     budget_id = fields.Many2one('expenditure.budget', string='Budget')
+    file = fields.Binary(string='Seasonal file')
     made_by_id = fields.Many2one('res.users', string='Made by')
     import_date = fields.Date(string='Import date')
     observations = fields.Text(string='Observations')
     line_ids = fields.One2many('control.amounts.received.line',
                                'control_id', string='Control of amounts received lines')
+    calendar_id = fields.Many2one(
+        'calendar.assigned.amounts', string='Calendar of assigned amounts')
 
 
 class ControlAmountsReceivedLine(models.Model):
@@ -44,11 +47,18 @@ class ControlAmountsReceivedLine(models.Model):
     _description = 'Control of amounts received lines'
     _rec_name = 'deposit_date'
 
+    def _get_amount_pending(self):
+        for record in self:
+            record.amount_pending = record.amount_assigned - record.amount_deposited
+
     amount_assigned = fields.Integer(string='Amount assigned')
     deposit_date = fields.Date(string='Deposit date')
     amount_deposited = fields.Integer(string='Amount deposited')
-    account_id = fields.Many2one('account.account', string='Account')
-    amount_pending = fields.Integer(string='Amount pending')
-    observations = fields.Text(string='Observations')
+    account_id = fields.Many2one('res.bank', string='Bank')
+    amount_pending = fields.Integer(
+        string='Amount pending', compute='_get_amount_pending')
+    observations = fields.Text(string='Comments')
     control_id = fields.Many2one(
         'control.amounts.received', string='Control of amounts received')
+    calendar_id = fields.Many2one(
+        'calendar.assigned.amounts', string='Calendar of assigned amounts')

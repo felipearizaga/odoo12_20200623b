@@ -26,6 +26,7 @@
                             <group>
                                 <field name="folio"/>
                                 <field name="budget_id"/>
+                                <field name="file"/>
                                 <field name="made_by_id"/>
                                 <field name="import_date"/>
                                 <field name="observations"/>
