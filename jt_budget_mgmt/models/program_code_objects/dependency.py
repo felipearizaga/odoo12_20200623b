@@ -60,3 +60,13 @@ class Dependency(models.Model):
             if program_code:
                 raise ValidationError('You can not delete dependency which are mapped with program code!')
         return super(Dependency, self).unlink()
+
+    def validate_dependency(self, dependency_string):
+        if len(str(dependency_string)) > 2:
+            dependency_str = str(dependency_string).zfill(3)
+            if dependency_str.isnumeric():
+                dependency = self.search(
+                    [('dependency', '=', dependency_str)], limit=1)
+                if dependency:
+                    return dependency
+        return False

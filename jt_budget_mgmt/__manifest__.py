@@ -35,7 +35,7 @@
         'security/ir.model.access.csv',
 
         # Data Files
-        'data/data.xml',
+        # 'data/data.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',

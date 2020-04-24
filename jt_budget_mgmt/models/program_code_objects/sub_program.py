@@ -62,3 +62,13 @@ class SubProgram(models.Model):
             if program_code:
                 raise ValidationError('You can not delete sub-program which are mapped with program code!')
         return super(SubProgram, self).unlink()
+
+    def validate_subprogram(self, subprogram_string, program):
+        if len(str(subprogram_string)) > 1:
+            subprogram_str = str(subprogram_string).zfill(2)
+            if subprogram_str.isnumeric():
+                subprogram = self.search(
+                    [('unam_key_id', '=', program.id), ('sub_program', '=', subprogram_str)], limit=1)
+                if subprogram:
+                    return subprogram
+        return False

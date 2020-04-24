@@ -60,3 +60,13 @@ class DepartureConversion(models.Model):
             if program_code:
                 raise ValidationError('You can not delete conversion item which are mapped with program code!')
         return super(DepartureConversion, self).unlink()
+
+    def validate_conversion_item(self, conversion_item_string):
+        if len(str(conversion_item_string)) > 4:
+            conversion_item_str = str(conversion_item_string).zfill(4)
+            if conversion_item_str.isnumeric():
+                conversion_item = self.search(
+                    [('federal_part', '=', conversion_item_str)], limit=1)
+                if conversion_item:
+                    return conversion_item
+        return False

@@ -61,3 +61,13 @@ class Program(models.Model):
             if program_code:
                 raise ValidationError('You can not delete program which are mapped with program code!')
         return super(Program, self).unlink()
+
+    def validate_program(self, program_string):
+        if len(str(program_string)) > 1:
+            program_str = str(program_string).zfill(2)
+            if program_str.isnumeric():
+                program = self.search(
+                    [('key_unam', '=', program_str)], limit=1)
+                if program:
+                    return program
+        return False

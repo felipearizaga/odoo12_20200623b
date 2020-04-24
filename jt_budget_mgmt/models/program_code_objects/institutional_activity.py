@@ -60,3 +60,14 @@ class InstitutionalActivity(models.Model):
             if program_code:
                 raise ValidationError('You can not delete institutional activity which are mapped with program code!')
         return super(InstitutionalActivity, self).unlink()
+
+    def validate_institutional_activity(self, institutional_activity_string):
+        if len(str(institutional_activity_string)) > 2:
+            institutional_activity_str = str(
+                institutional_activity_string).zfill(5)
+            if institutional_activity_str.isnumeric():
+                institutional_activity = self.search(
+                    [('number', '=', institutional_activity_str)], limit=1)
+                if institutional_activity:
+                    return institutional_activity
+        return False

@@ -62,3 +62,13 @@ class ExpenseType(models.Model):
             if program_code:
                 raise ValidationError('You can not delete expense type item which are mapped with program code!')
         return super(ExpenseType, self).unlink()
+
+    def validate_expense_type(self, expense_type_string):
+        if len(str(expense_type_string)) > 1:
+            expense_type_str = str(expense_type_string).zfill(2)
+            if expense_type_str.isnumeric():
+                expense_type = self.search(
+                    [('key_expenditure_type', '=', expense_type_str)], limit=1)
+                if expense_type:
+                    return expense_type
+        return False

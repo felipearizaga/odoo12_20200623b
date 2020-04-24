@@ -49,3 +49,13 @@ class AgreementType(models.Model):
             if program_code:
                 raise ValidationError('You can not delete agreement type which are mapped with program code!')
         return super(AgreementType, self).unlink()
+
+    def validate_agreement_type(self, agreement_type_string, project, agreement_number):
+        if len(str(agreement_type_string)) > 1:
+            agreement_type_str = str(agreement_type_string).zfill(2)
+            if agreement_type_str.isnumeric():
+                agreement_type = self.search(
+                    [('project_id.agreement_type', '=', agreement_type_str), ('number_agreement', '=', agreement_number)], limit=1)
+                if agreement_type:
+                    return agreement_type
+        return False

@@ -61,3 +61,13 @@ class GeographicLocation(models.Model):
             if program_code:
                 raise ValidationError('You can not delete geographic location item which are mapped with program code!')
         return super(GeographicLocation, self).unlink()
+
+    def validate_geo_location(self, location_string):
+        if len(str(location_string)) > 1:
+            location_str = str(location_string).zfill(2)
+            if location_str.isnumeric():
+                location = self.search(
+                    [('state_key', '=', location_str)], limit=1)
+                if location:
+                    return location
+        return False

@@ -72,3 +72,14 @@ class ResourceOrigin(models.Model):
             if program_code:
                 raise ValidationError('You can not delete origin resource which are mapped with program code!')
         return super(ResourceOrigin, self).unlink()
+
+    def validate_origin_resource(self, origin_resource_string):
+        if len(str(origin_resource_string)) > 0:
+            origin_resource_str = str(
+                origin_resource_string).replace('.', '').zfill(2)
+            if origin_resource_str.isnumeric():
+                origin_resource = self.search(
+                    [('key_origin', '=', origin_resource_str)], limit=1)
+                if origin_resource:
+                    return origin_resource
+        return False

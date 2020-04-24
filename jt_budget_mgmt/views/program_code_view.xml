@@ -9,7 +9,24 @@
                 <search string="Program code">
                     <field name="program_code"/>
                     <group expand="1" string="Group By">
-                        <filter string="Program code" name='program_code' context="{'group_by':'program_code'}"/>
+                        <filter string="Status" name='status' context="{'group_by':'state'}"/>
+                        <filter string="Budget" name='budget' context="{'group_by':'budget_id'}"/>
+                        <filter string="Year" name='year' context="{'group_by':'year'}"/>
+                        <filter string="Program" name='program' context="{'group_by':'program_id'}"/>
+                        <filter string="Sub-Program" name='subprogram' context="{'group_by':'sub_program_id'}"/>
+                        <filter string="Dependency" name='dependency' context="{'group_by':'dependency_id'}"/>
+                        <filter string="Sub-Dependency" name='subdependency' context="{'group_by':'sub_dependency_id'}"/>
+                        <filter string="Item" name='item' context="{'group_by':'item_id'}"/>
+                        <filter string="Resource Origin" name='resource_origin' context="{'group_by':'resource_origin_id'}"/>
+                        <filter string="Institutional Activity" name='institutional_activity' context="{'group_by':'institutional_activity_id'}"/>
+                        <filter string="Conversation Program SHCP" name='budget_program_conversion' context="{'group_by':'budget_program_conversion_id'}"/>
+                        <filter string="Federal Item" name='federal_item' context="{'group_by':'conversion_item_id'}"/>
+                        <filter string="Expense Type" name='expense_type' context="{'group_by':'expense_type_id'}"/>
+                        <filter string="State Code" name='location' context="{'group_by':'location_id'}"/>
+                        <filter string="Key Porfolio" name='portfolio_id' context="{'group_by':'portfolio_id'}"/>
+                        <filter string="Project Type Identifier" name='project_type' context="{'group_by':'project_type_id'}"/>
+                        <filter string="Stage Identifier" name='stage_id' context="{'group_by':'stage_id'}"/>
+                        <filter string="Agreement Type" name='agreement_type' context="{'group_by':'agreement_type_id'}"/>
                     </group>
                 </search>
             </field>

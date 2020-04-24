@@ -35,3 +35,17 @@ class YearConfiguration(models.Model):
     def _check_name(self):
         if not str(self.name).isnumeric():
             raise ValidationError(_('Year must be numeric value!'))
+
+    def validate_year(self, year_string):
+        if len(str(year_string)) > 3:
+            year_str = str(year_string)[:4]
+            if year_str.isnumeric():
+                year = self.search(
+                    [('name', '=', year_str)], limit=1)
+                if not year:
+                    if self._context.get('from_adequacies'):
+                        return False
+                    year = self.env['year.configuration'].create(
+                        {'name': year_str})
+                return year
+        return False

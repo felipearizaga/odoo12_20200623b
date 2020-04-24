@@ -62,3 +62,13 @@ class SubDependency(models.Model):
             if program_code:
                 raise ValidationError('You can not delete sub-dependency which are mapped with program code!')
         return super(SubDependency, self).unlink()
+
+    def validate_subdependency(self, subdependency_string, dependency):
+        if len(str(subdependency_string)) > 1:
+            subdependency_str = str(subdependency_string).zfill(2)
+            if subdependency_str.isnumeric():
+                subdependency = self.search(
+                    [('dependency_id', '=', dependency.id), ('sub_dependency', '=', subdependency_string)], limit=1)
+                if subdependency:
+                    return subdependency
+        return False

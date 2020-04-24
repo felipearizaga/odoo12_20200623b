@@ -114,6 +114,24 @@ class Standardization(models.Model):
 
     def validate_and_add_budget_line(self):
         if self.budget_file:
+            # Objects
+            year_obj = self.env['year.configuration']
+            program_obj = self.env['program']
+            subprogram_obj = self.env['sub.program']
+            dependancy_obj = self.env['dependency']
+            subdependancy_obj = self.env['sub.dependency']
+            item_obj = self.env['expenditure.item']
+            origin_obj = self.env['resource.origin']
+            activity_obj = self.env['institutional.activity']
+            shcp_obj = self.env['budget.program.conversion']
+            dpc_obj = self.env['departure.conversion']
+            expense_type_obj = self.env['expense.type']
+            location_obj = self.env['geographic.location']
+            wallet_obj = self.env['key.wallet']
+            project_type_obj = self.env['project.type']
+            stage_obj = self.env['stage']
+            agreement_type_obj = self.env['agreement.type']
+
             budget_obj = self.env['expenditure.budget'].sudo(
             ).with_context(from_adequacies=True)
 
@@ -164,7 +182,7 @@ class Standardization(models.Model):
                 final_dict = {}
 
                 # Validate year format
-                year = budget_obj.validate_year(result_dict.get('AÑO', ''))
+                year = year_obj.validate_year(result_dict.get('AÑO', ''))
                 if year:
                     p_code += year.name
                 else:
@@ -174,7 +192,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Program(PR)
-                program = budget_obj.validate_program(
+                program = program_obj.validate_program(
                     result_dict.get('Programa', ''))
                 if program:
                     final_dict['program_id'] = program.id
@@ -186,7 +204,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Sub-Program
-                subprogram = budget_obj.validate_subprogram(
+                subprogram = subprogram_obj.validate_subprogram(
                     result_dict.get('SubPrograma', ''), program)
                 if subprogram:
                     final_dict['sub_program_id'] = subprogram.id
@@ -198,7 +216,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Dependency
-                dependency = budget_obj.validate_dependency(
+                dependency = dependancy_obj.validate_dependency(
                     result_dict.get('Dependencia', ''))
                 if dependency:
                     final_dict['dependency_id'] = dependency.id
@@ -210,7 +228,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Sub-Dependency
-                subdependency = budget_obj.validate_subdependency(
+                subdependency = subdependancy_obj.validate_subdependency(
                     result_dict.get('SubDependencia', ''), dependency)
                 if subdependency:
                     final_dict['sub_dependency_id'] = subdependency.id
@@ -222,7 +240,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Item
-                item = budget_obj.validate_item(result_dict.get(
+                item = item_obj.validate_item(result_dict.get(
                     'Partida', ''), result_dict.get('Cve Ejercicio', ''))
                 if item:
                     final_dict['item_id'] = item.id
@@ -238,7 +256,7 @@ class Standardization(models.Model):
                                   )[:1].replace('.', '').zfill(2)
 
                 # Validate Origin Of Resource
-                origin_resource = budget_obj.validate_origin_resource(
+                origin_resource = origin_obj.validate_origin_resource(
                     result_dict.get('Digito Centraliador', ''))
                 if origin_resource:
                     final_dict['resource_origin_id'] = origin_resource.id
@@ -250,7 +268,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Institutional Activity Number
-                institutional_activity = budget_obj.validate_institutional_activity(
+                institutional_activity = activity_obj.validate_institutional_activity(
                     result_dict.get('Actividad Institucional', ''))
                 if institutional_activity:
                     final_dict['institutional_activity_id'] = institutional_activity.id
@@ -262,7 +280,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Conversion Program SHCP
-                shcp = budget_obj.validate_shcp(
+                shcp = shcp_obj.validate_shcp(
                     result_dict.get('Conversion Programa', ''), program)
                 if shcp:
                     final_dict['budget_program_conversion_id'] = shcp.id
@@ -274,7 +292,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Federal Item
-                conversion_item = budget_obj.validate_conversion_item(
+                conversion_item = dpc_obj.validate_conversion_item(
                     result_dict.get('Conversion Partida', ''))
                 if conversion_item:
                     final_dict['conversion_item_id'] = conversion_item.id
@@ -286,7 +304,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Expense Type
-                expense_type = budget_obj.validate_expense_type(
+                expense_type = expense_type_obj.validate_expense_type(
                     result_dict.get('Tipo de gasto', ''))
                 if expense_type:
                     final_dict['expense_type_id'] = expense_type.id
@@ -298,7 +316,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Expense Type
-                geo_location = budget_obj.validate_geo_location(
+                geo_location = location_obj.validate_geo_location(
                     result_dict.get('Ubicación geografica', ''))
                 if geo_location:
                     final_dict['location_id'] = geo_location.id
@@ -310,7 +328,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Wallet Key
-                wallet_key = budget_obj.validate_wallet_key(
+                wallet_key = wallet_obj.validate_wallet_key(
                     result_dict.get('Clave Cartera', ''))
                 if wallet_key:
                     final_dict['portfolio_id'] = wallet_key.id
@@ -322,7 +340,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Project Type
-                project_type = budget_obj.validate_project_type(
+                project_type = project_type_obj.with_context(from_adjustment=True).validate_project_type(
                     result_dict.get('Tipo de Proyecto', ''), result_dict)
                 if project_type:
                     final_dict['project_type_id'] = project_type.id
@@ -335,7 +353,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Stage
-                stage = budget_obj.validate_stage(
+                stage = stage_obj.validate_stage(
                     result_dict.get('Etapa', ''), project_type.project_id)
                 if stage:
                     final_dict['stage_id'] = stage.id
@@ -347,7 +365,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Agreement Type
-                agreement_type = budget_obj.validate_agreement_type(result_dict.get(
+                agreement_type = agreement_type_obj.validate_agreement_type(result_dict.get(
                     'Tipo de Convenio', ''), project_type.project_id, result_dict.get('No. de Convenio', ''))
                 if agreement_type:
                     final_dict['agreement_type_id'] = agreement_type.id
@@ -360,11 +378,17 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Amount
-                amount = budget_obj.validate_asigned_amount(
-                    result_dict.get('Amount', ''))
-                if amount == "False":
+                amount = 0
+                try:
+                    amount = float(result_dict.get('Amount', ''))
+                    if float(amount) == 0:
+                        failed_row += str(list(result_dict.values())) + \
+                            "------>> Amount should be greater than 0"
+                        failed_row_ids.append(pointer)
+                        continue
+                except:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Amount Format"
+                        "------>> Invalid Amount Format or Amount Amount should be 0"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -385,7 +409,7 @@ class Standardization(models.Model):
 
                 # Validation Budget
                 budget_str = result_dict.get('Budget', '')
-                budget = budget_obj.search([('budget_name', '=', budget_str)], limit=1)
+                budget = budget_obj.search([('name', '=', budget_str)], limit=1)
                 if not budget:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Budget Not Found"
@@ -393,7 +417,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Origin
-                origin = budget_obj.validate_origin_resource(
+                origin = origin_obj.validate_origin_resource(
                     result_dict.get('Origin', ''))
                 if not origin:
                     failed_row += str(list(result_dict.values())) + \

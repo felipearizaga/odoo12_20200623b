@@ -24,7 +24,7 @@ from odoo import models, fields, _
 import base64
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 
 
 class ImportLine(models.TransientModel):
@@ -63,7 +63,7 @@ class ImportLine(models.TransientModel):
     def import_line(self):
         budget = self.env['expenditure.budget'].browse(
             self._context.get('active_ids'))
-        if budget.budget_name != self.budget_name:
+        if budget.name != self.budget_name:
             raise UserError(_('Budget name does not match.'))
         elif self.file:
             try:
@@ -81,29 +81,39 @@ class ImportLine(models.TransientModel):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
 
+                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv', 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
+                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'authorized']
+
                 total_budget_amount = 0
                 result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
-                    result_dict = {}
+                    result_dict = {
+                        'imported': True,
+                        'state': 'draft',
+                    }
                     counter = 0
                     for colx, cell in enumerate(row, 1):
-                        result_dict.update({headers[counter]: cell.value})
+                        value = cell.value
+                        if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
+                            value = int(cell.value)
+
+                        result_dict.update(
+                            {field_headers[counter]: value})
                         counter += 1
-                    if 'Importe 1a Asignacion' in result_dict:
+                    if 'assigned' in result_dict:
                         total_budget_amount += float(
-                            result_dict.get('Importe 1a Asignacion'))
-                    result_vals.append(result_dict)
-                # print("---------> ", total_budget_amount, self.total_budget)
+                            result_dict.get('assigned', 0))
+                    result_vals.append((0, 0, result_dict))
+                print("---------> ", total_budget_amount, self.total_budget)
                 if total_budget_amount != self.total_budget:
                     raise UserError(
                         _('The sum of the assigned amounts is not equal to the total of the budget'))
 
+                data = result_vals
                 if budget:
                     budget.write({
-                        'budget_file': self.file,
-                        'filename': self.filename,
                         'import_status': 'in_progress',
-                        'total_rows': self.record_number,
+                        'line_ids': data,
                     })
             except UserError as e:
                 raise UserError(e)

@@ -46,3 +46,13 @@ class Stage(models.Model):
             if program_code:
                 raise ValidationError('You can not delete stage identifier which are mapped with program code!')
         return super(Stage, self).unlink()
+
+    def validate_stage(self, stage_string, project):
+        if len(str(stage_string)) > 1:
+            stage_str = str(stage_string).zfill(2)
+            if stage_str.isnumeric():
+                stage = self.search(
+                    [('project_id.stage_identifier', '=', stage_str)], limit=1)
+                if stage:
+                    return stage
+        return False

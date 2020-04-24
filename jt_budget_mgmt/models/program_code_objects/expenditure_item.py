@@ -100,3 +100,19 @@ class ExpenditureItem(models.Model):
             if program_code:
                 raise ValidationError('You can not delete item which are mapped with program code!')
         return super(ExpenditureItem, self).unlink()
+
+    def validate_item(self, item_string, typee):
+        if len(str(item_string)) > 2:
+            item_str = str(item_string).zfill(3)
+            typee = str(typee).lower()
+            if typee not in ['r', 'c', 'd']:
+                typee = 'r'
+            if item_str.isnumeric():
+                item = self.search(
+                    [('item', '=', item_str), ('exercise_type', '=', typee)], limit=1)
+                if not item:
+                    item = self.search(
+                        [('item', '=', item_str)], limit=1)
+                if item:
+                    return item
+        return False

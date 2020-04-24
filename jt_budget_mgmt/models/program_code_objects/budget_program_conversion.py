@@ -60,3 +60,16 @@ class BudgetProgramConversion(models.Model):
             if program_code:
                 raise ValidationError('You can not delete conversion program SHCP which are mapped with program code!')
         return super(BudgetProgramConversion, self).unlink()
+
+    def validate_shcp(self, shcp_string, program):
+        if len(str(shcp_string)) > 3:
+            shcp_str = str(shcp_string)
+            if len(shcp_str) == 4:
+                if not (re.match("[A-Z]{1}\d{3}", str(shcp_str).upper())):
+                    return False
+                else:
+                    shcp = self.search(
+                        [('shcp', '=', shcp_str)], limit=1)
+                    if shcp:
+                        return shcp
+        return False

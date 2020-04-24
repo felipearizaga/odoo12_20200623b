@@ -62,3 +62,13 @@ class KeyWallet(models.Model):
             if program_code:
                 raise ValidationError('You can not delete key portfolio item which are mapped with program code!')
         return super(KeyWallet, self).unlink()
+
+    def validate_wallet_key(self, wallet_key_string):
+        if len(str(wallet_key_string)) > 3:
+            wallet_key_str = str(wallet_key_string).zfill(4)
+            if wallet_key_str.isnumeric():
+                wallet_key = self.search(
+                    [('wallet_password', '=', wallet_key_str)], limit=1)
+                if wallet_key:
+                    return wallet_key
+        return False

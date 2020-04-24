@@ -45,3 +45,18 @@ class ProjectType(models.Model):
             if program_code:
                 raise ValidationError('You can not delete project type which are mapped with program code!')
         return super(ProjectType, self).unlink()
+
+    def validate_project_type(self, project_type_string, result_dict):
+        if len(str(project_type_string)) > 1:
+            number = ''
+            if self._context.get('from_adjustment'):
+                number = result_dict.get('No. de Proyecto')
+            else:
+                number = result_dict.project_number
+            project_type_str = str(project_type_string).zfill(2)
+            if project_type_str.isnumeric():
+                project_type = self.search(
+                    [('project_id.project_type_identifier', '=', project_type_str), ('number', '=', number)], limit=1)
+                if project_type:
+                    return project_type
+        return False
