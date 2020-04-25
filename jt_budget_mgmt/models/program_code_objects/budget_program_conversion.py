@@ -39,9 +39,6 @@ class BudgetProgramConversion(models.Model):
     _sql_constraints = [('uniq_unam_key_id', 'unique(unam_key_id)',
                          'The Key UNAM must be unique.')]
 
-    _sql_constraints = [('uniq_shcp', 'unique(shcp)',
-                         'The Conversion of SHCP program must be unique.')]
-
     @api.constrains('shcp')
     def _check_shcp(self):
         # To check size of the position is exact 2
