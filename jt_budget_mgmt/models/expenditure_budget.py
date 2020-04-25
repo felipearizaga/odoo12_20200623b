@@ -121,6 +121,9 @@ class ExpenditureBudget(models.Model):
                 raise ValidationError("Please select correct date")
 
     def import_lines(self):
+        ctx = self.env.context.copy()
+        if self._context.get('reimport'):
+            ctx['reimport'] = True
         return {
             'name': "Import Budget Lines",
             'type': 'ir.actions.act_window',
@@ -129,6 +132,7 @@ class ExpenditureBudget(models.Model):
             'view_type': 'form',
             'views': [(False, 'form')],
             'target': 'new',
+            'context': ctx,
         }
 
     def validate_and_add_budget_line(self):
@@ -157,8 +161,8 @@ class ExpenditureBudget(models.Model):
             agreement_type_obj = self.env['agreement.type']
 
             for line in self.line_ids:
-                # if counter == 100:
-                #     break
+                if counter == 10000:
+                    break
                 counter += 1
                 line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item, line.dv, line.origin_resource, line.ai, line.conversion_program,
                              line.departure_conversion, line.expense_type, line.location, line.portfolio, line.project_type, line.project_number, line.stage, line.agreement_type, line.agreement_number, line.exercise_type]
@@ -389,13 +393,21 @@ class ExpenditureBudget(models.Model):
                                 ('project_type_id', '=', project_type.id),
                                 ('stage_id', '=', stage.id),
                                 ('agreement_type_id', '=', agreement_type.id),
+                                # ('state', '=', 'validated'),
                             ], limit=1)
 
-                            if program_code:
+                            if program_code and program_code.state == 'validated':
                                 failed_row += str(line_vals) + \
                                     "------>> Duplicated Program Code Found!"
                                 failed_line_ids.append(line.id)
                                 continue
+                            if program_code and program_code.state == 'draft':
+                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id)], limit=1)
+                                if budget_line:
+                                    failed_row += str(line_vals) + \
+                                        "------>> Program Code Already Linked With Budget Line!"
+                                    failed_line_ids.append(line.id)
+                                    continue
 
                         if not program_code:
                             program_vals = {
@@ -419,9 +431,9 @@ class ExpenditureBudget(models.Model):
                             program_code = self.env['program.code'].sudo().create(
                                 program_vals)
                             self._cr.commit()
-                            if program_code:
-                                line.program_code_id = program_code.id
-                                success_line_ids.append(line.id)
+                        if program_code:
+                            line.program_code_id = program_code.id
+                            success_line_ids.append(line.id)
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Row Data Are Not Corrected or Duplicated Program Code Found!"
@@ -475,8 +487,9 @@ class ExpenditureBudget(models.Model):
     def previous_budget(self):
         if self.success_rows != self.total_rows:
             self.validate_and_add_budget_line()
-        if self.success_rows == self.total_rows:
-            self.verify_data()
+        total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
+        if total_lines == self.total_rows:
+            # self.verify_data()
             self.write({'state': 'previous'})
 
     def confirm(self):

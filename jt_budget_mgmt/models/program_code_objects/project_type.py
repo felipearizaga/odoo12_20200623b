@@ -39,6 +39,13 @@ class ProjectType(models.Model):
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
 
+    @api.constrains('project_id')
+    def _check_project_id(self):
+        if self.project_id:
+            p_type = self.search([('id', '!=', self.id), ('project_id', '=', self.project_id.id)], limit=1)
+            if p_type:
+                raise ValidationError(_('The Project type identifier must be unique'))
+
     def unlink(self):
         for pro_type in self:
             program_code = self.env['program.code'].search([('project_type_id', '=', pro_type.id)], limit=1)

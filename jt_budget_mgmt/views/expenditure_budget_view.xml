@@ -41,6 +41,7 @@
                             <group>
                                 <field name="user_id" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
+                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous'))]}" context="{'reimport': True}"/>
                                 <field name="total_budget" required="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>
@@ -54,7 +55,72 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Expenditure Budget Lines" attrs="{'invisible': [('state', '!=', 'draft')]}">
+                            <page string="Success Budget Lines" attrs="{'invisible': [('success_line_ids', '=', [])]}">
+                                <field name="success_line_ids">
+                                    <tree decoration-success="state == 'success'" create="false" edit="true" delete="false">
+                                        <!-- Hidden fields -->
+                                        <field name="imported" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+
+                                        <field name="program_code_id"/>
+                                        <field name="dependency_id"/>
+                                        <field name="sub_dependency_id"/>
+                                        <field name="program_id"/>
+                                        <field name="item_id"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+
+                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
+                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
+                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                    <form create="false" edit="true" delete="false">
+                                        <group>
+                                            <!-- Hidden Fields -->
+                                            <field name="imported" invisible="1"/>
+                                            <field name="state" invisible="1"/>
+
+                                            <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
+                                            <field name="dependency_id" invisible="1"/>
+                                            <field name="sub_dependency_id" invisible="1"/>
+                                            <field name="program_id" invisible="1"/>
+                                            <field name="item_id" invisible="1"/>
+                                            <field name="start_date" readonly="1"/>
+                                            <field name="end_date" readonly="1"/>
+                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" readonly="1"/>
+                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                            <field name="expenditure_budget_id" invisible="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                        </group>
+                                        <!-- Import related fields -->
+                                        <group attrs="{'invisible': [('state', 'in', ('manual', 'success'))]}">
+                                            <field name="year"/>
+                                            <field name="program"/>
+                                            <field name="subprogram"/>
+                                            <field name="dependency"/>
+                                            <field name="subdependency"/>
+                                            <field name="item"/>
+                                            <field name="dv"/>
+                                            <field name="origin_resource"/>
+                                            <field name="ai"/>
+                                            <field name="conversion_program"/>
+                                            <field name="departure_conversion"/>
+                                            <field name="expense_type"/>
+                                            <field name="location"/>
+                                            <field name="portfolio"/>
+                                            <field name="project_type"/>
+                                            <field name="project_number"/>
+                                            <field name="stage"/>
+                                            <field name="agreement_type"/>
+                                            <field name="agreement_number"/>
+                                            <field name="exercise_type"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Imported Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'previous'])]}">
                                 <field name="line_ids">
                                     <tree decoration-danger="state == 'fail'">
                                         <!-- Hidden fields -->
@@ -97,71 +163,6 @@
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                     <form>
-                                        <group>
-                                            <!-- Hidden Fields -->
-                                            <field name="imported" invisible="1"/>
-                                            <field name="state" invisible="1"/>
-
-                                            <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
-                                            <field name="dependency_id" invisible="1"/>
-                                            <field name="sub_dependency_id" invisible="1"/>
-                                            <field name="program_id" invisible="1"/>
-                                            <field name="item_id" invisible="1"/>
-                                            <field name="start_date" readonly="1"/>
-                                            <field name="end_date" readonly="1"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
-                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
-                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                            <field name="expenditure_budget_id" invisible="1"/>
-                                            <field name="currency_id" invisible="1"/>
-                                        </group>
-                                        <!-- Import related fields -->
-                                        <group attrs="{'invisible': ['|', ('state', 'in', ('manual', 'success'))]}">
-                                            <field name="year"/>
-                                            <field name="program"/>
-                                            <field name="subprogram"/>
-                                            <field name="dependency"/>
-                                            <field name="subdependency"/>
-                                            <field name="item"/>
-                                            <field name="dv"/>
-                                            <field name="origin_resource"/>
-                                            <field name="ai"/>
-                                            <field name="conversion_program"/>
-                                            <field name="departure_conversion"/>
-                                            <field name="expense_type"/>
-                                            <field name="location"/>
-                                            <field name="portfolio"/>
-                                            <field name="project_type"/>
-                                            <field name="project_number"/>
-                                            <field name="stage"/>
-                                            <field name="agreement_type"/>
-                                            <field name="agreement_number"/>
-                                            <field name="exercise_type"/>
-                                        </group>
-                                    </form>
-                                </field>
-                            </page>
-                            <page string="Success Budget Lines" attrs="{'invisible': [('success_line_ids', '=', [])]}">
-                                <field name="success_line_ids" readonly="1">
-                                    <tree decoration-success="state == 'success'" create="false" edit="false" delete="false">
-                                        <!-- Hidden fields -->
-                                        <field name="imported" invisible="1"/>
-                                        <field name="state" invisible="1"/>
-
-                                        <field name="program_code_id"/>
-                                        <field name="dependency_id"/>
-                                        <field name="sub_dependency_id"/>
-                                        <field name="program_id"/>
-                                        <field name="item_id"/>
-                                        <field name="start_date"/>
-                                        <field name="end_date"/>
-
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
-                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
-                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
-                                        <field name="currency_id" invisible="1"/>
-                                    </tree>
-                                    <form create="false" edit="false" delete="false">
                                         <group>
                                             <!-- Hidden Fields -->
                                             <field name="imported" invisible="1"/>

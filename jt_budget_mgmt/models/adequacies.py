@@ -60,8 +60,8 @@ class Adequacies(models.Model):
     total_increased = fields.Float(
         string='Total Decreased Amount', compute="_compute_total_amounts")
 
-    folio = fields.Integer(string='Folio', states={
-                           'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+    folio = fields.Char(string='Folio', states={
+        'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     budget_id = fields.Many2one('expenditure.budget', string='Budget', states={
                                 'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     reason = fields.Text(string='Reason for rejection')
@@ -83,6 +83,14 @@ class Adequacies(models.Model):
             'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     adequacies_lines_ids = fields.One2many(
         'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+
+    _sql_constraints = [
+        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')
 
     def _compute_failed_rows(self):
         for record in self:
@@ -125,9 +133,6 @@ class Adequacies(models.Model):
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
 
-    _sql_constraints = [
-        ('folio', 'unique(folio)', 'The folio must be unique.')]
-
     def import_lines(self):
         return {
             'type': 'ir.actions.act_window',
@@ -157,9 +162,6 @@ class Adequacies(models.Model):
             project_type_obj = self.env['project.type']
             stage_obj = self.env['stage']
             agreement_type_obj = self.env['agreement.type']
-
-            budget_obj = self.env['expenditure.budget'].sudo(
-            ).with_context(from_adequacies=True)
 
             # If user re-scan for failed rows
             re_scan_failed_rows_ids = eval(self.failed_row_ids)
@@ -209,9 +211,7 @@ class Adequacies(models.Model):
 
                 # Validate year format
                 year = year_obj.validate_year(result_dict.get('AÑO', ''))
-                if year:
-                    p_code += year.name
-                else:
+                if not year:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Year Format\n"
                     failed_row_ids.append(pointer)
@@ -220,10 +220,7 @@ class Adequacies(models.Model):
                 # Validate Program(PR)
                 program = program_obj.validate_program(
                     result_dict.get('Programa', ''))
-                if program:
-                    final_dict['program_id'] = program.id
-                    p_code += program.key_unam
-                else:
+                if not program:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Program(PR) Format\n"
                     failed_row_ids.append(pointer)
@@ -232,10 +229,7 @@ class Adequacies(models.Model):
                 # Validate Sub-Program
                 subprogram = subprogram_obj.validate_subprogram(
                     result_dict.get('SubPrograma', ''), program)
-                if subprogram:
-                    final_dict['sub_program_id'] = subprogram.id
-                    p_code += subprogram.sub_program
-                else:
+                if not subprogram:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
@@ -244,10 +238,7 @@ class Adequacies(models.Model):
                 # Validate Dependency
                 dependency = dependancy_obj.validate_dependency(
                     result_dict.get('Dependencia', ''))
-                if dependency:
-                    final_dict['dependency_id'] = dependency.id
-                    p_code += dependency.dependency
-                else:
+                if not dependency:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -256,10 +247,7 @@ class Adequacies(models.Model):
                 # Validate Sub-Dependency
                 subdependency = subdependancy_obj.validate_subdependency(
                     result_dict.get('SubDependencia', ''), dependency)
-                if subdependency:
-                    final_dict['sub_dependency_id'] = subdependency.id
-                    p_code += subdependency.sub_dependency
-                else:
+                if not subdependency:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -268,10 +256,7 @@ class Adequacies(models.Model):
                 # Validate Item
                 item = item_obj.validate_item(result_dict.get(
                     'Partida', ''), result_dict.get('Cve Ejercicio', ''))
-                if item:
-                    final_dict['item_id'] = item.id
-                    p_code += item.item
-                else:
+                if not item:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Expense Item(PAR) Format\n"
                     failed_row_ids.append(pointer)
@@ -284,10 +269,7 @@ class Adequacies(models.Model):
                 # Validate Origin Of Resource
                 origin_resource = origin_obj.validate_origin_resource(
                     result_dict.get('Digito Centraliador', ''))
-                if origin_resource:
-                    final_dict['resource_origin_id'] = origin_resource.id
-                    p_code += origin_resource.key_origin
-                else:
+                if not origin_resource:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Origin Of Resource(OR) Format\n"
                     failed_row_ids.append(pointer)
@@ -296,10 +278,7 @@ class Adequacies(models.Model):
                 # Validation Institutional Activity Number
                 institutional_activity = activity_obj.validate_institutional_activity(
                     result_dict.get('Actividad Institucional', ''))
-                if institutional_activity:
-                    final_dict['institutional_activity_id'] = institutional_activity.id
-                    p_code += institutional_activity.number
-                else:
+                if not institutional_activity:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Institutional Activity Number(AI) Format\n"
                     failed_row_ids.append(pointer)
@@ -308,10 +287,7 @@ class Adequacies(models.Model):
                 # Validation Conversion Program SHCP
                 shcp = shcp_obj.validate_shcp(
                     result_dict.get('Conversion Programa', ''), program)
-                if shcp:
-                    final_dict['budget_program_conversion_id'] = shcp.id
-                    p_code += shcp.shcp
-                else:
+                if not shcp:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                     failed_row_ids.append(pointer)
@@ -320,10 +296,7 @@ class Adequacies(models.Model):
                 # Validation Federal Item
                 conversion_item = dpc_obj.validate_conversion_item(
                     result_dict.get('Conversion Partida', ''))
-                if conversion_item:
-                    final_dict['conversion_item_id'] = conversion_item.id
-                    p_code += conversion_item.federal_part
-                else:
+                if not conversion_item:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid SHCP Games(CONPA) Format\n"
                     failed_row_ids.append(pointer)
@@ -332,10 +305,7 @@ class Adequacies(models.Model):
                 # Validation Expense Type
                 expense_type = expense_type_obj.validate_expense_type(
                     result_dict.get('Tipo de gasto', ''))
-                if expense_type:
-                    final_dict['expense_type_id'] = expense_type.id
-                    p_code += expense_type.key_expenditure_type
-                else:
+                if not expense_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Expense Type(TG) Format\n"
                     failed_row_ids.append(pointer)
@@ -344,10 +314,7 @@ class Adequacies(models.Model):
                 # Validation Expense Type
                 geo_location = location_obj.validate_geo_location(
                     result_dict.get('Ubicación geografica', ''))
-                if geo_location:
-                    final_dict['location_id'] = geo_location.id
-                    p_code += geo_location.state_key
-                else:
+                if not geo_location:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Geographic Location (UG) Format\n"
                     failed_row_ids.append(pointer)
@@ -356,10 +323,7 @@ class Adequacies(models.Model):
                 # Validation Wallet Key
                 wallet_key = wallet_obj.validate_wallet_key(
                     result_dict.get('Clave Cartera', ''))
-                if wallet_key:
-                    final_dict['portfolio_id'] = wallet_key.id
-                    p_code += wallet_key.wallet_password
-                else:
+                if not wallet_key:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Wallet Key(CC) Format\n"
                     failed_row_ids.append(pointer)
@@ -368,11 +332,7 @@ class Adequacies(models.Model):
                 # Validation Project Type
                 project_type = project_type_obj.with_context(from_adjustment=True).validate_project_type(
                     result_dict.get('Tipo de Proyecto', ''), result_dict)
-                if project_type:
-                    final_dict['project_type_id'] = project_type.id
-                    p_code += project_type.project_type_identifier
-                    p_code += project_type.number
-                else:
+                if not project_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Project Type(TP) Format\n"
                     failed_row_ids.append(pointer)
@@ -381,10 +341,7 @@ class Adequacies(models.Model):
                 # Validation Stage
                 stage = stage_obj.validate_stage(
                     result_dict.get('Etapa', ''), project_type.project_id)
-                if stage:
-                    final_dict['stage_id'] = stage.id
-                    p_code += stage.stage_identifier
-                else:
+                if not stage:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Stage(E) Format\n"
                     failed_row_ids.append(pointer)
@@ -393,11 +350,7 @@ class Adequacies(models.Model):
                 # Validation Agreement Type
                 agreement_type = agreement_type_obj.validate_agreement_type(result_dict.get(
                     'Tipo de Convenio', ''), project_type.project_id, result_dict.get('No. de Convenio', ''))
-                if agreement_type:
-                    final_dict['agreement_type_id'] = agreement_type.id
-                    p_code += agreement_type.agreement_type
-                    p_code += result_dict.get('No. de Convenio', '')
-                else:
+                if not agreement_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Agreement Type(TC) Format\n"
                     failed_row_ids.append(pointer)
@@ -406,7 +359,7 @@ class Adequacies(models.Model):
                 # Validation Amount
                 amount = 0
                 try:
-                    amount = float(result_dict.get('amount', ''))
+                    amount = float(result_dict.get('amount', 0))
                     if float(amount) < 10000:
                         failed_row += str(list(result_dict.values())) + \
                             "------>> Amount should be 10000 or greater than 10000\n"
@@ -414,7 +367,7 @@ class Adequacies(models.Model):
                         continue
                 except:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Amount Format or Amount Amount should be 10000 or greater than 10000\n"
+                        "------>> Invalid Amount Format or Amount should be greater than or equal to 10000"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -451,10 +404,11 @@ class Adequacies(models.Model):
                             ('state', '=', 'validated'),
                         ], limit=1)
 
-                        budget_line = self.env['expenditure.budget.line'].sudo().search(
-                            [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
-                        if not budget_line:
-                            1 / 0
+                        if program_code:
+                            budget_line = self.env['expenditure.budget.line'].sudo().search(
+                                [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                            if not budget_line:
+                                1 / 0
 
                     if not program_code:
                         1 / 0

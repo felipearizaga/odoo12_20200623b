@@ -40,6 +40,13 @@ class Stage(models.Model):
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
 
+    @api.constrains('project_id')
+    def _check_project_id(self):
+        if self.project_id:
+            p_type = self.search([('id', '!=', self.id), ('project_id', '=', self.project_id.id)], limit=1)
+            if p_type:
+                raise ValidationError(_('The agreement type identifier type must be unique'))
+
     def unlink(self):
         for stage in self:
             program_code = self.env['program.code'].search([('stage_id', '=', stage.id)], limit=1)

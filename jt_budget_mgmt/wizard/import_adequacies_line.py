@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 import base64
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
@@ -32,13 +32,17 @@ class ImportAdequaciesLine(models.TransientModel):
     _name = 'import.adequacies.line'
     _description = 'Import Adequacies Line'
 
-    folio = fields.Integer(string='Folio')
-    budget_id = fields.Many2one('expenditure.budget', string='Budget')
+    folio = fields.Char(string='Folio')
     record_number = fields.Integer(string='Number of records')
     file = fields.Binary(string='File')
     filename = fields.Char(string='File name')
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')
 
     def download_file(self):
         file_path = get_resource_path(
