@@ -29,13 +29,19 @@
     'maintainer': 'Jupical Technologies Pvt. Ltd.',
     'website': 'http://www.jupical.com',
     'license': 'AGPL-3',
-    'depends': ['account', 'project', 'jt_conac'],
+    'depends': ['account_accountant', 'account_reports', 'project', 'jt_conac'],
     'data': [
         # Security Files
         'security/ir.model.access.csv',
 
+        # Assets
+        'views/assets.xml',
+
         # Data Files
         'data/data.xml',
+
+        # Reports
+        # 'report/proforma_budget_summary_report.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',
@@ -70,7 +76,6 @@
         'wizard/reject_view.xml',
         'wizard/reject_standardization_line_view.xml',
         'wizard/import_standardization_line_view.xml',
-        'wizard/import_assigned_amount_line_view.xml',
         'wizard/import_adequacies_line_view.xml',
         'wizard/affect_payment_budget_wiz_view.xml',
 

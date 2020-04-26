@@ -253,11 +253,17 @@
         sequence="4"
     />
 
+    <record id="action_proforma_budget_summary" model="ir.actions.client">
+        <field name="name">Proforma budget summary</field>
+        <field name="tag">account_report</field>
+        <field name="context" eval="{'model': 'proforma.budget.summary.report'}" />
+    </record>
+
     <!-- menu for proforma budget summary -->
-    <!-- <menuitem
+    <menuitem
         id="menu_proforma_budget_summary"
         name="Proforma Budget Summary"
         parent="menu_reports"
         sequence="1"
-        action="action_proforma_budget_summary"/> -->
+        action="action_proforma_budget_summary"/>
 </odoo>
