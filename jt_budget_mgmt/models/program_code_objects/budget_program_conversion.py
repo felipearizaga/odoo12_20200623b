@@ -33,7 +33,8 @@ class BudgetProgramConversion(models.Model):
 
     unam_key_id = fields.Many2one('program', string='Key UNAM')
     desc = fields.Text(string='Description of key UNAM')
-    shcp = fields.Char(string='Conversion of SHCP program', size=4)
+    shcp = fields.Many2one("shcp.code", string='Conversion of SHCP program')
+    # shcp = fields.Char(string='Conversion of SHCP program', size=4)
     description = fields.Text(string='Description conversion of SHCP program')
 
     _sql_constraints = [('uniq_unam_key_id', 'unique(unam_key_id)',

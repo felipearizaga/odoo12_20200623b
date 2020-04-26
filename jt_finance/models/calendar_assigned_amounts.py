@@ -81,8 +81,19 @@ class CalendarAssignedAmountsLines(models.Model):
 
     date = fields.Date(string='Deposit date')
     budget_id = fields.Many2one(
-        'budget.program.conversion', string='Budgetary Program')
-    month = fields.Char(string='Month of the amount')
+        'shcp.code', string='Budgetary Program')
+    month = fields.Selection([('jan','January'),
+                              ('feb','February'),
+                              ('march','March'),
+                              ('april','April'),
+                              ('may','May'),
+                              ('june','June'),
+                              ('july','July'),
+                              ('aug','August'),
+                              ('sept','September'),
+                              ('oct','October'),
+                              ('nov','November'),
+                              ('dec','December')], string='Month of the amount', default='jan')
     observations = fields.Text(string='Comments')
     amount_assigned = fields.Integer(string='Amount assigned')
     amount_deposited = fields.Integer(string='Amount deposited')

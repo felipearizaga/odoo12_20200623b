@@ -35,7 +35,7 @@
         'security/ir.model.access.csv',
 
         # Data Files
-        # 'data/data.xml',
+        'data/data.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',
@@ -47,6 +47,7 @@
         'views/program_code_views/resource_origin_view.xml',
         'views/program_code_views/institutional_activity_view.xml',
         'views/program_code_views/budget_program_conversion_view.xml',
+        'views/program_code_views/shcp_code_view.xml',
         'views/program_code_views/departure_conversion_view.xml',
         'views/program_code_views/expense_type_view.xml',
         'views/program_code_views/geographic_location_view.xml',

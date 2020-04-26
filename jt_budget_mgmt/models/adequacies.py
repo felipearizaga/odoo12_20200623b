@@ -112,7 +112,8 @@ class Adequacies(models.Model):
 
     # Import process related fields
     allow_upload = fields.Boolean(string='Allow Update XLS File?')
-    budget_file = fields.Binary(string='Uploaded File')
+    budget_file = fields.Binary(string='Uploaded File', states={'accepted': [
+                                ('readonly', True)], 'rejected': [('readonly', True)]})
     filename = fields.Char(string='File name')
     import_status = fields.Selection([
         ('draft', 'Draft'),
@@ -207,7 +208,6 @@ class Adequacies(models.Model):
                     result_dict.update({headers[counter]: cell.value})
                     counter += 1
                 result_vals.append(result_dict)
-                final_dict = {}
 
                 # Validate year format
                 year = year_obj.validate_year(result_dict.get('AÑO', ''))
@@ -527,7 +527,7 @@ class Adequacies(models.Model):
         for adequacies in self:
             if adequacies.state not in ('draft'):
                 raise ValidationError(
-                    'You can not delete confirmed adjustments!')
+                    'You can not delete confirmed/rejected adjustments!')
         return super(Adequacies, self).unlink()
 
 

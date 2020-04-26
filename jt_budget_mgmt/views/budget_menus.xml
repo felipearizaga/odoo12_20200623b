@@ -122,6 +122,14 @@
         sequence="10"
     />
 
+    <menuitem
+        id="menu_shcp_code"
+        name="SHCP Code"
+        parent="menu_code_catalog"
+        action="action_shcp_code"
+        sequence="11"
+    />
+
     <!-- menu for departure conversion -->
     <menuitem
         id="menu_departure_conversion"

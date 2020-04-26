@@ -30,6 +30,7 @@ from . import verifying_digit
 from . import resource_origin
 from . import institutional_activity
 from . import budget_program_conversion
+from . import shcp_code
 from . import departure_conversion
 from . import expense_type
 from . import geographic_location

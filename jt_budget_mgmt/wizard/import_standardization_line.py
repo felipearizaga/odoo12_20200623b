@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 import base64
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
@@ -32,12 +32,20 @@ class ImportStandardizationLine(models.TransientModel):
     _name = 'import.standardization.line'
     _description = 'Import Standardization Line'
 
-    folio = fields.Integer(string='Folio')
+    folio = fields.Char(string='Folio')
     record_number = fields.Integer(string='Number of records')
     file = fields.Binary(string='File')
     filename = fields.Char(string='File name')
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
+
+    _sql_constraints = [
+        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')
 
     def download_file(self):
         file_path = get_resource_path(

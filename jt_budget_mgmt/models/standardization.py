@@ -37,6 +37,7 @@ class Standardization(models.Model):
     def _get_count(self):
         for record in self:
             record.record_number = len(record.line_ids)
+            record.all_line_count = len(record.line_ids)
             record.imported_record_number = len(
                 record.line_ids.filtered(lambda l: l.imported == True))
             record.draft_count = len(
@@ -50,16 +51,20 @@ class Standardization(models.Model):
             record.cancelled_count = len(
                 record.line_ids.filtered(lambda l: l.state == 'cancelled'))
 
-    folio = fields.Integer(string='Folio')
+    folio = fields.Char(string='Folio', states={
+        'confirmed': [('readonly', True)], 'cancelled': [('readonly', True)]})
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     imported_record_number = fields.Integer(
         string='Number of imported records', compute='_get_count')
     observations = fields.Text(string='Observations')
+    select_box = fields.Boolean(string='Select Box')
     line_ids = fields.One2many(
-        'standardization.line', 'standardization_id', string='Standardization lines')
+        'standardization.line', 'standardization_id', string='Standardization lines', states={'cancelled': [('readonly', True)]})
     state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'),
                               ('cancelled', 'Cancelled')], default='draft', required=True, string='State')
+
+    # Counter fields for line stage
     draft_count = fields.Integer(string='Draft', compute='_get_count')
     received_count = fields.Integer(string='Received', compute='_get_count')
     in_process_count = fields.Integer(
@@ -67,6 +72,19 @@ class Standardization(models.Model):
     authorized_count = fields.Integer(
         string='Authorized', compute='_get_count')
     cancelled_count = fields.Integer(string='Cancelled', compute='_get_count')
+    all_line_count = fields.Integer(string='Cancelled', compute='_get_count')
+
+    _sql_constraints = [
+        ('folio_uniq_const', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')
+        folio = self.search(
+            [('id', '!=', self.id), ('folio', '=', self.folio)], limit=1)
+        if folio:
+            raise ValidationError('Folio Must be unique!')
 
     def _compute_failed_rows(self):
         for record in self:
@@ -88,7 +106,8 @@ class Standardization(models.Model):
 
     # Import process related fields
     allow_upload = fields.Boolean(string='Allow Update XLS File?')
-    budget_file = fields.Binary(string='Uploaded File')
+    budget_file = fields.Binary(string='Uploaded File', states={
+        'confirmed': [('readonly', True)], 'cancelled': [('readonly', True)]})
     filename = fields.Char(string='File name')
     import_status = fields.Selection([
         ('draft', 'Draft'),
@@ -108,9 +127,6 @@ class Standardization(models.Model):
     pointer_row = fields.Integer(
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
-
-    _sql_constraints = [('folio', 'unique(folio)',
-                         'The folio must be unique.')]
 
     def validate_and_add_budget_line(self):
         if self.budget_file:
@@ -179,13 +195,10 @@ class Standardization(models.Model):
                     result_dict.update({headers[counter]: cell.value})
                     counter += 1
                 result_vals.append(result_dict)
-                final_dict = {}
 
                 # Validate year format
                 year = year_obj.validate_year(result_dict.get('AÑO', ''))
-                if year:
-                    p_code += year.name
-                else:
+                if not year:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Year Format\n"
                     failed_row_ids.append(pointer)
@@ -194,10 +207,7 @@ class Standardization(models.Model):
                 # Validate Program(PR)
                 program = program_obj.validate_program(
                     result_dict.get('Programa', ''))
-                if program:
-                    final_dict['program_id'] = program.id
-                    p_code += program.key_unam
-                else:
+                if not program:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Program(PR) Format\n"
                     failed_row_ids.append(pointer)
@@ -206,10 +216,7 @@ class Standardization(models.Model):
                 # Validate Sub-Program
                 subprogram = subprogram_obj.validate_subprogram(
                     result_dict.get('SubPrograma', ''), program)
-                if subprogram:
-                    final_dict['sub_program_id'] = subprogram.id
-                    p_code += subprogram.sub_program
-                else:
+                if not subprogram:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
@@ -218,10 +225,7 @@ class Standardization(models.Model):
                 # Validate Dependency
                 dependency = dependancy_obj.validate_dependency(
                     result_dict.get('Dependencia', ''))
-                if dependency:
-                    final_dict['dependency_id'] = dependency.id
-                    p_code += dependency.dependency
-                else:
+                if not dependency:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -230,10 +234,7 @@ class Standardization(models.Model):
                 # Validate Sub-Dependency
                 subdependency = subdependancy_obj.validate_subdependency(
                     result_dict.get('SubDependencia', ''), dependency)
-                if subdependency:
-                    final_dict['sub_dependency_id'] = subdependency.id
-                    p_code += subdependency.sub_dependency
-                else:
+                if not subdependency:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
@@ -242,10 +243,7 @@ class Standardization(models.Model):
                 # Validate Item
                 item = item_obj.validate_item(result_dict.get(
                     'Partida', ''), result_dict.get('Cve Ejercicio', ''))
-                if item:
-                    final_dict['item_id'] = item.id
-                    p_code += item.item
-                else:
+                if not item:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Expense Item(PAR) Format\n"
                     failed_row_ids.append(pointer)
@@ -258,10 +256,7 @@ class Standardization(models.Model):
                 # Validate Origin Of Resource
                 origin_resource = origin_obj.validate_origin_resource(
                     result_dict.get('Digito Centraliador', ''))
-                if origin_resource:
-                    final_dict['resource_origin_id'] = origin_resource.id
-                    p_code += origin_resource.key_origin
-                else:
+                if not origin_resource:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Origin Of Resource(OR) Format\n"
                     failed_row_ids.append(pointer)
@@ -270,10 +265,7 @@ class Standardization(models.Model):
                 # Validation Institutional Activity Number
                 institutional_activity = activity_obj.validate_institutional_activity(
                     result_dict.get('Actividad Institucional', ''))
-                if institutional_activity:
-                    final_dict['institutional_activity_id'] = institutional_activity.id
-                    p_code += institutional_activity.number
-                else:
+                if not institutional_activity:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Institutional Activity Number(AI) Format\n"
                     failed_row_ids.append(pointer)
@@ -282,10 +274,7 @@ class Standardization(models.Model):
                 # Validation Conversion Program SHCP
                 shcp = shcp_obj.validate_shcp(
                     result_dict.get('Conversion Programa', ''), program)
-                if shcp:
-                    final_dict['budget_program_conversion_id'] = shcp.id
-                    p_code += shcp.shcp
-                else:
+                if not shcp:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                     failed_row_ids.append(pointer)
@@ -294,10 +283,7 @@ class Standardization(models.Model):
                 # Validation Federal Item
                 conversion_item = dpc_obj.validate_conversion_item(
                     result_dict.get('Conversion Partida', ''))
-                if conversion_item:
-                    final_dict['conversion_item_id'] = conversion_item.id
-                    p_code += conversion_item.federal_part
-                else:
+                if not conversion_item:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid SHCP Games(CONPA) Format\n"
                     failed_row_ids.append(pointer)
@@ -306,10 +292,7 @@ class Standardization(models.Model):
                 # Validation Expense Type
                 expense_type = expense_type_obj.validate_expense_type(
                     result_dict.get('Tipo de gasto', ''))
-                if expense_type:
-                    final_dict['expense_type_id'] = expense_type.id
-                    p_code += expense_type.key_expenditure_type
-                else:
+                if not expense_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Expense Type(TG) Format\n"
                     failed_row_ids.append(pointer)
@@ -318,10 +301,7 @@ class Standardization(models.Model):
                 # Validation Expense Type
                 geo_location = location_obj.validate_geo_location(
                     result_dict.get('Ubicación geografica', ''))
-                if geo_location:
-                    final_dict['location_id'] = geo_location.id
-                    p_code += geo_location.state_key
-                else:
+                if not geo_location:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Geographic Location (UG) Format\n"
                     failed_row_ids.append(pointer)
@@ -330,10 +310,7 @@ class Standardization(models.Model):
                 # Validation Wallet Key
                 wallet_key = wallet_obj.validate_wallet_key(
                     result_dict.get('Clave Cartera', ''))
-                if wallet_key:
-                    final_dict['portfolio_id'] = wallet_key.id
-                    p_code += wallet_key.wallet_password
-                else:
+                if not wallet_key:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Wallet Key(CC) Format\n"
                     failed_row_ids.append(pointer)
@@ -342,11 +319,7 @@ class Standardization(models.Model):
                 # Validation Project Type
                 project_type = project_type_obj.with_context(from_adjustment=True).validate_project_type(
                     result_dict.get('Tipo de Proyecto', ''), result_dict)
-                if project_type:
-                    final_dict['project_type_id'] = project_type.id
-                    p_code += project_type.project_type_identifier
-                    p_code += project_type.number
-                else:
+                if not project_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Project Type(TP) Format\n"
                     failed_row_ids.append(pointer)
@@ -355,10 +328,7 @@ class Standardization(models.Model):
                 # Validation Stage
                 stage = stage_obj.validate_stage(
                     result_dict.get('Etapa', ''), project_type.project_id)
-                if stage:
-                    final_dict['stage_id'] = stage.id
-                    p_code += stage.stage_identifier
-                else:
+                if not stage:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Stage(E) Format\n"
                     failed_row_ids.append(pointer)
@@ -367,11 +337,7 @@ class Standardization(models.Model):
                 # Validation Agreement Type
                 agreement_type = agreement_type_obj.validate_agreement_type(result_dict.get(
                     'Tipo de Convenio', ''), project_type.project_id, result_dict.get('No. de Convenio', ''))
-                if agreement_type:
-                    final_dict['agreement_type_id'] = agreement_type.id
-                    p_code += agreement_type.agreement_type
-                    p_code += result_dict.get('No. de Convenio', '')
-                else:
+                if not agreement_type:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Invalid Agreement Type(TC) Format\n"
                     failed_row_ids.append(pointer)
@@ -388,14 +354,22 @@ class Standardization(models.Model):
                         continue
                 except:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Amount Format or Amount Amount should be 0"
+                        "------>> Invalid Amount Format or Amount should be 0"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Folio
                 folio = result_dict.get('Folio', '')
-                if type(folio) is float or type(folio) is int:
-                    line_standardization = self.env['standardization.line'].search([('folio', '=', int(folio))], limit=1)
+                if folio:
+                    try:
+                        folio = int(float(folio))
+                    except:
+                        failed_row += str(list(result_dict.values())) + \
+                            "------>> Folio Must Be Numeric"
+                        failed_row_ids.append(pointer)
+                        continue
+                    line_standardization = self.env['standardization.line'].search(
+                        [('folio', '=', str(folio))], limit=1)
                     if line_standardization:
                         failed_row += str(list(result_dict.values())) + \
                             "------>> Folio Must Be Unique"
@@ -409,7 +383,8 @@ class Standardization(models.Model):
 
                 # Validation Budget
                 budget_str = result_dict.get('Budget', '')
-                budget = budget_obj.search([('name', '=', budget_str)], limit=1)
+                budget = budget_obj.search(
+                    [('name', '=', budget_str)], limit=1)
                 if not budget:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Budget Not Found"
@@ -429,21 +404,22 @@ class Standardization(models.Model):
                 cancel_reason = result_dict.get('Reason for rejection', '')
                 state_str = result_dict.get('Stage', '')
                 state = False
-                if str(state_str).lower() == 'draft':
-                    state = 'draft'
-                elif str(state_str).lower() == 'received':
-                    state = 'received'
-                elif str(state_str).lower() in ['in process', 'in progress']:
-                    state = 'in_process'
-                elif str(state_str).lower() == 'authorized':
-                    state = 'authorized'
-                elif str(state_str).lower() == 'cancelled':
-                    state = 'cancelled'
-                else:
-                    failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Stage Format\n"
-                    failed_row_ids.append(pointer)
-                    continue
+                if state_str:
+                    if str(state_str).lower() == 'draft':
+                        state = 'draft'
+                    elif str(state_str).lower() == 'received':
+                        state = 'received'
+                    elif str(state_str).lower() in ['in process', 'in progress']:
+                        state = 'in_process'
+                    elif str(state_str).lower() == 'authorized':
+                        state = 'authorized'
+                    elif str(state_str).lower() == 'cancelled':
+                        state = 'cancelled'
+                    else:
+                        failed_row += str(list(result_dict.values())) + \
+                            "------>> Invalid Stage Format\n"
+                        failed_row_ids.append(pointer)
+                        continue
 
                 try:
                     program_code = False
@@ -469,10 +445,11 @@ class Standardization(models.Model):
                             ('state', '=', 'validated'),
                         ], limit=1)
 
-                        budget_line = self.env['expenditure.budget.line'].sudo().search(
-                            [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', budget.id)], limit=1)
-                        if not budget_line:
-                            1 / 0
+                        if program_code:
+                            budget_line = self.env['expenditure.budget.line'].sudo().search(
+                                [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', budget.id)], limit=1)
+                            if not budget_line:
+                                1 / 0
 
                     if not program_code:
                         1 / 0
@@ -498,7 +475,7 @@ class Standardization(models.Model):
                     self.write({'line_ids': [(0, 0, line_vals)]})
                 except:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Row Data Are Not Corrected or Validated Program Code Not Found!"
+                        "------>> Row Data Are Not Corrected or Validated Program Code Not Found or Program Code not associated with selected budget!"
                     failed_row_ids.append(pointer)
 
             failed_row_ids_eval = eval(self.failed_row_ids)
@@ -545,8 +522,19 @@ class Standardization(models.Model):
                     }
                 }
 
+    def validate_data(self):
+        if len(self.line_ids.ids) == 0:
+            raise ValidationError("Please Add Standardization Lines")
+        if self.failed_rows > 0:
+            raise ValidationError("Please correct failed rows!")
+        if self.total_rows > 0 and len(self.line_ids.ids) != self.total_rows:
+            raise ValidationError(
+                "Total imported rows not matched with total standardization lines!")
+
     def confirm(self):
+        self.validate_data()
         self.state = 'confirmed'
+        self.line_ids.write({'state': 'draft'})
 
     def cancel(self):
         self.state = 'cancelled'
@@ -638,6 +626,22 @@ class Standardization(models.Model):
             ('standardization_id', '=', self.id), ('state', '=', 'cancelled')]
         return action
 
+    def all_lines_button(self):
+        action = self.env.ref(
+            'jt_budget_mgmt.action_standardization_lines').read()[0]
+        action['view_mode'] = 'tree'
+        action['domain'] = [
+            ('standardization_id', '=', self.id)]
+        return action
+
+    def select_deselect_checkbox(self):
+        if self.select_box:
+            self.select_box = False
+        else:
+            self.select_box = True
+
+        self.line_ids.write({'selected': self.select_box})
+
 
 class StandardizationLine(models.Model):
 
@@ -645,9 +649,9 @@ class StandardizationLine(models.Model):
     _description = 'Re-standardization Lines'
     _rec_name = 'folio'
 
-    folio = fields.Integer(string='Folio')
-    code_id = fields.Many2one('program.code', string='Code')
+    folio = fields.Char(string='Folio')
     budget_id = fields.Many2one('expenditure.budget', string='Budget')
+    code_id = fields.Many2one('program.code', string='Code', domain="[('budget_id', '=', budget_id)]")
     amount = fields.Monetary(string='Amount', currency_field='currency_id')
     origin_id = fields.Many2one('resource.origin', string='Origin')
     quarter = fields.Text(string='Quarter')
@@ -665,3 +669,11 @@ class StandardizationLine(models.Model):
                              required=True, string='State')
     _sql_constraints = [('uniq_program_per_standardization_id', 'unique(code_id,standardization_id)',
                          'The program code must be unique per Standardization')]
+
+    _sql_constraints = [
+        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')

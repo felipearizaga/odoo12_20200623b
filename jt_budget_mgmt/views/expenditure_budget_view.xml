@@ -86,8 +86,8 @@
                                             <field name="sub_dependency_id" invisible="1"/>
                                             <field name="program_id" invisible="1"/>
                                             <field name="item_id" invisible="1"/>
-                                            <field name="start_date" readonly="1"/>
-                                            <field name="end_date" readonly="1"/>
+                                            <field name="start_date"/>
+                                            <field name="end_date"/>
                                             <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" readonly="1"/>
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
@@ -173,8 +173,8 @@
                                             <field name="sub_dependency_id" invisible="1"/>
                                             <field name="program_id" invisible="1"/>
                                             <field name="item_id" invisible="1"/>
-                                            <field name="start_date" readonly="1"/>
-                                            <field name="end_date" readonly="1"/>
+                                            <field name="start_date"/>
+                                            <field name="end_date"/>
                                             <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>

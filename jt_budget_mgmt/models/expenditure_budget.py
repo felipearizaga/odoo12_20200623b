@@ -531,9 +531,9 @@ class ExpenditureBudgetLine(models.Model):
         'expenditure.budget', string='Expenditure Budget', ondelete="cascade")
 
     start_date = fields.Date(
-        string='Start date', related="expenditure_budget_id.from_date")
+        string='Start date')
     end_date = fields.Date(
-        string='End date', related="expenditure_budget_id.to_date")
+        string='End date')
 
     authorized = fields.Float(
         string='Authorized')

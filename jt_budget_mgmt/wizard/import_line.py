@@ -22,6 +22,8 @@
 ##############################################################################
 from odoo import models, fields, _
 import base64
+import xlrd
+from datetime import datetime
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
 from odoo.exceptions import UserError
@@ -82,7 +84,7 @@ class ImportLine(models.TransientModel):
                         headers.append(cell.value)
 
                 field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv', 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
-                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'authorized']
+                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'authorized', 'start_date', 'end_date']
 
                 total_budget_amount = 0
                 result_vals = []
@@ -96,6 +98,34 @@ class ImportLine(models.TransientModel):
                         value = cell.value
                         if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
                             value = int(cell.value)
+
+                        if field_headers[counter] == 'start_date':
+                            try:
+                                start_date = False
+                                if type(value) is str:
+                                    start_date = datetime.strptime(str(value), '%m/%d/%Y').date()
+                                elif type(value) is int or type(value) is float:
+                                    start_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
+                                if start_date:
+                                    value = start_date
+                                else:
+                                    value = False
+                            except:
+                                pass
+
+                        if field_headers[counter] == 'end_date':
+                            try:
+                                end_date = False
+                                if type(value) is str:
+                                    end_date = datetime.strptime(str(value), '%m/%d/%Y').date()
+                                elif type(value) is int or type(value) is float:
+                                    end_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
+                                if end_date:
+                                    value = end_date
+                                else:
+                                    value = False
+                            except:
+                                pass
 
                         result_dict.update(
                             {field_headers[counter]: value})
@@ -111,7 +141,8 @@ class ImportLine(models.TransientModel):
                             ('program', '=', str(result_dict.get('program'))),
                             ('subprogram', '=', str(result_dict.get('subprogram'))),
                             ('dependency', '=', str(result_dict.get('dependency'))),
-                            ('subdependency', '=', str(result_dict.get('subdependency'))),
+                            ('subdependency', '=', str(
+                                result_dict.get('subdependency'))),
                             ('item', '=', str(result_dict.get('item'))),
                             ('dv', '=', str(result_dict.get('dv'))),
                             ('origin_resource', '=', str(
@@ -121,10 +152,12 @@ class ImportLine(models.TransientModel):
                                 result_dict.get('conversion_program'))),
                             ('departure_conversion', '=', str(
                                 result_dict.get('departure_conversion'))),
-                            ('expense_type', '=', str(result_dict.get('expense_type'))),
+                            ('expense_type', '=', str(
+                                result_dict.get('expense_type'))),
                             ('location', '=', str(result_dict.get('location'))),
                             ('portfolio', '=', str(result_dict.get('portfolio'))),
-                            ('project_type', '=', str(result_dict.get('project_type'))),
+                            ('project_type', '=', str(
+                                result_dict.get('project_type'))),
                             ('project_number', '=', str(
                                 result_dict.get('project_number'))),
                             ('stage', '=', str(result_dict.get('stage'))),
@@ -143,7 +176,8 @@ class ImportLine(models.TransientModel):
                 data = result_vals
                 if budget:
                     if self._context.get('reimport'):
-                        budget.line_ids.filtered(lambda l: l.state != 'manual').unlink()
+                        budget.line_ids.filtered(
+                            lambda l: l.state != 'manual').unlink()
                     budget.write({
                         'import_status': 'in_progress',
                         'line_ids': data,

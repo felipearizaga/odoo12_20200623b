@@ -5,7 +5,9 @@
         name="UNAM Finance"
         id="menu_finance"
         web_icon="jt_finance,static/description/icon.png"
-        sequence="41"
+        sequence="5"
+        parent="account_accountant.menu_accounting"
+
     />
 
     <!-- menu for revenue budget control -->
