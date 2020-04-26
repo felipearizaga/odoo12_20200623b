@@ -20,7 +20,10 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+import re
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError, UserError
+
 
 class SHCPCode(models.Model):
 
@@ -28,3 +31,14 @@ class SHCPCode(models.Model):
     _description = 'SHCP Program Code'
 
     name = fields.Char("Code")
+
+    @api.constrains('name')
+    def _check_name(self):
+        if self.name:
+            # To check size of the position is exact 2
+            if len(self.name) != 4:
+                raise ValidationError(_('The SHCP program value size must be four.'))
+            if self.name and len(self.name) == 4:
+                if not (re.match("[A-Z]{1}\d{3}", str(self.name).upper())):
+                    raise UserError(
+                        _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))

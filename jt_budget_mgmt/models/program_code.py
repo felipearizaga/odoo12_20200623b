@@ -159,8 +159,8 @@ class ProgramCode(models.Model):
                 program_code += str(pc.resource_origin_id.key_origin)
             if pc.institutional_activity_id and pc.institutional_activity_id.number:
                 program_code += str(pc.institutional_activity_id.number)
-            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp:
-                program_code += str(pc.budget_program_conversion_id.shcp)
+            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp and pc.budget_program_conversion_id.shcp.name:
+                program_code += str(pc.budget_program_conversion_id.shcp.name)
             if pc.conversion_item_id and pc.conversion_item_id.federal_part:
                 program_code += str(pc.conversion_item_id.federal_part)
             if pc.expense_type_id and pc.expense_type_id.key_expenditure_type:
@@ -227,8 +227,8 @@ class ProgramCode(models.Model):
                 program_code += str(pc.resource_origin_id.key_origin)
             if pc.institutional_activity_id and pc.institutional_activity_id.number:
                 program_code += str(pc.institutional_activity_id.number)
-            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp:
-                program_code += str(pc.budget_program_conversion_id.shcp)
+            if pc.budget_program_conversion_id and pc.budget_program_conversion_id.shcp and pc.budget_program_conversion_id.shcp.name:
+                program_code += str(pc.budget_program_conversion_id.shcp.name)
             if pc.conversion_item_id and pc.conversion_item_id.federal_part:
                 program_code += str(pc.conversion_item_id.federal_part)
             if pc.expense_type_id and pc.expense_type_id.key_expenditure_type:

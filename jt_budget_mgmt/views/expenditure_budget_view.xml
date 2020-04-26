@@ -39,7 +39,7 @@
                         </div>
                         <group>
                             <group>
-                                <field name="user_id" required="1"/>
+                                <field name="user_id" readonly="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
                                 <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous'))]}" context="{'reimport': True}"/>
                                 <field name="total_budget" required="1"/>

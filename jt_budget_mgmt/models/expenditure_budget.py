@@ -393,7 +393,6 @@ class ExpenditureBudget(models.Model):
                                 ('project_type_id', '=', project_type.id),
                                 ('stage_id', '=', stage.id),
                                 ('agreement_type_id', '=', agreement_type.id),
-                                # ('state', '=', 'validated'),
                             ], limit=1)
 
                             if program_code and program_code.state == 'validated':

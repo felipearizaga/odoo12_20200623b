@@ -34,7 +34,6 @@ class BudgetProgramConversion(models.Model):
     unam_key_id = fields.Many2one('program', string='Key UNAM')
     desc = fields.Text(string='Description of key UNAM')
     shcp = fields.Many2one("shcp.code", string='Conversion of SHCP program')
-    # shcp = fields.Char(string='Conversion of SHCP program', size=4)
     description = fields.Text(string='Description conversion of SHCP program')
 
     _sql_constraints = [('uniq_unam_key_id', 'unique(unam_key_id)',
@@ -42,13 +41,14 @@ class BudgetProgramConversion(models.Model):
 
     @api.constrains('shcp')
     def _check_shcp(self):
-        # To check size of the position is exact 2
-        if len(self.shcp) != 4:
-            raise ValidationError(_('The Conversion of SHCP program value size must be four.'))
-        if self.shcp and len(self.shcp) == 4:
-            if not (re.match("[A-Z]{1}\d{3}", self.shcp.upper())):
-                raise UserError(
-                    _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))
+        if self.shcp:
+            # To check size of the position is exact 4
+            if len(self.shcp.name) != 4:
+                raise ValidationError(_('The Conversion of SHCP program value size must be four.'))
+            if self.shcp.name and len(self.shcp.name) == 4:
+                if not (re.match("[A-Z]{1}\d{3}", str(self.shcp.name).upper())):
+                    raise UserError(
+                        _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))
 
     @api.onchange('desc')
     def _onchange_key_unam(self):
@@ -70,7 +70,7 @@ class BudgetProgramConversion(models.Model):
                     return False
                 else:
                     shcp = self.search(
-                        [('shcp', '=', shcp_str)], limit=1)
+                        [('shcp.name', '=', shcp_str), ('unam_key_id', '=', program.id)], limit=1)
                     if shcp:
                         return shcp
         return False
