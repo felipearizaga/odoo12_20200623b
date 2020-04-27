@@ -32,9 +32,9 @@
     'depends': ['account_accountant', 'project', 'jt_budget_mgmt'],
     'data': [
         'security/ir.model.access.csv',
-        'views/control_amounts_received_view.xml',
+        'data/data.xml',
+        'views/control_assigned_amount_view.xml',
         'views/calendar_assigned_amounts_view.xml',
-        'views/control_assigned_amounts_view.xml',
         'views/budget_view.xml',
     ],
     'application': False,

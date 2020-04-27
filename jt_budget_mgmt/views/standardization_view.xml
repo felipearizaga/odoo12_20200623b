@@ -14,6 +14,27 @@
                 </search>
             </field>
         </record>
+
+        <!-- search view for standardization lines model -->
+        <record id="standardization_line_search_view" model="ir.ui.view">
+            <field name="name">standardization.line.search.view</field>
+            <field name="model">standardization.line</field>
+            <field name="arch" type="xml">
+                <search string="Re-standardization Lines">
+                    <field name="folio"/>
+                    <field name="state"/>
+                    <filter name="draft" string="Draft" domain="[('state','=', 'draft')]"/>
+                    <filter name="received" string="Received" domain="[('state','=', 'received')]"/>
+                    <filter name="in_progress" string="In Progress" domain="[('state','=', 'in_progress')]"/>
+                    <filter name="authorized" string="Authorized" domain="[('state','=', 'authorized')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state','=', 'cancelled')]"/>
+
+                    <group expand="1" string="Group By">
+                        <filter string="Status" name='status' context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
         
         <!-- form view for standardization model -->
     	<record id="standardization_form_view" model="ir.ui.view">

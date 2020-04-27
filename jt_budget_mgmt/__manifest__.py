@@ -70,6 +70,7 @@
         'views/expenditure_budget_view.xml',
         'views/adequacies_view.xml',
         'views/standardization_view.xml',
+        'views/control_assigned_amounts_view.xml',
 
         # Wizard Files
         'wizard/import_line_view.xml',

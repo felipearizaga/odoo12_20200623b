@@ -10,6 +10,8 @@
                     <field name="folio"/>
                     <group expand="1" string="Group By">
                         <filter string="Folio" name='folio' context="{'group_by':'folio'}"/>
+                        <filter string="Made By" name='user_id' context="{'group_by':'user_id'}"/>
+                        <filter string="Budget" name='budget_id' context="{'group_by':'budget_id'}"/>
                     </group>
                 </search>
             </field>
@@ -35,11 +37,11 @@
                                 <field name="import_file"/>
                                 <field name="budget_id"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight"/>
-                                <field name="made_by_id"/>
-                                <field name="observations"/>
+                                <field name="user_id" readonly="1"/>
                             </group>
                             <group>
                                 <field name="import_date"/>
+                                <field name="observations"/>
                             </group>
                         </group>
                         <notebook>
@@ -79,11 +81,13 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="folio"/>
-                    <field name="import_file"/>
                     <field name="budget_id"/>
-                    <field name="made_by_id"/>
                     <field name="import_date"/>
-                    <field name="observations"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                    <field name="observations" invisible="1"/>
+                    <field name="import_file" invisible="1"/>
+                    <field name="line_ids" invisible="1"/>
                 </tree>
             </field>
         </record>

@@ -527,6 +527,11 @@ class Standardization(models.Model):
             raise ValidationError("Please Add Standardization Lines")
         if self.failed_rows > 0:
             raise ValidationError("Please correct failed rows!")
+
+        lines = self.line_ids.filtered(lambda l: l.amount == 0)
+        if lines:
+            raise ValidationError("Row Amount must be greater than 0!")
+
         if self.total_rows > 0 and len(self.line_ids.ids) != self.total_rows:
             raise ValidationError(
                 "Total imported rows not matched with total standardization lines!")

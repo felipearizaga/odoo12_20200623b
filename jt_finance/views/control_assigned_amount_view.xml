@@ -17,57 +17,59 @@
         </record>
         
         <!-- form view for calendar assigned amounts model -->
-        <record id="calendar_assigned_amounts_form_view" model="ir.ui.view">
-            <field name="name">calendar.assigned.amounts.form.view</field>
+        <record id="control_amounts_received_form_view" model="ir.ui.view">
+            <field name="name">control.amount.received.view.tree</field>
             <field name="model">calendar.assigned.amounts</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
                         <group>
                             <group>
-                                <field name="date" required="1"/>
-                                <field name="amount_to_receive"/>
-                                <field name="amount_received"/>
-                                <field name="amount_pending"/>
-                                <field name="obs_calender_amount"/>
-
-                                <!-- Fields for Control of Assigned Amount -->
-                                <field name="folio" invisible="1"/>
-                                <field name="budget_id" invisible="1"/>
-                                <field name="import_date" invisible="1"/>
-                                <field name="user_id" invisible="1"/>
-                                <field name="obs_cont_amount" invisible="1"/>
-                                <field name="file" invisible="1"/>
+                                <!-- Fields for control of amount received -->
+                                <field name="folio" readonly="1"/>
+                                <field name="budget_id" required="1"/>
+                                <field name="file" filename="filename"/>
                                 <field name="filename" invisible="1"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="import_date"/>
+                                <field name="obs_cont_amount"/>
+
+                                <!-- Fields for calender of amount received -->
+                                <field name="date" invisible="1"/>
+                                <field name="amount_to_receive" invisible="1"/>
+                                <field name="amount_received" invisible="1"/>
+                                <field name="amount_pending" invisible="1"/>
                             </group>        
                         </group>
                         <notebook>
-                            <page string="Calendar of assigned amounts lines">
+                            <page string="Control of amounts received lines">
                                 <field name="line_ids">
                                     <tree>
+                                        <field name="calendar_assigned_amount_id" invisible="1"/>
+
                                        <field name="date"/>
                                        <field name="shcp_id"/>
                                        <field name="month"/>
                                        <field name="amount_assigned"/>
                                        <field name="amount_deposited"/>
-                                       <field name="amount_pending" invisible="1"/>
+                                       <field name="amount_pending"/>
                                        <field name="bank_id"/>
                                        <field name="bank_account_id"/>
                                        <field name="observations"/>
-                                       <field name="calendar_assigned_amount_id" invisible="1"/>
                                     </tree>
                                     <form>
                                         <group>
+                                            <field name="calendar_assigned_amount_id" invisible="1"/>
+
                                             <field name="date"/>
-                                            <field name="shcp_id" required="1"/>
-                                            <field name="month" required="1"/>
-                                            <field name="amount_assigned" required="1"/>
-                                            <field name="amount_deposited" required="1"/>
-                                            <field name="amount_pending" invisible="1"/>
+                                            <field name="shcp_id"/>
+                                            <field name="month"/>
+                                            <field name="amount_assigned"/>
+                                            <field name="amount_deposited"/>
+                                            <field name="amount_pending"/>
                                             <field name="bank_id"/>
                                             <field name="bank_account_id"/>
                                             <field name="observations"/>
-                                            <field name="calendar_assigned_amount_id" invisible="1"/>
                                         </group>
                                     </form>
                                 </field>
@@ -79,39 +81,38 @@
         </record>
 
         <!-- tree view for calendar assigned amounts model -->
-        <record id="calendar_assigned_amounts_tree_view" model="ir.ui.view">
-            <field name="name">calendar.assigned.amounts.tree.view</field>
+        <record id="control_amounts_received_tree_view" model="ir.ui.view">
+            <field name="name">control.amount.received.view.tree</field>
             <field name="model">calendar.assigned.amounts</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="date"/>
-                    <field name="obs_calender_amount"/>
-                    <field name="amount_to_receive"/>
-                    <field name="amount_received"/>
-                    <field name="amount_pending"/>
+                    <field name="folio"/>
+                    <field name="budget_id"/>
+                    <field name="import_date"/>
+                    <field name="user_id" readonly="1"/>
+                    <field name="obs_cont_amount"/>
 
-                    <!-- Fields for Control of Assigned Amount -->
-                    <field name="folio" invisible="1"/>
-                    <field name="budget_id" invisible="1"/>
-                    <field name="import_date" invisible="1"/>
-                    <field name="user_id" invisible="1"/>
-                    <field name="obs_cont_amount" invisible="1"/>
+                    <!-- Fields for calender of amount received -->
                     <field name="file" invisible="1"/>
                     <field name="filename" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <field name="amount_to_receive" invisible="1"/>
+                    <field name="amount_received" invisible="1"/>
+                    <field name="amount_pending" invisible="1"/>
                 </tree>
             </field>
         </record>
 
         <!-- action for calendar assigned amounts views -->
-        <record id="action_calendar_assigned_amounts" model="ir.actions.act_window">
-            <field name="name">Calendar of assigned amounts</field>
+        <record id="action_control_amounts_received" model="ir.actions.act_window">
+            <field name="name">Control Of Amount Received</field>
             <field name="res_model">calendar.assigned.amounts</field>
             <field name="view_mode">tree,form,search</field>
             <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('calendar_assigned_amounts_tree_view')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('calendar_assigned_amounts_form_view')})]"/>
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('control_amounts_received_tree_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('control_amounts_received_form_view')})]"/>
             <field name="context">{}</field>
         </record>
-            <!-- <field name="view_id" ref="calendar_assigned_amounts_tree_view"/> -->
+            <!-- <field name="view_id" ref="control_amounts_received_tree_view"/> -->
     </data>
 </odoo>

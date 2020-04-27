@@ -36,7 +36,7 @@
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
                                 <field name="adaptation_type" required="1"/>
-                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'draft')]}"/>
+                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', '=', 'accepted'), ('import_status', '!=', 'draft')]}"/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>

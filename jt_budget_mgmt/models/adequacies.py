@@ -496,9 +496,8 @@ class Adequacies(models.Model):
                     total_increased += line.amount
                     counter_increased += 1
             if self.adaptation_type == 'compensated' and total_decreased != total_increased:
-                if counter_decreased > 0 and counter_increased > 0:
-                    raise ValidationError(
-                        "The total amount of the increases and the total amount of the decreases must be equal")
+                raise ValidationError(
+                    "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!")
 
     def confirm(self):
         self.validate_data()

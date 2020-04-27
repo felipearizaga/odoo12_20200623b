@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class CalendarAssignedAmounts(models.Model):
@@ -31,45 +31,41 @@ class CalendarAssignedAmounts(models.Model):
 
     def _get_amount(self):
         for record in self:
-            amount_to_receive = 0
-            amount_received = 0
-            for line in record.line_ids:
-                amount_to_receive += line.amount_assigned
-                amount_received += line.amount_deposited
-            record.amount_to_receive = amount_to_receive
-            record.amount_received = amount_received
+            record.amount_to_receive = sum(
+                record.line_ids.mapped('amount_assigned'))
+            record.amount_received = sum(
+                record.line_ids.mapped('amount_deposited'))
             record.amount_pending = record.amount_to_receive - record.amount_received
 
+    # Fields for control of amount received
+    folio = fields.Char(string='Folio')
+    budget_id = fields.Many2one('expenditure.budget', domain=[
+                                ('state', '=', 'validate')])
+    user_id = fields.Many2one('res.users', string='Made By',
+                              default=lambda self: self.env.user, tracking=True)
+    file = fields.Binary(string='Seasonal File')
+    filename = fields.Char(string="File Name")
+    import_date = fields.Date(string='Import Date')
+    obs_cont_amount = fields.Text(string='Observations')
+
+    # Fields for Calender of assigned amounts
     date = fields.Date(string='Date')
-    amount_to_receive = fields.Integer(
+    amount_to_receive = fields.Float(
         string='Amount to receive', compute='_get_amount')
-    amount_received = fields.Integer(
+    amount_received = fields.Float(
         string='Amount received', compute='_get_amount')
-    amount_pending = fields.Integer(
+    amount_pending = fields.Float(
         string='Amount pending', compute='_get_amount')
-    observations = fields.Text(string='Comments')
+    obs_calender_amount = fields.Text(string='Observations')
+
     line_ids = fields.One2many('calendar.assigned.amounts.lines',
                                'calendar_assigned_amount_id', string='Calendar of assigned amount lines')
 
     @api.model
     def create(self, vals):
+        vals['folio'] = self.env['ir.sequence'].next_by_code(
+            'control.amount.received') or _('New')
         res = super(CalendarAssignedAmounts, self).create(vals)
-        vals = {
-            'made_by_id': self.env.user.id,
-            'calendar_id': res.id,
-        }
-        control = self.env['control.amounts.received'].create(vals)
-        for line in res.line_ids:
-            vals = {
-                'amount_assigned': line.amount_assigned,
-                'deposit_date': line.date,
-                'amount_deposited': line.amount_deposited,
-                'account_id': line.bank_id.id,
-                'observations': line.observations,
-                'control_id': control.id,
-                'calendar_id': res.id,
-            }
-            self.env['control.amounts.received.line'].create(vals)
         return res
 
 
@@ -80,25 +76,35 @@ class CalendarAssignedAmountsLines(models.Model):
     _rec_name = 'date'
 
     date = fields.Date(string='Deposit date')
-    budget_id = fields.Many2one(
+    shcp_id = fields.Many2one(
         'shcp.code', string='Budgetary Program')
-    month = fields.Selection([('jan','January'),
-                              ('feb','February'),
-                              ('march','March'),
-                              ('april','April'),
-                              ('may','May'),
-                              ('june','June'),
-                              ('july','July'),
-                              ('aug','August'),
-                              ('sept','September'),
-                              ('oct','October'),
-                              ('nov','November'),
-                              ('dec','December')], string='Month of the amount', default='jan')
-    observations = fields.Text(string='Comments')
-    amount_assigned = fields.Integer(string='Amount assigned')
-    amount_deposited = fields.Integer(string='Amount deposited')
+    month = fields.Selection([
+        ('january', 'January'),
+        ('february', 'February'),
+        ('march', 'March'),
+        ('april', 'April'),
+        ('may', 'May'),
+        ('june', 'June'),
+        ('july', 'July'),
+        ('august', 'August'),
+        ('september', 'September'),
+        ('october', 'October'),
+        ('november', 'November'),
+        ('december', 'December')], string='Month of the amount', default='january')
+    amount_assigned = fields.Float(string='Amount assigned')
+    amount_deposited = fields.Float(string='Amount deposited')
+
+    def _compute_amount_pending(self):
+        for line in self:
+            line.amount_pending = line.amount_assigned - line.amount_deposited
+
+    amount_pending = fields.Float(string='Amount Pending', compute="_compute_amount_pending")
     bank_id = fields.Many2one('res.bank', string='Bank')
     bank_account_id = fields.Many2one(
-        'res.partner.bank', string='Bank account')
+        'res.partner.bank', string='Bank account', domain="['|', ('bank_id', '=', False), ('bank_id', '=', bank_id)]")
+    observations = fields.Text(string='Observations')
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
+
+    _sql_constraints = [
+        ('shcp_id_uniq', 'unique(shcp_id)', 'The Budgetary Program must be unique.')]

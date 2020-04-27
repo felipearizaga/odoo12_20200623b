@@ -20,7 +20,8 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo.exceptions import ValidationError
+from odoo import models, fields, api, _
 
 
 class ControlAssignedAmounts(models.Model):
@@ -29,21 +30,26 @@ class ControlAssignedAmounts(models.Model):
     _description = 'Control of Assigned Amounts'
     _rec_name = 'folio'
 
-    folio = fields.Integer(string='Folio', states={'draft': [('readonly', False)]})
-    import_file = fields.Binary(string='File to import', states={'draft': [('readonly', False)]})
-    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'draft': [('readonly', False)]})
-    made_by_id = fields.Many2one('res.users', string='Made by', states={'draft': [('readonly', False)]})
-    import_date = fields.Date(string='Import date', states={'draft': [('readonly', False)]})
-    observations = fields.Text(string='Observations', states={'draft': [('readonly', False)]})
+    folio = fields.Char(string='Folio')
+    import_file = fields.Binary(string='File to import')
+    budget_id = fields.Many2one('expenditure.budget', string='Budget')
+    user_id = fields.Many2one('res.users', string='Made by', default=lambda self: self.env.user, tracking=True)
+    import_date = fields.Date(string='Import date')
+    observations = fields.Text(string='Observations')
     state = fields.Selection([('draft', 'Draft'), ('process', 'In process'),
                               ('validated', 'Validated'),
                               ('rejected', 'Rejected'),
-                              ('canceled', 'Canceled')], default='draft', required=True, string='State')
+                              ('canceled', 'Canceled')], default='draft', required=True, string='Status')
     line_ids = fields.One2many('control.assigned.amounts.lines',
                                'assigned_amount_id', string='Assigned amount lines')
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.constrains('folio')
+    def _check_folio(self):
+        if not str(self.folio).isnumeric():
+            raise ValidationError('Folio Must be numeric value!')
 
     def import_lines(self):
         return {
@@ -82,3 +88,6 @@ class ControlAssignedAmountsLines(models.Model):
     available = fields.Integer(string='Available')
     assigned_amount_id = fields.Many2one(
         'control.assigned.amounts', string='Assigned amount')
+
+    _sql_constraints = [
+        ('unique_assigned_amount_id_program_code', 'unique(code,assigned_amount_id)', 'The program code must be unique per Control of Assigned Amounts')]
