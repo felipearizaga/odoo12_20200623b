@@ -647,6 +647,13 @@ class Standardization(models.Model):
 
         self.line_ids.write({'selected': self.select_box})
 
+    def unlink(self):
+        for budget in self:
+            if budget.state != 'draft':
+                raise ValidationError(
+                    'You can not delete confirmed Re-standardization!')
+        return super(Standardization, self).unlink()
+
 
 class StandardizationLine(models.Model):
 

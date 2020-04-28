@@ -246,21 +246,21 @@
     />
 
     <!-- menu for budget control -->
-    <!-- <menuitem
+    <menuitem
         id="menu_budget_control"
         name="Budget Control"
         parent="menu_budget"
         sequence="3"
-    /> -->
+    />
 
     <!-- menu for control of assigned amounts -->
-    <!-- <menuitem
+    <menuitem
         id="menu_control_assigned_amounts"
         name="Control of assigned amounts"
         parent="menu_budget_control"
         action="action_control_assigned_amounts"
         sequence="1"
-    /> -->
+    />
 
     <!-- menu for reports -->
     <menuitem

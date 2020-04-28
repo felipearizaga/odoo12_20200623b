@@ -78,6 +78,7 @@
         'wizard/reject_standardization_line_view.xml',
         'wizard/import_standardization_line_view.xml',
         'wizard/import_adequacies_line_view.xml',
+        'wizard/import_assigned_amount_line_view.xml',
         'wizard/affect_payment_budget_wiz_view.xml',
 
         # Main Menu File

@@ -58,14 +58,14 @@
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="date"/>
+                                            <field name="date" readonly="1"/>
                                             <field name="shcp_id" required="1"/>
                                             <field name="month" required="1"/>
                                             <field name="amount_assigned" required="1"/>
-                                            <field name="amount_deposited" required="1"/>
+                                            <field name="amount_deposited" readonly="1"/>
                                             <field name="amount_pending" invisible="1"/>
-                                            <field name="bank_id"/>
-                                            <field name="bank_account_id"/>
+                                            <field name="bank_id" readonly="1"/>
+                                            <field name="bank_account_id" readonly="1"/>
                                             <field name="observations"/>
                                             <field name="calendar_assigned_amount_id" invisible="1"/>
                                         </group>

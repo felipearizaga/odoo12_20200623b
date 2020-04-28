@@ -490,6 +490,8 @@ class Adequacies(models.Model):
                     raise ValidationError(
                         "The total amount of the increases/decreases should be greater than or equal to 10000")
                 if line.line_type == 'decrease':
+                    if self.adaptation_type == 'liquid':
+                        raise ValidationError("In liquid adjustment, you can only increase amount of budget!")
                     total_decreased += line.amount
                     counter_decreased += 1
                 if line.line_type == 'increase':
@@ -537,7 +539,7 @@ class AdequaciesLines(models.Model):
     _rec_name = ''
 
     line_type = fields.Selection(
-        [('increase', 'Increase'), ('decrease', 'Decrease')], string='Type')
+        [('increase', 'Increase'), ('decrease', 'Decrease')], string='Type', default='increase')
     amount = fields.Float(string='Amount')
     creation_type = fields.Selection(
         [('manual', 'Manual'), ('imported', 'Imported')],

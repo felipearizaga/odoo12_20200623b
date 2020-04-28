@@ -105,6 +105,3 @@ class CalendarAssignedAmountsLines(models.Model):
     observations = fields.Text(string='Observations')
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
-
-    _sql_constraints = [
-        ('shcp_id_uniq', 'unique(shcp_id)', 'The Budgetary Program must be unique.')]

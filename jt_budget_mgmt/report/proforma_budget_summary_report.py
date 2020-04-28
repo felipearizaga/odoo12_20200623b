@@ -25,10 +25,12 @@ from odoo import models, fields, api, _
 
 class ProformaBudgetSummaryReport(models.AbstractModel):
     _name = "proforma.budget.summary.report"
-    _inherit = "account.coa.report"
+    _inherit = "account.report"
     _description = "Proforma Budget Summary"
 
-    filter_program_code = None
+    # filter_program_code = None
+    filter_date = {'mode': 'range', 'filter': 'this_month'}
+    # filter_budget_control = None
 
     def _get_templates(self):
         templates = super(ProformaBudgetSummaryReport, self)._get_templates()
@@ -57,9 +59,15 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         return self.env['program.code'].search([])
 
     @api.model
-    def _init_filter_program_code(self, options, previous_options=None):
-        print("init filter program code..........")
-        return False
+    def _init_filter_budget_control(self, options, previous_options=None):
+        print("init filter budget_control..........")
+        options['budget_control'] = []
+        options['budget_control'].append({
+            'id': 1,
+            'name': 'Authorized',
+            'code': '01',
+            # 'selected': journal_map.get(j.id, j.id in default_group_ids),
+        })
 
     @api.model
     def _get_options_program_code(self, options):
@@ -83,7 +91,34 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         print("_set_context............", res)
         return res
 
-    # def _get_lines(self, options, line_id=None):
+    def _get_lines(self, options, line_id=None):
+        lines = []
+
+        budget_lines = self.env['expenditure.budget.line'].search([('expenditure_budget_id.state', '=', 'validate')])
+
+        for b_line in budget_lines:
+            annual_modified = b_line.authorized + b_line.assigned
+            columns = [
+                {'name': b_line.authorized},
+                {'name': b_line.assigned},
+                {'name': annual_modified},
+                {'name': 0},
+                {'name': 0},
+                {'name': 0},
+                {'name': 0},
+                {'name': 0},
+                {'name': b_line.available}
+            ]
+            lines.append({
+                'id': b_line.id,
+                'name': b_line.program_code_id.program_code,
+                'columns': columns,
+                'level': 0,
+                'unfoldable': False,
+                'unfolded': True,
+            })
+
+        return lines
     #     conac_obj = self.env['coa.conac']
     #     lines = []
     #     hierarchy_lines = conac_obj.sudo().search(

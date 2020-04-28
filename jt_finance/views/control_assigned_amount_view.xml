@@ -62,14 +62,14 @@
                                             <field name="calendar_assigned_amount_id" invisible="1"/>
 
                                             <field name="date"/>
-                                            <field name="shcp_id"/>
-                                            <field name="month"/>
-                                            <field name="amount_assigned"/>
+                                            <field name="shcp_id" readonly="1"/>
+                                            <field name="month" readonly="1"/>
+                                            <field name="amount_assigned" readonly="1"/>
                                             <field name="amount_deposited"/>
                                             <field name="amount_pending"/>
                                             <field name="bank_id"/>
                                             <field name="bank_account_id"/>
-                                            <field name="observations"/>
+                                            <field name="observations" readonly="1"/>
                                         </group>
                                     </form>
                                 </field>
