@@ -26,6 +26,7 @@
                         <group>
                             <group>
                                 <field name="date" required="1"/>
+                                <field name="month_int" invisible="1"/>
                                 <field name="amount_to_receive"/>
                                 <field name="amount_received"/>
                                 <field name="amount_pending"/>
@@ -85,6 +86,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="date"/>
+                    <field name="month_int" invisible="1"/>
                     <field name="obs_calender_amount"/>
                     <field name="amount_to_receive"/>
                     <field name="amount_received"/>
@@ -112,6 +114,5 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('calendar_assigned_amounts_form_view')})]"/>
             <field name="context">{}</field>
         </record>
-            <!-- <field name="view_id" ref="calendar_assigned_amounts_tree_view"/> -->
     </data>
 </odoo>
