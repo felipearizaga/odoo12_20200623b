@@ -41,7 +41,7 @@
         'data/data.xml',
 
         # Reports
-        # 'report/proforma_budget_summary_report.xml',
+        'report/report_template.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',
