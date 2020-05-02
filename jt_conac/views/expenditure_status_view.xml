@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="expenditure_status_form_view" model="ir.ui.view">
+            <field name="name">expenditure.status.form.view</field>
+            <field name="model">expenditure.status</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="concept"/>
+                            <field name="approved"/>
+                            <field name="ext_and_red"/>
+                            <field name="modified"/>
+                            <field name="accrued"/>
+                            <field name="paid_out"/>
+                            <field name="sub_exercise"/>
+                            <field name="parent_id" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="expenditure_status_tree_view" model="ir.ui.view">
+            <field name="name">expenditure.status.tree.view</field>
+            <field name="model">expenditure.status</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="concept"/>
+                    <field name="approved"/>
+                    <field name="ext_and_red"/>
+                    <field name="modified"/>
+                    <field name="accrued"/>
+                    <field name="paid_out"/>
+                    <field name="sub_exercise"/>
+                    <field name="parent_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_expenditure_status" model="ir.actions.act_window">
+            <field name="name">Status of Expenditure</field>
+            <field name="res_model">expenditure.status</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

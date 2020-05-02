@@ -159,7 +159,10 @@ class ImportAdequaciesLine(models.TransientModel):
                         'diff': error_string,
                         'total_rows': self.record_number,
                     }
-                    if error_string == '':
+                    dict_flag = not bool(code_amount_dict)
+                    if dict_flag:
+                        raise ValidationError("Please select correct file!")
+                    if error_string == '' and not dict_flag:
                         vals_amount_control['file'] = self.file
                         vals_amount_control['filename'] = self.filename
                         self.error_status = False

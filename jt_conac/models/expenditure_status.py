@@ -20,24 +20,19 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import coa_conac
-from . import cog_conac
-from . import account_account
-from . import debt_statement
-from . import cash_statement
-from . import income_statement
-from . import expenditure_status
-from . import states_and_program
-# from . import trial_balance_report
-from . import financial_report_1_5
-from . import financial_report_4_0
-# from . import financial_report_4_1
-from . import financial_report_4_2
-from . import financial_report_4_3
-from . import financial_report_4_4
-from . import financial_report_4_5
-from . import financial_report_4_6
-from . import financial_report_4_7
-from . import financial_report_4_8
-from . import financial_report_4_9
-from . import financial_report_4_10
+from odoo import models, fields
+
+
+class StatusOfExpenditure(models.Model):
+    _name = 'expenditure.status'
+    _description = 'Status of Expenditure'
+    _rec_name = 'concept'
+
+    concept = fields.Char(string='Concepto')
+    approved = fields.Float(string='Aprobado')
+    ext_and_red = fields.Float(string='Ampliaciones/ (Reducciones)')
+    modified = fields.Float(string='Modificado')
+    accrued = fields.Float(string='Devengado')
+    paid_out = fields.Float(string='Pagado')
+    sub_exercise = fields.Char(string='Subejercicio')
+    parent_id = fields.Many2one('expenditure.status', string='Parent')

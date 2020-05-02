@@ -20,24 +20,19 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import coa_conac
-from . import cog_conac
-from . import account_account
-from . import debt_statement
-from . import cash_statement
-from . import income_statement
-from . import expenditure_status
-from . import states_and_program
-# from . import trial_balance_report
-from . import financial_report_1_5
-from . import financial_report_4_0
-# from . import financial_report_4_1
-from . import financial_report_4_2
-from . import financial_report_4_3
-from . import financial_report_4_4
-from . import financial_report_4_5
-from . import financial_report_4_6
-from . import financial_report_4_7
-from . import financial_report_4_8
-from . import financial_report_4_9
-from . import financial_report_4_10
+from odoo import models, fields
+
+
+class StatementOfDebt(models.Model):
+    _name = 'debt.statement'
+    _description = 'Statement of Debt'
+    _rec_name = 'denomination'
+
+    denomination = fields.Char(string='Denomination of Debts')
+    currency_id = fields.Many2one(
+        'res.currency', string='Contracting Currency')
+    country_id = fields.Many2one(
+        'res.country', string='Institution or Creditor Country')
+    init_balance = fields.Float(string='Initial Balance of the Period')
+    end_balance = fields.Float(string='End Balance of the Period')
+    parent_id = fields.Many2one('debt.statement', string='Parent')

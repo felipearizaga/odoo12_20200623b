@@ -23,10 +23,10 @@
 from odoo import models
 
 
-class AnalyticalStatusOfAssets(models.AbstractModel):
-    _name = "jt_conac.analytical.status.of.assets.report"
+class StatementOfFinancialPosition(models.AbstractModel):
+    _name = "jt_conac.financial.position.report"
     _inherit = "jt_conac.coa.conac.report"
-    _description = "Analytical Status of Assets"
+    _description = "Statement of Financial Position"
 
     def _get_lines(self, options, line_id=None):
         conac_obj = self.env['coa.conac']
@@ -35,7 +35,7 @@ class AnalyticalStatusOfAssets(models.AbstractModel):
             [('parent_id', '=', False)], order='code')
 
         for line in hierarchy_lines:
-            if line.code == '1.0.0.0':
+            if line.code in ('1.0.0.0', '2.0.0.0', '3.0.0.0'):
                 lines.append({
                     'id': 'hierarchy_' + line.code,
                     'name': line.display_name,

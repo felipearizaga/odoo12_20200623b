@@ -23,14 +23,14 @@
 from odoo import models, _
 
 
-class StatementOfCashFlows(models.AbstractModel):
-    _name = "jt_conac.statement.of.cash.report"
+class AnalyticalIncomeStatement(models.AbstractModel):
+    _name = "jt_conac.analytical.income.statement.report"
     _inherit = "account.coa.report"
-    _description = "Statement of Cash Flows"
+    _description = "Analytical Income Statement"
 
     def _get_templates(self):
         templates = super(
-            StatementOfCashFlows, self)._get_templates()
+            AnalyticalIncomeStatement, self)._get_templates()
         templates[
             'main_table_header_template'] = 'account_reports.main_table_header'
         templates['main_template'] = 'account_reports.main_template'
@@ -38,46 +38,64 @@ class StatementOfCashFlows(models.AbstractModel):
 
     def _get_columns_name(self, options):
         return [
-            {'name': _('Concepto')},
+            {'name': _('Nombre')},
+            {'name': _('Estimado')},
+            {'name': _('Ampliaciones y Reducciones')},
+            {'name': _('Modificado')},
+            {'name': _('Devengado')},
+            {'name': _('Recaudado')},
+            {'name': _('Diferencia')},
         ]
 
     def _get_lines(self, options, line_id=None):
-        cash_obj = self.env['cash.statement']
+        income_obj = self.env['income.statement']
         lines = []
-        hierarchy_lines = cash_obj.sudo().search(
+        hierarchy_lines = income_obj.sudo().search(
             [('parent_id', '=', False)], order='id')
 
         for line in hierarchy_lines:
             lines.append({
                 'id': 'hierarchy_' + str(line.id),
-                'name': line.concept,
-                'columns': [],
+                'name': line.name,
+                'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                 'level': 1,
                 'unfoldable': False,
                 'unfolded': True,
             })
 
-            level_1_lines = cash_obj.search([('parent_id', '=', line.id)])
+            level_1_lines = income_obj.search([('parent_id', '=', line.id)])
             for level_1_line in level_1_lines:
                 lines.append({
                     'id': 'level_one_%s' % level_1_line.id,
-                    'name': level_1_line.concept,
-                    'columns': [],
+                    'name': level_1_line.name,
+                    'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                     'level': 2,
                     'unfoldable': True,
                     'unfolded': True,
                     'parent_id': 'hierarchy_' + str(line.id),
                 })
 
-                level_2_lines = cash_obj.search(
+                level_2_lines = income_obj.search(
                     [('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
                     lines.append({
                         'id': 'level_two_%s' % level_2_line.id,
-                        'name': level_2_line.concept,
-                        'columns': [],
+                        'name': level_2_line.name,
+                        'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                         'level': 3,
+                        'unfoldable': True,
+                        'unfolded': True,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })
 
+                    level_3_lines = income_obj.search(
+                        [('parent_id', '=', level_2_line.id)])
+                    for level_3_line in level_3_lines:
+                        lines.append({
+                            'id': 'level_three_%s' % level_3_line.id,
+                            'name': level_3_line.name,
+                            'columns': [{'name': level_3_line.estimated}, {'name': level_3_line.exp_and_red}, {'name': level_3_line.modified}, {'name': level_3_line.accrued}, {'name': level_3_line.raised}, {'name': level_3_line.difference}],
+                            'level': 4,
+                            'parent_id': 'level_two_%s' % level_2_line.id,
+                        })
         return lines

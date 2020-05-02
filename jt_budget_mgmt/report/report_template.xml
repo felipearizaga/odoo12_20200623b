@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="filter_info_template">
+    <template id="jt_budget_mgmt.filter_info_template">
         <div class="row print_only" style='margin-top: 20px; margin-bottom: 10px;'>
             <div class="col-4">
                 <t t-if="options.get('date') and options['date'].get('string')"><t t-esc="options['date']['string']"/></t>
@@ -34,18 +34,6 @@
                     </t>
                 </div>
                 <div class="col-12">
-                    <!-- <t t-if="options.get('budget_control')"> -->
-                        Budget Control:
-                        <t t-set="control_value" t-value="'All'"/>
-                        <t t-foreach="options['budget_control']" t-as="j">
-                            <t t-if="j.get('selected') == True">
-                                <t t-set="control_value" t-value="''"/>
-                                <t t-esc="j.get('code')"/>
-                            </t>
-                        </t>
-                        <t t-esc="control_value"/>
-                    <!-- </t> -->
-
                     <t t-if="options.get('journals')">
                         Journals:
                         <t t-set="journal_value" t-value="'All'"/>

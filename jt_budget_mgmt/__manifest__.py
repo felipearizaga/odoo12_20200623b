@@ -41,7 +41,8 @@
         'data/data.xml',
 
         # Reports
-        'report/report_template.xml',
+        # 'report/report_template.xml',
+        'report/search_template.xml',
 
         # Program Code Views
         'views/program_code_views/program_view.xml',
