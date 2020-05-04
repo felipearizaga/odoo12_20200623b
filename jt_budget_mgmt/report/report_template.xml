@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="jt_budget_mgmt.filter_info_template">
+    <template id="filter_info_template">
         <div class="row print_only" style='margin-top: 20px; margin-bottom: 10px;'>
             <div class="col-4">
                 <t t-if="options.get('date') and options['date'].get('string')"><t t-esc="options['date']['string']"/></t>
@@ -109,29 +109,6 @@
                         <t t-esc="selected_filter_name"/>
                     </t>
                 </div>
-            </div>
-        </div>
-    </template>
-    
-    <template id="jt_budget_mgmt.main_template">
-        <div class='o_account_reports_body'>
-            <div class="o_account_reports_page o_account_reports_no_print">
-                <div class="o_account_reports_header">
-                    <div class="print_only"><h2><t t-esc="report.get('name')"></t></h2></div>
-                    <t t-call="jt_budget_mgmt.filter_info_template"/>
-                </div>
-                <div class="o_account_reports_summary"/>
-                <div class="table-responsive">
-                    <table class="o_account_reports_table table-hover">
-                        <t t-call="{{model._get_templates()['main_table_header_template']}}"/>
-                        <tbody>
-                            <t t-if="lines.get('lines')">
-                                <t t-call="{{model._get_templates()['line_template']}}"/>
-                            </t>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="js_account_report_footnotes"/>
             </div>
         </div>
     </template>
