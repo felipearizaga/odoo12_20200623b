@@ -20,20 +20,13 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields
 
-# Code Structure
-from . import code_structure
-from . import report_program_fields
 
-from . import year_configuration
-from . import project_project
+class ReportProgramFields(models.Model):
 
-# Add all objects of program code views
-from . import program_code_objects
+    _name = 'report.program.fields'
+    _description = 'Report Program Fields'
+    _rec_name = 'name'
 
-from . import program_code
-from . import expenditure_budget
-
-from . import adequacies
-from . import standardization
-from . import control_assigned_amounts
+    name = fields.Char(string='Name')

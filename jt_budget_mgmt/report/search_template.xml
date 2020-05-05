@@ -35,10 +35,28 @@
         </div>
     </template>
 
+    <template id="search_template_program_code_section">
+        <a type="button" class="dropdown-toggle program_code_section_filter" data-toggle="dropdown">
+            <span class="fa fa-folder-open"/> Programmatic Code Section
+        </a>
+        <ul class="dropdown-menu o_filters_menu" role="menu">
+            <li class="o_account_report_search js_program_code_section_m2m"/>
+            <li class="o_account_report_search js_section_program_m2m"/>
+        </ul>
+        <!-- <a type="button" class="dropdown-toggle section_program_filter" data-toggle="dropdown">
+            <span class="fa fa-folder-open"/> Program
+        </a> -->
+        <!-- <ul class="dropdown-menu o_filters_menu" role="menu">
+        </ul> -->
+    </template>
+
     <template id="search_template_jt" inherit_id="account_reports.search_template">
         <xpath expr="." position="inside">
             <div class="btn-group o_dropdown o_account_reports_filter_budget_controls" t-if="options.get('budget_control') != None">
                 <t t-call="jt_budget_mgmt.search_template_budget_control"/>
+            </div>
+            <div class="btn-group o_dropdown o_account_reports_filter_program_code_section" t-if="options.get('code_sections') != None">
+                <t t-call="jt_budget_mgmt.search_template_program_code_section"/>
             </div>
         </xpath>
     </template>

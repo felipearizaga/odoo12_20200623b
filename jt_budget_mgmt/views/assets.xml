@@ -4,6 +4,7 @@
         <template id="backend_assets" inherit_id="web.assets_backend" name="Backend Asset">
             <xpath expr=".">
                 <script type="text/javascript" src="/jt_budget_mgmt/static/src/js/widget_export_data.js"></script>
+                <script type="text/javascript" src="/jt_budget_mgmt/static/src/js/widget_financial_report.js"></script>
             </xpath>
         </template>
     </data>

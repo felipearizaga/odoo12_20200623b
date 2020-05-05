@@ -28,7 +28,7 @@ class CodeStructure(models.Model):
 
     _name = 'code.structure'
     _description = 'Code Structure'
-    _rec_name = 'position_priority'
+    _rec_name = 'section'
 
     position_priority = fields.Char(string='Position priority', size=2)
     section = fields.Selection([

@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_year_config,year_config,model_year_configuration,base.group_user,1,1,1,1
-access_code_structure,code_structure,model_code_structure,base.group_user,1,1,1,1
+access_code_structure_user,code_structure_user,model_code_structure,base.group_user,1,1,1,1
+access_code_structure,code_structure,model_code_structure,,1,1,1,1
 access_program,program,model_program,base.group_user,1,1,1,1
 access_sub_program,sub_program,model_sub_program,base.group_user,1,1,1,1
 access_dependency,dependency,model_dependency,base.group_user,1,1,1,1
@@ -27,3 +28,4 @@ access_standardization,standardization,model_standardization,base.group_user,1,1
 access_standardization_line,standardization_line,model_standardization_line,base.group_user,1,1,1,1
 access_control_assigned_amounts,control_assigned_amounts,model_control_assigned_amounts,base.group_user,1,1,1,1
 access_control_assigned_amounts_lines,control_assigned_amounts_lines,model_control_assigned_amounts_lines,base.group_user,1,1,1,1
+access_report_program_fields,report_program_fields,model_report_program_fields,base.group_user,1,1,1,1

@@ -41,11 +41,17 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
     # Custom filters
     filter_budget_control = None
+    filter_program_code_section = None
 
     # Set columns based on dynamic options
     def _get_columns_name(self, options):
         column_list = []
         column_list.append({'name': _("Program Code")})
+
+        # Add program code structure fields
+        for column in options['selected_program_fields']:
+            column_list.append({'name': _(column)})
+
         for column in options['selected_budget_control']:
             column_list.append({'name': _(column)})
         return column_list
@@ -58,7 +64,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         counter = 1
 
         if previous_options and previous_options.get('budget_control'):
-            budget_control_map = dict((opt['id'], opt['selected']) for opt in previous_options['budget_control'] if opt['id'] != 'divider' and 'selected' in opt)
+            budget_control_map = dict((opt['id'], opt['selected'])
+                                      for opt in previous_options['budget_control'] if opt['id'] != 'divider' and 'selected' in opt)
         else:
             budget_control_map = {}
 
@@ -74,6 +81,52 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 options['selected_budget_control'].append(str(label))
             counter += 1
 
+    @api.model
+    def _init_filter_program_code_section(self, options, previous_options=None):
+        options['code_sections'] = previous_options and previous_options.get(
+            'code_sections') or []
+        program_fields_ids = [int(acc) for acc in options['code_sections']]
+        selected_program_fields = program_fields_ids \
+            and self.env['report.program.fields'].browse(program_fields_ids) \
+            or self.env['report.program.fields']
+        options['selected_program_fields'] = selected_program_fields.mapped('name')
+
+        # Program Section filter
+        options['section_program'] = previous_options and previous_options.get(
+            'section_program') or []
+        program_ids = [int(acc) for acc in options['section_program']]
+        selected_programs = program_ids \
+            and self.env['program'].browse(program_ids) \
+            or self.env['program']
+        options['selected_programs'] = selected_programs.mapped('key_unam')
+
+        # Sub Program Section filter
+        options['section_sub_program'] = previous_options and previous_options.get(
+            'section_sub_program') or []
+        sub_program_ids = [int(acc) for acc in options['section_sub_program']]
+        selected_sub_programs = sub_program_ids \
+            and self.env['sub.program'].browse(sub_program_ids) \
+            or self.env['sub.program']
+        options['selected_sub_programs'] = selected_sub_programs.mapped('sub_program')
+
+        # Dependency Section filter
+        options['section_dependency'] = previous_options and previous_options.get(
+            'section_dependency') or []
+        dependency_ids = [int(acc) for acc in options['section_dependency']]
+        selected_dependency = dependency_ids \
+            and self.env['dependency'].browse(dependency_ids) \
+            or self.env['dependency']
+        options['selected_dependency'] = selected_dependency.mapped('dependency')
+
+        # Sub Dependency Section filter
+        options['section_sub_dependency'] = previous_options and previous_options.get(
+            'section_sub_dependency') or []
+        sub_dependency_ids = [int(acc) for acc in options['section_sub_dependency']]
+        selected_sub_dependency = sub_dependency_ids \
+            and self.env['sub.dependency'].browse(sub_dependency_ids) \
+            or self.env['sub.dependency']
+        options['selected_sub_dependency'] = selected_sub_dependency.mapped('sub_dependency')
+
     def _get_lines(self, options, line_id=None):
         lines = []
         budget_lines = self.env['expenditure.budget.line'].search(
@@ -82,6 +135,67 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         for b_line in budget_lines:
             annual_modified = b_line.authorized + b_line.assigned
             columns = []
+
+            # Program code struture view fields
+            for column in options['selected_program_fields']:
+                if column == 'Year':
+                    year = b_line.program_code_id.year and b_line.program_code_id.year.name or ''
+                    columns.append({'name': str(year)})
+                if column == 'Program':
+                    program = b_line.program_code_id.program_id and b_line.program_code_id.program_id.key_unam or ''
+                    columns.append({'name': str(program)})
+                if column == 'Sub Program':
+                    subprogram = b_line.program_code_id.sub_program_id and b_line.program_code_id.sub_program_id.sub_program or ''
+                    columns.append({'name': str(subprogram)})
+                if column == 'Dependency':
+                    dependency = b_line.program_code_id.dependency_id and b_line.program_code_id.dependency_id.dependency or ''
+                    columns.append({'name': str(dependency)})
+                if column == 'Sub Dependency':
+                    subdependency = b_line.program_code_id.sub_dependency_id and b_line.program_code_id.sub_dependency_id.sub_dependency or ''
+                    columns.append({'name': str(subdependency)})
+                if column == 'Expenditure Item':
+                    item = b_line.program_code_id.item_id and b_line.program_code_id.item_id.item or ''
+                    columns.append({'name': str(item)})
+                if column == 'Check Digit':
+                    check_digit = b_line.program_code_id.check_digit or ''
+                    columns.append({'name': str(check_digit)})
+                if column == 'Source of Resource':
+                    sor = b_line.program_code_id.resource_origin_id and b_line.program_code_id.resource_origin_id.key_origin or ''
+                    columns.append({'name': str(sor)})
+                if column == 'Institutional Activity':
+                    ai = b_line.program_code_id.institutional_activity_id and b_line.program_code_id.institutional_activity_id.number or ''
+                    columns.append({'name': str(ai)})
+                if column == 'Conversion of Budgetary Program':
+                    conversion = b_line.program_code_id.budget_program_conversion_id and b_line.program_code_id.budget_program_conversion_id.shcp and b_line.program_code_id.budget_program_conversion_id.shcp.name or ''
+                    columns.append({'name': str(conversion)})
+                if column == 'SHCP items':
+                    shcp = b_line.program_code_id.conversion_item_id and b_line.program_code_id.conversion_item_id.federal_part or ''
+                    columns.append({'name': str(shcp)})
+                if column == 'Type of Expenditure':
+                    expense_type = b_line.program_code_id.expense_type_id and b_line.program_code_id.expense_type_id.key_expenditure_type or ''
+                    columns.append({'name': str(expense_type)})
+                if column == 'Geographic Location':
+                    location = b_line.program_code_id.location_id and b_line.program_code_id.location_id.state_key or ''
+                    columns.append({'name': str(location)})
+                if column == 'Wallet Key':
+                    wallet_key = b_line.program_code_id.portfolio_id and b_line.program_code_id.portfolio_id.wallet_password or ''
+                    columns.append({'name': str(wallet_key)})
+                if column == 'Type of Project':
+                    project_type = b_line.program_code_id.project_type_id and b_line.program_code_id.project_type_id.project_type_identifier or ''
+                    columns.append({'name': str(project_type)})
+                if column == 'Project Number':
+                    project_number = b_line.program_code_id.project_number or ''
+                    columns.append({'name': str(project_number)})
+                if column == 'Stage':
+                    stage = b_line.program_code_id.stage_id and b_line.program_code_id.stage_id.stage_identifier or ''
+                    columns.append({'name': str(stage)})
+                if column == 'Type of Agreement':
+                    agreement_type = b_line.program_code_id.agreement_type_id and b_line.program_code_id.agreement_type_id.agreement_type or ''
+                    columns.append({'name': str(agreement_type)})
+                if column == 'Agreement Number':
+                    agreement_number = b_line.program_code_id.number_agreement or ''
+                    columns.append({'name': str(agreement_number)})
+
             for column in options['selected_budget_control']:
                 if column == 'Authorized':
                     columns.append({'name': b_line.authorized})
@@ -189,8 +303,6 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             html = html.replace(b'<div class="js_account_report_footnotes"></div>',
                                 self.get_html_footnotes(footnotes_to_render))
         return html
-
-
 
     #     ####################################################
     # # OPTIONS: hierarchy

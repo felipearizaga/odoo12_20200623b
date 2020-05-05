@@ -39,6 +39,7 @@
 
         # Data Files
         'data/data.xml',
+        'data/report.program.fields.csv',
 
         # Reports
         # 'report/report_template.xml',
