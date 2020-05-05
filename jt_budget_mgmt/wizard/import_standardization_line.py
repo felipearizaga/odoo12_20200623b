@@ -67,6 +67,15 @@ class ImportStandardizationLine(models.TransientModel):
             'res_id': self.id,
         }
 
+    @api.model
+    def default_get(self, fields):
+        res = super(ImportStandardizationLine, self).default_get(fields)
+        standardization = self.env['standardization'].browse(
+            self._context.get('active_id'))
+        if standardization and standardization.folio:
+            res['folio'] = standardization.folio
+        return res
+
     def import_line(self):
         standardization = self.env['standardization'].browse(
             self._context.get('active_id'))

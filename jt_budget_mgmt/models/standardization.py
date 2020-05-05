@@ -73,6 +73,13 @@ class Standardization(models.Model):
         string='Authorized', compute='_get_count')
     cancelled_count = fields.Integer(string='Cancelled', compute='_get_count')
     all_line_count = fields.Integer(string='Cancelled', compute='_get_count')
+    check_line_state = fields.Boolean(compute="_compute_check_line_state", store=True)
+
+    @api.depends('line_ids')
+    def _compute_check_line_state(self):
+        for standardization in self:
+            standardization.check_line_state = False
+            lines = standardization.line_ids.filtered(lambda l: l.amount_effected == False and l.state == 'authorized')
 
     _sql_constraints = [
         ('folio_uniq_const', 'unique(folio)', 'The folio must be unique.')]
@@ -392,34 +399,39 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Origin
-                origin = origin_obj.validate_origin_resource(
-                    result_dict.get('Origin', ''))
+                origin = self.env['quarter.budget'].search([('name', '=', result_dict.get('Origin', ''))], limit=1)
                 if not origin:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Origin Not Format\n"
+                        "------>> Origin Not Found\n"
                     failed_row_ids.append(pointer)
                     continue
 
-                quarter = result_dict.get('Quarter', '')
-                cancel_reason = result_dict.get('Reason for rejection', '')
-                state_str = result_dict.get('Stage', '')
-                state = False
-                if state_str:
-                    if str(state_str).lower() == 'draft':
-                        state = 'draft'
-                    elif str(state_str).lower() == 'received':
-                        state = 'received'
-                    elif str(state_str).lower() in ['in process', 'in progress']:
-                        state = 'in_process'
-                    elif str(state_str).lower() == 'authorized':
-                        state = 'authorized'
-                    elif str(state_str).lower() == 'cancelled':
-                        state = 'cancelled'
-                    else:
-                        failed_row += str(list(result_dict.values())) + \
-                            "------>> Invalid Stage Format\n"
-                        failed_row_ids.append(pointer)
-                        continue
+                quarter = self.env['quarter.budget'].search([('name', '=', result_dict.get('Quarter', ''))], limit=1)
+                if not quarter:
+                    failed_row += str(list(result_dict.values())) + \
+                        "------>> Quarter Not Found\n"
+                    failed_row_ids.append(pointer)
+                    continue
+
+                # cancel_reason = result_dict.get('Reason for rejection', '')
+                # state_str = result_dict.get('Stage', '')
+                # state = False
+                # if state_str:
+                #     if str(state_str).lower() == 'draft':
+                #         state = 'draft'
+                #     elif str(state_str).lower() == 'received':
+                #         state = 'received'
+                #     elif str(state_str).lower() in ['in process', 'in progress']:
+                #         state = 'in_process'
+                #     elif str(state_str).lower() == 'authorized':
+                #         state = 'authorized'
+                #     elif str(state_str).lower() == 'cancelled':
+                #         state = 'cancelled'
+                #     else:
+                #         failed_row += str(list(result_dict.values())) + \
+                #             "------>> Invalid Stage Format\n"
+                #         failed_row_ids.append(pointer)
+                #         continue
 
                 try:
                     program_code = False
@@ -467,9 +479,9 @@ class Standardization(models.Model):
                         'budget_id': budget.id,
                         'amount': amount,
                         'origin_id': origin.id,
-                        'quarter': quarter,
-                        'state': state,
-                        'reason': cancel_reason,
+                        'quarter': quarter.id,
+                        # 'state': state,
+                        # 'reason': cancel_reason,
                         'imported': True,
                     }
                     self.write({'line_ids': [(0, 0, line_vals)]})
@@ -665,20 +677,21 @@ class StandardizationLine(models.Model):
     budget_id = fields.Many2one('expenditure.budget', string='Budget')
     code_id = fields.Many2one('program.code', string='Code', domain="[('budget_id', '=', budget_id)]")
     amount = fields.Monetary(string='Amount', currency_field='currency_id')
-    origin_id = fields.Many2one('resource.origin', string='Origin')
-    quarter = fields.Text(string='Quarter')
+    origin_id = fields.Many2one('quarter.budget', string='Origin')
+    quarter = fields.Many2one('quarter.budget', string='Quarter')
     reason = fields.Text(string='Reason for rejection')
     standardization_id = fields.Many2one(
         'standardization', string='Standardization', ondelete="cascade")
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.user.company_id.currency_id)
     imported = fields.Boolean(default=False)
+    amount_effected = fields.Boolean(string='Amount Effected?')
     selected = fields.Boolean(default=False)
     state = fields.Selection([('draft', 'Draft'), ('received', 'Received'),
                               ('in_process', 'In process'),
                               ('authorized', 'Authorized'),
-                              ('cancelled', 'Cancelled')], default='draft',
-                             required=True, string='State')
+                              ('cancelled', 'Cancelled')],
+                             string='State')
     _sql_constraints = [('uniq_program_per_standardization_id', 'unique(code_id,standardization_id)',
                          'The program code must be unique per Standardization')]
 
@@ -689,3 +702,17 @@ class StandardizationLine(models.Model):
     def _check_folio(self):
         if not str(self.folio).isnumeric():
             raise ValidationError('Folio Must be numeric value!')
+
+    @api.onchange('state')
+    def _onchange_state(self):
+        state = self._origin.state
+        if state and state == 'draft' and self.state not in ['draft','received', 'cancelled']:
+            raise ValidationError("You can only select Cancel or Received status")
+        if state and state == 'received' and self.state not in ['received', 'in_process', 'cancelled']:
+            raise ValidationError("You can only select Cancel or In Progress status")
+        if state and state == 'in_process' and self.state not in ['in_process', 'authorized', 'cancelled']:
+            raise ValidationError("You can only select Cancel or Authorized status")
+        if state and state == 'authorized' and self.state not in ['authorized', 'cancelled']:
+            raise ValidationError("You can only select Cancel status")
+        if state and state == 'cancelled' and self.state not in ['cancelled']:
+            raise ValidationError("You can only not select any status")

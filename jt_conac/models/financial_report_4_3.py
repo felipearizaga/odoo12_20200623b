@@ -20,13 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models
+from odoo import models, _
 
 
 class StateOfVariation(models.AbstractModel):
     _name = "jt_conac.state.of.variation.report"
     _inherit = "jt_conac.coa.conac.report"
     _description = "State of Variation in the Public Treasury"
+
+    def _get_columns_name(self, options):
+        return [
+            {'name': _('Concepto')},
+            {'name': _('Hacienda Pública / Patrimonio Contribuido')},
+            {'name': _('Patrimonio Generado de Ejercicios Anteriores')},
+            {'name': _('Patrimonio Generado del Ejercicio')},
+            {'name': _('Exceso o Insuficiencia en la Actualización de la Hacienda Pública / Patrimonio')},
+        ]
 
     def _get_lines(self, options, line_id=None):
         conac_obj = self.env['coa.conac']
@@ -39,7 +48,7 @@ class StateOfVariation(models.AbstractModel):
                 lines.append({
                     'id': 'hierarchy_' + line.code,
                     'name': line.display_name,
-                    'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
+                    'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                     'level': 1,
                     'unfoldable': False,
                     'unfolded': True,
@@ -50,7 +59,7 @@ class StateOfVariation(models.AbstractModel):
                     lines.append({
                         'id': 'level_one_%s' % level_1_line.id,
                         'name': level_1_line.display_name,
-                        'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
+                        'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                         'level': 2,
                         'unfoldable': True,
                         'unfolded': True,
@@ -63,7 +72,7 @@ class StateOfVariation(models.AbstractModel):
                         lines.append({
                             'id': 'level_two_%s' % level_2_line.id,
                             'name': level_2_line.display_name,
-                            'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
+                            'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                             'level': 3,
                             'unfoldable': True,
                             'unfolded': True,
@@ -73,21 +82,10 @@ class StateOfVariation(models.AbstractModel):
                         level_3_lines = conac_obj.search(
                             [('parent_id', '=', level_2_line.id)])
                         for level_3_line in level_3_lines:
-                            nature = ''
-                            acc_type = ''
-                            if level_3_line == 'debtor':
-                                nature = 'Debitable account'
-                                acc_type = 'Debtor'
-                            elif level_3_line == 'creditor':
-                                nature = 'Creditable account'
-                                acc_type = 'Creditor'
-                            elif nature == 'debtor_creditor':
-                                nature = 'Debitable/Creditable account'
-                                acc_type = 'Debtoror/Creditor'
                             lines.append({
                                 'id': 'level_three_%s' % level_3_line.id,
                                 'name': level_3_line.display_name,
-                                'columns': [{'name': nature}, {'name': acc_type}, {'name': level_3_line.gender}, {'name': level_3_line.group}, {'name': level_3_line.item}],
+                                'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                                 'level': 4,
                                 'parent_id': 'level_two_%s' % level_2_line.id,
                             })

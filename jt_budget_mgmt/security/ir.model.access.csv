@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_quarter_budget,quarter_budget,model_quarter_budget,base.group_user,1,1,1,1
+access_origin_ministry,origin_ministry,model_origin_ministry,base.group_user,1,1,1,1
 access_year_config,year_config,model_year_configuration,base.group_user,1,1,1,1
 access_code_structure_user,code_structure_user,model_code_structure,base.group_user,1,1,1,1
 access_code_structure,code_structure,model_code_structure,,1,1,1,1

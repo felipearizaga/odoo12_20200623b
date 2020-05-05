@@ -20,22 +20,14 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields, api, _
 
-# Code Structure
-from . import code_structure
-from . import report_program_fields
-from . import origin_ministry
-from . import quarter
 
-from . import year_configuration
-from . import project_project
+class QuarterBudget(models.Model):
 
-# Add all objects of program code views
-from . import program_code_objects
+    _name = 'quarter.budget'
+    _description = 'Quarter Budget'
 
-from . import program_code
-from . import expenditure_budget
-
-from . import adequacies
-from . import standardization
-from . import control_assigned_amounts
+    name = fields.Char(string='Quarter')
+    start_date = fields.Char(string='Start Date')
+    end_date = fields.Char(string='End Date')

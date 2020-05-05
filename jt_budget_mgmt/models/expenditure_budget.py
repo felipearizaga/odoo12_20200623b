@@ -401,10 +401,10 @@ class ExpenditureBudget(models.Model):
                                 failed_line_ids.append(line.id)
                                 continue
                             if program_code and program_code.state == 'draft':
-                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id)], limit=1)
+                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), ('start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
-                                        "------>> Program Code Already Linked With Budget Line!"
+                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
                                     failed_line_ids.append(line.id)
                                     continue
 
@@ -579,7 +579,8 @@ class ExpenditureBudgetLine(models.Model):
     agreement_number = fields.Char(string='Agreement number')
     exercise_type = fields.Char(string='Exercise type')
 
-    _sql_constraints = [
-        ('uniq_program_code_id', 'unique(program_code_id)',
-         'The Program code must be unique!'),
-    ]
+    # _sql_constraints = [
+    #     ('uniq_program_code_id', 'unique(program_code_id)',
+    #      'The Program code must be unique!'),
+    # ]
+    # ALTER TABLE expenditure_budget_line DROP CONSTRAINT expenditure_budget_line_uniq_program_code_id;

@@ -20,13 +20,23 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models
+from odoo import models, _
 
 
 class AnalyticalStatusOfAssets(models.AbstractModel):
     _name = "jt_conac.analytical.status.of.assets.report"
     _inherit = "jt_conac.coa.conac.report"
     _description = "Analytical Status of Assets"
+
+    def _get_columns_name(self, options):
+        return [
+            {'name': _('Concepto')},
+            {'name': _('Saldo Inicial')},
+            {'name': _('Cargos del Periodo')},
+            {'name': _('Abonos del Periodo')},
+            {'name': _('Saldo Final')},
+            {'name': _('Variación del Periodo')},
+        ]
 
     def _get_lines(self, options, line_id=None):
         conac_obj = self.env['coa.conac']
@@ -73,21 +83,10 @@ class AnalyticalStatusOfAssets(models.AbstractModel):
                         level_3_lines = conac_obj.search(
                             [('parent_id', '=', level_2_line.id)])
                         for level_3_line in level_3_lines:
-                            nature = ''
-                            acc_type = ''
-                            if level_3_line == 'debtor':
-                                nature = 'Debitable account'
-                                acc_type = 'Debtor'
-                            elif level_3_line == 'creditor':
-                                nature = 'Creditable account'
-                                acc_type = 'Creditor'
-                            elif nature == 'debtor_creditor':
-                                nature = 'Debitable/Creditable account'
-                                acc_type = 'Debtoror/Creditor'
                             lines.append({
                                 'id': 'level_three_%s' % level_3_line.id,
                                 'name': level_3_line.display_name,
-                                'columns': [{'name': nature}, {'name': acc_type}, {'name': level_3_line.gender}, {'name': level_3_line.group}, {'name': level_3_line.item}],
+                                'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                                 'level': 4,
                                 'parent_id': 'level_two_%s' % level_2_line.id,
                             })

@@ -130,6 +130,20 @@
         sequence="11"
     />
 
+    <menuitem
+        id="menu_origin_ministry"
+        name="Origin"
+        parent="menu_code_catalog"
+        action="action_origin_ministry"
+    />
+
+    <menuitem
+        id="menu_quarter_budget"
+        name="Quarter"
+        parent="menu_code_catalog"
+        action="action_quarter_budget"
+    />    
+
     <!-- menu for departure conversion -->
     <menuitem
         id="menu_departure_conversion"
