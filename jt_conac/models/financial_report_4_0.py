@@ -85,4 +85,14 @@ class StatementOfFinancialPosition(models.AbstractModel):
                                 'level': 4,
                                 'parent_id': 'level_two_%s' % level_2_line.id,
                             })
+
+                            accounts = self.env['account.account'].search([('coa_conac_id', '=', level_3_line.id)])
+                            for account in accounts:
+                                lines.append({
+                                    'id': 'level_four_%s' % account.id,
+                                    'name': account.display_name,
+                                    'columns': [{'name': ''}, {'name': account.user_type_id and account.user_type_id.name or ''}, {'name': level_3_line.gender}, {'name': account.group_id and account.group_id.name or ''}, {'name': level_3_line.item}],
+                                    'level': 5,
+                                    'parent_id': 'level_three_%s' % level_3_line.id,
+                                })
         return lines

@@ -43,7 +43,6 @@
         'data/quarter.budget.csv',
 
         # Reports
-        # 'report/report_template.xml',
         'report/search_template.xml',
 
         # Program Code Views
@@ -67,7 +66,6 @@
 
         # Root Views
         'views/quarter_budget_view.xml',
-        'views/origin_ministry_view.xml',
         'views/year_configuration_view.xml',
         'views/code_structure_view.xml',
         'views/project_project_view.xml',

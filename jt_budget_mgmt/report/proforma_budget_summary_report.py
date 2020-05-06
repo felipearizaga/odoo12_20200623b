@@ -20,6 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from datetime import datetime
 from odoo import models, fields, api, _
 
 
@@ -89,7 +90,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         selected_program_fields = program_fields_ids \
             and self.env['report.program.fields'].browse(program_fields_ids) \
             or self.env['report.program.fields']
-        options['selected_program_fields'] = selected_program_fields.mapped('name')
+        options['selected_program_fields'] = selected_program_fields.mapped(
+            'name')
 
         # Program Section filter
         options['section_program'] = previous_options and previous_options.get(
@@ -107,7 +109,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         selected_sub_programs = sub_program_ids \
             and self.env['sub.program'].browse(sub_program_ids) \
             or self.env['sub.program']
-        options['selected_sub_programs'] = selected_sub_programs.mapped('sub_program')
+        options['selected_sub_programs'] = selected_sub_programs.mapped(
+            'sub_program')
 
         # Dependency Section filter
         options['section_dependency'] = previous_options and previous_options.get(
@@ -116,25 +119,190 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         selected_dependency = dependency_ids \
             and self.env['dependency'].browse(dependency_ids) \
             or self.env['dependency']
-        options['selected_dependency'] = selected_dependency.mapped('dependency')
+        options['selected_dependency'] = selected_dependency.mapped(
+            'dependency')
 
         # Sub Dependency Section filter
         options['section_sub_dependency'] = previous_options and previous_options.get(
             'section_sub_dependency') or []
-        sub_dependency_ids = [int(acc) for acc in options['section_sub_dependency']]
+        sub_dependency_ids = [int(acc)
+                              for acc in options['section_sub_dependency']]
         selected_sub_dependency = sub_dependency_ids \
             and self.env['sub.dependency'].browse(sub_dependency_ids) \
             or self.env['sub.dependency']
-        options['selected_sub_dependency'] = selected_sub_dependency.mapped('sub_dependency')
+        options['selected_sub_dependency'] = selected_sub_dependency.mapped(
+            'sub_dependency')
+
+        # Expense Item filter
+        options['section_expense_item'] = previous_options and previous_options.get(
+            'section_expense_item') or []
+        item_ids = [int(acc) for acc in options['section_expense_item']]
+        selected_items = item_ids \
+            and self.env['expenditure.item'].browse(item_ids) \
+            or self.env['expenditure.item']
+        options['selected_items'] = selected_items.mapped('item')
+
+        # Origin Resource filter
+        options['section_or'] = previous_options and previous_options.get(
+            'section_or') or []
+        or_ids = [int(acc) for acc in options['section_or']]
+        selected_origins = or_ids \
+            and self.env['resource.origin'].browse(or_ids) \
+            or self.env['resource.origin']
+        options['selected_or'] = selected_origins.mapped('key_origin')
+
+        # Institutional Activity filter
+        options['section_ai'] = previous_options and previous_options.get(
+            'section_ai') or []
+        ai_ids = [int(acc) for acc in options['section_ai']]
+        selected_acitvities = ai_ids \
+            and self.env['institutional.activity'].browse(ai_ids) \
+            or self.env['institutional.activity']
+        options['selected_ai'] = selected_acitvities.mapped('number')
+
+        # Budget Program Conversion (CONPP) filter
+        options['section_conpp'] = previous_options and previous_options.get(
+            'section_conpp') or []
+        conpp_ids = [int(acc) for acc in options['section_conpp']]
+        selected_conpp = conpp_ids \
+            and self.env['budget.program.conversion'].browse(conpp_ids) \
+            or self.env['budget.program.conversion']
+        options['selected_conpp'] = selected_conpp.mapped(
+            'shcp').mapped('name')
+
+        # SHCP Games (CONPA) filter
+        options['section_conpa'] = previous_options and previous_options.get(
+            'section_conpa') or []
+        conpa_ids = [int(acc) for acc in options['section_conpa']]
+        selected_conpa = conpa_ids \
+            and self.env['departure.conversion'].browse(conpa_ids) \
+            or self.env['departure.conversion']
+        options['selected_conpa'] = selected_conpa.mapped('federal_part')
+
+        # Type of Expense (TG) filter
+        options['section_expense'] = previous_options and previous_options.get(
+            'section_expense') or []
+        expense_ids = [int(acc) for acc in options['section_expense']]
+        selected_expenses = expense_ids \
+            and self.env['expense.type'].browse(expense_ids) \
+            or self.env['expense.type']
+        options['selected_expenses'] = selected_expenses.mapped(
+            'key_expenditure_type')
+
+        # Geographic Location (UG) filter
+        options['section_ug'] = previous_options and previous_options.get(
+            'section_ug') or []
+        ug_ids = [int(acc) for acc in options['section_ug']]
+        selected_ug = ug_ids \
+            and self.env['geographic.location'].browse(ug_ids) \
+            or self.env['geographic.location']
+        options['selected_ug'] = selected_ug.mapped('state_key')
+
+        # Wallet Key (CC) filter
+        options['section_wallet'] = previous_options and previous_options.get(
+            'section_wallet') or []
+        wallet_ids = [int(acc) for acc in options['section_wallet']]
+        selected_wallets = wallet_ids \
+            and self.env['key.wallet'].browse(wallet_ids) \
+            or self.env['key.wallet']
+        options['selected_wallets'] = selected_wallets.mapped(
+            'wallet_password')
+
+        # Project Type (TP) filter
+        options['section_tp'] = previous_options and previous_options.get(
+            'section_tp') or []
+        tp_ids = [int(acc) for acc in options['section_tp']]
+        selected_tp = tp_ids \
+            and self.env['project.type'].browse(tp_ids) \
+            or self.env['project.type']
+        options['selected_tp'] = selected_tp.mapped('project_type_identifier')
+
+        # Project Number filter
+        options['section_pn'] = previous_options and previous_options.get(
+            'section_pn') or []
+        pn_ids = [int(acc) for acc in options['section_pn']]
+        selected_pn = pn_ids \
+            and self.env['project.type'].browse(pn_ids) \
+            or self.env['project.type']
+        options['selected_pn'] = selected_pn.mapped('number')
+
+        # Stage filter
+        options['section_stage'] = previous_options and previous_options.get(
+            'section_stage') or []
+        stage_ids = [int(acc) for acc in options['section_stage']]
+        selected_stage = stage_ids \
+            and self.env['stage'].browse(stage_ids) \
+            or self.env['stage']
+        options['selected_stage'] = selected_stage.mapped('stage_identifier')
+
+        # Agreement Type filter
+        options['section_agreement_type'] = previous_options and previous_options.get(
+            'section_agreement_type') or []
+        type_ids = [int(acc) for acc in options['section_agreement_type']]
+        selected_type = type_ids \
+            and self.env['agreement.type'].browse(type_ids) \
+            or self.env['agreement.type']
+        options['selected_type'] = selected_type.mapped('agreement_type')
+
+        # Agreement Number filter
+        options['section_agreement_number'] = previous_options and previous_options.get(
+            'section_agreement_number') or []
+        agreement_number_ids = [int(acc)
+                                for acc in options['section_agreement_number']]
+        selected_agreement_number = agreement_number_ids \
+            and self.env['agreement.type'].browse(agreement_number_ids) \
+            or self.env['agreement.type']
+        options['selected_agreement_number'] = selected_agreement_number.mapped(
+            'number_agreement')
 
     def _get_lines(self, options, line_id=None):
+        start = datetime.strptime(
+            str(options['date'].get('date_from')), '%Y-%m-%d').date()
+        end = datetime.strptime(
+            options['date'].get('date_to'), '%Y-%m-%d').date()
+
         lines = []
         budget_lines = self.env['expenditure.budget.line'].search(
-            [('expenditure_budget_id.state', '=', 'validate')])
+            [('expenditure_budget_id.state', '=', 'validate'), ('start_date', '>=', start), ('end_date', '<=', end)])
 
         for b_line in budget_lines:
             annual_modified = b_line.authorized + b_line.assigned
             columns = []
+
+            if len(options['selected_programs']) > 0 and str(b_line.program_code_id.program_id.key_unam) not in options['selected_programs']:
+                continue
+            if len(options['selected_sub_programs']) > 0 and str(b_line.program_code_id.sub_program_id.sub_program) not in options['selected_sub_programs']:
+                continue
+            if len(options['selected_dependency']) > 0 and str(b_line.program_code_id.dependency_id.dependency) not in options['selected_dependency']:
+                continue
+            if len(options['selected_sub_dependency']) > 0 and str(b_line.program_code_id.sub_dependency_id.sub_dependency) not in options['selected_sub_dependency']:
+                continue
+            if len(options['selected_items']) > 0 and str(b_line.program_code_id.item_id.item) not in options['selected_items']:
+                continue
+            if len(options['selected_or']) > 0 and str(b_line.program_code_id.resource_origin_id.key_origin) not in options['selected_or']:
+                continue
+            if len(options['selected_ai']) > 0 and str(b_line.program_code_id.institutional_activity_id.number) not in options['selected_ai']:
+                continue
+            if len(options['selected_conpp']) > 0 and str(b_line.program_code_id.budget_program_conversion_id.shcp.name) not in options['selected_conpp']:
+                continue
+            if len(options['selected_conpa']) > 0 and str(b_line.program_code_id.conversion_item_id.federal_part) not in options['selected_conpa']:
+                continue
+            if len(options['selected_expenses']) > 0 and str(b_line.program_code_id.expense_type_id.key_expenditure_type) not in options['selected_expenses']:
+                continue
+            if len(options['selected_ug']) > 0 and str(b_line.program_code_id.location_id.state_key) not in options['selected_ug']:
+                continue
+            if len(options['selected_wallets']) > 0 and str(b_line.program_code_id.portfolio_id.wallet_password) not in options['selected_wallets']:
+                continue
+            if len(options['selected_tp']) > 0 and str(b_line.program_code_id.project_type_id.project_type_identifier) not in options['selected_tp']:
+                continue
+            if len(options['selected_pn']) > 0 and str(b_line.program_code_id.project_number) not in options['selected_pn']:
+                continue
+            if len(options['selected_stage']) > 0 and str(b_line.program_code_id.stage_id.stage_identifier) not in options['selected_stage']:
+                continue
+            if len(options['selected_type']) > 0 and str(b_line.program_code_id.agreement_type_id.agreement_type) not in options['selected_type']:
+                continue
+            if len(options['selected_agreement_number']) > 0 and str(b_line.program_code_id.number_agreement) not in options['selected_agreement_number']:
+                continue
 
             # Program code struture view fields
             for column in options['selected_program_fields']:
@@ -233,254 +401,3 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         return '%s_%s_Summary_Report' % (
             date_report.year,
             str(date_report.month).zfill(2))
-
-    def get_html(self, options, line_id=None, additional_context=None):
-        '''
-        return the html value of report, or html value of unfolded line
-        * if line_id is set, the template used will be the line_template
-        otherwise it uses the main_template. Reason is for efficiency, when unfolding a line in the report
-        we don't want to reload all lines, just get the one we unfolded.
-        '''
-        # Check the security before updating the context to make sure the options are safe.
-        self._check_report_security(options)
-
-        # Prevent inconsistency between options and context.
-        self = self.with_context(self._set_context(options))
-
-        templates = self._get_templates()
-        report_manager = self._get_report_manager(options)
-        report = {'name': self._get_report_name(),
-                  'summary': report_manager.summary,
-                  'company_name': self.env.company.name, }
-        lines = self._get_lines(options, line_id=line_id)
-
-        if options.get('hierarchy'):
-            lines = self._create_hierarchy(lines, options)
-        if options.get('selected_column'):
-            lines = self._sort_lines(lines, options)
-
-        footnotes_to_render = []
-        if self.env.context.get('print_mode', False):
-            # we are in print mode, so compute footnote number and include them in lines values, otherwise, let the js compute the number correctly as
-            # we don't know all the visible lines.
-            footnotes = dict([(str(f.line), f)
-                              for f in report_manager.footnotes_ids])
-            number = 0
-            for line in lines:
-                f = footnotes.get(str(line.get('id')))
-                if f:
-                    number += 1
-                    line['footnote'] = str(number)
-                    footnotes_to_render.append(
-                        {'id': f.id, 'number': number, 'text': f.text})
-
-        rcontext = {'report': report,
-                    'lines': {'columns_header': self.get_header(options), 'lines': lines},
-                    'options': options,
-                    'context': self.env.context,
-                    'model': self,
-                    }
-        if additional_context and type(additional_context) == dict:
-            rcontext.update(additional_context)
-        if self.env.context.get('analytic_account_ids'):
-            rcontext['options']['analytic_account_ids'] = [
-                {'id': acc.id, 'name': acc.name} for acc in self.env.context['analytic_account_ids']
-            ]
-
-        render_template = templates.get(
-            'main_template', 'account_reports.main_template')
-        if line_id is not None:
-            render_template = templates.get(
-                'line_template', 'account_reports.line_template')
-        html = self.env['ir.ui.view'].render_template(
-            render_template,
-            values=dict(rcontext),
-        )
-        if self.env.context.get('print_mode', False):
-            for k, v in self._replace_class().items():
-                html = html.replace(k, v)
-            # append footnote as well
-            html = html.replace(b'<div class="js_account_report_footnotes"></div>',
-                                self.get_html_footnotes(footnotes_to_render))
-        return html
-
-    #     ####################################################
-    # # OPTIONS: hierarchy
-    # ####################################################
-    # MOST_SORT_PRIO = 0
-    # LEAST_SORT_PRIO = 99
-
-    # # Create codes path in the hierarchy based on account.
-    # def get_account_codes(self, account):
-    #     # A code is tuple(sort priority, actual code)
-    #     codes = []
-    #     if account.group_id:
-    #         group = account.group_id
-    #         while group:
-    #             code = '%s %s' % (group.code_prefix or '', group.name)
-    #             codes.append((self.MOST_SORT_PRIO, code))
-    #             group = group.parent_id
-    #     else:
-    #         # Limit to 3 levels.
-    #         code = account.code[:3]
-    #         while code:
-    #             codes.append((self.MOST_SORT_PRIO, code))
-    #             code = code[:-1]
-    #     return list(reversed(codes))
-
-    # @api.model
-    # def _sort_lines(self, lines, options):
-    #     def merge_tree(line):
-    #         sorted_list.append(line)
-    #         for l in sorted(tree[line['id']], key=lambda k: selected_sign * k['columns'][selected_column - k.get('colspan', 1)]['no_format']):
-    #             merge_tree(l)
-
-    #     sorted_list = []
-    #     selected_column = abs(options['selected_column']) - 1
-    #     selected_sign = -copysign(1, options['selected_column'])
-    #     tree = defaultdict(list)
-    #     if 'sortable' not in self._get_columns_name(options)[selected_column].get('class', ''):
-    #         return lines  # Nothing to do here
-    #     for line in lines:
-    #         tree[line.get('parent_id')].append(line)
-    #     for line in sorted(tree[None], key=lambda k: ('total' in k.get('class', ''), selected_sign * k['columns'][selected_column - k.get('colspan', 1)]['no_format'])):
-    #         merge_tree(line)
-
-    #     return sorted_list
-
-    # @api.model
-    # def _create_hierarchy(self, lines, options):
-    #     """This method is called when the option 'hiearchy' is enabled on a report.
-    #     It receives the lines (as computed by _get_lines()) in argument, and will add
-    #     a hiearchy in those lines by using the account.group of accounts. If not set,
-    #     it will fallback on creating a hierarchy based on the account's code first 3
-    #     digits.
-    #     """
-    #     is_number = ['number' in c.get('class', []) for c in self.get_header(options)[-1][1:]]
-    #     # Avoid redundant browsing.
-    #     accounts_cache = {}
-
-    #     # Retrieve account either from cache, either by browsing.
-    #     def get_account(id):
-    #         if id not in accounts_cache:
-    #             accounts_cache[id] = self.env['account.account'].browse(id)
-    #         return accounts_cache[id]
-
-    #     # Add the report line to the hierarchy recursively.
-    #     def add_line_to_hierarchy(line, codes, level_dict, depth=None):
-    #         # Recursively build a dict where:
-    #         # 'children' contains only subcodes
-    #         # 'lines' contains the lines at this level
-    #         # This > lines [optional, i.e. not for topmost level]
-    #         #      > children > [codes] "That" > lines
-    #         #                                  > metadata
-    #         #                                  > children
-    #         #      > metadata(depth, parent ...)
-
-    #         if not codes:
-    #             return
-    #         if not depth:
-    #             depth = line.get('level', 1)
-    #         level_dict.setdefault('depth', depth)
-    #         level_dict.setdefault('parent_id', 'hierarchy_' + codes[0][1] if codes[0][0] != 'root' else codes[0][1])
-    #         level_dict.setdefault('children', {})
-    #         code = codes[1]
-    #         codes = codes[1:]
-    #         level_dict['children'].setdefault(code, {})
-
-    #         if len(codes) > 1:
-    #             add_line_to_hierarchy(line, codes, level_dict['children'][code], depth=depth + 1)
-    #         else:
-    #             level_dict['children'][code].setdefault('lines', [])
-    #             level_dict['children'][code]['lines'].append(line)
-    #             for l in level_dict['children'][code]['lines']:
-    #                 l['parent_id'] = 'hierarchy_' + code[1]
-
-    #     # Merge a list of columns together and take care about str values.
-    #     def merge_columns(columns):
-    #         return [('n/a' if any(i != '' for i in x) else '') if any(isinstance(i, str) for i in x) else sum(x) for x in zip(*columns)]
-
-    #     # Get_lines for the newly computed hierarchy.
-    #     def get_hierarchy_lines(values, depth=1):
-    #         lines = []
-    #         sum_sum_columns = []
-    #         unfold_all = self.env.context.get('print_mode') and len(options.get('unfolded_lines')) == 0
-    #         for base_line in values.get('lines', []):
-    #             lines.append(base_line)
-    #             sum_sum_columns.append([c.get('no_format_name', c['name']) for c in base_line['columns']])
-
-    #         # For the last iteration, there might not be the children key (see add_line_to_hierarchy)
-    #         for key in sorted(values.get('children', {}).keys()):
-    #             sum_columns, sub_lines = get_hierarchy_lines(values['children'][key], depth=values['depth'])
-    #             id = 'hierarchy_' + key[1]
-    #             header_line = {
-    #                 'id': id,
-    #                 'name': key[1] if len(key[1]) < 30 else key[1][:30] + '...',  # second member of the tuple
-    #                 'title_hover': key[1],
-    #                 'unfoldable': True,
-    #                 'unfolded': id in options.get('unfolded_lines') or unfold_all,
-    #                 'level': values['depth'],
-    #                 'parent_id': values['parent_id'],
-    #                 'columns': [{'name': self.format_value(c) if not isinstance(c, str) else c} for c in sum_columns],
-    #             }
-    #             if key[0] == self.LEAST_SORT_PRIO:
-    #                 header_line['style'] = 'font-style:italic;'
-    #             lines += [header_line] + sub_lines
-    #             sum_sum_columns.append(sum_columns)
-    #         return merge_columns(sum_sum_columns), lines
-
-    #     def deep_merge_dict(source, destination):
-    #         for key, value in source.items():
-    #             if isinstance(value, dict):
-    #                 # get node or create one
-    #                 node = destination.setdefault(key, {})
-    #                 deep_merge_dict(value, node)
-    #             else:
-    #                 destination[key] = value
-
-    #         return destination
-
-    #     # Hierarchy of codes.
-    #     accounts_hierarchy = {}
-
-    #     new_lines = []
-    #     no_group_lines = []
-    #     # If no account.group at all, we need to pass once again in the loop to dispatch
-    #     # all the lines across their account prefix, hence the None
-    #     for line in lines + [None]:
-    #         # Only deal with lines grouped by accounts.
-    #         # And discriminating sections defined by account.financial.html.report.line
-    #         is_grouped_by_account = line and line.get('caret_options') == 'account.account'
-    #         if not is_grouped_by_account or not line:
-
-    #             # No group code found in any lines, compute it automatically.
-    #             no_group_hierarchy = {}
-    #             for no_group_line in no_group_lines:
-    #                 codes = [('root', str(line.get('parent_id')) or 'root'), (self.LEAST_SORT_PRIO, _('(No Group)'))]
-    #                 if not accounts_hierarchy:
-    #                     account = get_account(no_group_line.get('account_id', no_group_line.get('id')))
-    #                     codes = [('root', str(line.get('parent_id')) or 'root')] + self.get_account_codes(account)
-    #                 add_line_to_hierarchy(no_group_line, codes, no_group_hierarchy, line.get('level', 0) + 1)
-    #             no_group_lines = []
-
-    #             deep_merge_dict(no_group_hierarchy, accounts_hierarchy)
-
-    #             # Merge the newly created hierarchy with existing lines.
-    #             if accounts_hierarchy:
-    #                 new_lines += get_hierarchy_lines(accounts_hierarchy)[1]
-    #                 accounts_hierarchy = {}
-
-    #             if line:
-    #                 new_lines.append(line)
-    #             continue
-
-    #         # Exclude lines having no group.
-    #         account = get_account(line.get('account_id', line.get('id')))
-    #         if not account.group_id:
-    #             no_group_lines.append(line)
-    #             continue
-
-    #         codes = [('root', str(line.get('parent_id')) or 'root')] + self.get_account_codes(account)
-    #         add_line_to_hierarchy(line, codes, accounts_hierarchy, line.get('level', 0) + 1)
-
-    #     return new_lines

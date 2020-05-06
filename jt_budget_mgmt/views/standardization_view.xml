@@ -73,6 +73,7 @@
                         </div>
 	            		<group>
                             <group>
+                                <field name="check_line_state" invisible="1"/>
     	            			<field name="folio" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'draft')]}"/>
                                 <field name="record_number"/>
@@ -90,6 +91,7 @@
                                 <button name="select_deselect_checkbox" type="object" string="Select/Deselect" class="oe_highlight"/>
                                 <field name="line_ids">
                                     <tree editable="bottom">
+                                        <field name="amount_effected" invisible="1"/>
                                         <field name="selected"/>
                                         <field name="standardization_id" invisible="1"/>
                                         <field name="folio" required="1" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}"/>
@@ -97,13 +99,14 @@
                                         <field name="code_id" required="1" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}"/>
                                         <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}"/>
                                         <field name="origin_id" required="1" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}" options="{'no_create': True, 'no_create_edit': True}" context="{'create': False, 'edit': False}"/>
-                                        <field name="quarter" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}" options="{'no_create': True, 'no_create_edit': True}" context="{'create': False, 'edit': False}"/>
+                                        <field name="quarter" required="1" attrs="{'readonly': [('parent.state', 'in', ('confirmed', 'cancelled'))]}" options="{'no_create': True, 'no_create_edit': True}" context="{'create': False, 'edit': False}"/>
                                         <field name="reason"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="state" attrs="{'readonly': [('parent.state', '=', 'draft')]}"/>
                                     </tree>
                                     <form>
                                         <group>
+                                            <field name="amount_effected" invisible="1"/>
                                             <field name="folio"/>
                                             <field name="code_id"/>
                                             <field name="budget_id"/>

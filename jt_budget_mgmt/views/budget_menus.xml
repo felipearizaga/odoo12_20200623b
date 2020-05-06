@@ -16,6 +16,12 @@
         sequence="5"
     />
 
+    <menuitem
+        id="menu_extra_views"
+        name="Others"
+        parent="menu_budget_config"
+    />
+
     <!-- menu for structure and catalog -->
     <menuitem
         id="menu_struct_and_catalog"
@@ -125,22 +131,15 @@
     <menuitem
         id="menu_shcp_code"
         name="SHCP Code"
-        parent="menu_code_catalog"
+        parent="menu_extra_views"
         action="action_shcp_code"
         sequence="11"
     />
 
     <menuitem
-        id="menu_origin_ministry"
-        name="Origin"
-        parent="menu_code_catalog"
-        action="action_origin_ministry"
-    />
-
-    <menuitem
         id="menu_quarter_budget"
         name="Quarter"
-        parent="menu_code_catalog"
+        parent="menu_extra_views"
         action="action_quarter_budget"
     />    
 

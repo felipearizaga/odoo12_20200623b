@@ -24,7 +24,6 @@
 # Code Structure
 from . import code_structure
 from . import report_program_fields
-from . import origin_ministry
 from . import quarter
 
 from . import year_configuration

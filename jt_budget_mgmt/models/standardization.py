@@ -73,13 +73,66 @@ class Standardization(models.Model):
         string='Authorized', compute='_get_count')
     cancelled_count = fields.Integer(string='Cancelled', compute='_get_count')
     all_line_count = fields.Integer(string='Cancelled', compute='_get_count')
-    check_line_state = fields.Boolean(compute="_compute_check_line_state", store=True)
+    check_line_state = fields.Boolean(
+        compute="_compute_check_line_state", store=True)
 
     @api.depends('line_ids')
     def _compute_check_line_state(self):
         for standardization in self:
             standardization.check_line_state = False
-            lines = standardization.line_ids.filtered(lambda l: l.amount_effected == False and l.state == 'authorized')
+            lines = standardization.line_ids.filtered(
+                lambda l: l.amount_effected == False and l.state == 'authorized')
+            for line in lines:
+                if line.origin_id and line.quarter:
+                    budget_lines = self.env['expenditure.budget.line'].search(
+                        [('program_code_id', '=', line.code_id.id), ('expenditure_budget_id', '=', line.budget_id.id)])
+
+                    origin_start_date_day = False
+                    origin_start_date_month = False
+                    origin_end_date_day = False
+                    origin_end_date_month = False
+
+                    date_start = str(line.origin_id.start_date).split('/')
+                    if len(date_start) > 1:
+                        origin_start_date_day = date_start[0]
+                        origin_start_date_month = date_start[1]
+                    date_end = str(line.origin_id.end_date).split('/')
+                    if len(date_end) > 1:
+                        origin_end_date_day = date_end[0]
+                        origin_end_date_month = date_end[1]
+
+                    origin_budget_line = False
+                    for budget_line in budget_lines:
+                        if budget_line.start_date and str(budget_line.start_date.day).zfill(2) == origin_start_date_day and str(budget_line.start_date.month).zfill(2) == origin_start_date_month and budget_line.end_date and str(budget_line.end_date.day).zfill(2) == origin_end_date_day and str(budget_line.end_date.month).zfill(2) == origin_end_date_month:
+                            origin_budget_line = budget_line
+                            break
+
+                    quarter_start_date_day = False
+                    quarter_start_date_month = False
+                    quarter_end_date_day = False
+                    quarter_end_date_month = False
+
+                    date_start = str(line.quarter.start_date).split('/')
+                    if len(date_start) > 1:
+                        quarter_start_date_day = date_start[0]
+                        quarter_start_date_month = date_start[1]
+                    date_end = str(line.quarter.end_date).split('/')
+                    if len(date_end) > 1:
+                        quarter_end_date_day = date_end[0]
+                        quarter_end_date_month = date_end[1]
+
+                    quarter_budget_line = False
+                    for budget_line in budget_lines:
+                        if budget_line.start_date and str(budget_line.start_date.day).zfill(2) == quarter_start_date_day and str(budget_line.start_date.month).zfill(2) == quarter_start_date_month and budget_line.end_date and str(budget_line.end_date.day).zfill(2) == quarter_end_date_day and str(budget_line.end_date.month).zfill(2) == quarter_end_date_month:
+                            quarter_budget_line = budget_line
+                            break
+
+                    if origin_budget_line and quarter_budget_line and origin_budget_line.available >= line.amount:
+                        amount = origin_budget_line.available - line.amount
+                        origin_budget_line.write({'available': amount})
+                        increase_amount = quarter_budget_line.available + line.amount
+                        quarter_budget_line.write({'available': increase_amount})
+                        line.amount_effected = True
 
     _sql_constraints = [
         ('folio_uniq_const', 'unique(folio)', 'The folio must be unique.')]
@@ -399,14 +452,16 @@ class Standardization(models.Model):
                     continue
 
                 # Validate Origin
-                origin = self.env['quarter.budget'].search([('name', '=', result_dict.get('Origin', ''))], limit=1)
+                origin = self.env['quarter.budget'].search(
+                    [('name', '=', result_dict.get('Origin', ''))], limit=1)
                 if not origin:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Origin Not Found\n"
                     failed_row_ids.append(pointer)
                     continue
 
-                quarter = self.env['quarter.budget'].search([('name', '=', result_dict.get('Quarter', ''))], limit=1)
+                quarter = self.env['quarter.budget'].search(
+                    [('name', '=', result_dict.get('Quarter', ''))], limit=1)
                 if not quarter:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Quarter Not Found\n"
@@ -675,7 +730,8 @@ class StandardizationLine(models.Model):
 
     folio = fields.Char(string='Folio')
     budget_id = fields.Many2one('expenditure.budget', string='Budget')
-    code_id = fields.Many2one('program.code', string='Code', domain="[('budget_id', '=', budget_id)]")
+    code_id = fields.Many2one(
+        'program.code', string='Code', domain="[('budget_id', '=', budget_id)]")
     amount = fields.Monetary(string='Amount', currency_field='currency_id')
     origin_id = fields.Many2one('quarter.budget', string='Origin')
     quarter = fields.Many2one('quarter.budget', string='Quarter')
@@ -706,12 +762,15 @@ class StandardizationLine(models.Model):
     @api.onchange('state')
     def _onchange_state(self):
         state = self._origin.state
-        if state and state == 'draft' and self.state not in ['draft','received', 'cancelled']:
-            raise ValidationError("You can only select Cancel or Received status")
+        if state and state == 'draft' and self.state not in ['draft', 'received', 'cancelled']:
+            raise ValidationError(
+                "You can only select Cancel or Received status")
         if state and state == 'received' and self.state not in ['received', 'in_process', 'cancelled']:
-            raise ValidationError("You can only select Cancel or In Progress status")
+            raise ValidationError(
+                "You can only select Cancel or In Progress status")
         if state and state == 'in_process' and self.state not in ['in_process', 'authorized', 'cancelled']:
-            raise ValidationError("You can only select Cancel or Authorized status")
+            raise ValidationError(
+                "You can only select Cancel or Authorized status")
         if state and state == 'authorized' and self.state not in ['authorized', 'cancelled']:
             raise ValidationError("You can only select Cancel status")
         if state and state == 'cancelled' and self.state not in ['cancelled']:

@@ -9,7 +9,7 @@
                 <t t-esc="selected_control"/>
             </t>
             <t t-else="">
-                All
+                Select
             </t>
         </a>
         <div class="dropdown-menu o_filters_menu" role="menu">
@@ -41,13 +41,7 @@
         </a>
         <ul class="dropdown-menu o_filters_menu" role="menu">
             <li class="o_account_report_search js_program_code_section_m2m"/>
-            <li class="o_account_report_search js_section_program_m2m"/>
         </ul>
-        <!-- <a type="button" class="dropdown-toggle section_program_filter" data-toggle="dropdown">
-            <span class="fa fa-folder-open"/> Program
-        </a> -->
-        <!-- <ul class="dropdown-menu o_filters_menu" role="menu">
-        </ul> -->
     </template>
 
     <template id="search_template_jt" inherit_id="account_reports.search_template">
