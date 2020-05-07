@@ -230,48 +230,6 @@ msgid "Reporting"
 msgstr "Informes"
 
 #. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_status_variation_pt
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_6
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_6
-msgid "State of Variation in the Public Treasury"
-msgstr "Estado de variación en la Hacienda Pública"
-
-#. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_stmt_finc_posn
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_9
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_9
-msgid "Statement of Changes in the Financial Position"
-msgstr "Estado de cambios en la posición financiera"
-
-#. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_stmt_of_fin_postn
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_4
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_4
-msgid "Statement of Financial Position"
-msgstr "Estado de situación financiera"
-
-#. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_stmt_cash_flow
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_10
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_10
-msgid "Statement of cash flows"
-msgstr "Estado de flujos de efectivo"
-
-#. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_state_and_program
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_13
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_13
-msgid "States and Program Reports"
-msgstr "Estados e informes del programa"
-
-#. module: jt_conac
-#: model:account.financial.html.report,name:jt_conac.report_status_of_activities
-#: model:ir.actions.client,name:jt_conac.account_financial_html_report_action_5
-#: model:ir.ui.menu,name:jt_conac.account_financial_html_report_menu_5
-msgid "Status of Activities"
-msgstr "Estado de las actividades"
-
-#. module: jt_conac
 #: model_terms:ir.ui.view,arch_db:jt_conac.coa_view_form_inh_jt_conac
 msgid "code"
 msgstr "código"

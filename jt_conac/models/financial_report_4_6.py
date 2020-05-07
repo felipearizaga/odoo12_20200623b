@@ -28,14 +28,36 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
     _inherit = "jt_conac.coa.conac.report"
     _description = "Statement of Changes in the Financial Position"
 
+    filter_date = {'date_from': '', 'date_to': '', 'filter': 'this_year'}
+    filter_comparison = {'date_from': '', 'date_to': '', 'filter': 'no_comparison', 'number_period': 1}
+    filter_journals = True
+    filter_all_entries = True
+    filter_journals = True
+    filter_unfold_all = True
+    filter_hierarchy = True
+    filter_analytic = None
+
     def _get_columns_name(self, options):
-        return [
+        columns = [
             {'name': _('Account Name')},
             {'name': _('Origin')},
             {'name': _('Application')},
         ]
 
+        comparison = options.get('comparison')
+        periods = []
+        if comparison and comparison.get('filter') != 'no_comparison':
+            periods = [period.get('string') for period in comparison.get('periods')]
+        columns.extend([{'name': period} for period in periods])
+
+        return columns
+
     def _get_lines(self, options, line_id=None):
+        comparison = options.get('comparison')
+        periods = []
+        if comparison and comparison.get('filter') != 'no_comparison':
+            periods = [period.get('string') for period in comparison.get('periods')]
+
         conac_obj = self.env['coa.conac']
         lines = []
         hierarchy_lines = conac_obj.sudo().search(
@@ -43,10 +65,12 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
 
         for line in hierarchy_lines:
             if line.code in ('1.0.0.0', '2.0.0.0', '3.0.0.0'):
+                level_1_columns = [{'name': ''}, {'name': ''}]
+                level_1_columns.extend([{'name': ''} for period in periods])
                 lines.append({
                     'id': 'hierarchy_' + line.code,
                     'name': line.display_name,
-                    'columns': [{'name': ''}, {'name': ''}],
+                    'columns': level_1_columns,
                     'level': 1,
                     'unfoldable': False,
                     'unfolded': True,
@@ -54,10 +78,13 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
 
                 level_1_lines = conac_obj.search([('parent_id', '=', line.id)])
                 for level_1_line in level_1_lines:
+                    level_2_columns = [{'name': ''}, {'name': ''}]
+                    level_2_columns.extend([{'name': ''} for period in periods])
+
                     lines.append({
                         'id': 'level_one_%s' % level_1_line.id,
                         'name': level_1_line.display_name,
-                        'columns': [{'name': ''}, {'name': ''}],
+                        'columns': level_2_columns,
                         'level': 2,
                         'unfoldable': True,
                         'unfolded': True,
@@ -67,10 +94,13 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                     level_2_lines = conac_obj.search(
                         [('parent_id', '=', level_1_line.id)])
                     for level_2_line in level_2_lines:
+                        level_3_columns = [{'name': ''}, {'name': ''}]
+                        level_3_columns.extend([{'name': ''} for period in periods])
+
                         lines.append({
                             'id': 'level_two_%s' % level_2_line.id,
                             'name': level_2_line.display_name,
-                            'columns': [{'name': ''}, {'name': ''}],
+                            'columns': level_3_columns,
                             'level': 3,
                             'unfoldable': True,
                             'unfolded': True,
@@ -80,10 +110,12 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                         level_3_lines = conac_obj.search(
                             [('parent_id', '=', level_2_line.id)])
                         for level_3_line in level_3_lines:
+                            level_4_columns = [{'name': ''}, {'name': ''}]
+                            level_4_columns.extend([{'name': ''} for period in periods])
                             lines.append({
                                 'id': 'level_three_%s' % level_3_line.id,
                                 'name': level_3_line.display_name,
-                                'columns': [{'name': ''}, {'name': ''}],
+                                'columns': level_4_columns,
                                 'level': 4,
                                 'parent_id': 'level_two_%s' % level_2_line.id,
                             })

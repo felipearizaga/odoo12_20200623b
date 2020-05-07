@@ -39,6 +39,15 @@ class ImportAdequaciesLine(models.TransientModel):
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
 
+    @api.model
+    def default_get(self, fields):
+        res = super(ImportAdequaciesLine, self).default_get(fields)
+        adequacies = self.env['adequacies'].browse(
+            self._context.get('active_id'))
+        if adequacies and adequacies.folio:
+            res['folio'] = adequacies.folio
+        return res
+
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():

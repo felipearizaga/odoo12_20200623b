@@ -31,6 +31,7 @@ class SHCPCode(models.Model):
     _description = 'SHCP Program Code'
 
     name = fields.Char("Code")
+    desc = fields.Text(string='Description')
 
     @api.constrains('name')
     def _check_name(self):

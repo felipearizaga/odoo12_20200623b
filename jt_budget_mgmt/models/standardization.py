@@ -76,7 +76,7 @@ class Standardization(models.Model):
     check_line_state = fields.Boolean(
         compute="_compute_check_line_state", store=True)
 
-    @api.depends('line_ids')
+    @api.depends('line_ids', 'line_ids.state')
     def _compute_check_line_state(self):
         for standardization in self:
             standardization.check_line_state = False
@@ -622,7 +622,7 @@ class Standardization(models.Model):
         }
 
     def action_draft(self):
-        lines = self.line_ids.filtered(lambda l: l.selected == True)
+        lines = self.line_ids.filtered(lambda l: l.selected == True and l.state == False)
         for line in lines:
             line.state = 'draft'
 

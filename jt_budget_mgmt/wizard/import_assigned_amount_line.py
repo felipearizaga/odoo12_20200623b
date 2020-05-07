@@ -41,6 +41,15 @@ class ImportAssignedAmountLine(models.TransientModel):
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
 
+    @api.model
+    def default_get(self, fields):
+        res = super(ImportAssignedAmountLine, self).default_get(fields)
+        assigned_amount = self.env['control.assigned.amounts'].browse(
+            self._context.get('active_id'))
+        if assigned_amount and assigned_amount.folio:
+            res['folio'] = assigned_amount.folio
+        return res
+
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():

@@ -491,7 +491,13 @@ class Adequacies(models.Model):
                         "The total amount of the increases/decreases should be greater than or equal to 10000")
                 if line.line_type == 'decrease':
                     if self.adaptation_type == 'liquid':
-                        raise ValidationError("In liquid adjustment, you can only increase amount of budget!")
+                        raise ValidationError(
+                            "In liquid adjustment, you can only increase amount of budget!")
+                    budget_line = self.env['expenditure.budget.line'].sudo().search(
+                        [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                    if budget_line and budget_line.assigned < line.amount:
+                        raise ValidationError("You can not decrease amount more than assigned amount!")
+
                     total_decreased += line.amount
                     counter_decreased += 1
                 if line.line_type == 'increase':

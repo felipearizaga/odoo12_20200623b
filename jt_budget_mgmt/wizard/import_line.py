@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 import base64
 import xlrd
 from datetime import datetime
@@ -41,6 +41,15 @@ class ImportLine(models.TransientModel):
     filename = fields.Char(string='File name')
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
+
+    @api.model
+    def default_get(self, fields):
+        res = super(ImportLine, self).default_get(fields)
+        budget = self.env['expenditure.budget'].browse(
+            self._context.get('active_id'))
+        if budget and budget.name:
+            res['budget_name'] = budget.name
+        return res
 
     def download_file(self):
         file_path = get_resource_path(

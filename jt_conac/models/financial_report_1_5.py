@@ -28,6 +28,17 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
     _inherit = "account.coa.report"
     _description = "Mexican CONAC Chart of Account Report"
 
+    filter_journals = None
+    filter_multi_company = None
+    filter_date = None
+    filter_all_entries = None
+    filter_comparison = None
+    filter_journals = None
+    filter_analytic = None
+    filter_unfold_all = None
+    filter_hierarchy = None
+    filter_partner = None
+
     def _get_templates(self):
         templates = super(MXReportAccountCoaCONAC, self)._get_templates()
         templates[
@@ -96,13 +107,13 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
                     for level_3_line in level_3_lines:
                         nature = ''
                         acc_type = ''
-                        if level_3_line == 'debtor':
+                        if level_3_line.applicability == 'debtor':
                             nature = 'Debitable account'
                             acc_type = 'Debtor'
-                        elif level_3_line == 'creditor':
+                        elif level_3_line.applicability == 'creditor':
                             nature = 'Creditable account'
                             acc_type = 'Creditor'
-                        elif nature == 'debtor_creditor':
+                        elif level_3_line.applicability == 'debtor_creditor':
                             nature = 'Debitable/Creditable account'
                             acc_type = 'Debtoror/Creditor'
                         lines.append({

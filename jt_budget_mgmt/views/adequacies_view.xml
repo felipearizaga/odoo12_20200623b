@@ -65,7 +65,7 @@
                                             <field name="program" required="1" attrs="{'readonly': [('imported', '=', True)]}" /> 
                                             <field name="line_type" required="1"/>
                                             <field name="amount" required="1"/>
-                                            <field name="creation_type" required="1"/>
+                                            <field name="creation_type" required="1" attrs="{'readonly': [('imported', '=', False)]}"/>
                                         </group>
                                     </form>
                                 </field>

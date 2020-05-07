@@ -28,6 +28,15 @@ class StatementOfCashFlows(models.AbstractModel):
     _inherit = "account.coa.report"
     _description = "Statement of Cash Flows"
 
+    filter_date = {'date_from': '', 'date_to': '', 'filter': 'this_year'}
+    filter_comparison = {'date_from': '', 'date_to': '', 'filter': 'no_comparison', 'number_period': 1}
+    filter_journals = True
+    filter_all_entries = True
+    filter_journals = True
+    filter_unfold_all = True
+    filter_hierarchy = True
+    filter_analytic = None
+
     def _get_templates(self):
         templates = super(
             StatementOfCashFlows, self)._get_templates()
@@ -37,21 +46,36 @@ class StatementOfCashFlows(models.AbstractModel):
         return templates
 
     def _get_columns_name(self, options):
-        return [
+        columns = [
             {'name': _('Concepto')},
         ]
 
+        comparison = options.get('comparison')
+        periods = []
+        if comparison and comparison.get('filter') != 'no_comparison':
+            periods = [period.get('string') for period in comparison.get('periods')]
+        columns.extend([{'name': period} for period in periods])
+
+        return columns
+
     def _get_lines(self, options, line_id=None):
+        comparison = options.get('comparison')
+        periods = []
+        if comparison and comparison.get('filter') != 'no_comparison':
+            periods = [period.get('string') for period in comparison.get('periods')]
         cash_obj = self.env['cash.statement']
         lines = []
         hierarchy_lines = cash_obj.sudo().search(
             [('parent_id', '=', False)], order='id')
 
         for line in hierarchy_lines:
+            level_1_columns = []
+            level_1_columns.extend([{'name': ''} for period in periods])
+
             lines.append({
                 'id': 'hierarchy_' + str(line.id),
                 'name': line.concept,
-                'columns': [],
+                'columns': level_1_columns,
                 'level': 1,
                 'unfoldable': False,
                 'unfolded': True,
@@ -59,10 +83,13 @@ class StatementOfCashFlows(models.AbstractModel):
 
             level_1_lines = cash_obj.search([('parent_id', '=', line.id)])
             for level_1_line in level_1_lines:
+                level_2_columns = []
+                level_2_columns.extend([{'name': ''} for period in periods])
+
                 lines.append({
                     'id': 'level_one_%s' % level_1_line.id,
                     'name': level_1_line.concept,
-                    'columns': [],
+                    'columns': level_2_columns,
                     'level': 2,
                     'unfoldable': True,
                     'unfolded': True,
@@ -72,10 +99,13 @@ class StatementOfCashFlows(models.AbstractModel):
                 level_2_lines = cash_obj.search(
                     [('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
+                    level_3_columns = []
+                    level_3_columns.extend([{'name': ''} for period in periods])
+
                     lines.append({
                         'id': 'level_two_%s' % level_2_line.id,
                         'name': level_2_line.concept,
-                        'columns': [],
+                        'columns': level_3_columns,
                         'level': 3,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })

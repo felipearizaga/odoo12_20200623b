@@ -32,6 +32,7 @@
     'depends': ['account_accountant', 'l10n_mx_reports'],
     'data': [
         'security/ir.model.access.csv',
+        'views/report_template.xml',
         'views/coa_conac_view.xml',
         'views/coa_view.xml',
         'views/cog_conac_view.xml',
