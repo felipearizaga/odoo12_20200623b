@@ -41,6 +41,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
     filter_partner = None
 
     # Custom filters
+    filter_line_pages = None
     filter_budget_control = None
     filter_program_code_section = None
 
@@ -56,6 +57,38 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         for column in options['selected_budget_control']:
             column_list.append({'name': _(column)})
         return column_list
+
+    @api.model
+    def _init_filter_line_pages(self, options, previous_options=None):
+        options['line_pages'] = []
+        budget_lines = self.env['expenditure.budget.line'].search(
+            [('expenditure_budget_id.state', '=', 'validate')])
+
+        pages = round(len(budget_lines) / 3)
+        line_list = []
+        for page in range(1, pages + 1):
+            line_list.append(page)
+
+        list_labels = self._context.get('lines_data', line_list)
+        counter = 1
+
+        if previous_options and previous_options.get('line_pages'):
+            line_pages_map = dict((opt['id'], opt['selected'])
+                                  for opt in previous_options['line_pages'] if opt['id'] != 'divider' and 'selected' in opt)
+        else:
+            line_pages_map = {}
+
+        options['selected_line_pages'] = []
+        for label in list_labels:
+            options['line_pages'].append({
+                'id': str(counter),
+                'name': str(label),
+                'code': str(label),
+                'selected': line_pages_map.get(str(counter)),
+            })
+            if line_pages_map.get(str(counter)):
+                options['selected_line_pages'].append(str(label))
+            counter += 1
 
     @api.model
     def _init_filter_budget_control(self, options, previous_options=None):
@@ -392,6 +425,19 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 'unfolded': True,
             })
 
+        selected_line_pages = options['selected_line_pages']
+        all_list = []
+        for s in selected_line_pages:
+            s = int(s)
+            start = (s - 1) * 3 + 1
+            end = s * 3
+            for i in range(start - 1, end):
+                try:
+                    all_list.append(lines[i])
+                except:
+                    pass
+        if len(all_list) > 0:
+            return all_list
         return lines
 
     def _get_report_name(self):

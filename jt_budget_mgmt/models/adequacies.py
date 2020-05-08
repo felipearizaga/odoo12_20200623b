@@ -408,10 +408,16 @@ class Adequacies(models.Model):
                             budget_line = self.env['expenditure.budget.line'].sudo().search(
                                 [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
                             if not budget_line:
-                                1 / 0
+                                failed_row += str(list(result_dict.values())) + \
+                                    "------>> Budget line not found for program code!"
+                                failed_row_ids.append(pointer)
+                                continue
 
                     if not program_code:
-                        1 / 0
+                        failed_row += str(list(result_dict.values())) + \
+                            "------>> Program code not found!"
+                        failed_row_ids.append(pointer)
+                        continue
                     success_row_ids.append(pointer)
 
                     if self._context.get('re_scan_failed'):

@@ -468,26 +468,6 @@ class Standardization(models.Model):
                     failed_row_ids.append(pointer)
                     continue
 
-                # cancel_reason = result_dict.get('Reason for rejection', '')
-                # state_str = result_dict.get('Stage', '')
-                # state = False
-                # if state_str:
-                #     if str(state_str).lower() == 'draft':
-                #         state = 'draft'
-                #     elif str(state_str).lower() == 'received':
-                #         state = 'received'
-                #     elif str(state_str).lower() in ['in process', 'in progress']:
-                #         state = 'in_process'
-                #     elif str(state_str).lower() == 'authorized':
-                #         state = 'authorized'
-                #     elif str(state_str).lower() == 'cancelled':
-                #         state = 'cancelled'
-                #     else:
-                #         failed_row += str(list(result_dict.values())) + \
-                #             "------>> Invalid Stage Format\n"
-                #         failed_row_ids.append(pointer)
-                #         continue
-
                 try:
                     program_code = False
                     if stage and origin and budget and year and program and subprogram and dependency and subdependency and item and origin_resource and institutional_activity and shcp and conversion_item and expense_type and geo_location and wallet_key and project_type and stage and agreement_type:
@@ -516,10 +496,16 @@ class Standardization(models.Model):
                             budget_line = self.env['expenditure.budget.line'].sudo().search(
                                 [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', budget.id)], limit=1)
                             if not budget_line:
-                                1 / 0
+                                failed_row += str(list(result_dict.values())) + \
+                                    "------>> Budget line not found for selected program code!"
+                                failed_row_ids.append(pointer)
+                                continue
 
                     if not program_code:
-                        1 / 0
+                        failed_row += str(list(result_dict.values())) + \
+                            "------>> Program code not found!"
+                        failed_row_ids.append(pointer)
+                        continue
                     success_row_ids.append(pointer)
 
                     if self._context.get('re_scan_failed'):
@@ -535,8 +521,6 @@ class Standardization(models.Model):
                         'amount': amount,
                         'origin_id': origin.id,
                         'quarter': quarter.id,
-                        # 'state': state,
-                        # 'reason': cancel_reason,
                         'imported': True,
                     }
                     self.write({'line_ids': [(0, 0, line_vals)]})
@@ -729,7 +713,7 @@ class StandardizationLine(models.Model):
     _rec_name = 'folio'
 
     folio = fields.Char(string='Folio')
-    budget_id = fields.Many2one('expenditure.budget', string='Budget')
+    budget_id = fields.Many2one('expenditure.budget', string='Budget', domain="[('state', '=', 'validate')]")
     code_id = fields.Many2one(
         'program.code', string='Code', domain="[('budget_id', '=', budget_id)]")
     amount = fields.Monetary(string='Amount', currency_field='currency_id')

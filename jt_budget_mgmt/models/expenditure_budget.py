@@ -172,11 +172,11 @@ class ExpenditureBudget(models.Model):
                     asigned_amount = 0
                     try:
                         asigned_amount = float(line.assigned)
-                        if asigned_amount == 0:
-                            failed_row += str(line_vals) + \
-                                "------>> Assigned Amount should be greater than 0!"
-                            failed_line_ids.append(line.id)
-                            continue
+                        # if asigned_amount == 0:
+                        #     failed_row += str(line_vals) + \
+                        #         "------>> Assigned Amount should be greater than 0!"
+                        #     failed_line_ids.append(line.id)
+                        #     continue
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Asigned Amount Format"
@@ -346,11 +346,11 @@ class ExpenditureBudget(models.Model):
                     asigned_amount = 0
                     try:
                         asigned_amount = float(line.assigned)
-                        if asigned_amount == 0:
-                            failed_row += str(line_vals) + \
-                                "------>> Assigned Amount should be greater than 0!"
-                            failed_line_ids.append(line.id)
-                            continue
+                        # if asigned_amount == 0:
+                        #     failed_row += str(line_vals) + \
+                        #         "------>> Assigned Amount should be greater than 0!"
+                        #     failed_line_ids.append(line.id)
+                        #     continue
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Asigned Amount Format"

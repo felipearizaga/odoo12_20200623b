@@ -290,11 +290,11 @@ class ControlAssignedAmounts(models.Model):
                     asigned_amount = 0
                     try:
                         asigned_amount = float(line.assigned)
-                        if asigned_amount == 0:
-                            failed_row += str(line_vals) + \
-                                "------>> Assigned Amount should be greater than 0!"
-                            failed_line_ids.append(line.id)
-                            continue
+                        # if asigned_amount == 0:
+                        #     failed_row += str(line_vals) + \
+                        #         "------>> Assigned Amount should be greater than 0!"
+                        #     failed_line_ids.append(line.id)
+                        #     continue
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Asigned Amount Format"
@@ -339,13 +339,13 @@ class ControlAssignedAmounts(models.Model):
                                 ('agreement_type_id', '=', agreement_type.id),
                             ], limit=1)
 
-                            if program_code and program_code.state == 'validated':
-                                failed_row += str(line_vals) + \
-                                    "------>> Duplicated Program Code Found!"
-                                failed_line_ids.append(line.id)
-                                continue
+                            # if program_code and program_code.state == 'validated':
+                            #     failed_row += str(line_vals) + \
+                            #         "------>> Duplicated Program Code Found!"
+                            #     failed_line_ids.append(line.id)
+                            #     continue
                             if program_code and program_code.state == 'draft':
-                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id)], limit=1)
+                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), ('start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
                                         "------>> Program Code Already Linked With Budget Line!"

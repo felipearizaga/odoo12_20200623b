@@ -43,6 +43,15 @@ class ImportAdequaciesLine(models.TransientModel):
     error_status = fields.Boolean(string='Error Status')
     error_string = fields.Text(string='Error String')
 
+    @api.model
+    def default_get(self, fields):
+        res = super(ImportAdequaciesLine, self).default_get(fields)
+        control_amount = self.env['calendar.assigned.amounts'].browse(
+            self._context.get('active_id'))
+        if control_amount and control_amount.folio:
+            res['folio'] = control_amount.folio
+        return res
+
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():
@@ -110,9 +119,11 @@ class ImportAdequaciesLine(models.TransientModel):
                             try:
                                 start_date = False
                                 if type(value) is str:
-                                    start_date = datetime.strptime(str(value), '%m/%d/%Y').date()
+                                    start_date = datetime.strptime(
+                                        str(value), '%m/%d/%Y').date()
                                 elif type(value) is int or type(value) is float:
-                                    start_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
+                                    start_date = datetime(
+                                        *xlrd.xldate_as_tuple(value, 0)).date()
                                 if start_date:
                                     value = start_date
                                 else:
@@ -124,9 +135,11 @@ class ImportAdequaciesLine(models.TransientModel):
                             try:
                                 end_date = False
                                 if type(value) is str:
-                                    end_date = datetime.strptime(str(value), '%m/%d/%Y').date()
+                                    end_date = datetime.strptime(
+                                        str(value), '%m/%d/%Y').date()
                                 elif type(value) is int or type(value) is float:
-                                    end_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
+                                    end_date = datetime(
+                                        *xlrd.xldate_as_tuple(value, 0)).date()
                                 if end_date:
                                     value = end_date
                                 else:
@@ -149,11 +162,15 @@ class ImportAdequaciesLine(models.TransientModel):
                                 data_dict[code] = float(budget_line.assigned)
                             else:
                                 vals = data_dict[code]
-                                data_dict[code] = vals + float(budget_line.assigned)
+                                data_dict[code] = vals + \
+                                    float(budget_line.assigned)
                     for key, value in code_amount_dict.items():
                         if key in data_dict and value != data_dict.get(key):
                             diff = data_dict.get(key) - value
                             error_string += str(key) + ': ' + str(diff) + "\n"
+                        elif key not in data_dict:
+                            error_string += str(key) + \
+                                ': the program was not detected' + "\n"
                     vals_amount_control = {
                         'import_date': datetime.today().date(),
                         'diff': error_string,
@@ -166,6 +183,42 @@ class ImportAdequaciesLine(models.TransientModel):
                         vals_amount_control['file'] = self.file
                         vals_amount_control['filename'] = self.filename
                         self.error_status = False
+
+                        if control_amount and control_amount.date and control_amount.date.month in [3, 6, 9]:
+                            start_date = False
+                            end_date = False
+
+                            check_start_month = False
+                            check_end_day = False
+
+                            if control_amount.date.month == 3:
+                                start_date = datetime.strptime(
+                                    '%s-04-01' % (control_amount.date.year), '%Y-%m-%d').date()
+                                end_date = datetime.strptime(
+                                    '%s-06-30' % (control_amount.date.year), '%Y-%m-%d').date()
+
+                                check_start_month = 1
+                                check_end_day = 31
+                            if control_amount.date.month == 6:
+                                start_date = datetime.strptime(
+                                    '%s-07-01' % (control_amount.date.year), '%Y-%m-%d').date()
+                                end_date = datetime.strptime(
+                                    '%s-09-30' % (control_amount.date.year), '%Y-%m-%d').date()
+
+                                check_start_month = 4
+                                check_end_day = 30
+                            if control_amount.date.month == 9:
+                                start_date = datetime.strptime(
+                                    '%s-10-01' % (control_amount.date.year), '%Y-%m-%d').date()
+                                end_date = datetime.strptime(
+                                    '%s-12-31' % (control_amount.date.year), '%Y-%m-%d').date()
+
+                                check_start_month = 7
+                                check_end_day = 30
+                            if start_date and end_date and control_amount.budget_id:
+                                for line in control_amount.budget_id.success_line_ids:
+                                    if line.start_date and line.start_date.month == check_start_month and line.start_date.day == 1 and line.end_date.month == control_amount.date.month and line.end_date.day == check_end_day:
+                                        new_line = line.copy(default={'start_date': start_date, 'end_date': end_date, 'state': 'success'})
                     else:
                         self.error_status = True
                         self.error_string = error_string
