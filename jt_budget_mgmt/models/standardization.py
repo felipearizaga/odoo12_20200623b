@@ -127,11 +127,11 @@ class Standardization(models.Model):
                             quarter_budget_line = budget_line
                             break
 
-                    if origin_budget_line and quarter_budget_line and origin_budget_line.available >= line.amount:
-                        amount = origin_budget_line.available - line.amount
-                        origin_budget_line.write({'available': amount})
-                        increase_amount = quarter_budget_line.available + line.amount
-                        quarter_budget_line.write({'available': increase_amount})
+                    if origin_budget_line and quarter_budget_line and origin_budget_line.assigned >= line.amount:
+                        amount = origin_budget_line.assigned - line.amount
+                        origin_budget_line.write({'assigned': amount})
+                        increase_amount = quarter_budget_line.assigned + line.amount
+                        quarter_budget_line.write({'assigned': increase_amount})
                         line.amount_effected = True
 
     _sql_constraints = [
@@ -740,8 +740,9 @@ class StandardizationLine(models.Model):
 
     @api.constrains('folio')
     def _check_folio(self):
-        if not str(self.folio).isnumeric():
-            raise ValidationError('Folio Must be numeric value!')
+        for line in self:
+            if not str(line.folio).isnumeric():
+                raise ValidationError('Folio Must be numeric value!')
 
     @api.onchange('state')
     def _onchange_state(self):

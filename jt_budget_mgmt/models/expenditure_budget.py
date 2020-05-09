@@ -71,6 +71,17 @@ class ExpenditureBudget(models.Model):
     import_record_number = fields.Integer(
         string='Number of imported records', readonly=True, compute='_get_count')
 
+    def _compute_total_quarter_budget(self):
+        for budget in self:
+            total_quarter_budget = 0
+            for line in budget.success_line_ids:
+                if line.start_date and line.start_date.day == 1 and line.start_date.month == 1 and line.end_date and line.end_date.month == 3:
+                    total_quarter_budget += line.assigned
+            budget.total_quarter_budget = total_quarter_budget
+
+    total_quarter_budget = fields.Float(
+        string='Total 1st Quarter', tracking=True, compute="_compute_total_quarter_budget")
+
     # Budget Lines
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',

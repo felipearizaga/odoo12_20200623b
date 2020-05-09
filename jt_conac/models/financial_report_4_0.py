@@ -20,6 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from datetime import datetime
 from odoo import models, _
 
 
@@ -58,6 +59,10 @@ class StatementOfFinancialPosition(models.AbstractModel):
         hierarchy_lines = conac_obj.sudo().search(
             [('parent_id', '=', False)], order='code')
 
+        posted = 'draft'
+        if options.get('unposted_in_period'):
+            posted = 'posted'
+
         for line in hierarchy_lines:
             if line.code in ('1.0.0.0', '2.0.0.0', '3.0.0.0'):
                 lines.append({
@@ -86,11 +91,23 @@ class StatementOfFinancialPosition(models.AbstractModel):
                     for level_2_line in level_2_lines:
                         level_3_lines = conac_obj.search(
                             [('parent_id', '=', level_2_line.id)])
+                        period_balance = {}
                         for level_3_line in level_3_lines:
+
+                            balance = 0
 
                             accounts = self.env['account.account'].search([('coa_conac_id', '=', level_3_line.id)])
                             for account in accounts:
-                                pass
+                                for period in comparison.get('periods'):
+                                    date_start = datetime.strptime(str(period.get('date_from')), '%Y-%m-%d').date()
+                                    date_end = datetime.strptime(str(period.get('date_to')), '%Y-%m-%d').date()
+
+                                    move_lines = self.env['account.move.line'].sudo().search([('account_id', '=', account.id), ('move_id.state', '=', posted), ('date', '>=', date_start), ('date', '<=', date_end)])
+                                    balance = sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit'))
+                                    pervious_balance = 0
+                                    if period_balance.get(period.get('string')):
+                                        pervious_balance = period_balance.get(period.get('string'))
+                                    period_balance[period.get('string')] = pervious_balance + balance
 
                         lines.append({
                             'id': 'level_two_%s' % level_2_line.id,

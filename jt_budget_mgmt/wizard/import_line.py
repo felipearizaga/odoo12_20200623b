@@ -142,43 +142,8 @@ class ImportLine(models.TransientModel):
                     if 'assigned' in result_dict:
                         total_budget_amount += float(
                             result_dict.get('assigned', 0))
-
-                    # if self._context.get('reimport'):
-                    #     has_code = self.env['expenditure.budget.line'].search([
-                    #         ('state', '=', 'success'),
-                    #         ('year', '=', str(result_dict.get('year'))),
-                    #         ('program', '=', str(result_dict.get('program'))),
-                    #         ('subprogram', '=', str(result_dict.get('subprogram'))),
-                    #         ('dependency', '=', str(result_dict.get('dependency'))),
-                    #         ('subdependency', '=', str(
-                    #             result_dict.get('subdependency'))),
-                    #         ('item', '=', str(result_dict.get('item'))),
-                    #         ('dv', '=', str(result_dict.get('dv'))),
-                    #         ('origin_resource', '=', str(
-                    #             result_dict.get('origin_resource'))),
-                    #         ('ai', '=', str(result_dict.get('ai'))),
-                    #         ('conversion_program', '=', str(
-                    #             result_dict.get('conversion_program'))),
-                    #         ('departure_conversion', '=', str(
-                    #             result_dict.get('departure_conversion'))),
-                    #         ('expense_type', '=', str(
-                    #             result_dict.get('expense_type'))),
-                    #         ('location', '=', str(result_dict.get('location'))),
-                    #         ('portfolio', '=', str(result_dict.get('portfolio'))),
-                    #         ('project_type', '=', str(
-                    #             result_dict.get('project_type'))),
-                    #         ('project_number', '=', str(
-                    #             result_dict.get('project_number'))),
-                    #         ('stage', '=', str(result_dict.get('stage'))),
-                    #         ('agreement_type', '=', str(
-                    #             result_dict.get('agreement_type'))),
-                    #         ('agreement_number', '=', str(result_dict.get('agreement_number')))], limit=1)
-                    #     if not has_code:
-                    #         result_vals.append((0, 0, result_dict))
-                    # else:
-                    #     result_vals.append((0, 0, result_dict))
                     result_vals.append((0, 0, result_dict))
-                print("---------> ", total_budget_amount, self.total_budget)
+                # print("---------> ", total_budget_amount, self.total_budget)
                 if total_budget_amount != self.total_budget:
                     raise UserError(
                         _('The sum of the assigned amounts is not equal to the total of the budget'))

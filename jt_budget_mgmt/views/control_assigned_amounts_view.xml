@@ -186,7 +186,7 @@
                                     </form>
                                 </field>
                             </page>
-                            <page string='Import Status' attrs="{'invisible': [('import_status', '=', 'draft')]}">
+                            <page string='Import Status'>
                                 <group>
                                     <field name="import_status" readonly="1" invisible="1"/>
                                     <field name="total_rows" string="Total Rows"/>

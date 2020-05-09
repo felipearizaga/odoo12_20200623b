@@ -47,7 +47,7 @@
                         <button name="validate_and_add_budget_line" type="object" string="Re-scan Failed Rows" class="oe_highlight" attrs="{'invisible': [('failed_rows', '=', 0), ('allow_upload', '=', False)]}" context="{'re_scan_failed':True}"/>
 
                         <button name="confirm" type="object" string="Validate" class="oe_highlight" attrs="{'invisible': ['|', ('failed_rows', '>', 0), ('state', '!=', 'draft')]}"/>
-                        <button name="cancel" type="object" string="Cancel" class="oe_highlight" states="draft,confirmed"/>
+                        <button name="cancel" type="object" string="Cancel" class="oe_highlight" states="draft"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                     </header>
             		<sheet>

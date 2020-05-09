@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="requested_report_form_view" model="ir.ui.view">
+            <field name="name">requested.reports.form.view</field>
+            <field name="model">requested.reports</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Retry" name="re_request" type="object" class="oe_highlight" states='failed'/>
+                        <!--<button string="Close" class="btn btn-default" special="cancel" states='request'/>-->
+                        <field name="state" nolabel="1" colspan="2" widget="statusbar"
+                               statusbar_visible="in_progress,complete"/>
+                    </header>
+                    <group string="Report Request Detail">
+                        <group>
+                            <field name="name"/>
+                            <field name="report_file"/>
+                            <field name="requested_by"/>
+
+                        </group>
+                        <group >
+                            <field name="requested_time" />
+                            <field name="execution_time" />
+                            <field name="prepared_time" />
+                        </group>
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+
+         <!-- Passes Tree view -->
+        <record id="requested_report_tree_view" model="ir.ui.view">
+            <field name="name">requested.reports.tree.view</field>
+            <field name="model">requested.reports</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="report_file"/>
+                    <field name="requested_by"/>
+                     <field name="requested_time"/>
+                    <field name="execution_time"/>
+                    <field name="prepared_time"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_requested_reports" model="ir.actions.act_window">
+            <field name="name">Requested Reports</field>
+            <field name="res_model">requested.reports</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

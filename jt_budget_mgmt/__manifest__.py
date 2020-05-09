@@ -41,6 +41,7 @@
         'data/data.xml',
         'data/report.program.fields.csv',
         'data/quarter.budget.csv',
+        'data/budget.control.csv',
 
         # Reports
         'report/search_template.xml',
@@ -74,6 +75,7 @@
         'views/adequacies_view.xml',
         'views/standardization_view.xml',
         'views/control_assigned_amounts_view.xml',
+        'views/requested_reports_view.xml',
 
         # Wizard Files
         'wizard/import_line_view.xml',
@@ -83,6 +85,7 @@
         'wizard/import_adequacies_line_view.xml',
         'wizard/import_assigned_amount_line_view.xml',
         'wizard/affect_payment_budget_wiz_view.xml',
+        'wizard/request_summary_report_wiz.xml',
 
         # Main Menu File
         'views/budget_menus.xml',

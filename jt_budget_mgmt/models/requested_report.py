@@ -20,23 +20,22 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields
 
-# Code Structure
-from . import code_structure
-from . import report_program_fields
-from . import quarter
+class RequestedReports(models.Model):
 
-from . import year_configuration
-from . import project_project
+    _name = 'requested.reports'
+    _description = 'Requested Reports'
+    _rec_name = 'name'
 
-# Add all objects of program code views
-from . import program_code_objects
+    name = fields.Char(string='Name')
+    report_file = fields.Binary(string='Download Report')
+    requested_by = fields.Many2one("res.users",string='Requested By')
+    requested_time = fields.Datetime("Requested Time")
+    execution_time = fields.Datetime("Execution Time")
+    prepared_time = fields.Datetime("Prepared Time")
+    state = fields.Selection([('in_progress',"In Process"),('failed','Failed'),('complete',"Ready To Download")],
+                             default="in_progress",string="Status")
+    domain = fields.Text("Domain")
+    cron_id = fields.Many2one("ir.cron", "Scheduled Cron")
 
-from . import program_code
-from . import expenditure_budget
-
-from . import adequacies
-from . import standardization
-from . import control_assigned_amounts
-from . import budget_control
-from . import requested_report

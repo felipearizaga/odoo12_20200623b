@@ -44,10 +44,14 @@ class ControlAssignedAmounts(models.Model):
     import_record_number = fields.Integer(
         string='Number of imported records', readonly=True, compute='_get_count')
 
-    folio = fields.Char(string='Folio', states={'validated': [('readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
-    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'validated': [('readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
-    user_id = fields.Many2one('res.users', string='Made by', default=lambda self: self.env.user, tracking=True)
-    import_date = fields.Date(string='Import date', states={'validated': [('readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
+    folio = fields.Char(string='Folio', states={'validated': [('readonly', True)], 'rejected': [
+                        ('readonly', True)], 'canceled': [('readonly', True)]})
+    budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'validated': [(
+        'readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
+    user_id = fields.Many2one(
+        'res.users', string='Made by', default=lambda self: self.env.user, tracking=True)
+    import_date = fields.Date(string='Import date', states={'validated': [(
+        'readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
     observations = fields.Text(string='Observations')
     state = fields.Selection([('draft', 'Draft'), ('process', 'In process'),
                               ('validated', 'Validated'),
@@ -144,6 +148,34 @@ class ControlAssignedAmounts(models.Model):
                              line.departure_conversion, line.expense_type, line.location, line.portfolio, line.project_type, line.project_number, line.stage, line.agreement_type, line.agreement_number, line.exercise_type]
 
                 if line.state != 'success':
+
+                    # Validate start date
+                    if line.start_date and line.start_date.day == 1 and line.start_date.month in [1, 4, 7, 10]:
+                        pass
+                    else:
+                        failed_row += str(line_vals) + \
+                            "------>> Invalid start date based on quarter rules\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+                    # Validate end date
+                    if line.end_date:
+                        flag = False
+                        if line.end_date.month not in [3, 6, 9, 12] or line.end_date.day not in [31, 30]:
+                            flag = True
+                        if line.end_date.month == 3 and line.end_date.day != 31:
+                            flag = True
+                        if line.end_date.month == 6 and line.end_date.day != 30:
+                            flag = True
+                        if line.end_date.month == 9 and line.end_date.day != 30:
+                            flag = True
+                        if line.end_date.month == 12 and line.end_date.day != 31:
+                            flag = True
+                        if flag:
+                            failed_row += str(line_vals) + \
+                                "------>> Invalid end date based on quarter rules\n"
+                            failed_line_ids.append(line.id)
+                            continue
 
                     # Validate year format
                     year = year_obj.validate_year(line.year)
@@ -345,7 +377,8 @@ class ControlAssignedAmounts(models.Model):
                             #     failed_line_ids.append(line.id)
                             #     continue
                             if program_code and program_code.state == 'draft':
-                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), ('start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
+                                budget_line = self.env['expenditure.budget.line'].search([('expenditure_budget_id', '=', self.budget_id.id), ('program_code_id', '=', program_code.id), (
+                                    'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
                                         "------>> Program Code Already Linked With Budget Line!"
@@ -420,21 +453,26 @@ class ControlAssignedAmounts(models.Model):
     def confirm(self):
         if self.success_rows != self.total_rows:
             self.validate_and_add_budget_line()
-        total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
+        total_lines = len(self.success_line_ids.filtered(
+            lambda l: l.state == 'success'))
         if total_lines == self.total_rows:
             self.import_date = datetime.today().date()
             self.state = 'process'
 
     def validate(self):
         vals_list = []
+        total_assigned_amount = sum(self.success_line_ids.mapped('authorized'))
+        total_budget_amount = sum(self.budget_id.success_line_ids.mapped('authorized'))
+        if total_assigned_amount != total_budget_amount:
+            raise ValidationError("Authorized amount not matched with budget!")
         for line in self.success_line_ids:
             vals = {
                 'program_code_id': line.program_code_id.id,
                 'start_date': line.start_date,
                 'end_date': line.end_date,
-                'authorized': line.authorized,
+                # 'authorized': line.authorized,
                 'assigned': line.assigned,
-                'available': line.available,
+                # 'available': line.available,
                 'imported': line.imported,
                 'state': line.state,
                 'year': line.year,

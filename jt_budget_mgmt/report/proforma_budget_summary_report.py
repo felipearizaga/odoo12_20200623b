@@ -64,7 +64,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         budget_lines = self.env['expenditure.budget.line'].search(
             [('expenditure_budget_id.state', '=', 'validate')])
 
-        pages = round(len(budget_lines) / 3)
+        pages = round(len(budget_lines) / 500)
         line_list = []
         for page in range(1, pages + 1):
             line_list.append(page)
@@ -429,8 +429,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         all_list = []
         for s in selected_line_pages:
             s = int(s)
-            start = (s - 1) * 3 + 1
-            end = s * 3
+            start = (s - 1) * 500 + 1
+            end = s * 500
             for i in range(start - 1, end):
                 try:
                     all_list.append(lines[i])
@@ -438,7 +438,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     pass
         if len(all_list) > 0:
             return all_list
-        return lines
+        return lines[:500]
 
     def _get_report_name(self):
         context = self.env.context

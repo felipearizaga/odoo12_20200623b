@@ -296,4 +296,18 @@
         parent="menu_reports"
         sequence="1"
         action="action_proforma_budget_summary"/>
+
+    <!--<menuitem-->
+        <!--id="request_summary_report"-->
+        <!--name="Request Report"-->
+        <!--parent="menu_reports"-->
+        <!--sequence="2"-->
+        <!--action="act_req_summary_report"/>-->
+
+    <!--<menuitem-->
+        <!--id="requested_report_menu"-->
+        <!--name="Requested Reports"-->
+        <!--parent="menu_reports"-->
+        <!--sequence="3"-->
+        <!--action="action_requested_reports"/>-->
 </odoo>

@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_control,budget_control,model_budget_control,base.group_user,1,1,1,1
 access_quarter_budget,quarter_budget,model_quarter_budget,base.group_user,1,1,1,1
 access_year_config,year_config,model_year_configuration,base.group_user,1,1,1,1
 access_code_structure_user,code_structure_user,model_code_structure,base.group_user,1,1,1,1
@@ -30,3 +31,4 @@ access_standardization_line,standardization_line,model_standardization_line,base
 access_control_assigned_amounts,control_assigned_amounts,model_control_assigned_amounts,base.group_user,1,1,1,1
 access_control_assigned_amounts_lines,control_assigned_amounts_lines,model_control_assigned_amounts_lines,base.group_user,1,1,1,1
 access_report_program_fields,report_program_fields,model_report_program_fields,base.group_user,1,1,1,1
+access_requested_report,requested_report_by_user,model_requested_reports,base.group_user,1,1,1,1
