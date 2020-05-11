@@ -23,8 +23,11 @@
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
                 <form>
+                    <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
+                        Budget Line validation process is in progress. We will notify once validation process done.
+                    </div></center>
                     <header>
-                        <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
                         <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'previous')]}"/>
                         <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
@@ -39,9 +42,10 @@
                         </div>
                         <group>
                             <group>
+                                <field name="cron_running" invisible="1"/>
                                 <field name="user_id" readonly="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
-                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous'))]}" context="{'reimport': True}"/>
+                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', '|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous')), ('cron_running', '=', True)]}" context="{'reimport': True}"/>
                                 <field name="total_budget"/>
                                 <field name="total_quarter_budget"/>
                                 <field name="record_number"/>
@@ -58,39 +62,41 @@
                         <notebook>
                             <page string="Success Budget Lines" attrs="{'invisible': [('success_line_ids', '=', [])]}">
                                 <field name="success_line_ids">
-                                    <tree decoration-success="state == 'success'" create="false" edit="true" delete="false">
+                                    <tree decoration-success="state == 'success'" create="false" delete="false" edit="true">
                                         <!-- Hidden fields -->
                                         <field name="imported" invisible="1"/>
+                                        <field name="imported_sessional" invisible="1"/>
                                         <field name="state" invisible="1"/>
 
-                                        <field name="program_code_id"/>
-                                        <field name="dependency_id"/>
-                                        <field name="sub_dependency_id"/>
-                                        <field name="program_id"/>
-                                        <field name="item_id"/>
-                                        <field name="start_date"/>
-                                        <field name="end_date"/>
+                                        <field name="program_code_id" readonly="1"/>
+                                        <field name="dependency_id" readonly="1"/>
+                                        <field name="sub_dependency_id" readonly="1"/>
+                                        <field name="program_id" readonly="1"/>
+                                        <field name="item_id" readonly="1"/>
+                                        <field name="start_date" readonly="1"/>
+                                        <field name="end_date" readonly="1"/>
 
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
+                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount" readonly="1"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                     <form create="false" edit="true" delete="false">
                                         <group>
                                             <!-- Hidden Fields -->
                                             <field name="imported" invisible="1"/>
+                                            <field name="imported_sessional" invisible="1"/>
                                             <field name="state" invisible="1"/>
 
-                                            <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
+                                            <field name="program_code_id" attrs="{'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}" readonly="1"/>
                                             <field name="dependency_id" invisible="1"/>
                                             <field name="sub_dependency_id" invisible="1"/>
                                             <field name="program_id" invisible="1"/>
                                             <field name="item_id" invisible="1"/>
-                                            <field name="start_date"/>
-                                            <field name="end_date"/>
+                                            <field name="start_date" readonly="1"/>
+                                            <field name="end_date" readonly="1"/>
                                             <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" readonly="1"/>
-                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported_sessional', '=', False)]}"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
@@ -122,10 +128,11 @@
                                 </field>
                             </page>
                             <page string="Imported Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'previous'])]}">
-                                <field name="line_ids">
+                                <field name="line_ids" attrs="{'readonly': [('cron_running', '=', True)]}">
                                     <tree decoration-danger="state == 'fail'">
                                         <!-- Hidden fields -->
                                         <field name="imported" invisible="1"/>
+                                        <field name="imported_sessional" invisible="1"/>
                                         <field name="state" invisible="1"/>
 
                                         <field name="program_code_id"/>
@@ -167,6 +174,7 @@
                                         <group>
                                             <!-- Hidden Fields -->
                                             <field name="imported" invisible="1"/>
+                                            <field name="imported_sessional" invisible="1"/>
                                             <field name="state" invisible="1"/>
 
                                             <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>

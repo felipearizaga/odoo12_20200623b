@@ -22,7 +22,8 @@
 ##############################################################################
 import base64
 import io
-from datetime import datetime
+import math
+from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -88,7 +89,7 @@ class ExpenditureBudget(models.Model):
         string='Expenditure Budget Lines', states={'validate': [('readonly', True)]}, domain=[('state', '!=', 'success')])
     success_line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
-        string='Expenditure Budget Lines', states={'validate': [('readonly', True)]}, domain=[('state', '=', 'success')])
+        string='Expenditure Budget Lines', domain=[('state', '=', 'success')])
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -109,6 +110,7 @@ class ExpenditureBudget(models.Model):
                 [('expenditure_budget_id', '=', budget.id)])
 
     # Rows Progress Tracking Details
+    cron_running = fields.Boolean(string='Running CRON?')
     import_status = fields.Selection([
         ('draft', 'Draft'),
         ('in_progress', 'In Progress'),
@@ -146,7 +148,10 @@ class ExpenditureBudget(models.Model):
             'context': ctx,
         }
 
-    def validate_and_add_budget_line(self):
+    def validate_and_add_budget_line(self, record_id=False, cron_id=False):
+        if record_id:
+            self = self.env['expenditure.budget'].browse(int(record_id))
+
         if len(self.line_ids.ids) > 0:
             counter = 0
             failed_row = ""
@@ -171,7 +176,13 @@ class ExpenditureBudget(models.Model):
             stage_obj = self.env['stage']
             agreement_type_obj = self.env['agreement.type']
 
-            for line in self.line_ids:
+            lines_to_execute = self.line_ids
+            cron = False
+            if cron_id:
+                cron = self.env['ir.cron'].sudo().browse(int(cron_id))
+                lines_to_execute = self.env['expenditure.budget.line'].search([('cron_id', '=', cron.id)])
+
+            for line in lines_to_execute:
                 if counter == 10000:
                     break
                 counter += 1
@@ -475,14 +486,30 @@ class ExpenditureBudget(models.Model):
                 vals['failed_row_file'] = failed_data
                 self.write(vals)
 
-            if len(failed_line_ids) == 0:
-                return{
-                    'effect': {
-                        'fadeout': 'slow',
-                        'message': 'All rows are imported successfully!',
-                        'type': 'rainbow_man',
-                    }
-                }
+            if cron:
+                lines_to_execute.write({'cron_id': False})
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False)], limit=1)
+                if next_cron:
+                    nextcall = datetime.now()
+                    nextcall = nextcall + timedelta(seconds=15)
+                    next_cron.write({'nextcall': nextcall, 'active': True})
+                else:
+                    self.write({'cron_running': False})
+                    self._cr.commit()
+                    if len(self.line_ids.ids) == 0:
+                        self.write({'state': 'previous'})
+                    self.env.user.notify_info(message='Budget ' + str(self.name) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                self._cr.commit()
+                # cron.sudo().write({"active": False})
+
+            # if len(failed_line_ids) == 0:
+            #     return{
+            #         'effect': {
+            #             'fadeout': 'slow',
+            #             'message': 'All rows are imported successfully!',
+            #             'type': 'rainbow_man',
+            #         }
+            #     }
 
     def verify_data(self):
         total = sum(self.success_line_ids.mapped('assigned'))
@@ -495,12 +522,46 @@ class ExpenditureBudget(models.Model):
         return True
 
     def previous_budget(self):
-        if self.success_rows != self.total_rows:
-            self.validate_and_add_budget_line()
-        total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
-        if total_lines == self.total_rows:
-            # self.verify_data()
-            self.write({'state': 'previous'})
+        # Total CRON to create
+        total_cron = math.ceil(len(self.line_ids.ids) / 10000)
+
+        if total_cron == 1:
+            if self.success_rows != self.total_rows:
+                self.validate_and_add_budget_line()
+            total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
+            if total_lines == self.total_rows:
+                self.write({'state': 'previous'})
+        else:
+            self.write({'cron_running': True})
+            prev_cron_id = False
+            line_ids = self.line_ids.ids
+            for seq in range(1, total_cron + 1):
+
+                # Create CRON JOB
+                cron_name = str(self.name).replace(' ', '') + "_" + str(seq)
+                nextcall = datetime.now()
+                nextcall = nextcall + timedelta(seconds=15)
+                lines = line_ids[:10000]
+
+                cron_vals = {
+                    'name': cron_name,
+                    'state': 'code',
+                    'nextcall': nextcall,
+                    'numbercall': -1,
+                    'code': "model.validate_and_add_budget_line()",
+                    'model_id': self.env.ref('jt_budget_mgmt.model_expenditure_budget').id,
+                    'user_id': self.env.user.id,
+                }
+
+                # Final process
+                cron = self.env['ir.cron'].sudo().create(cron_vals)
+                cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                if prev_cron_id:
+                    cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+                line_records = self.env['expenditure.budget.line'].browse(lines)
+                line_records.write({'cron_id': cron.id})
+                del line_ids[:10000]
+                prev_cron_id = cron.id
 
     def confirm(self):
         self.verify_data()
@@ -567,6 +628,7 @@ class ExpenditureBudgetLine(models.Model):
     imported = fields.Boolean()
     state = fields.Selection([('manual', 'Manual'), ('draft', 'Draft'), (
         'fail', 'Fail'), ('success', 'Success')], string='Status', default='manual')
+    imported_sessional = fields.Boolean()
 
     # Fields for imported data
     year = fields.Char(string='Year')
@@ -589,9 +651,10 @@ class ExpenditureBudgetLine(models.Model):
     agreement_type = fields.Char(string='Type of Agreement')
     agreement_number = fields.Char(string='Agreement number')
     exercise_type = fields.Char(string='Exercise type')
+    cron_id = fields.Many2one('ir.cron', string="CRON ID")
 
-    # _sql_constraints = [
-    #     ('uniq_program_code_id', 'unique(program_code_id)',
-    #      'The Program code must be unique!'),
-    # ]
+    _sql_constraints = [
+        ('uniq_quarter', 'unique(program_code_id,start_date,end_date)',
+         'The Program code must be unique per quarter!'),
+    ]
     # ALTER TABLE expenditure_budget_line DROP CONSTRAINT expenditure_budget_line_uniq_program_code_id;

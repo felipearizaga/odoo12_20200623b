@@ -376,7 +376,7 @@ class ControlAssignedAmounts(models.Model):
                             #         "------>> Duplicated Program Code Found!"
                             #     failed_line_ids.append(line.id)
                             #     continue
-                            if program_code and program_code.state == 'draft':
+                            if program_code:
                                 budget_line = self.env['expenditure.budget.line'].search([('expenditure_budget_id', '=', self.budget_id.id), ('program_code_id', '=', program_code.id), (
                                     'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
@@ -474,6 +474,7 @@ class ControlAssignedAmounts(models.Model):
                 'assigned': line.assigned,
                 # 'available': line.available,
                 'imported': line.imported,
+                'imported_sessional': True,
                 'state': line.state,
                 'year': line.year,
                 'program': line.program,

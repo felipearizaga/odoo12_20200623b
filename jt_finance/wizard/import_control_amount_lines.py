@@ -170,7 +170,13 @@ class ImportAdequaciesLine(models.TransientModel):
                             error_string += str(key) + ': ' + str(diff) + "\n"
                         elif key not in data_dict:
                             error_string += str(key) + \
-                                ': the program was not detected' + "\n"
+                                ': ' + \
+                                str(value) + \
+                                ' (the program was not detected in budget)' + "\n"
+                    for key, value in data_dict.items():
+                        if key not in code_amount_dict:
+                            error_string += str(key) + \
+                                ': ' + str(value) + ' (the program was not detected in CLC file)' + "\n"
                     vals_amount_control = {
                         'import_date': datetime.today().date(),
                         'diff': error_string,
@@ -218,7 +224,16 @@ class ImportAdequaciesLine(models.TransientModel):
                             if start_date and end_date and control_amount.budget_id:
                                 for line in control_amount.budget_id.success_line_ids:
                                     if line.start_date and line.start_date.month == check_start_month and line.start_date.day == 1 and line.end_date.month == control_amount.date.month and line.end_date.day == check_end_day:
-                                        new_line = line.copy(default={'start_date': start_date, 'end_date': end_date, 'state': 'success'})
+                                        budget_line_exist = self.env['expenditure.budget.line'].search([
+                                            ('expenditure_budget_id', '=', control_amount.budget_id.id),
+                                            ('program_code_id', '=', line.program_code_id.id), 
+                                            ('start_date', '=', start_date),
+                                            ('end_date', '=', end_date)], limit=1)
+                                        if budget_line_exist:
+                                            raise ValidationError("Duplicated quarter line already exist in budget lines!")
+
+                                        new_line = line.copy(
+                                            default={'start_date': start_date, 'end_date': end_date, 'state': 'success'})
                     else:
                         self.error_status = True
                         self.error_string = error_string
