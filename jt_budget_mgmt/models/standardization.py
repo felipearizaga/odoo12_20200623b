@@ -24,9 +24,8 @@ import base64
 import io
 from datetime import datetime
 from xlrd import open_workbook
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
 
 class Standardization(models.Model):
 
@@ -586,6 +585,37 @@ class Standardization(models.Model):
         if self.total_rows > 0 and len(self.line_ids.ids) != self.total_rows:
             raise ValidationError(
                 "Total imported rows not matched with total standardization lines!")
+
+        bugdet_l_obj = self.env['expenditure.budget.line']
+        for line in self.line_ids:
+            if line.amount and line.origin_id and line.code_id and line.budget_id:
+                budget_lines = bugdet_l_obj.search([('expenditure_budget_id', '=', line.budget_id.id),
+                                                    ('program_code_id', '=', line.code_id.id)])
+                origin_start_date_day = False
+                origin_start_date_month = False
+                origin_end_date_day = False
+                origin_end_date_month = False
+
+                date_start = str(line.origin_id.start_date).split('/')
+                if len(date_start) > 1:
+                    origin_start_date_day = date_start[0]
+                    origin_start_date_month = date_start[1]
+                date_end = str(line.origin_id.end_date).split('/')
+                if len(date_end) > 1:
+                    origin_end_date_day = date_end[0]
+                    origin_end_date_month = date_end[1]
+                origin_budget_line = False
+                for budget_line in budget_lines:
+                    if not origin_budget_line:
+                        if budget_line.start_date and str(budget_line.start_date.day).zfill(
+                                2) == origin_start_date_day and str(budget_line.start_date.month).zfill(
+                                2) == origin_start_date_month and budget_line.end_date and str(
+                                budget_line.end_date.day).zfill(2) == origin_end_date_day and str(
+                                budget_line.end_date.month).zfill(2) == origin_end_date_month:
+                            origin_budget_line = budget_line
+                if origin_budget_line and line.amount > origin_budget_line.assigned:
+                    raise ValidationError(_("The amount is greater than the one assigned in the budget. \n"
+                            "Budget: %s \nProgram Code: %s" % (line.budget_id.name, line.code_id.program_code)))
 
     def confirm(self):
         self.validate_data()

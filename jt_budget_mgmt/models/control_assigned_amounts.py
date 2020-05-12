@@ -504,11 +504,6 @@ class ControlAssignedAmounts(models.Model):
     def reject(self):
         self.state = 'rejected'
 
-    def cancel(self):
-        self.line_ids = False
-        self.success_line_ids = False
-        self.state = 'canceled'
-
     def unlink(self):
         for Camount in self:
             if Camount.state not in ('draft', 'process'):
@@ -562,6 +557,32 @@ class ControlAssignedAmountsLines(models.Model):
     agreement_type = fields.Char(string='Type of Agreement')
     agreement_number = fields.Char(string='Agreement number')
     exercise_type = fields.Char(string='Exercise type')
+
+    @api.onchange('program_code_id')
+    def onchange_program_code_id(self):
+        if self.program_code_id:
+            code = self.program_code_id
+            self.year = code.year and code.year.name or ''
+            self.program = code.program_id and code.program_id.key_unam or ''
+            self.subprogram = code.sub_program_id and code.sub_program_id.sub_program or ''
+            self.dependency = code.dependency_id and code.dependency_id.dependency or ''
+            self.subdependency = code.sub_dependency_id and code.sub_dependency_id.sub_dependency or ''
+            self.item = code.item_id and code.item_id.item or ''
+            self.dv = code.check_digit
+            self.ai = code.institutional_activity_id and code.institutional_activity_id.number or ''
+            self.origin_resource = code.resource_origin_id and code.resource_origin_id.key_origin or ''
+            self.conversion_program = code.budget_program_conversion_id and code.budget_program_conversion_id.shcp.name or ''
+            self.departure_conversion = code.conversion_item_id and code.conversion_item_id.federal_part or ''
+            self.expense_type = code.expense_type_id and code.expense_type_id.key_expenditure_type or ''
+            self.location = code.location_id and code.location_id.state_key or ''
+            self.portfolio = code.portfolio_id and code.portfolio_id.wallet_password or ''
+            self.project_type = code.project_type_id.project_id and code.project_type_id.project_id.name or ''
+            self.project_number = code.project_number
+            if code.stage_id and code.stage_id.project_id:
+                self.stage = code.stage_id.project_id.name
+            if code.agreement_type_id and code.agreement_type_id.project_id:
+                self.agreement_type = code.agreement_type_id.project_id.name
+            self.agreement_number = code.number_agreement
 
     _sql_constraints = [
         ('unique_assigned_amount_id_program_code', 'unique(program_code_id,assigned_amount_id)', 'The program code must be unique per Control of Assigned Amounts')]

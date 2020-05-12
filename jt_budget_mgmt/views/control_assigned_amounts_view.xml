@@ -28,8 +28,7 @@
                         <button name="confirm" type="object" string="Confirm" class="oe_highlight" states='draft'/>
                         <button name="validate" type="object" string="Validate" class="oe_highlight" states='process'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='process'/>
-                        <button name="cancel" type="object" string="Cancel" class="oe_highlight" states='process'/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,process,validated,rejected,canceled"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,process,validated,rejected"/>
                     </header>
                     <sheet>
                         <group>
@@ -120,6 +119,7 @@
 
                                         <!-- Imported data fields -->
                                         <field name="year" invisible="1"/>
+<!--                                        <field name="program_code_id"/>-->
                                         <field name="program"/>
                                         <field name="subprogram"/>
                                         <field name="dependency"/>
@@ -151,17 +151,16 @@
                                             <field name="imported" invisible="1"/>
                                             <field name="state" invisible="1"/>
 
-                                            <field name="program_code_id" invisible="1"/>
+                                            <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
                                             <field name="start_date"/>
                                             <field name="end_date"/>
                                             <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                            <field name="assigned_amount_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
                                         </group>
                                         <!-- Import related fields -->
-                                        <group>
+                                        <group attrs="{'invisible': ['|', ('state', 'in', ('manual', 'success'))]}">
                                             <field name="year"/>
                                             <field name="program"/>
                                             <field name="subprogram"/>
@@ -184,6 +183,45 @@
                                             <field name="exercise_type"/>
                                         </group>
                                     </form>
+<!--                                    <form>-->
+<!--                                        <group>-->
+<!--                                            &lt;!&ndash; Hidden Fields &ndash;&gt;-->
+<!--                                            <field name="imported" invisible="1"/>-->
+<!--                                            <field name="state" invisible="1"/>-->
+
+<!--                                            <field name="program_code_id" invisible="1"/>-->
+<!--                                            <field name="start_date"/>-->
+<!--                                            <field name="end_date"/>-->
+<!--                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>-->
+<!--                                            <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>-->
+<!--                                            <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>-->
+<!--                                            <field name="assigned_amount_id" invisible="1"/>-->
+<!--                                            <field name="currency_id" invisible="1"/>-->
+<!--                                        </group>-->
+<!--                                        &lt;!&ndash; Import related fields &ndash;&gt;-->
+<!--                                        <group>-->
+<!--                                            <field name="year"/>-->
+<!--                                            <field name="program"/>-->
+<!--                                            <field name="subprogram"/>-->
+<!--                                            <field name="dependency"/>-->
+<!--                                            <field name="subdependency"/>-->
+<!--                                            <field name="item"/>-->
+<!--                                            <field name="dv"/>-->
+<!--                                            <field name="origin_resource"/>-->
+<!--                                            <field name="ai"/>-->
+<!--                                            <field name="conversion_program"/>-->
+<!--                                            <field name="departure_conversion"/>-->
+<!--                                            <field name="expense_type"/>-->
+<!--                                            <field name="location"/>-->
+<!--                                            <field name="portfolio"/>-->
+<!--                                            <field name="project_type"/>-->
+<!--                                            <field name="project_number"/>-->
+<!--                                            <field name="stage"/>-->
+<!--                                            <field name="agreement_type"/>-->
+<!--                                            <field name="agreement_number"/>-->
+<!--                                            <field name="exercise_type"/>-->
+<!--                                        </group>-->
+<!--                                    </form>-->
                                 </field>
                             </page>
                             <page string='Import Status'>
