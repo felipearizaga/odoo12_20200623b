@@ -486,12 +486,13 @@ class ExpenditureBudget(models.Model):
                 vals['failed_row_file'] = failed_data
                 self.write(vals)
 
+            self._cr.commit()
             if cron:
                 lines_to_execute.write({'cron_id': False})
-                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False)], limit=1)
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
-                    nextcall = nextcall + timedelta(seconds=15)
+                    nextcall = nextcall + timedelta(seconds=10)
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
@@ -500,7 +501,6 @@ class ExpenditureBudget(models.Model):
                         self.write({'state': 'previous'})
                     self.env.user.notify_info(message='Budget ' + str(self.name) + ' Lines Validated. Please verify and correct lines, if any failed!')
                 self._cr.commit()
-                # cron.sudo().write({"active": False})
 
             # if len(failed_line_ids) == 0:
             #     return{
@@ -511,14 +511,23 @@ class ExpenditureBudget(models.Model):
             #         }
             #     }
 
+    def remove_cron_records(self):
+        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
+        for cron in crons:
+            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+                try:
+                    cron.sudo().unlink()
+                except:
+                    pass
+
     def verify_data(self):
         total = sum(self.success_line_ids.mapped('assigned'))
         if total <= 0:
             raise ValidationError("Budget amount should be greater than 0")
         if len(self.success_line_ids.ids) == 0:
             raise ValidationError("Please correct failed rows")
-        if self.total_rows > 0 and self.success_rows != self.total_rows:
-            raise ValidationError("Please correct failed rows")
+        # if self.total_rows > 0 and self.success_rows != self.total_rows:
+        #     raise ValidationError("Please correct failed rows")
         return True
 
     def previous_budget(self):
@@ -538,15 +547,16 @@ class ExpenditureBudget(models.Model):
             for seq in range(1, total_cron + 1):
 
                 # Create CRON JOB
-                cron_name = str(self.name).replace(' ', '') + "_" + str(seq)
+                cron_name = str(self.name).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
                 nextcall = datetime.now()
-                nextcall = nextcall + timedelta(seconds=15)
+                nextcall = nextcall + timedelta(seconds=10)
                 lines = line_ids[:10000]
 
                 cron_vals = {
                     'name': cron_name,
                     'state': 'code',
                     'nextcall': nextcall,
+                    'nextcall_copy': nextcall,
                     'numbercall': -1,
                     'code': "model.validate_and_add_budget_line()",
                     'model_id': self.env.ref('jt_budget_mgmt.model_expenditure_budget').id,

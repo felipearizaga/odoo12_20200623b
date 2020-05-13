@@ -22,7 +22,8 @@
 ##############################################################################
 import base64
 import io
-from datetime import datetime
+import math
+from datetime import datetime, timedelta
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _
 
@@ -39,6 +40,7 @@ class ControlAssignedAmounts(models.Model):
             record.import_record_number = len(
                 record.success_line_ids.filtered(lambda l: l.imported == True))
 
+    cron_running = fields.Boolean(string='Running CRON?')
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
@@ -115,7 +117,10 @@ class ControlAssignedAmounts(models.Model):
             'context': ctx,
         }
 
-    def validate_and_add_budget_line(self):
+    def validate_and_add_budget_line(self, record_id=False, cron_id=False):
+        if record_id:
+            self = self.env['control.assigned.amounts'].browse(int(record_id))
+
         if len(self.line_ids.ids) > 0:
             counter = 0
             failed_row = ""
@@ -140,7 +145,13 @@ class ControlAssignedAmounts(models.Model):
             stage_obj = self.env['stage']
             agreement_type_obj = self.env['agreement.type']
 
-            for line in self.line_ids:
+            lines_to_execute = self.line_ids
+            cron = False
+            if cron_id:
+                cron = self.env['ir.cron'].sudo().browse(int(cron_id))
+                lines_to_execute = self.env['control.assigned.amounts.lines'].search([('cron_id', '=', cron.id)])
+
+            for line in lines_to_execute:
                 if counter == 10000:
                     break
                 counter += 1
@@ -441,23 +452,83 @@ class ControlAssignedAmounts(models.Model):
                 vals['failed_row_file'] = failed_data
                 self.write(vals)
 
-            if len(failed_line_ids) == 0:
-                return{
-                    'effect': {
-                        'fadeout': 'slow',
-                        'message': 'All rows are imported successfully!',
-                        'type': 'rainbow_man',
-                    }
-                }
+            if cron:
+                lines_to_execute.write({'cron_id': False})
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)], limit=1)
+                if next_cron:
+                    nextcall = datetime.now()
+                    nextcall = nextcall + timedelta(seconds=10)
+                    next_cron.write({'nextcall': nextcall, 'active': True})
+                else:
+                    self.write({'cron_running': False})
+                    self._cr.commit()
+                    if len(self.line_ids.ids) == 0:
+                        self.write({'state': 'process'})
+                    self.env.user.notify_info(message='Control of Assigned Amounts ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                self._cr.commit()
+
+            # if len(failed_line_ids) == 0:
+            #     return{
+            #         'effect': {
+            #             'fadeout': 'slow',
+            #             'message': 'All rows are imported successfully!',
+            #             'type': 'rainbow_man',
+            #         }
+            #     }
+
+    def remove_cron_records(self):
+        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)])
+        for cron in crons:
+            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+                try:
+                    cron.sudo().unlink()
+                except:
+                    pass
 
     def confirm(self):
-        if self.success_rows != self.total_rows:
-            self.validate_and_add_budget_line()
-        total_lines = len(self.success_line_ids.filtered(
-            lambda l: l.state == 'success'))
-        if total_lines == self.total_rows:
-            self.import_date = datetime.today().date()
-            self.state = 'process'
+        # Total CRON to create
+        total_cron = math.ceil(len(self.line_ids.ids) / 10000)
+
+        if total_cron == 1:
+            if self.success_rows != self.total_rows:
+                self.validate_and_add_budget_line()
+            total_lines = len(self.success_line_ids.filtered(
+                lambda l: l.state == 'success'))
+            if total_lines == self.total_rows:
+                self.import_date = datetime.today().date()
+                self.state = 'process'
+        else:
+            self.write({'cron_running': True})
+            prev_cron_id = False
+            line_ids = self.line_ids.ids
+            for seq in range(1, total_cron + 1):
+
+                # Create CRON JOB
+                cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
+                nextcall = datetime.now()
+                nextcall = nextcall + timedelta(seconds=10)
+                lines = line_ids[:10000]
+
+                cron_vals = {
+                    'name': cron_name,
+                    'state': 'code',
+                    'nextcall': nextcall,
+                    'nextcall_copy': nextcall,
+                    'numbercall': -1,
+                    'code': "model.validate_and_add_budget_line()",
+                    'model_id': self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id,
+                    'user_id': self.env.user.id,
+                }
+
+                # Final process
+                cron = self.env['ir.cron'].sudo().create(cron_vals)
+                cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                if prev_cron_id:
+                    cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+                line_records = self.env['control.assigned.amounts.lines'].browse(lines)
+                line_records.write({'cron_id': cron.id})
+                del line_ids[:10000]
+                prev_cron_id = cron.id
 
     def validate(self):
         vals_list = []
@@ -557,6 +628,7 @@ class ControlAssignedAmountsLines(models.Model):
     agreement_type = fields.Char(string='Type of Agreement')
     agreement_number = fields.Char(string='Agreement number')
     exercise_type = fields.Char(string='Exercise type')
+    cron_id = fields.Many2one('ir.cron', string="CRON ID")
 
     @api.onchange('program_code_id')
     def onchange_program_code_id(self):
@@ -576,12 +648,12 @@ class ControlAssignedAmountsLines(models.Model):
             self.expense_type = code.expense_type_id and code.expense_type_id.key_expenditure_type or ''
             self.location = code.location_id and code.location_id.state_key or ''
             self.portfolio = code.portfolio_id and code.portfolio_id.wallet_password or ''
-            self.project_type = code.project_type_id.project_id and code.project_type_id.project_id.name or ''
+            self.project_type = code.project_type_id and code.project_type_id.project_type_identifier or ''
             self.project_number = code.project_number
-            if code.stage_id and code.stage_id.project_id:
-                self.stage = code.stage_id.project_id.name
-            if code.agreement_type_id and code.agreement_type_id.project_id:
-                self.agreement_type = code.agreement_type_id.project_id.name
+            if code.stage_id and code.stage_id.stage_identifier:
+                self.stage = code.stage_id.stage_identifier
+            if code.agreement_type_id and code.agreement_type_id.agreement_type:
+                self.agreement_type = code.agreement_type_id.agreement_type
             self.agreement_number = code.number_agreement
 
     _sql_constraints = [

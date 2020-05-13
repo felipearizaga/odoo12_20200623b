@@ -24,8 +24,11 @@
             <field name="model">control.assigned.amounts</field>
             <field name="arch" type="xml">
                 <form>
+                    <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
+                        Control of Assigned Amounts Lines validation process is in progress. We will notify once validation process done.
+                    </div></center>
                     <header>
-                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" states='draft'/>
+                        <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
                         <button name="validate" type="object" string="Validate" class="oe_highlight" states='process'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='process'/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,process,validated,rejected"/>
@@ -33,10 +36,11 @@
                     <sheet>
                         <group>
                             <group>
+                                <field name="cron_running" invisible="1"/>
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
-                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'progress'))]}" context="{'reimport': True}"/>
+                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', '|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'progress')), ('cron_running', '=', True)]}" context="{'reimport': True}"/>
                                 <field name="user_id" readonly="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>
@@ -106,7 +110,7 @@
                                 </field>
                             </page>
                             <page string="Imported Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'process'])]}">
-                                <field name="line_ids">
+                                <field name="line_ids" attrs="{'readonly': [('cron_running', '=', True)]}">
                                     <tree decoration-danger="state == 'fail'">
                                         <!-- Hidden fields -->
                                         <field name="imported" invisible="1"/>

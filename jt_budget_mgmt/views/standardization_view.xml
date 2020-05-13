@@ -42,11 +42,14 @@
             <field name="model">standardization</field>
             <field name="arch" type="xml">
             	<form>
+                    <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
+                        Standardization Lines validation process is in progress. We will notify once validation process done.
+                    </div></center>
                     <header>
-                        <button name="validate_and_add_budget_line" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'in_progress')]}"/>
+                        <button name="validate_draft_lines" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'in_progress'), ('cron_running', '=', True)]}"/>
                         <button name="validate_and_add_budget_line" type="object" string="Re-scan Failed Rows" class="oe_highlight" attrs="{'invisible': [('failed_rows', '=', 0), ('allow_upload', '=', False)]}" context="{'re_scan_failed':True}"/>
 
-                        <button name="confirm" type="object" string="Validate" class="oe_highlight" attrs="{'invisible': ['|', ('failed_rows', '>', 0), ('state', '!=', 'draft')]}"/>
+                        <button name="confirm" type="object" string="Validate" class="oe_highlight" attrs="{'invisible': ['|', '|', ('failed_rows', '>', 0), ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
                         <button name="cancel" type="object" string="Cancel" class="oe_highlight" states="draft"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                     </header>
@@ -73,6 +76,7 @@
                         </div>
 	            		<group>
                             <group>
+                                <field name="cron_running" invisible="1"/>
                                 <field name="check_line_state" invisible="1"/>
     	            			<field name="folio" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'draft')]}"/>

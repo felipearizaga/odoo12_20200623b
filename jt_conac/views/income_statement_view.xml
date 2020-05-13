@@ -9,12 +9,12 @@
                     <sheet>
                         <group>
                             <field name="name"/>
-                            <field name="estimated"/>
-                            <field name="exp_and_red"/>
-                            <field name="modified"/>
-                            <field name="accrued"/>
-                            <field name="raised"/>
-                            <field name="difference"/>
+                            <field name="estimated" widget="float"/>
+                            <field name="exp_and_red" widget="float"/>
+                            <field name="modified" widget="float"/>
+                            <field name="accrued" widget="float"/>
+                            <field name="raised" widget="float"/>
+                            <field name="difference" widget="float"/>
                             <field name="parent_id" invisible="1"/>
                         </group>
                     </sheet>

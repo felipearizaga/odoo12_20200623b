@@ -22,10 +22,12 @@
 ##############################################################################
 import base64
 import io
-from datetime import datetime
+import math
+from datetime import datetime, timedelta
 from xlrd import open_workbook
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+
 
 class Standardization(models.Model):
 
@@ -50,6 +52,7 @@ class Standardization(models.Model):
             record.cancelled_count = len(
                 record.line_ids.filtered(lambda l: l.state == 'cancelled'))
 
+    cron_running = fields.Boolean(string='Running CRON?')
     folio = fields.Char(string='Folio', states={
         'confirmed': [('readonly', True)], 'cancelled': [('readonly', True)]})
     record_number = fields.Integer(
@@ -187,7 +190,10 @@ class Standardization(models.Model):
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
 
-    def validate_and_add_budget_line(self):
+    def validate_and_add_budget_line(self, record_id=False, cron_id=False):
+        if record_id:
+            self = self.env['standardization'].browse(int(record_id))
+
         if self.budget_file:
             # Objects
             year_obj = self.env['year.configuration']
@@ -206,6 +212,10 @@ class Standardization(models.Model):
             project_type_obj = self.env['project.type']
             stage_obj = self.env['stage']
             agreement_type_obj = self.env['agreement.type']
+
+            cron = False
+            if cron_id:
+                cron = self.env['ir.cron'].sudo().browse(int(cron_id))
 
             budget_obj = self.env['expenditure.budget'].sudo(
             ).with_context(from_adequacies=True)
@@ -563,14 +573,70 @@ class Standardization(models.Model):
             if self.failed_row_ids == 0 or len(failed_row_ids_eval) == 0:
                 self.write({'allow_upload': False})
 
-            if len(failed_row_ids) == 0:
-                return{
-                    'effect': {
-                        'fadeout': 'slow',
-                        'message': 'All rows are imported successfully!',
-                        'type': 'rainbow_man',
-                    }
+            if cron:
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)], limit=1)
+                if next_cron:
+                    nextcall = datetime.now()
+                    nextcall = nextcall + timedelta(seconds=10)
+                    next_cron.write({'nextcall': nextcall, 'active': True})
+                else:
+                    self.write({'cron_running': False})
+                    self._cr.commit()
+                    self.env.user.notify_info(message='Standardization - ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                self._cr.commit()
+
+            # if len(failed_row_ids) == 0:
+            #     return{
+            #         'effect': {
+            #             'fadeout': 'slow',
+            #             'message': 'All rows are imported successfully!',
+            #             'type': 'rainbow_man',
+            #         }
+            #     }
+
+    def remove_cron_records(self):
+        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)])
+        for cron in crons:
+            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+                try:
+                    cron.sudo().unlink()
+                except:
+                    pass
+
+    def validate_draft_lines(self):
+        if self.budget_file:
+            # Total CRON to create
+            data = base64.decodestring(self.budget_file)
+            book = open_workbook(file_contents=data or b'')
+            sheet = book.sheet_by_index(0)
+            total_sheet_rows = sheet.nrows - 1
+            total_cron = math.ceil(total_sheet_rows / 10000)
+
+            self.write({'cron_running': True})
+            prev_cron_id = False
+            for seq in range(1, total_cron + 1):
+                # Create CRON JOB
+                cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
+                nextcall = datetime.now()
+                nextcall = nextcall + timedelta(seconds=10)
+
+                cron_vals = {
+                    'name': cron_name,
+                    'state': 'code',
+                    'nextcall': nextcall,
+                    'nextcall_copy': nextcall,
+                    'numbercall': -1,
+                    'code': "model.validate_and_add_budget_line()",
+                    'model_id': self.env.ref('jt_budget_mgmt.model_standardization').id,
+                    'user_id': self.env.user.id,
                 }
+
+                # Final process
+                cron = self.env['ir.cron'].sudo().create(cron_vals)
+                cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                if prev_cron_id:
+                    cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+                prev_cron_id = cron.id
 
     def validate_data(self):
         if len(self.line_ids.ids) == 0:

@@ -28,3 +28,4 @@ class IrCron(models.Model):
     _inherit = 'ir.cron'
 
     prev_cron_id = fields.Integer(string='Next CRON ID')
+    nextcall_copy = fields.Datetime(string='Nextcall Copy For Budget')

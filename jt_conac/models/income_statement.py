@@ -20,13 +20,13 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class StatementOfIncome(models.Model):
     _name = 'income.statement'
     _description = 'Statement of Income'
-    _rec_name = 'name'
+    # _rec_name = 'name'
 
     name = fields.Char(string='Nombre')
     estimated = fields.Float(string='Estimado')
