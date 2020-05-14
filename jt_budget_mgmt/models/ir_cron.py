@@ -29,3 +29,7 @@ class IrCron(models.Model):
 
     prev_cron_id = fields.Integer(string='Next CRON ID')
     nextcall_copy = fields.Datetime(string='Nextcall Copy For Budget')
+    budget_id = fields.Many2one('expenditure.budget', string="Budget")
+    control_assigned_id = fields.Many2one('control.assigned.amounts', string="Control of Assigned Amount")
+    standardization_id = fields.Many2one('standardization', string="Re-standardization")
+    adequacies_id = fields.Many2one('adequacies', string="Adequacies")

@@ -239,7 +239,7 @@ class Standardization(models.Model):
                     headers.append(cell.value)
 
             result_vals = []
-            lines_to_iterate = self.pointer_row + 10000
+            lines_to_iterate = self.pointer_row + 5000
             total_sheet_rows = sheet.nrows - 1
             if total_sheet_rows < lines_to_iterate:
                 lines_to_iterate = total_sheet_rows + 1
@@ -565,7 +565,6 @@ class Standardization(models.Model):
                 vals['failed_row_file'] = failed_data
             if pointer == sheet.nrows:
                 vals['import_status'] = 'done'
-            self.write(vals)
 
             if pointer == sheet.nrows and len(failed_row_ids_eval) > 0:
                 self.write({'allow_upload': True})
@@ -581,9 +580,9 @@ class Standardization(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
-                    self._cr.commit()
                     self.env.user.notify_info(message='Standardization - ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
-                self._cr.commit()
+            if vals:
+                self.write(vals)
 
             # if len(failed_row_ids) == 0:
             #     return{
@@ -595,9 +594,9 @@ class Standardization(models.Model):
             #     }
 
     def remove_cron_records(self):
-        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)])
+        crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)])
         for cron in crons:
-            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+            if cron.standardization_id and not cron.standardization_id.cron_running:
                 try:
                     cron.sudo().unlink()
                 except:
@@ -610,7 +609,7 @@ class Standardization(models.Model):
             book = open_workbook(file_contents=data or b'')
             sheet = book.sheet_by_index(0)
             total_sheet_rows = sheet.nrows - 1
-            total_cron = math.ceil(total_sheet_rows / 10000)
+            total_cron = math.ceil(total_sheet_rows / 5000)
 
             self.write({'cron_running': True})
             prev_cron_id = False
@@ -629,6 +628,7 @@ class Standardization(models.Model):
                     'code': "model.validate_and_add_budget_line()",
                     'model_id': self.env.ref('jt_budget_mgmt.model_standardization').id,
                     'user_id': self.env.user.id,
+                    'standardization_id': self.id
                 }
 
                 # Final process

@@ -149,10 +149,11 @@ class ControlAssignedAmounts(models.Model):
             cron = False
             if cron_id:
                 cron = self.env['ir.cron'].sudo().browse(int(cron_id))
-                lines_to_execute = self.env['control.assigned.amounts.lines'].search([('cron_id', '=', cron.id)])
+                if cron:
+                    lines_to_execute = self.env['control.assigned.amounts.lines'].search([('cron_id', '=', cron.id)])
 
             for line in lines_to_execute:
-                if counter == 10000:
+                if counter == 5000:
                     break
                 counter += 1
                 line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item, line.dv, line.origin_resource, line.ai, line.conversion_program,
@@ -417,7 +418,6 @@ class ControlAssignedAmounts(models.Model):
                             }
                             program_code = self.env['program.code'].sudo().create(
                                 program_vals)
-                            self._cr.commit()
                         if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)
@@ -432,14 +432,13 @@ class ControlAssignedAmounts(models.Model):
             success_lines = self.env['control.assigned.amounts.lines'].search(
                 [('assigned_amount_id', '=', self.id), ('id', 'in', success_line_ids)])
             success_lines.write({'state': 'success'})
-            self._cr.commit()
             for l in failed_lines:
                 if l.state == 'draft':
                     l.state = 'fail'
 
             failed_data = False
+            vals = {}
             if failed_row != "":
-                vals = {}
                 content = ""
                 if self.failed_row_file:
                     file_data = base64.b64decode(self.failed_row_file)
@@ -450,7 +449,6 @@ class ControlAssignedAmounts(models.Model):
                 content += str(failed_row)
                 failed_data = base64.b64encode(content.encode('utf-8'))
                 vals['failed_row_file'] = failed_data
-                self.write(vals)
 
             if cron:
                 lines_to_execute.write({'cron_id': False})
@@ -461,11 +459,11 @@ class ControlAssignedAmounts(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
-                    self._cr.commit()
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'process'})
                     self.env.user.notify_info(message='Control of Assigned Amounts ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
-                self._cr.commit()
+            if vals:
+                self.write(vals)
 
             # if len(failed_line_ids) == 0:
             #     return{
@@ -477,9 +475,9 @@ class ControlAssignedAmounts(models.Model):
             #     }
 
     def remove_cron_records(self):
-        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)])
+        crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)])
         for cron in crons:
-            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+            if cron.control_assigned_id and not cron.control_assigned_id.cron_running:
                 try:
                     cron.sudo().unlink()
                 except:
@@ -487,7 +485,7 @@ class ControlAssignedAmounts(models.Model):
 
     def confirm(self):
         # Total CRON to create
-        total_cron = math.ceil(len(self.line_ids.ids) / 10000)
+        total_cron = math.ceil(len(self.line_ids.ids) / 5000)
 
         if total_cron == 1:
             if self.success_rows != self.total_rows:
@@ -507,7 +505,7 @@ class ControlAssignedAmounts(models.Model):
                 cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
                 nextcall = datetime.now()
                 nextcall = nextcall + timedelta(seconds=10)
-                lines = line_ids[:10000]
+                lines = line_ids[:5000]
 
                 cron_vals = {
                     'name': cron_name,
@@ -518,6 +516,7 @@ class ControlAssignedAmounts(models.Model):
                     'code': "model.validate_and_add_budget_line()",
                     'model_id': self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id,
                     'user_id': self.env.user.id,
+                    'control_assigned_id': self.id
                 }
 
                 # Final process
@@ -527,7 +526,7 @@ class ControlAssignedAmounts(models.Model):
                     cron.write({'prev_cron_id': prev_cron_id, 'active': False})
                 line_records = self.env['control.assigned.amounts.lines'].browse(lines)
                 line_records.write({'cron_id': cron.id})
-                del line_ids[:10000]
+                del line_ids[:5000]
                 prev_cron_id = cron.id
 
     def validate(self):

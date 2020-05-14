@@ -180,10 +180,11 @@ class ExpenditureBudget(models.Model):
             cron = False
             if cron_id:
                 cron = self.env['ir.cron'].sudo().browse(int(cron_id))
-                lines_to_execute = self.env['expenditure.budget.line'].search([('cron_id', '=', cron.id)])
+                if cron:
+                    lines_to_execute = self.env['expenditure.budget.line'].search([('cron_id', '=', cron.id)])
 
             for line in lines_to_execute:
-                if counter == 10000:
+                if counter == 5000:
                     break
                 counter += 1
                 line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item, line.dv, line.origin_resource, line.ai, line.conversion_program,
@@ -425,10 +426,10 @@ class ExpenditureBudget(models.Model):
                             if program_code and program_code.state == 'draft':
                                 budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), ('start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
-                                    failed_row += str(line_vals) + \
-                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
-                                    failed_line_ids.append(line.id)
-                                    continue
+                                        failed_row += str(line_vals) + \
+                                            "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
+                                        failed_line_ids.append(line.id)
+                                        continue
 
                         if not program_code:
                             program_vals = {
@@ -451,7 +452,6 @@ class ExpenditureBudget(models.Model):
                             }
                             program_code = self.env['program.code'].sudo().create(
                                 program_vals)
-                            self._cr.commit()
                         if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)
@@ -466,27 +466,26 @@ class ExpenditureBudget(models.Model):
             success_lines = self.env['expenditure.budget.line'].search(
                 [('expenditure_budget_id', '=', self.id), ('id', 'in', success_line_ids)])
             success_lines.write({'state': 'success'})
-            self._cr.commit()
             for l in failed_lines:
                 if l.state == 'draft':
                     l.state = 'fail'
 
             failed_data = False
+            vals = {}
             if failed_row != "":
-                vals = {}
                 content = ""
                 if self.failed_row_file:
                     file_data = base64.b64decode(self.failed_row_file)
                     content += io.StringIO(file_data.decode("utf-8")).read()
+                if cron:
+                    content = ''
                 content += "\n"
                 content += "...................Failed Rows " + \
                     str(datetime.today()) + "...............\n"
                 content += str(failed_row)
                 failed_data = base64.b64encode(content.encode('utf-8'))
                 vals['failed_row_file'] = failed_data
-                self.write(vals)
 
-            self._cr.commit()
             if cron:
                 lines_to_execute.write({'cron_id': False})
                 next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)], limit=1)
@@ -496,11 +495,11 @@ class ExpenditureBudget(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
-                    self._cr.commit()
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'previous'})
                     self.env.user.notify_info(message='Budget ' + str(self.name) + ' Lines Validated. Please verify and correct lines, if any failed!')
-                self._cr.commit()
+            if vals.get('failed_row_file'):
+                self.write(vals)
 
             # if len(failed_line_ids) == 0:
             #     return{
@@ -512,9 +511,9 @@ class ExpenditureBudget(models.Model):
             #     }
 
     def remove_cron_records(self):
-        crons = self.env['ir.cron'].sudo().search([('nextcall_copy', '!=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
+        crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
         for cron in crons:
-            if cron.nextcall_copy and cron.nextcall and cron.nextcall_copy != cron.nextcall:
+            if cron.budget_id and not cron.budget_id.cron_running:
                 try:
                     cron.sudo().unlink()
                 except:
@@ -532,7 +531,7 @@ class ExpenditureBudget(models.Model):
 
     def previous_budget(self):
         # Total CRON to create
-        total_cron = math.ceil(len(self.line_ids.ids) / 10000)
+        total_cron = math.ceil(len(self.line_ids.ids) / 5000)
 
         if total_cron == 1:
             if self.success_rows != self.total_rows:
@@ -550,7 +549,7 @@ class ExpenditureBudget(models.Model):
                 cron_name = str(self.name).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
                 nextcall = datetime.now()
                 nextcall = nextcall + timedelta(seconds=10)
-                lines = line_ids[:10000]
+                lines = line_ids[:5000]
 
                 cron_vals = {
                     'name': cron_name,
@@ -561,6 +560,7 @@ class ExpenditureBudget(models.Model):
                     'code': "model.validate_and_add_budget_line()",
                     'model_id': self.env.ref('jt_budget_mgmt.model_expenditure_budget').id,
                     'user_id': self.env.user.id,
+                    'budget_id': self.id
                 }
 
                 # Final process
@@ -570,7 +570,7 @@ class ExpenditureBudget(models.Model):
                     cron.write({'prev_cron_id': prev_cron_id, 'active': False})
                 line_records = self.env['expenditure.budget.line'].browse(lines)
                 line_records.write({'cron_id': cron.id})
-                del line_ids[:10000]
+                del line_ids[:5000]
                 prev_cron_id = cron.id
 
     def confirm(self):

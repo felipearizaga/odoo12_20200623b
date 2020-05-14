@@ -23,7 +23,7 @@
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
                 <form>
-                    <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
+                    <center><div attrs="{'invisible': [('cron_running', '=', False)]}" class="alert alert-primary" role="alert">
                         Budget Line validation process is in progress. We will notify once validation process done.
                     </div></center>
                     <header>
@@ -73,11 +73,11 @@
                                         <field name="sub_dependency_id" readonly="1"/>
                                         <field name="program_id" readonly="1"/>
                                         <field name="item_id" readonly="1"/>
-                                        <field name="start_date" readonly="1"/>
-                                        <field name="end_date" readonly="1"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
 
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount" readonly="1"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
@@ -93,9 +93,9 @@
                                             <field name="sub_dependency_id" invisible="1"/>
                                             <field name="program_id" invisible="1"/>
                                             <field name="item_id" invisible="1"/>
-                                            <field name="start_date" readonly="1"/>
-                                            <field name="end_date" readonly="1"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" readonly="1"/>
+                                            <field name="start_date"/>
+                                            <field name="end_date"/>
+                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1" attrs="{'readonly': [('imported_sessional', '=', False)]}"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
