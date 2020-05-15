@@ -461,7 +461,9 @@ class ControlAssignedAmounts(models.Model):
                     self.write({'cron_running': False})
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'process'})
-                    self.env.user.notify_info(message='Control of Assigned Amounts ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                    self.user_id.notify_info(message='Control of Assigned Amounts - ' + str(self.folio) +
+                    ' Lines Validation process completed. Please verify and correct lines, if any failed!',
+                                    title='Control of Assigned Amounts', sticky=True)
             if vals:
                 self.write(vals)
 

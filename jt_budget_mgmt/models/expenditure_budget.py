@@ -497,9 +497,12 @@ class ExpenditureBudget(models.Model):
                     self.write({'cron_running': False})
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'previous'})
-                    self.env.user.notify_info(message='Budget ' + str(self.name) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                    self.user_id.notify_info(message='Budget - ' + str(self.name) + ' Lines validation process completed. '
+                                    'Please verify and correct lines, if any failed!',
+                                    title="Budget Line Validation", sticky=True)
             if vals.get('failed_row_file'):
                 self.write(vals)
+
 
             # if len(failed_line_ids) == 0:
             #     return{
@@ -538,7 +541,7 @@ class ExpenditureBudget(models.Model):
                 self.validate_and_add_budget_line()
             total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
             if total_lines == self.total_rows:
-                self.write({'state': 'previous'})
+                self.state = 'previous'
         else:
             self.write({'cron_running': True})
             prev_cron_id = False

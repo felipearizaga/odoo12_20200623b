@@ -152,18 +152,21 @@ class ImportAdequaciesLine(models.TransientModel):
                         counter += 1
                     result_vals.append((0, 0, result_dict))
                 data = result_vals
+
                 if control_amount and control_amount.budget_id:
                     data_dict = {}
                     error_string = ''
-                    for budget_line in control_amount.budget_id.success_line_ids:
-                        if budget_line.program_code_id and budget_line.program_code_id.budget_program_conversion_id:
-                            code = budget_line.program_code_id.budget_program_conversion_id.shcp.name
-                            if code not in data_dict:
-                                data_dict[code] = float(budget_line.assigned)
-                            else:
-                                vals = data_dict[code]
-                                data_dict[code] = vals + \
-                                    float(budget_line.assigned)
+                    if control_amount and control_amount.date:
+                        for budget_line in control_amount.budget_id.success_line_ids:
+                            if budget_line.end_date and budget_line.end_date.month == control_amount.date.month:
+                                if budget_line.program_code_id and budget_line.program_code_id.budget_program_conversion_id:
+                                    code = budget_line.program_code_id.budget_program_conversion_id.shcp.name
+                                    if code not in data_dict:
+                                        data_dict[code] = float(budget_line.assigned)
+                                    else:
+                                        vals = data_dict[code]
+                                        data_dict[code] = vals + \
+                                            float(budget_line.assigned)
                     for key, value in code_amount_dict.items():
                         if key in data_dict and value != data_dict.get(key):
                             diff = data_dict.get(key) - value

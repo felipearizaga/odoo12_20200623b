@@ -490,7 +490,9 @@ class Adequacies(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
-                    self.env.user.notify_info(message='Adequacies - ' + str(self.folio) + ' Lines Validated. Please verify and correct lines, if any failed!')
+                    self.user_id.notify_info(message='Adequacies - ' + str(self.folio) +
+                        ' Lines Validation process completed. Please verify and correct lines, if any failed!',
+                        title="Adequacies", sticky=True)
             if vals:
                 self.write(vals)
 
@@ -521,32 +523,35 @@ class Adequacies(models.Model):
             total_sheet_rows = sheet.nrows - 1
             total_cron = math.ceil(total_sheet_rows / 5000)
 
-            self.write({'cron_running': True})
-            prev_cron_id = False
-            for seq in range(1, total_cron + 1):
-                # Create CRON JOB
-                cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
-                nextcall = datetime.now()
-                nextcall = nextcall + timedelta(seconds=10)
+            if total_cron == 1:
+                self.validate_and_add_budget_line()
+            else:
+                self.write({'cron_running': True})
+                prev_cron_id = False
+                for seq in range(1, total_cron + 1):
+                    # Create CRON JOB
+                    cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
+                    nextcall = datetime.now()
+                    nextcall = nextcall + timedelta(seconds=10)
 
-                cron_vals = {
-                    'name': cron_name,
-                    'state': 'code',
-                    'nextcall': nextcall,
-                    'nextcall_copy': nextcall,
-                    'numbercall': -1,
-                    'code': "model.validate_and_add_budget_line()",
-                    'model_id': self.env.ref('jt_budget_mgmt.model_adequacies').id,
-                    'user_id': self.env.user.id,
-                    'adequacies_id': self.id
-                }
+                    cron_vals = {
+                        'name': cron_name,
+                        'state': 'code',
+                        'nextcall': nextcall,
+                        'nextcall_copy': nextcall,
+                        'numbercall': -1,
+                        'code': "model.validate_and_add_budget_line()",
+                        'model_id': self.env.ref('jt_budget_mgmt.model_adequacies').id,
+                        'user_id': self.env.user.id,
+                        'adequacies_id': self.id
+                    }
 
-                # Final process
-                cron = self.env['ir.cron'].sudo().create(cron_vals)
-                cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
-                if prev_cron_id:
-                    cron.write({'prev_cron_id': prev_cron_id, 'active': False})
-                prev_cron_id = cron.id
+                    # Final process
+                    cron = self.env['ir.cron'].sudo().create(cron_vals)
+                    cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                    if prev_cron_id:
+                        cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+                    prev_cron_id = cron.id
 
     def validate_data(self):
         for adequacies in self:
