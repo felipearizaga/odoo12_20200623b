@@ -488,30 +488,25 @@ class ExpenditureBudget(models.Model):
 
             if cron:
                 lines_to_execute.write({'cron_id': False})
-                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)], limit=1)
+                model_id = self.env.ref('jt_budget_mgmt.model_expenditure_budget').id
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id),
+                                                               ('active', '=', False),
+                                                               ('model_id', '=', model_id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
                     nextcall = nextcall + timedelta(seconds=10)
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
+                    self.user_id.notify_info(
+                        message='Budget - ' + str(self.name) + ' Lines validation process completed. \
+                                                               Please verify and correct lines, if any failed!',
+                        title="Budget Line Validation", sticky=True)
                     self.write({'cron_running': False})
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'previous'})
-                    self.user_id.notify_info(message='Budget - ' + str(self.name) + ' Lines validation process completed. '
-                                    'Please verify and correct lines, if any failed!',
-                                    title="Budget Line Validation", sticky=True)
+
             if vals.get('failed_row_file'):
                 self.write(vals)
-
-
-            # if len(failed_line_ids) == 0:
-            #     return{
-            #         'effect': {
-            #             'fadeout': 'slow',
-            #             'message': 'All rows are imported successfully!',
-            #             'type': 'rainbow_man',
-            #         }
-            #     }
 
     def remove_cron_records(self):
         crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
