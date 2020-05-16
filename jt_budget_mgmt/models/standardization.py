@@ -580,7 +580,7 @@ class Standardization(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
-                    self.user_id.notify_info(message='Standardization - ' + str(self.folio) +
+                    self.create_uid.notify_info(message='Standardization - ' + str(self.folio) +
                         ' Lines validation process completed. Please verify and correct lines, if any failed!',
                         title="Re-standardization", sticky=True)
             if vals:

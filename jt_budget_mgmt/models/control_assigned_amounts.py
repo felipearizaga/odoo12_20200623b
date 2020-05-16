@@ -40,6 +40,7 @@ class ControlAssignedAmounts(models.Model):
             record.import_record_number = len(
                 record.success_line_ids.filtered(lambda l: l.imported == True))
 
+    name = fields.Char(string="Name")
     cron_running = fields.Boolean(string='Running CRON?')
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')

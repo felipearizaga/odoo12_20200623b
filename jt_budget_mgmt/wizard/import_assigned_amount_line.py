@@ -34,6 +34,7 @@ class ImportAssignedAmountLine(models.TransientModel):
     _name = 'import.assigned.amount.line'
     _description = 'Import Assigned Amount Line'
 
+    name = fields.Char(string='Name')
     folio = fields.Char(string='Folio')
     file = fields.Binary(string='File')
     filename = fields.Char(string='File name')
@@ -48,6 +49,8 @@ class ImportAssignedAmountLine(models.TransientModel):
             self._context.get('active_id'))
         if assigned_amount and assigned_amount.folio:
             res['folio'] = assigned_amount.folio
+        if assigned_amount and assigned_amount.name:
+            res['name'] = assigned_amount.name
         return res
 
     @api.constrains('folio')

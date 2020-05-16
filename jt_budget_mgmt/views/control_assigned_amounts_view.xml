@@ -7,6 +7,7 @@
             <field name="model">control.assigned.amounts</field>
             <field name="arch" type="xml">
                 <search string="Control of Assigned Amounts">
+                    <field name="name"/>
                     <field name="folio"/>
                     <group expand="1" string="Group By">
                         <filter string="Folio" name='folio' context="{'group_by':'folio'}"/>
@@ -37,6 +38,7 @@
                         <group>
                             <group>
                                 <field name="cron_running" invisible="1"/>
+                                <field name="name" required="1"/>
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
@@ -251,6 +253,7 @@
             <field name="model">control.assigned.amounts</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="name"/>
                     <field name="folio"/>
                     <field name="budget_id"/>
                     <field name="import_date"/>
