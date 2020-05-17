@@ -26,7 +26,7 @@
             <field name="arch" type="xml">
                 <form>
                     <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
-                        Control of Assigned Amounts Lines validation process is in progress. We will notify once validation process done.
+                        Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
                     <header>
                         <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
@@ -37,7 +37,7 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="cron_running" invisible="1"/>
+
                                 <field name="name" required="1"/>
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
@@ -232,6 +232,8 @@
                             </page>
                             <page string='Import Status'>
                                 <group>
+                                    <field name="cron_running" readonly="1" widget="boolean_toggle"
+                                           string="Data validation Status"/>
                                     <field name="import_status" readonly="1" invisible="1"/>
                                     <field name="total_rows" string="Total Rows"/>
                                     <field name="draft_rows" string="Rows To Validate" invisible="1"/>

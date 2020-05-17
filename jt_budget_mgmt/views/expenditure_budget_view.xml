@@ -24,7 +24,7 @@
             <field name="arch" type="xml">
                 <form>
                     <center><div attrs="{'invisible': [('cron_running', '=', False)]}" class="alert alert-primary" role="alert">
-                        Budget Line validation process is in progress. We will notify once validation process done.
+                        Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
                     <header>
                         <button name="previous_budget" type="object" string="Previous budget" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
@@ -42,7 +42,6 @@
                         </div>
                         <group>
                             <group>
-                                <field name="cron_running" invisible="1"/>
                                 <field name="user_id" readonly="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
                                 <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', '|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous')), ('cron_running', '=', True)]}" context="{'reimport': True}"/>
@@ -218,6 +217,8 @@
                             </page>
                             <page string='Import Status'>
                                 <group>
+                                    <field name="cron_running" widget="boolean_toggle"
+                                           string="Data validation Status"/>
                                     <field name="import_status" readonly="1" invisible="1"/>
                                     <field name="total_rows" string="Total Rows"/>
                                     <field name="draft_rows" string="Rows To Validate" invisible="1"/>

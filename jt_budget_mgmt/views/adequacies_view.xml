@@ -22,7 +22,7 @@
             <field name="arch" type="xml">
                 <form>
                      <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
-                        Adequacies Lines validation process is in progress. We will notify once validation process done.
+                        Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
                     <header>
                         <button name="validate_draft_lines" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'in_progress'), ('cron_running', '=', True)]}"/>
@@ -36,7 +36,6 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="cron_running" invisible="1"/>
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
                                 <field name="adaptation_type" required="1"/>
@@ -76,6 +75,8 @@
                             </page>
                             <page string='Import Status' attrs="{'invisible': [('allow_upload', '=', False), ('budget_file', '=', False)]}">
                                 <group>
+                                    <field name="cron_running" readonly="1" widget="boolean_toggle"
+                                           string="Data validation Status"/>
                                     <field name="allow_upload" invisible="1"/>
                                     <field name="budget_file" filename="filename"/>
                                     <field name="filename" invisible="1"/>
