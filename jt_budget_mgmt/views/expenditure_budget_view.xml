@@ -217,7 +217,7 @@
                             </page>
                             <page string='Import Status'>
                                 <group>
-                                    <field name="cron_running" widget="boolean_toggle"
+                                    <field name="cron_running" readonly="1" widget="boolean_toggle"
                                            string="Data validation Status"/>
                                     <field name="import_status" readonly="1" invisible="1"/>
                                     <field name="total_rows" string="Total Rows"/>
