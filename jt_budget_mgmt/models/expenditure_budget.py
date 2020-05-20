@@ -148,6 +148,25 @@ class ExpenditureBudget(models.Model):
             'context': ctx,
         }
 
+    def send_notification_msg(self, user):
+        ch_obj = self.env['mail.channel']
+        base_user = self.env.ref('base.user_root')
+        body = 'Budget Validation Process is Completed for %s' % self.name
+        if user:
+            ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name))], limit=1)
+            print ("Channel name ", ch)
+            if not ch:
+                ch = ch_obj.create({
+                    'name': 'OdooBot, ' + user.name,
+                    'public': 'private',
+                    'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
+                                                              'partner_email': user.partner_id.email}),]
+                })
+            ch.message_post(attachment_ids=[], body=body, content_subtype='html',
+                    message_type='comment', partner_ids=[], subtype='mail.mt_comment',
+                    email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
+        return True
+
     def validate_and_add_budget_line(self, record_id=False, cron_id=False):
         if record_id:
             self = self.env['expenditure.budget'].browse(int(record_id))
@@ -497,6 +516,7 @@ class ExpenditureBudget(models.Model):
                     nextcall = nextcall + timedelta(seconds=10)
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
+                    self.send_notification_msg(self.user_id)
                     self.user_id.notify_info(
                         message='Budget - ' + str(self.name) + ' Lines validation process completed. \
                                                                Please verify and correct lines, if any failed!',
