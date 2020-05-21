@@ -35,10 +35,12 @@
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
-                            <button class="oe_stat_button" name="show_imported_lines" type="object" icon="fa-bars">
+                            <button class="oe_stat_button" name="show_imported_lines" type="object" icon="fa-bars"
+                                attrs="{'invisible': [('line_ids', '=', [])]}">
                                 <field name="imported_lines_count" widget="statinfo" string="Imported Lines"/>
                             </button>
-                            <button class="oe_stat_button" name="show_success_lines" type="object" icon="fa-bars">
+                            <button class="oe_stat_button" name="show_success_lines" type="object" icon="fa-bars"
+                                attrs="{'invisible': [('success_line_ids', '=', [])]}">
                                 <field name="success_lines_count" widget="statinfo" string="Success Lines"/>
                             </button>
                         </div>
@@ -73,8 +75,9 @@
                             <page string="Success Budget Lines" attrs="{'invisible': [('success_line_ids', '=', [])]}">
                                 <field name="success_line_ids">
                                     <tree decoration-success="state == 'success'" create="false"
-                                          delete="false" edit="true" limit="1000">
+                                          delete="false" edit="true" limit="80">
                                         <!-- Hidden fields -->
+                                        <field name="imported" invisible="1"/>
                                         <field name="imported" invisible="1"/>
                                         <field name="imported_sessional" invisible="1"/>
                                         <field name="state" invisible="1"/>

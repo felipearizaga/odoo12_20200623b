@@ -26,7 +26,7 @@ import math
 from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 class ExpenditureBudget(models.Model):
 
@@ -181,19 +181,29 @@ class ExpenditureBudget(models.Model):
             'context': ctx,
         }
 
-    def send_notification_msg(self, user):
+    def send_notification_msg(self, user, failed, successed):
         ch_obj = self.env['mail.channel']
         base_user = self.env.ref('base.user_root')
-        body = 'Budget Validation Process is Completed for %s' % self.name
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url = base_url + '/web#id=%s&view_type=form&model=expenditure.budget' % (self.id)
+        body = (_("Budget Validation Process is Completed for \
+                    <a href='%s' target='new'>%s</a>" % (url, self.name)))
+        body += (_("<ul><li>Total Successed Lines: %s </li>\
+            <li>Total Failed Lines: %s </li></ul>") % (str(successed), str(failed)))
         if user:
-            ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name))], limit=1)
+            ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name)),
+                                       ('channel_type', '=', 'chat')], limit=1)
             print("Channel name ", ch)
             if not ch:
                 ch = ch_obj.create({
                     'name': 'OdooBot, ' + user.name,
                     'public': 'private',
+                    'channel_type': 'chat',
                     'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
-                                                              'partner_email': user.partner_id.email}), ]
+                                                              'partner_email': user.partner_id.email}),
+                                                      (0, 0, {'partner_id': base_user.partner_id.id,
+                                                              'partner_email': base_user.partner_id.email})
+                                                      ]
                 })
             ch.message_post(attachment_ids=[], body=body, content_subtype='html',
                             message_type='comment', partner_ids=[], subtype='mail.mt_comment',
@@ -553,7 +563,12 @@ class ExpenditureBudget(models.Model):
                     nextcall = nextcall + timedelta(seconds=10)
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
-                    self.send_notification_msg(self.user_id)
+                    failed_count = sucess_count = 0
+                    if self.line_ids:
+                        failed_count = len(self.line_ids.ids)
+                    if self.success_line_ids:
+                        sucess_count = len(self.success_line_ids)
+                    self.send_notification_msg(self.user_id, failed_count, sucess_count)
                     self.user_id.notify_info(
                         message='Budget - ' + str(self.name) + ' Lines validation process completed. \
                                                                Please verify and correct lines, if any failed!',
@@ -561,9 +576,14 @@ class ExpenditureBudget(models.Model):
                     self.write({'cron_running': False})
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'previous'})
+                    msg = (_("Budget Validation Process Ended at %s" % datetime.strftime(
+                    datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+                    self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
+                                                     'body': msg})
 
             if vals.get('failed_row_file'):
                 self.write(vals)
+
 
     def remove_cron_records(self):
         crons = self.env['ir.cron'].sudo().search(
@@ -587,6 +607,10 @@ class ExpenditureBudget(models.Model):
 
     def previous_budget(self):
         # Total CRON to create
+        msg = (_("Budget Validation Process Started at %s" % datetime.strftime(
+            datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+        self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
+                             'body': msg})
         total_cron = math.ceil(len(self.line_ids.ids) / 5000)
 
         if total_cron == 1:
@@ -596,6 +620,10 @@ class ExpenditureBudget(models.Model):
                 lambda l: l.state == 'success'))
             if total_lines == self.total_rows:
                 self.state = 'previous'
+            msg = (_("Budget Validation Process Ended at %s" % datetime.strftime(
+                datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+            self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
+                                             'body': msg})
         else:
             self.write({'cron_running': True})
             prev_cron_id = False
@@ -664,6 +692,7 @@ class ExpenditureBudget(models.Model):
     def show_imported_lines(self):
         action = self.env.ref(
             'jt_budget_mgmt.action_expenditure_budget_imported_line').read()[0]
+        action['limit'] = 5000
         action['domain'] = [('id', 'in', self.line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
             'jt_budget_mgmt.expenditure_budget_imported_line_search_view').id, )
@@ -672,6 +701,7 @@ class ExpenditureBudget(models.Model):
     def show_success_lines(self):
         action = self.env.ref(
             'jt_budget_mgmt.action_expenditure_budget_success_line').read()[0]
+        action['limit'] = 5000
         action['domain'] = [('id', 'in', self.success_line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
             'jt_budget_mgmt.expenditure_budget_success_line_search_view').id, )

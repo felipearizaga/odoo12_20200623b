@@ -26,6 +26,7 @@ import math
 from datetime import datetime, timedelta
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class ControlAssignedAmounts(models.Model):
@@ -463,9 +464,19 @@ class ControlAssignedAmounts(models.Model):
                     self.write({'cron_running': False})
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'process'})
+                    failed_count = success_count = 0
+                    if self.success_line_ids:
+                        success_count = len(self.success_line_ids)
+                    if self.line_ids:
+                        failed_count = len(self.line_ids)
+                    self.send_notification_msg(self.user_id, failed_count, success_count)
                     self.user_id.notify_info(message='Control of Assigned Amounts - ' + str(self.folio) +
                     ' Lines Validation process completed. Please verify and correct lines, if any failed!',
                                     title='Control of Assigned Amounts', sticky=True)
+                    msg = (_("Control of Assigned Amounts Validation Process Ended at %s" % datetime.strftime(
+                        datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+                    self.env['mail.message'].create({'model': 'control.assigned.amounts', 'res_id': self.id,
+                                                     'body': msg})
             if vals:
                 self.write(vals)
 
@@ -477,6 +488,34 @@ class ControlAssignedAmounts(models.Model):
             #             'type': 'rainbow_man',
             #         }
             #     }
+
+    def send_notification_msg(self, user, failed, successed):
+        ch_obj = self.env['mail.channel']
+        base_user = self.env.ref('base.user_root')
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url = base_url + '/web#id=%s&view_type=form&model=control.assigned.amounts' % (self.id)
+        body = (_("Control of Assigned Amounts Validation Process is Completed for \
+                       <a href='%s' target='new'>%s</a>" % (url, self.name)))
+        body += (_("<ul><li>Total Successed Lines: %s </li>\
+               <li>Total Failed Lines: %s </li></ul>") % (str(successed), str(failed)))
+        if user:
+            ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name)),
+                                       ('channel_type', '=', 'chat')], limit=1)
+            if not ch:
+                ch = ch_obj.create({
+                    'name': 'OdooBot, ' + user.name,
+                    'public': 'private',
+                    'channel_type': 'chat',
+                    'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
+                                                              'partner_email': user.partner_id.email}),
+                                                      (0, 0, {'partner_id': base_user.partner_id.id,
+                                                              'partner_email': base_user.partner_id.email})
+                                                      ]
+                })
+            ch.message_post(attachment_ids=[], body=body, content_subtype='html',
+                            message_type='comment', partner_ids=[], subtype='mail.mt_comment',
+                            email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
+        return True
 
     def remove_cron_records(self):
         crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)])
@@ -490,7 +529,10 @@ class ControlAssignedAmounts(models.Model):
     def confirm(self):
         # Total CRON to create
         total_cron = math.ceil(len(self.line_ids.ids) / 5000)
-
+        msg = (_("Control of Assigned Amounts Validation Process Started at %s" % datetime.strftime(
+            datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+        self.env['mail.message'].create({'model': 'control.assigned.amounts', 'res_id': self.id,
+                                         'body': msg})
         if total_cron == 1:
             if self.success_rows != self.total_rows:
                 self.validate_and_add_budget_line()
@@ -499,6 +541,10 @@ class ControlAssignedAmounts(models.Model):
             if total_lines == self.total_rows:
                 self.import_date = datetime.today().date()
                 self.state = 'process'
+            msg = (_("Control of Assigned Amounts Validation Process Ended at %s" % datetime.strftime(
+                datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+            self.env['mail.message'].create({'model': 'control.assigned.amounts', 'res_id': self.id,
+                                             'body': msg})
         else:
             self.write({'cron_running': True})
             prev_cron_id = False

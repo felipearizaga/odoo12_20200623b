@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 from xlrd import open_workbook
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 class Standardization(models.Model):
 
@@ -581,9 +581,18 @@ class Standardization(models.Model):
                     next_cron.write({'nextcall': nextcall, 'active': True})
                 else:
                     self.write({'cron_running': False})
+                    failed_count = success_count = 0
+                    if self.line_ids:
+                        success_count = len(self.line_ids)
+                    failed_count = self.total_rows - success_count
+                    self.send_notification_msg(self.create_uid, failed_count, success_count)
                     self.create_uid.notify_info(message='Standardization - ' + str(self.folio) +
                         ' Lines validation process completed. Please verify and correct lines, if any failed!',
                         title="Re-standardization", sticky=True)
+                    msg = (_("Re-standardization Validation Process Ended at %s" % datetime.strftime(
+                        datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+                    self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
+                                                     'body': msg})
             if vals:
                 self.write(vals)
 
@@ -605,6 +614,34 @@ class Standardization(models.Model):
                 except:
                     pass
 
+    def send_notification_msg(self, user, failed, successed):
+        ch_obj = self.env['mail.channel']
+        base_user = self.env.ref('base.user_root')
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url = base_url + '/web#id=%s&view_type=form&model=standardization' % (self.id)
+        body = (_("Re-standardization Validation Process is Completed for \
+                    <a href='%s' target='new'>%s</a>" % (url, self.folio)))
+        body += (_("<ul><li>Total Successed Lines: %s </li>\
+            <li>Total Failed Lines: %s </li></ul>") % (str(successed), str(failed)))
+        if user:
+            ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name)),
+                                       ('channel_type', '=', 'chat')], limit=1)
+            if not ch:
+                ch = ch_obj.create({
+                    'name': 'OdooBot, ' + user.name,
+                    'public': 'private',
+                    'channel_type': 'chat',
+                    'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
+                                                              'partner_email': user.partner_id.email}),
+                                                      (0, 0, {'partner_id': base_user.partner_id.id,
+                                                              'partner_email': base_user.partner_id.email})
+                                                      ]
+                })
+            ch.message_post(attachment_ids=[], body=body, content_subtype='html',
+                            message_type='comment', partner_ids=[], subtype='mail.mt_comment',
+                            email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
+        return True
+
     def validate_draft_lines(self):
         if self.budget_file:
             # Total CRON to create
@@ -613,9 +650,16 @@ class Standardization(models.Model):
             sheet = book.sheet_by_index(0)
             total_sheet_rows = sheet.nrows - 1
             total_cron = math.ceil(total_sheet_rows / 5000)
-
+            msg = (_("Re-standardization Validation Process Started at %s" % datetime.strftime(
+                datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+            self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
+                                             'body': msg})
             if total_cron == 1:
                 self.validate_and_add_budget_line()
+                msg = (_("Re-standardization Validation Process Ended at %s" % datetime.strftime(
+                    datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+                self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
+                                                 'body': msg})
             else:
                 self.write({'cron_running': True})
                 prev_cron_id = False
