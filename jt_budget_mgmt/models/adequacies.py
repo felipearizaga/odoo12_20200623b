@@ -32,6 +32,7 @@ from odoo.exceptions import ValidationError
 class Adequacies(models.Model):
 
     _name = 'adequacies'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Adequacies'
     _rec_name = 'folio'
 
@@ -62,9 +63,9 @@ class Adequacies(models.Model):
         string='Total Decreased Amount', compute="_compute_total_amounts")
 
     folio = fields.Char(string='Folio', states={
-        'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+        'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     budget_id = fields.Many2one('expenditure.budget', string='Budget', states={
-                                'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+                                'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     reason = fields.Text(string='Reason for rejection')
     cron_running = fields.Boolean(string='Running CRON?')
 
@@ -79,10 +80,10 @@ class Adequacies(models.Model):
          ('accepted', 'Accepted'), ('rejected', 'Rejected')],
         default='draft', required=True, string='State')
 
-    observation = fields.Text(string='Observation')
+    observation = fields.Text(string='Observation', tracking=True)
     adaptation_type = fields.Selection(
         [('compensated', 'Compensated Adjustments'), ('liquid', 'Liquid Adjustments')], default='compensated', states={
-            'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+            'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     adequacies_lines_ids = fields.One2many(
         'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
 

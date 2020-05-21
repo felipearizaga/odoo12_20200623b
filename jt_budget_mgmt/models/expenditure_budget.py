@@ -56,9 +56,9 @@ class ExpenditureBudget(models.Model):
 
     # Date Periods
     from_date = fields.Date(string='From', states={
-                            'validate': [('readonly', True)]})
+                            'validate': [('readonly', True)]}, tracking=True)
     to_date = fields.Date(string='To', states={
-                          'validate': [('readonly', True)]})
+                          'validate': [('readonly', True)]}, tracking=True)
 
     def _compute_total_budget(self):
         for budget in self:
@@ -83,6 +83,34 @@ class ExpenditureBudget(models.Model):
     total_quarter_budget = fields.Float(
         string='Total 1st Quarter', tracking=True, compute="_compute_total_quarter_budget")
 
+
+    def _get_imported_lines_count(self):
+        for record in self:
+            record.imported_lines_count = len(record.line_ids)
+            record.success_lines_count = len(record.success_line_ids)
+
+    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available')
+    def _compute_amt_total(self):
+        """
+        This function will count the total of all success rows
+        :return:
+        """
+        for budget in self:
+            assigned_total = 0
+            authorised_total = 0
+            available_total = 0
+            for line in budget.success_line_ids:
+                assigned_total += line.assigned
+                authorised_total += line.authorized
+                available_total += line.available
+
+            budget.assigned_total = assigned_total
+            budget.authorised_total = authorised_total
+            budget.available_total = available_total
+
+    assigned_total = fields.Float("Assigned Total", tracking=True, compute="_compute_amt_total", store=True)
+    authorised_total = fields.Float("Authorised Total", tracking=True, compute="_compute_amt_total", store=True)
+    available_total = fields.Float("Available Total", tracking=True, compute="_compute_amt_total", store=True)
     # Budget Lines
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
@@ -97,6 +125,11 @@ class ExpenditureBudget(models.Model):
         ('confirm', 'Confirm'),
         ('validate', 'Validate'),
         ('done', 'Done')], default='draft', required=True, string='State', tracking=True)
+
+    imported_lines_count = fields.Integer(
+        string='Imported Lines', compute='_get_imported_lines_count')
+    success_lines_count = fields.Integer(
+        string='Success Lines', compute='_get_imported_lines_count')
 
     def _compute_total_rows(self):
         for budget in self:
@@ -154,17 +187,17 @@ class ExpenditureBudget(models.Model):
         body = 'Budget Validation Process is Completed for %s' % self.name
         if user:
             ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name))], limit=1)
-            print ("Channel name ", ch)
+            print("Channel name ", ch)
             if not ch:
                 ch = ch_obj.create({
                     'name': 'OdooBot, ' + user.name,
                     'public': 'private',
                     'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
-                                                              'partner_email': user.partner_id.email}),]
+                                                              'partner_email': user.partner_id.email}), ]
                 })
             ch.message_post(attachment_ids=[], body=body, content_subtype='html',
-                    message_type='comment', partner_ids=[], subtype='mail.mt_comment',
-                    email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
+                            message_type='comment', partner_ids=[], subtype='mail.mt_comment',
+                            email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
         return True
 
     def validate_and_add_budget_line(self, record_id=False, cron_id=False):
@@ -200,7 +233,8 @@ class ExpenditureBudget(models.Model):
             if cron_id:
                 cron = self.env['ir.cron'].sudo().browse(int(cron_id))
                 if cron:
-                    lines_to_execute = self.env['expenditure.budget.line'].search([('cron_id', '=', cron.id)])
+                    lines_to_execute = self.env['expenditure.budget.line'].search(
+                        [('cron_id', '=', cron.id)])
 
             for line in lines_to_execute:
                 if counter == 5000:
@@ -443,12 +477,13 @@ class ExpenditureBudget(models.Model):
                                 failed_line_ids.append(line.id)
                                 continue
                             if program_code and program_code.state == 'draft':
-                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), ('start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
+                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), (
+                                    'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
-                                        failed_row += str(line_vals) + \
-                                            "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
-                                        failed_line_ids.append(line.id)
-                                        continue
+                                    failed_row += str(line_vals) + \
+                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
+                                    failed_line_ids.append(line.id)
+                                    continue
 
                         if not program_code:
                             program_vals = {
@@ -507,9 +542,11 @@ class ExpenditureBudget(models.Model):
 
             if cron:
                 lines_to_execute.write({'cron_id': False})
-                model_id = self.env.ref('jt_budget_mgmt.model_expenditure_budget').id
+                model_id = self.env.ref(
+                    'jt_budget_mgmt.model_expenditure_budget').id
                 next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id),
-                                                               ('active', '=', False),
+                                                               ('active',
+                                                                '=', False),
                                                                ('model_id', '=', model_id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
@@ -529,7 +566,8 @@ class ExpenditureBudget(models.Model):
                 self.write(vals)
 
     def remove_cron_records(self):
-        crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
+        crons = self.env['ir.cron'].sudo().search(
+            [('model_id', '=', self.env.ref('jt_budget_mgmt.model_expenditure_budget').id)])
         for cron in crons:
             if cron.budget_id and not cron.budget_id.cron_running:
                 try:
@@ -554,7 +592,8 @@ class ExpenditureBudget(models.Model):
         if total_cron == 1:
             if self.success_rows != self.total_rows:
                 self.validate_and_add_budget_line()
-            total_lines = len(self.success_line_ids.filtered(lambda l: l.state == 'success'))
+            total_lines = len(self.success_line_ids.filtered(
+                lambda l: l.state == 'success'))
             if total_lines == self.total_rows:
                 self.state = 'previous'
         else:
@@ -564,7 +603,8 @@ class ExpenditureBudget(models.Model):
             for seq in range(1, total_cron + 1):
 
                 # Create CRON JOB
-                cron_name = str(self.name).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
+                cron_name = str(self.name).replace(' ', '') + \
+                    "_" + str(datetime.now()).replace(' ', '')
                 nextcall = datetime.now()
                 nextcall = nextcall + timedelta(seconds=10)
                 lines = line_ids[:5000]
@@ -583,10 +623,12 @@ class ExpenditureBudget(models.Model):
 
                 # Final process
                 cron = self.env['ir.cron'].sudo().create(cron_vals)
-                cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                cron.write({'code': "model.validate_and_add_budget_line(" +
+                            str(self.id) + "," + str(cron.id) + ")"})
                 if prev_cron_id:
                     cron.write({'prev_cron_id': prev_cron_id, 'active': False})
-                line_records = self.env['expenditure.budget.line'].browse(lines)
+                line_records = self.env['expenditure.budget.line'].browse(
+                    lines)
                 line_records.write({'cron_id': cron.id})
                 del line_ids[:5000]
                 prev_cron_id = cron.id
@@ -618,6 +660,22 @@ class ExpenditureBudget(models.Model):
                     raise ValidationError(
                         'You can not delete processed budget!')
         return super(ExpenditureBudget, self).unlink()
+
+    def show_imported_lines(self):
+        action = self.env.ref(
+            'jt_budget_mgmt.action_expenditure_budget_imported_line').read()[0]
+        action['domain'] = [('id', 'in', self.line_ids.ids)]
+        action['search_view_id'] = (self.env.ref(
+            'jt_budget_mgmt.expenditure_budget_imported_line_search_view').id, )
+        return action
+
+    def show_success_lines(self):
+        action = self.env.ref(
+            'jt_budget_mgmt.action_expenditure_budget_success_line').read()[0]
+        action['domain'] = [('id', 'in', self.success_line_ids.ids)]
+        action['search_view_id'] = (self.env.ref(
+            'jt_budget_mgmt.expenditure_budget_success_line_search_view').id, )
+        return action
 
 
 class ExpenditureBudgetLine(models.Model):
@@ -665,7 +723,7 @@ class ExpenditureBudgetLine(models.Model):
     dependency = fields.Char(string='Dependency')
     subdependency = fields.Char(string='Sub-Dependency')
     item = fields.Char(string='Expense Item')
-    dv = fields.Char(string='Digit Varification')
+    dv = fields.Char(string='Digit Verification')
     origin_resource = fields.Char(string='Origin Resource')
     ai = fields.Char(string='Institutional Activity')
     conversion_program = fields.Char(string='Conversion Program')

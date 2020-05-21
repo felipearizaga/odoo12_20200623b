@@ -32,6 +32,7 @@ from odoo.exceptions import ValidationError
 class Standardization(models.Model):
 
     _name = 'standardization'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Re-standardization'
     _rec_name = 'folio'
 
@@ -54,12 +55,12 @@ class Standardization(models.Model):
 
     cron_running = fields.Boolean(string='Running CRON?')
     folio = fields.Char(string='Folio', states={
-        'confirmed': [('readonly', True)], 'cancelled': [('readonly', True)]})
+        'confirmed': [('readonly', True)], 'cancelled': [('readonly', True)]}, tracking=True)
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     imported_record_number = fields.Integer(
         string='Number of imported records', compute='_get_count')
-    observations = fields.Text(string='Observations')
+    observations = fields.Text(string='Observations', tracking=True)
     select_box = fields.Boolean(string='Select Box')
     line_ids = fields.One2many(
         'standardization.line', 'standardization_id', string='Standardization lines', states={'cancelled': [('readonly', True)]})

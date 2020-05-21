@@ -31,6 +31,7 @@ from odoo import models, fields, api, _
 class ControlAssignedAmounts(models.Model):
 
     _name = 'control.assigned.amounts'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Control of Assigned Amounts'
     _rec_name = 'folio'
 
@@ -40,7 +41,7 @@ class ControlAssignedAmounts(models.Model):
             record.import_record_number = len(
                 record.success_line_ids.filtered(lambda l: l.imported == True))
 
-    name = fields.Char(string="Name")
+    name = fields.Char(string="Name", tracking=True)
     cron_running = fields.Boolean(string='Running CRON?')
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
@@ -48,14 +49,14 @@ class ControlAssignedAmounts(models.Model):
         string='Number of imported records', readonly=True, compute='_get_count')
 
     folio = fields.Char(string='Folio', states={'validated': [('readonly', True)], 'rejected': [
-                        ('readonly', True)], 'canceled': [('readonly', True)]})
+                        ('readonly', True)], 'canceled': [('readonly', True)]}, tracking=True)
     budget_id = fields.Many2one('expenditure.budget', string='Budget', states={'validated': [(
-        'readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
+        'readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]}, tracking=True)
     user_id = fields.Many2one(
         'res.users', string='Made by', default=lambda self: self.env.user, tracking=True)
     import_date = fields.Date(string='Import date', states={'validated': [(
         'readonly', True)], 'rejected': [('readonly', True)], 'canceled': [('readonly', True)]})
-    observations = fields.Text(string='Observations')
+    observations = fields.Text(string='Observations', tracking=True)
     state = fields.Selection([('draft', 'Draft'), ('process', 'In process'),
                               ('validated', 'Validated'),
                               ('rejected', 'Rejected'),
