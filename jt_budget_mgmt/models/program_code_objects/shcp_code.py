@@ -43,3 +43,11 @@ class SHCPCode(models.Model):
                 if not (re.match("[A-Z]{1}\d{3}", str(self.name).upper())):
                     raise UserError(
                         _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))
+
+    def unlink(self):
+        for code in self:
+            conpp = self.env['budget.program.conversion'].search([('shcp', '=', code.id)], limit=1)
+            if conpp:
+                raise ValidationError(_('You can not delete SHCP Program Code which are mapped with'
+                                        ' Budget Program Conversion (CONPP)!'))
+        return super(Program, self).unlink()

@@ -100,7 +100,7 @@ class ImportAssignedAmountLine(models.TransientModel):
                         headers.append(cell.value)
 
                 field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv', 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
-                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'authorized', 'start_date', 'end_date']
+                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'start_date', 'end_date']
 
                 result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):

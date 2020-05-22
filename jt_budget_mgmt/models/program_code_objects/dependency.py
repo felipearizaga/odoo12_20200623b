@@ -58,7 +58,10 @@ class Dependency(models.Model):
         for dependency in self:
             program_code = self.env['program.code'].search([('dependency_id', '=', dependency.id)], limit=1)
             if program_code:
-                raise ValidationError('You can not delete dependency which are mapped with program code!')
+                raise ValidationError(_('You can not delete dependency which are mapped with program code!'))
+            sub_dependancy = self.env['sub.dependency'].search([('dependency_id', '=', dependency.id)], limit=1)
+            if sub_dependancy:
+                raise ValidationError(_('You can not delete Dependency which are mapped with Sub Dependancy!'))
         return super(Dependency, self).unlink()
 
     def validate_dependency(self, dependency_string):

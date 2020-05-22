@@ -59,7 +59,14 @@ class Program(models.Model):
         for program in self:
             program_code = self.env['program.code'].search([('program_id', '=', program.id)], limit=1)
             if program_code:
-                raise ValidationError('You can not delete program which are mapped with program code!')
+                raise ValidationError(_('You can not delete program which are mapped with program code!'))
+            sub_program = self.env['sub.program'].search([('unam_key_id', '=', program.id)], limit=1)
+            if sub_program:
+                raise ValidationError(_('You can not delete Program which are mapped with Sub Program!'))
+            conpp = self.env['budget.program.conversion'].search([('unam_key_id', '=', program.id)], limit=1)
+            if conpp    :
+                raise ValidationError(_('You can not delete Program which are mapped with Budget Program Conversion '
+                                        '(CONPP)!'))
         return super(Program, self).unlink()
 
     def validate_program(self, program_string):

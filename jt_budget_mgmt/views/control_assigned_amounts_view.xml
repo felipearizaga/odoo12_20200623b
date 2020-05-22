@@ -66,7 +66,7 @@
                                         <field name="start_date"/>
                                         <field name="end_date"/>
 
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
+<!--                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>-->
                                         <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount"/>
                                     </tree>
@@ -79,7 +79,7 @@
                                             <field name="program_code_id" readonly="1"/>
                                             <field name="start_date"/>
                                             <field name="end_date"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+<!--                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>-->
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="assigned_amount_id" invisible="1"/>
@@ -112,7 +112,8 @@
                                 </field>
                             </page>
                             <page string="Imported Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'process'])]}">
-                                <field name="line_ids" attrs="{'readonly': [('cron_running', '=', True)]}">
+                                <field name="line_ids" attrs="{'readonly': [('cron_running', '=', True)]}"
+                                    context="{'default_budget_id': budget_id}">
                                     <tree decoration-danger="state == 'fail'">
                                         <!-- Hidden fields -->
                                         <field name="imported" invisible="1"/>
@@ -146,7 +147,7 @@
                                         <field name="agreement_number" invisible="1"/>
                                         <field name="exercise_type" invisible="1"/>
 
-                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>
+<!--                                        <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Authorized Amount"/>-->
                                         <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Assigned Amount"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Available Amount" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
@@ -156,11 +157,13 @@
                                             <!-- Hidden Fields -->
                                             <field name="imported" invisible="1"/>
                                             <field name="state" invisible="1"/>
-
-                                            <field name="program_code_id" attrs="{'readonly': [('imported', '=', True)], 'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
+                                            <field name="program_code_id" domain="[('budget_id', '=', budget_id)]"
+                                               attrs="{'readonly': [('imported', '=', True)],
+                                               'invisible': ['|', ('state', 'in', ('draft', 'fail'))]}"/>
+                                            <field name="budget_id" invisible="1"/>
                                             <field name="start_date"/>
                                             <field name="end_date"/>
-                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+<!--                                            <field name="authorized" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>-->
                                             <field name="assigned" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                             <field name="currency_id" invisible="1"/>

@@ -159,8 +159,11 @@ class ControlAssignedAmounts(models.Model):
                 if counter == 5000:
                     break
                 counter += 1
-                line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item, line.dv, line.origin_resource, line.ai, line.conversion_program,
-                             line.departure_conversion, line.expense_type, line.location, line.portfolio, line.project_type, line.project_number, line.stage, line.agreement_type, line.agreement_number, line.exercise_type]
+                line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item,
+                             line.dv, line.origin_resource, line.ai, line.conversion_program,
+                             line.departure_conversion, line.expense_type, line.location, line.portfolio,
+                             line.project_type, line.project_number, line.stage, line.agreement_type,
+                             line.agreement_number, line.exercise_type]
 
                 if line.state != 'success':
 
@@ -350,18 +353,18 @@ class ControlAssignedAmounts(models.Model):
 
                     # Validation Authorized Amount
                     authorized_amount = 0
-                    try:
-                        authorized_amount = float(line.authorized)
-                        if authorized_amount == 0:
-                            failed_row += str(line_vals) + \
-                                "------>> Authorized Amount should be greater than 0!"
-                            failed_line_ids.append(line.id)
-                            continue
-                    except:
-                        failed_row += str(line_vals) + \
-                            "------>> Invalid Authorized Amount Format"
-                        failed_line_ids.append(line.id)
-                        continue
+                    # try:
+                    #     authorized_amount = float(line.authorized)
+                    #     if authorized_amount == 0:
+                    #         failed_row += str(line_vals) + \
+                    #             "------>> Authorized Amount should be greater than 0!"
+                    #         failed_line_ids.append(line.id)
+                    #         continue
+                    # except:
+                    #     failed_row += str(line_vals) + \
+                    #         "------>> Invalid Authorized Amount Format"
+                    #     failed_line_ids.append(line.id)
+                    #     continue
 
                     try:
                         program_code = False
@@ -581,10 +584,10 @@ class ControlAssignedAmounts(models.Model):
 
     def validate(self):
         vals_list = []
-        total_assigned_amount = sum(self.success_line_ids.mapped('authorized'))
-        total_budget_amount = sum(self.budget_id.success_line_ids.mapped('authorized'))
-        if total_assigned_amount != total_budget_amount:
-            raise ValidationError("Authorized amount not matched with budget!")
+        # total_assigned_amount = sum(self.success_line_ids.mapped('authorized'))
+        # total_budget_amount = sum(self.budget_id.success_line_ids.mapped('authorized'))
+        # if total_assigned_amount != total_budget_amount:
+        #     raise ValidationError("Authorized amount not matched with budget!")
         for line in self.success_line_ids:
             vals = {
                 'program_code_id': line.program_code_id.id,
@@ -643,7 +646,7 @@ class ControlAssignedAmountsLines(models.Model):
     start_date = fields.Date(string='Start date')
     end_date = fields.Date(string='End date')
 
-    authorized = fields.Integer(string='Authorized')
+    # authorized = fields.Integer(string='Authorized')
     assigned = fields.Integer(string='Assigned')
     available = fields.Integer(string='Available')
     currency_id = fields.Many2one(
@@ -651,6 +654,7 @@ class ControlAssignedAmountsLines(models.Model):
 
     assigned_amount_id = fields.Many2one(
         'control.assigned.amounts', string='Assigned amount')
+    budget_id = fields.Many2one('expenditure.budget', string='Budget')
 
     imported = fields.Boolean()
     state = fields.Selection([('manual', 'Manual'), ('draft', 'Draft'), (
