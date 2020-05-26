@@ -97,9 +97,22 @@ class ControlAssignedAmounts(models.Model):
         string='Success Rows', compute="_compute_total_rows")
     total_rows = fields.Integer(
         string="Total Rows", compute="_compute_total_rows")
+    assigned_total = fields.Float(
+        string="Total Assigned", compute="_compute_amt_total", store=True)
 
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
+
+    @api.depends('success_line_ids', 'success_line_ids.assigned', 'line_ids', 'line_ids.assigned')
+    def _compute_amt_total(self):
+        for seasonality in self:
+            assigned_total = 0
+            for line in seasonality.success_line_ids:
+                assigned_total += line.assigned
+            for im_line in seasonality.line_ids:
+                assigned_total += im_line.assigned
+
+            seasonality.assigned_total = assigned_total
 
     @api.constrains('folio')
     def _check_folio(self):
@@ -427,6 +440,7 @@ class ControlAssignedAmounts(models.Model):
                         if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)
+                            line.available = line.assigned
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Row Data Are Not Corrected or Duplicated Program Code Found!"
@@ -711,3 +725,14 @@ class ControlAssignedAmountsLines(models.Model):
 
     _sql_constraints = [
         ('unique_assigned_amount_id_program_code', 'unique(program_code_id,assigned_amount_id)', 'The program code must be unique per Control of Assigned Amounts')]
+
+    @api.onchange('assigned')
+    def onchange_assigned(self):
+        if self.assigned:
+            self.available = self.assigned
+
+    def write(self, vals):
+        if vals.get('assigned'):
+            for line in self:
+                line.available = vals.get('assigned')
+        return super(ControlAssignedAmountsLines, self).write(vals)

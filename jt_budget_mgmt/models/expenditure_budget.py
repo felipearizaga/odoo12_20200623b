@@ -89,7 +89,8 @@ class ExpenditureBudget(models.Model):
             record.imported_lines_count = len(record.line_ids)
             record.success_lines_count = len(record.success_line_ids)
 
-    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available')
+    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available',
+                 'line_ids','line_ids.assigned', 'line_ids.authorized','line_ids.available')
     def _compute_amt_total(self):
         """
         This function will count the total of all success rows
@@ -103,6 +104,10 @@ class ExpenditureBudget(models.Model):
                 assigned_total += line.assigned
                 authorised_total += line.authorized
                 available_total += line.available
+            for im_line in budget.line_ids:
+                assigned_total += im_line.assigned
+                authorised_total += im_line.authorized
+                available_total += im_line.available
 
             budget.assigned_total = assigned_total
             budget.authorised_total = authorised_total
@@ -519,6 +524,7 @@ class ExpenditureBudget(models.Model):
                         if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)
+                            line.available = line.assigned
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Row Data Are Not Corrected or Duplicated Program Code Found!"
@@ -773,4 +779,23 @@ class ExpenditureBudgetLine(models.Model):
         ('uniq_quarter', 'unique(program_code_id,start_date,end_date)',
          'The Program code must be unique per quarter!'),
     ]
+
+    @api.onchange('assigned')
+    def onchange_assigned(self):
+        if self.assigned:
+            self.available = self.assigned
+
+    def write(self, vals):
+        if vals.get('assigned'):
+            for line in self:
+                line.available = vals.get('assigned')
+        return super(ExpenditureBudgetLine, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        res = super(ExpenditureBudgetLine, self).create(vals)
+        if res and res.assigned:
+            res.available = res.assigned
+        return res
+
     # ALTER TABLE expenditure_budget_line DROP CONSTRAINT expenditure_budget_line_uniq_program_code_id;

@@ -93,7 +93,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
     @api.model
     def _init_filter_budget_control(self, options, previous_options=None):
         options['budget_control'] = []
-        list_labels = ['Authorized', 'Assigned', 'Annual Modified',
+        list_labels = ['Authorized', 'Assigned Total Annual', 'Assigned 1st Trimester',
+                       'Assigned 2nd Trimester', 'Assigned 3rd Trimester',
+                       'Assigned 4th Trimester', 'Annual Modified',
                        'Per Exercise', 'Committed', 'Accrued', 'Exercised', 'Paid', 'Available']
         counter = 1
 
@@ -295,11 +297,16 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             options['date'].get('date_to'), '%Y-%m-%d').date()
 
         lines = []
+        b_line_obj = self.env['expenditure.budget.line']
+        adequacies_line_obj = self.env['adequacies.lines']
         budget_lines = self.env['expenditure.budget.line'].search(
-            [('expenditure_budget_id.state', '=', 'validate'), ('start_date', '>=', start), ('end_date', '<=', end)])
-
+            [('expenditure_budget_id.state', '=', 'validate'),
+             ('start_date', '>=', start), ('end_date', '<=', end)])
+        program_code_list = []
         for b_line in budget_lines:
-            annual_modified = b_line.authorized + b_line.assigned
+            if b_line.program_code_id in program_code_list:
+                continue
+
             columns = []
 
             if len(options['selected_programs']) > 0 and str(b_line.program_code_id.program_id.key_unam) not in options['selected_programs']:
@@ -336,6 +343,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 continue
             if len(options['selected_agreement_number']) > 0 and str(b_line.program_code_id.number_agreement) not in options['selected_agreement_number']:
                 continue
+
 
             # Program code struture view fields
             for column in options['selected_program_fields']:
@@ -397,13 +405,39 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     agreement_number = b_line.program_code_id.number_agreement or ''
                     columns.append({'name': str(agreement_number)})
 
+            all_b_lines = b_line_obj.search([('program_code_id', '=', b_line.program_code_id.id),
+                                             ('start_date', '>=', start), ('end_date', '<=', end)])
+            annual_modified = 0
+            adequacies_lines = adequacies_line_obj.search([('program', '=', b_line.program_code_id.id),
+                                                    ('adequacies_id.state', '=', 'accepted')])
+            for ad_line in adequacies_lines:
+                if ad_line.line_type == 'increase':
+                    annual_modified += ad_line.amount
+                elif ad_line.line_type == 'decrease':
+                    annual_modified -= ad_line.amount
             for column in options['selected_budget_control']:
                 if column == 'Authorized':
-                    columns.append({'name': b_line.authorized})
-                elif column == 'Assigned':
-                    columns.append({'name': b_line.assigned})
+                    columns.append({'name': sum(x.authorized for x in all_b_lines)})
+                elif column == 'Assigned Total Annual':
+                    columns.append({'name': sum(x.assigned for x in all_b_lines)})
                 elif column == 'Annual Modified':
                     columns.append({'name': annual_modified})
+                elif column == 'Assigned 1st Trimester':
+                    columns.append({'name': sum(x.assigned if x.start_date.month == 1 and \
+                                    x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
+                                                    else 0 for x in all_b_lines)})
+                elif column == 'Assigned 2nd Trimester':
+                    columns.append({'name': sum(x.assigned if x.start_date.month == 4 and \
+                                    x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
+                                                    else 0 for x in all_b_lines)})
+                elif column == 'Assigned 3rd Trimester':
+                    columns.append({'name': sum(x.assigned if x.start_date.month == 7 and \
+                                    x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
+                                                    else 0 for x in all_b_lines)})
+                elif column == 'Assigned 4th Trimester':
+                    columns.append({'name': sum(x.assigned if x.start_date.month == 10 and \
+                                    x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
+                                                    else 0 for x in all_b_lines)})
                 elif column == 'Per Exercise':
                     columns.append({'name': 0})
                 elif column == 'Committed':
@@ -415,7 +449,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 elif column == 'Paid':
                     columns.append({'name': 0})
                 elif column == 'Available':
-                    columns.append({'name': b_line.available})
+                    columns.append({'name': sum(x.available for x in all_b_lines)})
             lines.append({
                 'id': b_line.id,
                 'name': b_line.program_code_id.program_code,
@@ -424,7 +458,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 'unfoldable': False,
                 'unfolded': True,
             })
-
+            program_code_list.append(b_line.program_code_id)
         selected_line_pages = options['selected_line_pages']
         all_list = []
         for s in selected_line_pages:
