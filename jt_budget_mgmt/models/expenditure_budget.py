@@ -89,8 +89,7 @@ class ExpenditureBudget(models.Model):
             record.imported_lines_count = len(record.line_ids)
             record.success_lines_count = len(record.success_line_ids)
 
-    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available',
-                 'line_ids','line_ids.assigned', 'line_ids.authorized','line_ids.available')
+    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available')
     def _compute_amt_total(self):
         """
         This function will count the total of all success rows
@@ -104,10 +103,6 @@ class ExpenditureBudget(models.Model):
                 assigned_total += line.assigned
                 authorised_total += line.authorized
                 available_total += line.available
-            for im_line in budget.line_ids:
-                assigned_total += im_line.assigned
-                authorised_total += im_line.authorized
-                available_total += im_line.available
 
             budget.assigned_total = assigned_total
             budget.authorised_total = authorised_total
@@ -198,7 +193,6 @@ class ExpenditureBudget(models.Model):
         if user:
             ch = ch_obj.sudo().search([('name', '=', str(base_user.name + ', ' + user.name)),
                                        ('channel_type', '=', 'chat')], limit=1)
-            print("Channel name ", ch)
             if not ch:
                 ch = ch_obj.create({
                     'name': 'OdooBot, ' + user.name,
@@ -255,8 +249,11 @@ class ExpenditureBudget(models.Model):
                 if counter == 5000:
                     break
                 counter += 1
-                line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item, line.dv, line.origin_resource, line.ai, line.conversion_program,
-                             line.departure_conversion, line.expense_type, line.location, line.portfolio, line.project_type, line.project_number, line.stage, line.agreement_type, line.agreement_number, line.exercise_type]
+                line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item,
+                             line.dv, line.origin_resource, line.ai, line.conversion_program,
+                             line.departure_conversion, line.expense_type, line.location, line.portfolio,
+                             line.project_type, line.project_number, line.stage, line.agreement_type,
+                             line.agreement_number, line.exercise_type]
 
                 if line.state == 'manual' or line.program_code_id:
                     # Validation Importe 1a Asignacion
@@ -444,7 +441,7 @@ class ExpenditureBudget(models.Model):
                         #     continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Asigned Amount Format"
+                            "------>> Invalid Asigned Amount Format \n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -454,12 +451,19 @@ class ExpenditureBudget(models.Model):
                         authorized_amount = float(line.authorized)
                         if authorized_amount == 0:
                             failed_row += str(line_vals) + \
-                                "------>> Authorized Amount should be greater than 0!"
+                                "------>> Authorized Amount should be greater than 0! \n"
                             failed_line_ids.append(line.id)
                             continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Authorized Amount Format"
+                            "------>> Invalid Authorized Amount Format \n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+
+                    if not line.dv:
+                        failed_row += str(line_vals) + \
+                            "------>> Digito Verificador is not added! \n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -496,7 +500,7 @@ class ExpenditureBudget(models.Model):
                                     'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
-                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date!"
+                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date! \n"
                                     failed_line_ids.append(line.id)
                                     continue
 
@@ -522,12 +526,30 @@ class ExpenditureBudget(models.Model):
                             program_code = self.env['program.code'].sudo().create(
                                 program_vals)
                         if program_code:
+                            pc = program_code
+                            dv_obj = self.env['verifying.digit']
+                            if pc.program_id and pc.sub_program_id and pc.dependency_id and \
+                                    pc.sub_dependency_id and pc.item_id:
+                                vd = dv_obj.check_digit_from_codes(
+                                    pc.program_id, pc.sub_program_id, pc.dependency_id, pc.sub_dependency_id,
+                                    pc.item_id)
+                                if vd and line.dv:
+                                    line_dv = line.dv
+                                    if len(line.dv) == 1:
+                                        line_dv = '0' + line.dv
+                                    if vd != line_dv:
+                                        failed_row += str(line_vals) + \
+                                                      "------>> Digito Verificador is not matched! \n"
+                                        failed_line_ids.append(line.id)
+                                        continue
+
+                        if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)
                             line.available = line.assigned
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Row Data Are Not Corrected or Duplicated Program Code Found!"
+                            "------>> Row Data Are Not Corrected or Duplicated Program Code Found! \n"
                         failed_line_ids.append(line.id)
                         continue
 

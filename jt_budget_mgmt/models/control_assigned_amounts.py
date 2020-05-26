@@ -103,14 +103,12 @@ class ControlAssignedAmounts(models.Model):
     _sql_constraints = [
         ('folio', 'unique(folio)', 'The folio must be unique.')]
 
-    @api.depends('success_line_ids', 'success_line_ids.assigned', 'line_ids', 'line_ids.assigned')
+    @api.depends('success_line_ids', 'success_line_ids.assigned')
     def _compute_amt_total(self):
         for seasonality in self:
             assigned_total = 0
             for line in seasonality.success_line_ids:
                 assigned_total += line.assigned
-            for im_line in seasonality.line_ids:
-                assigned_total += im_line.assigned
 
             seasonality.assigned_total = assigned_total
 
