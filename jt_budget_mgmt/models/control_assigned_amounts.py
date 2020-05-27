@@ -377,6 +377,12 @@ class ControlAssignedAmounts(models.Model):
                     #     failed_line_ids.append(line.id)
                     #     continue
 
+                    if not line.dv:
+                        failed_row += str(line_vals) + \
+                            "------>> Digito Verificador is not added! \n"
+                        failed_line_ids.append(line.id)
+                        continue
+
                     try:
                         program_code = False
                         if year and program and subprogram and dependency and subdependency and item and origin_resource and institutional_activity and shcp and conversion_item and expense_type and geo_location and wallet_key and project_type and stage and agreement_type:
@@ -435,6 +441,23 @@ class ControlAssignedAmounts(models.Model):
                             }
                             program_code = self.env['program.code'].sudo().create(
                                 program_vals)
+                        if program_code:
+                            pc = program_code
+                            dv_obj = self.env['verifying.digit']
+                            if pc.program_id and pc.sub_program_id and pc.dependency_id and \
+                                    pc.sub_dependency_id and pc.item_id:
+                                vd = dv_obj.check_digit_from_codes(
+                                    pc.program_id, pc.sub_program_id, pc.dependency_id, pc.sub_dependency_id,
+                                    pc.item_id)
+                                if vd and line.dv:
+                                    line_dv = line.dv
+                                    if len(line.dv) == 1:
+                                        line_dv = '0' + line.dv
+                                    if vd != line_dv:
+                                        failed_row += str(line_vals) + \
+                                                      "------>> Digito Verificador is not matched! \n"
+                                        failed_line_ids.append(line.id)
+                                        continue
                         if program_code:
                             line.program_code_id = program_code.id
                             success_line_ids.append(line.id)

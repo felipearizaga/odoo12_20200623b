@@ -319,6 +319,12 @@ class Standardization(models.Model):
                     failed_row_ids.append(pointer)
                     continue
 
+                if not result_dict.get('Digito Verificador'):
+                    failed_row += str(list(result_dict.values())) + \
+                                  "------>> Digito Verificador is not added!\n"
+                    failed_row_ids.append(pointer)
+                    continue
+
                 if result_dict.get('Digito Verificador'):
                     p_code += str(result_dict.get('Digito Verificador')
                                   )[:1].replace('.', '').zfill(2)
@@ -510,6 +516,19 @@ class Standardization(models.Model):
                                     "------>> Budget line not found for selected program code!"
                                 failed_row_ids.append(pointer)
                                 continue
+
+                            pc = program_code
+                            dv_obj = self.env['verifying.digit']
+                            if pc.program_id and pc.sub_program_id and pc.dependency_id and \
+                                    pc.sub_dependency_id and pc.item_id:
+                                vd = dv_obj.check_digit_from_codes(
+                                    pc.program_id, pc.sub_program_id, pc.dependency_id, pc.sub_dependency_id,
+                                    pc.item_id)
+                                if vd and p_code and vd != p_code:
+                                    failed_row += str(list(result_dict.values())) + \
+                                                  "------>> Digito Verificador is not matched! \n"
+                                    failed_row_ids.append(pointer)
+                                    continue
 
                     if not program_code:
                         failed_row += str(list(result_dict.values())) + \
@@ -878,11 +897,10 @@ class StandardizationLine(models.Model):
                               ('authorized', 'Authorized'),
                               ('cancelled', 'Cancelled')],
                              string='State')
-    _sql_constraints = [('uniq_program_per_standardization_id', 'unique(code_id,standardization_id)',
-                         'The program code must be unique per Standardization')]
 
-    _sql_constraints = [
-        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
+    _sql_constraints = [('uniq_program_per_standardization_id', 'unique(code_id,standardization_id)',
+                         'The program code must be unique per Standardization'),
+                        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
 
     @api.constrains('folio')
     def _check_folio(self):
