@@ -585,7 +585,7 @@ msgstr "Descripción de Dependencia"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc_stage
 msgid "Description"
-msgstr "Descripción de Actividad Institucional"
+msgstr "Descripción de Etapa"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_budget_program_conversion
