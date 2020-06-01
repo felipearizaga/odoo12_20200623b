@@ -92,8 +92,11 @@ class ImportLine(models.TransientModel):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
 
-                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv', 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
-                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'authorized', 'start_date', 'end_date']
+                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv',
+                                 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
+                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number',
+                                 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned',
+                                 'authorized', 'start_date', 'end_date']
 
                 total_budget_amount = 0
                 result_vals = []
@@ -105,8 +108,9 @@ class ImportLine(models.TransientModel):
                     counter = 0
                     for colx, cell in enumerate(row, 1):
                         value = cell.value
-                        if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
-                            value = int(cell.value)
+                        if field_headers[counter] not in ('authorized', 'assigned'):
+                            if field_headers[counter] in ('year', 'dv') and type(value) is int or type(value) is float:
+                                value = int(cell.value)
 
                         if field_headers[counter] == 'start_date':
                             try:
@@ -139,12 +143,12 @@ class ImportLine(models.TransientModel):
                         result_dict.update(
                             {field_headers[counter]: value})
                         counter += 1
+
                     if 'assigned' in result_dict:
                         total_budget_amount += float(
                             result_dict.get('assigned', 0))
                     result_vals.append((0, 0, result_dict))
-                # print("---------> ", total_budget_amount, self.total_budget)
-                if total_budget_amount != self.total_budget:
+                if round(total_budget_amount, 2) != self.total_budget:
                     raise UserError(
                         _('The sum of the assigned amounts is not equal to the total of the budget'))
 

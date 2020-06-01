@@ -99,8 +99,11 @@ class ImportAssignedAmountLine(models.TransientModel):
                     for colx, cell in enumerate(row, 1):
                         headers.append(cell.value)
 
-                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv', 'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
-                                 'expense_type', 'location', 'portfolio', 'project_type', 'project_number', 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned', 'start_date', 'end_date']
+                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item',
+                                 'dv', 'origin_resource', 'ai', 'conversion_program',
+                                 'departure_conversion', 'expense_type', 'location', 'portfolio',
+                                 'project_type', 'project_number', 'stage', 'agreement_type',
+                                 'agreement_number', 'exercise_type', 'assigned', 'start_date', 'end_date']
 
                 result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
@@ -111,8 +114,11 @@ class ImportAssignedAmountLine(models.TransientModel):
                     counter = 0
                     for colx, cell in enumerate(row, 1):
                         value = cell.value
-                        if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
-                            value = int(cell.value)
+                        if field_headers[counter] != 'assigned':
+                            if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
+                                value = int(cell.value)
+                        else:
+                            value = float(cell.value)
 
                         if field_headers[counter] == 'start_date':
                             try:
@@ -142,6 +148,7 @@ class ImportAssignedAmountLine(models.TransientModel):
                             except:
                                 pass
 
+                        print (field_headers[counter], value)
                         result_dict.update(
                             {field_headers[counter]: value})
                         counter += 1

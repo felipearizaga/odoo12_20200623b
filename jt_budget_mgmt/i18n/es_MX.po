@@ -6,14 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 13.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-28 22:19+0000\n"
-"PO-Revision-Date: 2020-05-28 22:19+0000\n"
+"POT-Creation-Date: 2020-05-29 22:56+0000\n"
+"PO-Revision-Date: 2020-05-29 19:14-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"Language: es\n"
+"X-Generator: Poedit 2.3\n"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_origin__00
@@ -51,6 +53,8 @@ msgid ""
 "<span class=\"fa fa-book\"/>\n"
 "            Budget Controls:"
 msgstr ""
+"<span class=\"fa fa-book\"/>\n"
+"            Control de  Presupuestos:"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_line_pages
@@ -58,11 +62,13 @@ msgid ""
 "<span class=\"fa fa-book\"/>\n"
 "            Pages:"
 msgstr ""
+"<span class=\"fa fa-book\"/>\n"
+"            Páginas:"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_program_code_section
 msgid "<span class=\"fa fa-folder-open\"/> Programmatic Code Section"
-msgstr ""
+msgstr "<span class=\"fa fa-folder-open\"/> Sección de Código Programático"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
@@ -160,16 +166,15 @@ msgstr "Líneas de Adecuación"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/adequacies.py:0
-#: code:addons/jt_budget_mgmt/models/adequacies.py:0
 #, python-format
 msgid "Adequacies Validation Process Ended at %s"
-msgstr ""
+msgstr "Proceso de validación de adecuación finalizado en% s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/adequacies.py:0
 #, python-format
 msgid "Adequacies Validation Process Started at %s"
-msgstr ""
+msgstr "Proceso de validación de adecuación iniciado en% s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/adequacies.py:0
@@ -178,6 +183,8 @@ msgid ""
 "Adequacies Validation Process is Completed for                     <a "
 "href='%s' target='new'>%s</a>"
 msgstr ""
+"Proceso de validación se completo por                     <a href='%s' "
+"target='new'>%s</a>"
 
 #. module: jt_budget_mgmt
 #. openerp-web
@@ -232,7 +239,7 @@ msgstr "Monto"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization_line__amount_effected
 msgid "Amount Effected?"
-msgstr ""
+msgstr "Monto Afectado?"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
@@ -322,12 +329,12 @@ msgstr "Presupuesto de Egresos"
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget_control
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Budget Control"
-msgstr "Control Presupuestal"
+msgstr "Estacionalidad Trimestral"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_budget_control
 msgid "Budget Control Selection Fields"
-msgstr ""
+msgstr "Selección"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_budget_program_conversion
@@ -347,20 +354,19 @@ msgstr "Conversión de Programa Presupuestario (CONPP)"
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_summary_report_download
 msgid "Budget Summary Report Download"
-msgstr ""
+msgstr "Descarga Resumen Presupuesto Proforma"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/expenditure_budget.py:0
-#: code:addons/jt_budget_mgmt/models/expenditure_budget.py:0
 #, python-format
 msgid "Budget Validation Process Ended at %s"
-msgstr ""
+msgstr "Proceso de validación de Presupuesto de Egresos finalizado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/expenditure_budget.py:0
 #, python-format
 msgid "Budget Validation Process Started at %s"
-msgstr ""
+msgstr "Proceso de validación de Presupuesto de Egresos iniciado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/expenditure_budget.py:0
@@ -369,6 +375,8 @@ msgid ""
 "Budget Validation Process is Completed for                     <a href='%s' "
 "target='new'>%s</a>"
 msgstr ""
+"Proceso de validación de Presupuesto de Egresos se completo "
+"por                     <a href='%s' target='new'>%s</a>"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__name
@@ -395,7 +403,7 @@ msgstr "Presupuestos"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__cog_id
 msgid "COG CONAC"
-msgstr ""
+msgstr "COG CONAC"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts_lines__cron_id
@@ -456,13 +464,13 @@ msgstr ""
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Close"
-msgstr ""
+msgstr "Cerrado"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_shcp_code__name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization_line__code_id
 msgid "Code"
-msgstr "Código"
+msgstr "Código SHCP"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_code_structure
@@ -536,24 +544,25 @@ msgstr "Estacionalidad Trimestral"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/control_assigned_amounts.py:0
-#: code:addons/jt_budget_mgmt/models/control_assigned_amounts.py:0
 #, python-format
 msgid "Control of Assigned Amounts Validation Process Ended at %s"
-msgstr ""
+msgstr "Proceso de validación de Estacionalidad Trimestral finalizado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/control_assigned_amounts.py:0
 #, python-format
 msgid "Control of Assigned Amounts Validation Process Started at %s"
-msgstr ""
+msgstr "Proceso de validación de Estacionalidad Trimestral iniciado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/control_assigned_amounts.py:0
 #, python-format
 msgid ""
-"Control of Assigned Amounts Validation Process is Completed for"
-"                        <a href='%s' target='new'>%s</a>"
+"Control of Assigned Amounts Validation Process is Completed "
+"for                        <a href='%s' target='new'>%s</a>"
 msgstr ""
+"Proceso de validación de Estacionalidad Trimestral se completo "
+"por                        <a href='%s' target='new'>%s</a>"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_control_assigned_amounts
@@ -570,7 +579,7 @@ msgstr "Barra de herramientas del panel de control"
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
 msgid "Conversation Program SHCP"
-msgstr ""
+msgstr "Conversión de Programa SHCP"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts_lines__conversion_program
@@ -781,7 +790,7 @@ msgstr "Descripción de Dependencia"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc_stage
 msgid "Description"
-msgstr "Descripción de Etapa"
+msgstr "Descripción de Actividad Institucional"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_budget_program_conversion
@@ -811,7 +820,7 @@ msgstr "Descripción de Origen de Recurso"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_project__desc_stage
 msgid "Description Stage"
-msgstr "Descripción de Etapa"
+msgstr "Descripción de Tipo de Proyecto"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_project_type
@@ -866,7 +875,7 @@ msgstr "Dígito Verificador"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__dv
 msgid "Digit Verification"
-msgstr ""
+msgstr "Dígito Verificador"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__display_name
@@ -937,12 +946,12 @@ msgstr "Descargar Archivo"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_line__dwnld_filename
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_standardization_line__dwnld_filename
 msgid "Download File name"
-msgstr ""
+msgstr "Nombre de Archivo de Descarga"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__report_file
 msgid "Download Report"
-msgstr ""
+msgstr "Descarga Reporte"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_adequacies_line_form_view
@@ -996,7 +1005,7 @@ msgstr "Fecha Final"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__execution_time
 msgid "Execution Time"
-msgstr ""
+msgstr "Tiempo de Ejecución"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts_lines__exercise_type
@@ -1044,12 +1053,12 @@ msgstr "Presupuesto de Egresos"
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_expenditure_budget_imported_line
 msgid "Expenditure budget imported line"
-msgstr ""
+msgstr "Líneas Importadas de Presupuesto de Egresos"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_expenditure_budget_success_line
 msgid "Expenditure budget success line"
-msgstr ""
+msgstr "Líneas exitosas de Presupuesto de Egresos"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_item_search_view
@@ -1064,7 +1073,7 @@ msgstr "Partida de Gasto"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__item_ids
 #, python-format
 msgid "Expense Item"
-msgstr "Partida"
+msgstr "Partida de Gasto"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_expenditure_item
@@ -1094,7 +1103,7 @@ msgstr "Exportar (XLSX)"
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Export Request"
-msgstr ""
+msgstr "Exportar Respuesta"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__desc__income
@@ -1110,7 +1119,7 @@ msgstr "Falló"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__state__failed
 msgid "Failed"
-msgstr ""
+msgstr "Falló"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__failed_row_ids
@@ -1142,7 +1151,7 @@ msgstr "Archivo de Filas Erróneas"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.adequacies_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_form_view
 msgid "Failed Rows Tracker"
-msgstr ""
+msgstr "Filas Erróneas Encontradas"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.adequacies_form_view
@@ -1218,7 +1227,7 @@ msgstr "Rendimientos Financieros"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_search_view
 msgid "Folio"
-msgstr ""
+msgstr "Folio"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/wizard/import_adequacies_line.py:0
@@ -1234,7 +1243,7 @@ msgstr "El Folio no coincide."
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_follower_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "Seguidores"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__message_channel_ids
@@ -1242,7 +1251,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_channel_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_channel_ids
 msgid "Followers (Channels)"
-msgstr ""
+msgstr "Seguidores (Canales)"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__message_partner_ids
@@ -1250,7 +1259,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_partner_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "Seguidores (Terceros)"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__from_date
@@ -1389,7 +1398,7 @@ msgstr "Identificador Tipo de Convenio"
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_needaction
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_unread
 msgid "If checked, new messages require your attention."
-msgstr ""
+msgstr "Revisar, los nuevos mensajes requieren su atención."
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,help:jt_budget_mgmt.field_adequacies__message_has_error
@@ -1401,7 +1410,7 @@ msgstr ""
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_has_error
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
+msgstr "Revisar, algunos mensajes tienen un error de entrega."
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_adequacies_line_form_view
@@ -1429,7 +1438,7 @@ msgstr "Línea de importación"
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_import_standardization_line
 msgid "Import Standardization Line"
-msgstr ""
+msgstr "Líneas importadas de Recalendarización"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__import_status
@@ -1474,7 +1483,7 @@ msgstr "Importar lineas"
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_import_standardization_line
 msgid "Import standardization line"
-msgstr ""
+msgstr "Líneas importadas de Recalendarización"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies_lines__imported
@@ -1502,7 +1511,7 @@ msgstr ""
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__state__in_progress
 msgid "In Process"
-msgstr ""
+msgstr "En Proceso"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__adequacies__import_status__in_progress
@@ -1653,7 +1662,7 @@ msgstr "Clave Cartera"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_year
 msgid "Last Financial Year"
-msgstr ""
+msgstr "Último Año Financiero"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies____last_update
@@ -1703,12 +1712,12 @@ msgstr "Última modificación en"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_month
 msgid "Last Month"
-msgstr ""
+msgstr "Último Mes"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_quarter
 msgid "Last Quarter"
-msgstr ""
+msgstr "Último Trimestre"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__write_uid
@@ -1826,7 +1835,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__control_assigned_amounts_lines__state__manual
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget_line__state__manual
 msgid "Manual"
-msgstr ""
+msgstr "Manual"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__message_has_error
@@ -1834,7 +1843,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_has_error
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_has_error
 msgid "Message Delivery error"
-msgstr ""
+msgstr "Mensaje de error de entrega"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__message_ids
@@ -1842,7 +1851,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_ids
 msgid "Messages"
-msgstr ""
+msgstr "Mensajes"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_modifications
@@ -1856,7 +1865,7 @@ msgstr "Modificaciones"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_report_program_fields__name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__name
 msgid "Name"
-msgstr "Nombre Tipo de Convenio"
+msgstr "Nombre de Estacionalidad"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__name_agreement
@@ -1929,7 +1938,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.institutional_activity_search_view
 msgid "Number"
-msgstr "Número de Convenio"
+msgstr "Número de Proyecto"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number_agreement
@@ -1968,7 +1977,7 @@ msgstr "Número de Registros Importados"
 #: model:ir.model.fields,help:jt_budget_mgmt.field_expenditure_budget__message_needaction_counter
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_needaction_counter
 msgid "Number of messages which requires an action"
-msgstr ""
+msgstr "Número de mensajes que requieren una acción"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,help:jt_budget_mgmt.field_adequacies__message_has_error_counter
@@ -1976,7 +1985,7 @@ msgstr ""
 #: model:ir.model.fields,help:jt_budget_mgmt.field_expenditure_budget__message_has_error_counter
 #: model:ir.model.fields,help:jt_budget_mgmt.field_standardization__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr ""
+msgstr "Número de mensajes con error de entrega"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__record_number
@@ -2055,12 +2064,12 @@ msgstr "Otros Productos"
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_extra_views
 msgid "Others"
-msgstr ""
+msgstr "Otros"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Period"
-msgstr ""
+msgstr "Periodo"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/budget_program_conversion.py:0
@@ -2070,8 +2079,8 @@ msgstr ""
 msgid ""
 "Please enter first digit as letter and last 3 digits as numbers for SHCP."
 msgstr ""
-"Ingresa una letra como primer digito y números en los últimos 3 dígitos para"
-" el Codigo SHCP."
+"Ingresa una letra como primer digito y números en los últimos 3 dígitos "
+"para el Codigo SHCP."
 
 #. module: jt_budget_mgmt
 #. openerp-web
@@ -2110,7 +2119,7 @@ msgstr "Presupuesto Previo"
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_form_view
 msgid "Print Lines"
-msgstr ""
+msgstr "Total Líneas"
 
 #. module: jt_budget_mgmt
 #. openerp-web
@@ -2130,12 +2139,12 @@ msgstr "Resumen Presupuesto Proforma"
 #: code:addons/jt_budget_mgmt/static/src/xml/proforma_budget_summary_report_widget.xml:0
 #, python-format
 msgid "Proforma Budget Summary Report"
-msgstr ""
+msgstr "Reporte Resumen Presupuesto Proforma"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.client,name:jt_budget_mgmt.action_proforma_budget_summary
 msgid "Proforma budget summary"
-msgstr ""
+msgstr "Resumen Presupuesto Proforma"
 
 #. module: jt_budget_mgmt
 #. openerp-web
@@ -2185,7 +2194,7 @@ msgstr "Código Programático"
 #: code:addons/jt_budget_mgmt/static/src/js/widget_financial_report.js:0
 #, python-format
 msgid "Programmatic Code Section"
-msgstr ""
+msgstr "Sección de Código Programático"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_code_struct_and_order
@@ -2269,7 +2278,7 @@ msgstr "Trimestres"
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_quarter_budget
 msgid "Quarter Budget"
-msgstr ""
+msgstr "Presupuesto Trimestral"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
@@ -2302,20 +2311,19 @@ msgstr "Recalendarizaciones"
 #: model:ir.model,name:jt_budget_mgmt.model_standardization_line
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_line_search_view
 msgid "Re-standardization Lines"
-msgstr ""
+msgstr "Líneas de Recalendarización"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/standardization.py:0
-#: code:addons/jt_budget_mgmt/models/standardization.py:0
 #, python-format
 msgid "Re-standardization Validation Process Ended at %s"
-msgstr ""
+msgstr "Proceso de validación de Recalendarización finalizado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/standardization.py:0
 #, python-format
 msgid "Re-standardization Validation Process Started at %s"
-msgstr ""
+msgstr "Proceso de validación de Recalendarización iniciado en %s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/standardization.py:0
@@ -2324,11 +2332,13 @@ msgid ""
 "Re-standardization Validation Process is Completed for                     "
 "<a href='%s' target='new'>%s</a>"
 msgstr ""
+"Proceso de validación de Recalendarización se completo "
+"por                        <a href='%s' target='new'>%s</a>"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__state__complete
 msgid "Ready To Download"
-msgstr ""
+msgstr "Listo para descargar"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__reason
@@ -2364,12 +2374,12 @@ msgstr "Rechazar"
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_reject_standardization_line
 msgid "Reject Standardization Line"
-msgstr ""
+msgstr "Líneas de Recalendarización rechazadas"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_reject_standardization_line
 msgid "Reject standardization line"
-msgstr ""
+msgstr "Líneas de Recalendarización rechazadas"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__adequacies__state__rejected
@@ -2380,12 +2390,12 @@ msgstr "Rechazado"
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_report_program_fields
 msgid "Report Program Fields"
-msgstr ""
+msgstr "Campos Reporte Proforma"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.requested_report_form_view
 msgid "Report Request Detail"
-msgstr ""
+msgstr "Detalle Reporte Proforma"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_reports
@@ -2395,34 +2405,34 @@ msgstr "Informes"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__state__request
 msgid "Request"
-msgstr ""
+msgstr "Respuesta"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.request_summary_report
 msgid "Request Report"
-msgstr ""
+msgstr "Respuesta de Informe"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.act_req_summary_report
 msgid "Request Summary Report"
-msgstr ""
+msgstr "Respuesta de  Informe Resumen"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__requested_by
 msgid "Requested By"
-msgstr ""
+msgstr "Respondido por"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_requested_reports
 #: model:ir.model,name:jt_budget_mgmt.model_requested_reports
 #: model:ir.ui.menu,name:jt_budget_mgmt.requested_report_menu
 msgid "Requested Reports"
-msgstr ""
+msgstr "Respuesta de Informe"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__requested_time
 msgid "Requested Time"
-msgstr ""
+msgstr "Tiempo de Respuesta"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
@@ -2450,7 +2460,7 @@ msgstr "Usuario Responsable"
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.requested_report_form_view
 msgid "Retry"
-msgstr ""
+msgstr "Procesar de nuevo"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__desc__pef
@@ -2508,7 +2518,7 @@ msgstr "Partidas SHCP"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__message_has_sms_error
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__message_has_sms_error
 msgid "SMS Delivery error"
-msgstr ""
+msgstr "Mensaje de error de entrega"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_ir_cron
@@ -2529,12 +2539,17 @@ msgstr "Sección del Código Programático"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_budget_control
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_line_pages
 msgid "Select"
-msgstr ""
+msgstr "Seleccionar"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_budget_control
+msgid "Authorized"
+msgstr "Autorizado"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__select_box
 msgid "Select Box"
-msgstr ""
+msgstr "Seleccionar"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_form_view
@@ -2747,7 +2762,7 @@ msgstr "Subprograma"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_sub_dependency
 msgid "Sub-dependency Description"
-msgstr "Descripción de Subprograma"
+msgstr "Descripción de Subdependencia"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_sub_program
@@ -2804,7 +2819,7 @@ msgstr "El Nombre del Presupuesto debe de ser único!"
 #: code:addons/jt_budget_mgmt/models/program_code_objects/verifying_digit.py:0
 #, python-format
 msgid "The Check value must be numeric value"
-msgstr ""
+msgstr "El Dígito Verificador debe ser un valor numérico"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/budget_program_conversion.py:0
@@ -2846,7 +2861,7 @@ msgstr "La Clave de Programa UNAM es único."
 #: code:addons/jt_budget_mgmt/models/program_code_objects/expense_type.py:0
 #, python-format
 msgid "The Key expenditure type must be numeric value"
-msgstr ""
+msgstr "La Clave de Programa UNAM debe ser un valor numérico"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/project_project.py:0
@@ -2858,7 +2873,7 @@ msgstr "El Numero de Convenio debe ser numérico"
 #: code:addons/jt_budget_mgmt/models/project_project.py:0
 #, python-format
 msgid "The Number must be numeric value"
-msgstr ""
+msgstr "El número de Actividad Institucional debe ser un valor numérico"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/code_structure.py:0
@@ -2880,7 +2895,7 @@ msgstr "La Prioridad de Posición es único!"
 #. module: jt_budget_mgmt
 #: model:ir.model.constraint,message:jt_budget_mgmt.constraint_expenditure_budget_line_uniq_quarter
 msgid "The Program code must be unique per quarter!"
-msgstr ""
+msgstr "El Código de Programático debe ser único por trimestre!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/project_project.py:0
@@ -2939,6 +2954,9 @@ msgid ""
 "Budget: %s \n"
 "Program Code: %s"
 msgstr ""
+"El monto es mayor que el asignado en el Presupuesto de Egresos.\n"
+"Presupuesto:% s\n"
+"Código Programático:% s"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/verifying_digit.py:0
@@ -3054,7 +3072,7 @@ msgstr "El tamaño del número debe ser cinco."
 #: code:addons/jt_budget_mgmt/models/project_type.py:0
 #, python-format
 msgid "The number size must be six."
-msgstr ""
+msgstr "El tamaño del número debe ser seis."
 
 #. module: jt_budget_mgmt
 #: model:ir.model.constraint,message:jt_budget_mgmt.constraint_adequacies_lines_uniq_program_per_adequacies_id
@@ -3064,7 +3082,12 @@ msgstr "El Código Programático es único por Adecuación"
 #. module: jt_budget_mgmt
 #: model:ir.model.constraint,message:jt_budget_mgmt.constraint_control_assigned_amounts_lines_unique_assigned_amount_id_program_code
 msgid "The program code must be unique per Control of Assigned Amounts"
-msgstr ""
+msgstr "El Código Programático debe ser único por Estacionalidad Trimestral"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.constraint,message:jt_budget_mgmt.constraint_standardization_line_uniq_program_per_standardization_id
+msgid "The program code must be unique per Standardization"
+msgstr "El Código Programático debe ser único por Recalendarización"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/project_type.py:0
@@ -3164,17 +3187,17 @@ msgstr "El tamaño de la Clave Cartera debe ser de 4 dígitos."
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_year
 msgid "This Financial Year"
-msgstr ""
+msgstr "Este Año Financiero"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_month
 msgid "This Month"
-msgstr ""
+msgstr "Este Mes"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_quarter
 msgid "This Quarter"
-msgstr ""
+msgstr "Este Trimestre"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__to_date
@@ -3185,6 +3208,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__total_quarter_budget
 msgid "Total 1st Quarter"
 msgstr "Total 1st Trimestre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts__assigned_total
+msgid "Total Assigned"
+msgstr "Total Asignado"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
@@ -3484,6 +3512,7 @@ msgstr "Año"
 #, python-format
 msgid "You can not delete Dependency which are mapped with Sub Dependancy!"
 msgstr ""
+"No puedes eliminar una Dependencia que esta ligada a una Subdependencia!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/program.py:0
@@ -3492,12 +3521,14 @@ msgid ""
 "You can not delete Program which are mapped with Budget Program Conversion "
 "(CONPP)!"
 msgstr ""
+"No puedes eliminar un Programa que esta ligado a una  Conversión de "
+"Programa Presupuestario (CONPP)!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/program.py:0
 #, python-format
 msgid "You can not delete Program which are mapped with Sub Program!"
-msgstr ""
+msgstr "No puedes eliminar un Programa que esta ligado a un Subprograma!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/shcp_code.py:0
@@ -3506,18 +3537,22 @@ msgid ""
 "You can not delete SHCP Program Code which are mapped with Budget Program "
 "Conversion (CONPP)!"
 msgstr ""
+"No puedes eliminar un Código SHCP  que este ligado a una Conversión de "
+"Programa Presupuestario (CONPP)!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/dependency.py:0
 #, python-format
 msgid "You can not delete dependency which are mapped with program code!"
 msgstr ""
+"No puedes eliminar una Dependencia que este ligado a un Código Programático!"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/program.py:0
 #, python-format
 msgid "You can not delete program which are mapped with program code!"
 msgstr ""
+"No puedes eliminar un Programa que este ligado a un Código Programático!"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
@@ -3525,6 +3560,8 @@ msgid ""
 "Your report is in progress you will notify shortly once we prepared the "
 "report"
 msgstr ""
+"Su informe está en progreso, le notificaremos en breve una vez que hayamos "
+"preparado el informe"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.reassign_budget_wiz_form_view
@@ -3532,10 +3569,12 @@ msgid ""
 "order to reallocate the budget, you need to select the start and\n"
 "end dates will affect the budget confirmed this year."
 msgstr ""
+"para reasignar el presupuesto, debe seleccionar el inicio y\n"
+"Las fechas finales afectarán el presupuesto confirmado este año."
 
 #. module: jt_budget_mgmt
 #. openerp-web
 #: code:addons/jt_budget_mgmt/static/src/xml/proforma_budget_summary_report_widget.xml:0
 #, python-format
 msgid "to print report."
-msgstr ""
+msgstr "imprimir Reporte."

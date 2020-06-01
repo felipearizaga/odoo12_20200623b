@@ -93,7 +93,13 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
     @api.model
     def _init_filter_budget_control(self, options, previous_options=None):
         options['budget_control'] = []
-        list_labels = ['Authorized', 'Assigned Total Annual', 'Assigned 1st Trimester',
+        if self.env.user.lang == 'es_MX':
+            list_labels = ['Autorizado', 'Total Asignado Anual', 'Asignado 1er Trimestre',
+                           'Asignado 2do Trimestre', 'Asignado 3er Trimestre',
+                           'Asignado 4to Trimestre', 'Modificado Anual',
+                           'Por Ejercer', 'Comprometido', 'Devengado', 'Ejercido', 'Pagado', 'Disponible']
+        else:
+            list_labels = ['Authorized', 'Assigned Total Annual', 'Assigned 1st Trimester',
                        'Assigned 2nd Trimester', 'Assigned 3rd Trimester',
                        'Assigned 4th Trimester', 'Annual Modified',
                        'Per Exercise', 'Committed', 'Accrued', 'Exercised', 'Paid', 'Available']
@@ -416,39 +422,39 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 elif ad_line.line_type == 'decrease':
                     annual_modified -= ad_line.amount
             for column in options['selected_budget_control']:
-                if column == 'Authorized':
+                if column in ('Authorized', 'Autorizado'):
                     columns.append({'name': sum(x.authorized for x in all_b_lines)})
-                elif column == 'Assigned Total Annual':
+                elif column in ('Assigned Total Annual', 'Total Asignado Anual'):
                     columns.append({'name': sum(x.assigned for x in all_b_lines)})
-                elif column == 'Annual Modified':
+                elif column in ('Annual Modified', 'Modificado Anual'):
                     columns.append({'name': annual_modified})
-                elif column == 'Assigned 1st Trimester':
+                elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
                     columns.append({'name': sum(x.assigned if x.start_date.month == 1 and \
                                     x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
                                                     else 0 for x in all_b_lines)})
-                elif column == 'Assigned 2nd Trimester':
+                elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
                     columns.append({'name': sum(x.assigned if x.start_date.month == 4 and \
                                     x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
                                                     else 0 for x in all_b_lines)})
-                elif column == 'Assigned 3rd Trimester':
+                elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
                     columns.append({'name': sum(x.assigned if x.start_date.month == 7 and \
                                     x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
                                                     else 0 for x in all_b_lines)})
-                elif column == 'Assigned 4th Trimester':
+                elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
                     columns.append({'name': sum(x.assigned if x.start_date.month == 10 and \
                                     x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
                                                     else 0 for x in all_b_lines)})
-                elif column == 'Per Exercise':
+                elif column in ('Per Exercise', 'Por Ejercer'):
                     columns.append({'name': 0})
-                elif column == 'Committed':
+                elif column in ('Committed', 'Comprometido'):
                     columns.append({'name': 0})
-                elif column == 'Accrued':
+                elif column in ('Accrued', 'Devengado'):
                     columns.append({'name': 0})
-                elif column == 'Exercised':
+                elif column in ('Exercised', 'Ejercido'):
                     columns.append({'name': 0})
-                elif column == 'Paid':
+                elif column in ('Paid', 'Pagado'):
                     columns.append({'name': 0})
-                elif column == 'Available':
+                elif column in ('Available', 'Disponible'):
                     columns.append({'name': sum(x.available for x in all_b_lines)})
             lines.append({
                 'id': b_line.id,

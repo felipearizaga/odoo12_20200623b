@@ -32,3 +32,4 @@ access_control_assigned_amounts,control_assigned_amounts,model_control_assigned_
 access_control_assigned_amounts_lines,control_assigned_amounts_lines,model_control_assigned_amounts_lines,base.group_user,1,1,1,1
 access_report_program_fields,report_program_fields,model_report_program_fields,base.group_user,1,1,1,1
 access_requested_report,requested_report_by_user,model_requested_reports,base.group_user,1,1,1,1
+access_report_files,requested_report_files_by_user,model_report_files,base.group_user,1,1,1,1

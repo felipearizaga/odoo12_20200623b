@@ -143,6 +143,12 @@ msgid "Agreement type"
 msgstr "Tipo de acuerdo"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts__name
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
+msgid "Name"
+msgstr "Nombre de Estacionalidad"
+
+#. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__project_id
 msgid "Agreement type identifier"
 msgstr "Identificador Tipo de Convenio"

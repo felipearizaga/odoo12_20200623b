@@ -26,6 +26,18 @@
                             <field name="prepared_time" />
                         </group>
                     </group>
+                    <group string="Files" invisible="1">
+                        <field name="file_ids" nolabel="1">
+                            <tree>
+                                <field name="name" invisible="1"/>
+                                <field name="file" filename="name"/>
+                                <field name="cron_id" invisible="1"/>
+                            </tree>
+                            <form>
+                                <field name="file" filename="name"/>
+                            </form>
+                        </field>
+                    </group>
                     <group string='Period'>
                         <field name="filter_date" required="1"/>
 <!--                        <field name="start_date" />-->

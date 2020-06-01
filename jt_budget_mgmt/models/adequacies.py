@@ -628,14 +628,20 @@ class Adequacies(models.Model):
             counter_increased = 0
             if len(self.adequacies_lines_ids.ids) == 0:
                 raise ValidationError("Please select or import any lines!")
+            if self.adaptation_type != 'compensated':
+                line_types = adequacies.adequacies_lines_ids.mapped('line_type')
+                line_types = list(set(line_types))
+                if len(line_types) > 1:
+                    raise ValidationError(
+                        "In liquid adjustment, you can only increase or decrease amount of budget!")
             for line in adequacies.adequacies_lines_ids:
                 if line.amount < 10000:
                     raise ValidationError(
                         "The total amount of the increases/decreases should be greater than or equal to 10000")
                 if line.line_type == 'decrease':
-                    if self.adaptation_type == 'liquid':
-                        raise ValidationError(
-                            "In liquid adjustment, you can only increase amount of budget!")
+                    # if self.adaptation_type == 'liquid':
+                    #     raise ValidationError(
+                    #         "In liquid adjustment, you can only increase amount of budget!")
                     budget_line = self.env['expenditure.budget.line'].sudo().search(
                         [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
                     if budget_line and budget_line.assigned < line.amount:

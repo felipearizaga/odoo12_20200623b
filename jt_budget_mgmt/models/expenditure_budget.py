@@ -583,8 +583,7 @@ class ExpenditureBudget(models.Model):
                 model_id = self.env.ref(
                     'jt_budget_mgmt.model_expenditure_budget').id
                 next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id),
-                                                               ('active',
-                                                                '=', False),
+                                                               ('active', '=', False),
                                                                ('model_id', '=', model_id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
