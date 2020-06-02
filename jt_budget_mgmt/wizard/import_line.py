@@ -144,9 +144,16 @@ class ImportLine(models.TransientModel):
                             {field_headers[counter]: value})
                         counter += 1
 
+                    if 'authorized' in result_dict:
+                        amt = result_dict.get('authorized', 0)
+                        if float(amt) <= 0:
+                            raise UserError(_("Authorized Amount should be greater than 0!"))
+
                     if 'assigned' in result_dict:
-                        total_budget_amount += float(
-                            result_dict.get('assigned', 0))
+                        amt = result_dict.get('assigned', 0)
+                        if float(amt) <= 0:
+                            raise UserError(_("Assigned Amount should be greater than 0!"))
+                        total_budget_amount += float(amt)
                     result_vals.append((0, 0, result_dict))
                 if round(total_budget_amount, 2) != self.total_budget:
                     raise UserError(

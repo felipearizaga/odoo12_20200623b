@@ -326,8 +326,7 @@ class Standardization(models.Model):
                     continue
 
                 if result_dict.get('Digito Verificador'):
-                    p_code += str(result_dict.get('Digito Verificador')
-                                  )[:1].replace('.', '').zfill(2)
+                    p_code += str(result_dict.get('Digito Verificador')).zfill(2)
 
                 # Validate Origin Of Resource
                 origin_resource = origin_obj.validate_origin_resource(
@@ -423,7 +422,7 @@ class Standardization(models.Model):
                 amount = 0
                 try:
                     amount = float(result_dict.get('Amount', ''))
-                    if float(amount) == 0:
+                    if float(amount) <= 0:
                         failed_row += str(list(result_dict.values())) + \
                             "------>> Amount should be greater than 0"
                         failed_row_ids.append(pointer)

@@ -50,19 +50,23 @@
                                 <field name="year" required="1"/>
                                 
                                 <!-- Program Relation -->
-                                <field name="program_id" required="1"/>
+                                <field name="program_id" required="1" attrs="{'readonly': [('state', '=', 'validated')]}"/>
                                 <field name="desc_program"/>
                                 <!-- Sub Program Relation -->
-                                <field name="sub_program_id" required="1" domain="[('unam_key_id', '=', program_id)]" context="{'default_unam_key_id': program_id}"/>
+                                <field name="sub_program_id"
+                                       required="1" domain="[('unam_key_id', '=', program_id)]"
+                                       context="{'default_unam_key_id': program_id}"/>
                                 <field name="desc_sub_program"/>
                                 <!-- Dependency Relation -->
-                                <field name="dependency_id" required="1"/>
+                                <field name="dependency_id" attrs="{'readonly': [('state', '=', 'validated')]}"
+                                       required="1"/>
                                 <field name="desc_dependency"/>
                                 <!-- Sub-Dependency Relation -->
-                                <field name="sub_dependency_id" required="1" domain="[('dependency_id', '=', dependency_id)]" context="{'default_dependency_id': dependency_id}"/>
+                                <field name="sub_dependency_id" attrs="{'readonly': [('state', '=', 'validated')]}"
+                                       required="1" domain="[('dependency_id', '=', dependency_id)]" context="{'default_dependency_id': dependency_id}"/>
                                 <field name="desc_sub_dependency"/>
                                 <!-- Item Relation -->
-                                <field name="item_id" required="1"/>
+                                <field name="item_id" required="1" attrs="{'readonly': [('state', '=', 'validated')]}"/>
                                 <field name="desc_item"/>
                                 <!-- Digit Verification -->
                                 <field name="check_digit"/>
@@ -114,6 +118,16 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="program_code"/>
+                    <field name="dependency_id"/>
+                    <field name="sub_dependency_id"/>
+                    <field name="program_id" string="Program"/>
+                    <field name="item_id"/>
+                    <field name="total_authorized_amt"/>
+                    <field name="total_assigned_amt"/>
+                    <field name="total_1_assigned_amt"/>
+                    <field name="total_2_assigned_amt"/>
+                    <field name="total_3_assigned_amt"/>
+                    <field name="total_4_assigned_amt"/>
                 </tree>
             </field>
         </record>

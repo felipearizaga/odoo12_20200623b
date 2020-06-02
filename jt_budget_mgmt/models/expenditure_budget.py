@@ -260,11 +260,11 @@ class ExpenditureBudget(models.Model):
                     asigned_amount = 0
                     try:
                         asigned_amount = float(line.assigned)
-                        # if asigned_amount == 0:
-                        #     failed_row += str(line_vals) + \
-                        #         "------>> Assigned Amount should be greater than 0!"
-                        #     failed_line_ids.append(line.id)
-                        #     continue
+                        if asigned_amount <= 0:
+                            failed_row += str(line_vals) + \
+                                "------>> Assigned Amount should be greater than 0!"
+                            failed_line_ids.append(line.id)
+                            continue
                     except:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Asigned Amount Format"
@@ -275,7 +275,7 @@ class ExpenditureBudget(models.Model):
                     authorized_amount = 0
                     try:
                         authorized_amount = float(line.authorized)
-                        if authorized_amount == 0:
+                        if authorized_amount <= 0:
                             failed_row += str(line_vals) + \
                                 "------>> Authorized Amount should be greater than 0!"
                             failed_line_ids.append(line.id)
@@ -719,7 +719,7 @@ class ExpenditureBudget(models.Model):
     def show_imported_lines(self):
         action = self.env.ref(
             'jt_budget_mgmt.action_expenditure_budget_imported_line').read()[0]
-        action['limit'] = 5000
+        action['limit'] = 1000
         action['domain'] = [('id', 'in', self.line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
             'jt_budget_mgmt.expenditure_budget_imported_line_search_view').id, )
@@ -728,7 +728,7 @@ class ExpenditureBudget(models.Model):
     def show_success_lines(self):
         action = self.env.ref(
             'jt_budget_mgmt.action_expenditure_budget_success_line').read()[0]
-        action['limit'] = 5000
+        action['limit'] = 1000
         action['domain'] = [('id', 'in', self.success_line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
             'jt_budget_mgmt.expenditure_budget_success_line_search_view').id, )

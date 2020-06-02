@@ -280,8 +280,7 @@ class Adequacies(models.Model):
                     continue
 
                 if result_dict.get('Digito Verificador'):
-                    p_code += str(result_dict.get('Digito Verificador')
-                                  )[:1].replace('.', '').zfill(2)
+                    p_code += str(result_dict.get('Digito Verificador')).zfill(2)
 
                 # Validate Origin Of Resource
                 origin_resource = origin_obj.validate_origin_resource(

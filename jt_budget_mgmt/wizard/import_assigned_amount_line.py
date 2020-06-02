@@ -120,6 +120,10 @@ class ImportAssignedAmountLine(models.TransientModel):
                         else:
                             value = float(cell.value)
 
+                        if field_headers[counter] == 'assigned':
+                            if value <= 0:
+                                raise UserError(_("Assigned Amount should be greater than 0!"))
+
                         if field_headers[counter] == 'start_date':
                             try:
                                 start_date = False
@@ -148,7 +152,6 @@ class ImportAssignedAmountLine(models.TransientModel):
                             except:
                                 pass
 
-                        print (field_headers[counter], value)
                         result_dict.update(
                             {field_headers[counter]: value})
                         counter += 1

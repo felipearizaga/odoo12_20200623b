@@ -36,7 +36,7 @@ class ProgramCode(models.Model):
     year = fields.Many2one('year.configuration', string='Year (YEAR)', states={'validated': [('readonly', True)]})
 
     # Program Relations
-    program_id = fields.Many2one('program', string='KEY UNAM', states={'validated': [('readonly', True)]})
+    program_id = fields.Many2one('program', string='KEY UNAM')
     desc_program = fields.Text(
         string='Description KEY UNAM', related="program_id.desc_key_unam")
 
@@ -46,19 +46,19 @@ class ProgramCode(models.Model):
         string='Sub Program Description', related="sub_program_id.desc")
 
     # Dependency Relation
-    dependency_id = fields.Many2one('dependency', string='Dependency', states={'validated': [('readonly', True)]})
+    dependency_id = fields.Many2one('dependency', string='Dependency')
     desc_dependency = fields.Text(
         string='Dependency Description', related="dependency_id.description")
 
     # Sub Dependency Relation
     sub_dependency_id = fields.Many2one(
-        'sub.dependency', string='Sub dependency', states={'validated': [('readonly', True)]})
+        'sub.dependency', string='Sub dependency')
     desc_sub_dependency = fields.Text(
         string='Sub-dependency Description', related="sub_dependency_id.description")
 
     # Item Relation
     item_id = fields.Many2one(
-        'expenditure.item', string='Item', states={'validated': [('readonly', True)]})
+        'expenditure.item', string='Item')
     desc_item = fields.Text(string='Description of Item',
                             related="item_id.description")
 
@@ -132,6 +132,41 @@ class ProgramCode(models.Model):
     agreement_type_id = fields.Many2one('agreement.type', string='Identifier type of Agreement', states={'validated': [('readonly', True)]})
     name_agreement = fields.Text(string='Name type of Agreement', related='agreement_type_id.name_agreement')
     number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
+
+    total_assigned_amt = fields.Float(string="Assigned Total Annual", compute="_compute_amt")
+    total_1_assigned_amt = fields.Float(string="Assigned 1st Trimester", compute="_compute_amt")
+    total_2_assigned_amt = fields.Float(string="Assigned 2nd Annual", compute="_compute_amt")
+    total_3_assigned_amt = fields.Float(string="Assigned 3rd Annual", compute="_compute_amt")
+    total_4_assigned_amt = fields.Float(string="Assigned 4th Annual", compute="_compute_amt")
+    total_authorized_amt = fields.Float(string="Authorized", compute="_compute_amt")
+
+    def _compute_amt(self):
+        bud_line_obj = self.env['expenditure.budget.line']
+        for code in self:
+            lines = bud_line_obj.search([('program_code_id', '=', code.id),
+                                         ('expenditure_budget_id.state', '=', 'validate')])
+            authorized = assigned = st_ass = nd_ass = rd_ass = th_ass = 0
+            for line in lines:
+                authorized += line.authorized
+                assigned += line.assigned
+                if line.start_date.month == 1 and \
+                    line.start_date.day == 1 and line.end_date.month == 3 and line.end_date.day == 31:
+                    st_ass += line.assigned
+                elif line.start_date.month == 4 and \
+                    line.start_date.day == 1 and line.end_date.month == 6 and line.end_date.day == 30 :
+                    nd_ass += line.assigned
+                elif line.start_date.month == 7 and \
+                    line.start_date.day == 1 and line.end_date.month == 9 and line.end_date.day == 30:
+                    rd_ass += line.assigned
+                elif line.start_date.month == 10 and \
+                    line.start_date.day == 1 and line.end_date.month == 12 and line.end_date.day == 31:
+                    th_ass += line.assigned
+            code.total_assigned_amt = assigned
+            code.total_authorized_amt = authorized
+            code.total_1_assigned_amt = st_ass
+            code.total_2_assigned_amt = nd_ass
+            code.total_3_assigned_amt = rd_ass
+            code.total_4_assigned_amt = th_ass
 
     @api.constrains('program_code')
     def _check_program_code(self):
