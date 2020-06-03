@@ -121,8 +121,8 @@ class ImportAssignedAmountLine(models.TransientModel):
                             value = float(cell.value)
 
                         if field_headers[counter] == 'assigned':
-                            if value <= 0:
-                                raise UserError(_("Assigned Amount should be greater than 0!"))
+                            if value < 0:
+                                raise UserError(_("Assigned Amount should be greater than or 0!"))
 
                         if field_headers[counter] == 'start_date':
                             try:

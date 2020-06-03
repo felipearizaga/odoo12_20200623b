@@ -351,9 +351,9 @@ class ControlAssignedAmounts(models.Model):
                     asigned_amount = 0
                     try:
                         asigned_amount = float(line.assigned)
-                        if asigned_amount <= 0:
+                        if asigned_amount < 0:
                             failed_row += str(line_vals) + \
-                                "------>> Assigned Amount should be greater than 0!"
+                                "------>> Assigned Amount should be greater than or 0!"
                             failed_line_ids.append(line.id)
                             continue
                     except:

@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from datetime import datetime, timedelta
 import calendar
 from xlrd import *
@@ -28,6 +28,8 @@ import xlwt
 import base64
 from io import BytesIO
 import math
+from odoo.exceptions import UserError
+
 
 class BudgetSummaryReportDownload(models.TransientModel):
 
@@ -54,25 +56,39 @@ class BudgetSummaryReportDownload(models.TransientModel):
     end_date = fields.Date(string='End Date')
 
     # Budget Control Related fields
-    budget_control_ids = fields.Many2many('budget.control', string='Budget Control')
+    budget_control_ids = fields.Many2many(
+        'budget.control', string='Budget Control')
 
     # Program Code Section Related fields
-    code_section_ids = fields.Many2many('code.structure', string='Programming Code Section')
+    code_section_ids = fields.Many2many(
+        'code.structure', string='Programming Code Section')
     program_ids = fields.Many2many('program', string='Program')
     sub_program_ids = fields.Many2many('sub.program', string='Sub-Program')
     dependency_ids = fields.Many2many('dependency', string='Dependency')
-    sub_dependency_ids = fields.Many2many('sub.dependency', string='Sub-Dependency')
+    sub_dependency_ids = fields.Many2many(
+        'sub.dependency', string='Sub-Dependency')
     item_ids = fields.Many2many('expenditure.item', string='Expense Item')
     origin_ids = fields.Many2many('resource.origin', string='Origin Resource')
-    activity_ids = fields.Many2many('institutional.activity', string='Institutional Activity')
-    conpp_ids = fields.Many2many('budget.program.conversion', string='Budget Program Conversion (CONPP)')
-    conpa_ids = fields.Many2many('departure.conversion', string='SHCP Games (CONPA)')
-    expense_type_ids = fields.Many2many('expense.type', string='Type of Expense (TG)')
-    location_ids = fields.Many2many('geographic.location', string='Geographic Location (UG)')
+    activity_ids = fields.Many2many(
+        'institutional.activity', string='Institutional Activity')
+    conpp_ids = fields.Many2many(
+        'budget.program.conversion', string='Budget Program Conversion (CONPP)')
+    conpa_ids = fields.Many2many(
+        'departure.conversion', string='SHCP Games (CONPA)')
+    expense_type_ids = fields.Many2many(
+        'expense.type', string='Type of Expense (TG)')
+    location_ids = fields.Many2many(
+        'geographic.location', string='Geographic Location (UG)')
     wallet_ids = fields.Many2many('key.wallet', string='Wallet Key (CC)')
-    project_type_ids = fields.Many2many('project.type', string='Project Type (TP)')
+    project_type_ids = fields.Many2many(
+        'project.type', string='Project Type (TP)')
     stage_ids = fields.Many2many('stage', string='Stage (E)')
-    agreement_type_ids = fields.Many2many('agreement.type', string='Type of agreement (TC)')
+    agreement_type_ids = fields.Many2many(
+        'agreement.type', string='Type of agreement (TC)')
+
+    favourite_report_id = fields.Many2one(
+        'favourite.summary.report', string='Favourite Report')
+    favourite_name = fields.Char('Name')
 
     @api.onchange('filter_date')
     def onchange_filter(self):
@@ -80,11 +96,12 @@ class BudgetSummaryReportDownload(models.TransientModel):
             date = datetime.now()
             filter_date = self.filter_date
             if filter_date == 'this_month':
-                self.start_date = date.replace(day = 1)
-                self.end_date = date.replace(day = calendar.monthrange(date.year, date.month)[1])
+                self.start_date = date.replace(day=1)
+                self.end_date = date.replace(
+                    day=calendar.monthrange(date.year, date.month)[1])
             elif filter_date == 'this_quarter':
                 month = date.month
-                if month >= 1 and month <=3:
+                if month >= 1 and month <= 3:
                     self.start_date = date.replace(month=1, day=1)
                     self.end_date = date.replace(month=3, day=31)
                 elif month >= 4 and month <= 6:
@@ -106,16 +123,18 @@ class BudgetSummaryReportDownload(models.TransientModel):
                 last_month = last_month_date.month
                 if last_month == 12:
                     year = date.year - 1
-                    self.start_date = date.replace(day=1, month=last_month, year=year)
+                    self.start_date = date.replace(
+                        day=1, month=last_month, year=year)
                     self.end_date = date.replace(day=calendar.monthrange(date.year, last_month)[1], month=last_month,
                                                  year=year)
                 else:
                     self.start_date = date.replace(day=1, month=last_month)
-                    self.end_date = date.replace(day=calendar.monthrange(date.year, last_month)[1], month=last_month)
+                    self.end_date = date.replace(day=calendar.monthrange(
+                        date.year, last_month)[1], month=last_month)
             elif filter_date == 'last_quarter':
                 month = date.month
                 year = date.year
-                if month >= 1 and month <=3:
+                if month >= 1 and month <= 3:
                     self.start_date = date.replace(month=1, day=1, year=year)
                     self.end_date = date.replace(month=12, day=31, year=year)
                 elif month >= 4 and month <= 6:
@@ -142,15 +161,18 @@ class BudgetSummaryReportDownload(models.TransientModel):
         if self.dependency_ids:
             domain.append(('dependency_id', 'in', self.dependency_ids.ids))
         if self.sub_dependency_ids:
-            domain.append(('sub_dependency_id', 'in', self.sub_dependency_ids.ids))
+            domain.append(('sub_dependency_id', 'in',
+                           self.sub_dependency_ids.ids))
         if self.item_ids:
             domain.append(('item_id', 'in', self.item_ids.ids))
         if self.origin_ids:
             domain.append(('resource_origin_id', 'in', self.origin_ids.ids))
         if self.activity_ids:
-            domain.append(('institutional_activity_id', 'in', self.activity_ids.ids))
+            domain.append(('institutional_activity_id',
+                           'in', self.activity_ids.ids))
         if self.conpp_ids:
-            domain.append(('budget_program_conversion_id', 'in', self.conpp_ids.ids))
+            domain.append(('budget_program_conversion_id',
+                           'in', self.conpp_ids.ids))
         if self.conpa_ids:
             domain.append(('conversion_item_id', 'in', self.conpa_ids.ids))
         if self.expense_type_ids:
@@ -174,7 +196,7 @@ class BudgetSummaryReportDownload(models.TransientModel):
         end = self.end_date
         for code in programs:
             all_b_lines = bud_line_obj.search([('program_code_id', '=', code.id),
-                ('expenditure_budget_id.state', '=', 'validate'),('start_date', '>=', start), ('end_date', '<=', end)])
+                                               ('expenditure_budget_id.state', '=', 'validate'), ('start_date', '>=', start), ('end_date', '<=', end)])
             if all_b_lines:
                 code_lines.append({code: all_b_lines})
                 code_lines_new.append({code.id: all_b_lines.ids})
@@ -256,27 +278,29 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                 col += 1
                                 value = 0
                                 if bug_con.name == 'Authorized':
-                                    value = sum(x.authorized for x in all_b_lines)
+                                    value = sum(
+                                        x.authorized for x in all_b_lines)
                                 elif bug_con.name == 'Assigned Total Annual':
-                                    value = sum(x.assigned for x in all_b_lines)
+                                    value = sum(
+                                        x.assigned for x in all_b_lines)
                                 elif bug_con.name == 'Annual Modified':
                                     value = annual_modified
                                 elif bug_con.name == 'Assigned 1st Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 1 and \
-                                                              x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
-                                                    else 0 for x in all_b_lines)
+                                    value = sum(x.assigned if x.start_date.month == 1 and
+                                                x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31
+                                                else 0 for x in all_b_lines)
                                 elif bug_con.name == 'Assigned 2nd Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 4 and \
-                                                              x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
-                                                    else 0 for x in all_b_lines)
+                                    value = sum(x.assigned if x.start_date.month == 4 and
+                                                x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30
+                                                else 0 for x in all_b_lines)
                                 elif bug_con.name == 'Assigned 3rd Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 7 and \
-                                                              x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
-                                                    else 0 for x in all_b_lines)
+                                    value = sum(x.assigned if x.start_date.month == 7 and
+                                                x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30
+                                                else 0 for x in all_b_lines)
                                 elif bug_con.name == 'Assigned 4th Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 10 and \
-                                                              x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
-                                                    else 0 for x in all_b_lines)
+                                    value = sum(x.assigned if x.start_date.month == 10 and
+                                                x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31
+                                                else 0 for x in all_b_lines)
                                 elif bug_con.name == 'Per Exercise':
                                     value = 0
                                 elif bug_con.name == 'Committed':
@@ -288,7 +312,8 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                 elif bug_con.name == 'Paid':
                                     value = 0
                                 elif bug_con.name == 'Available':
-                                    value = sum(x.available for x in all_b_lines)
+                                    value = sum(
+                                        x.available for x in all_b_lines)
                                 ws1.write(row, col, value)
                             for code_sec in self.code_section_ids:
                                 col += 1
@@ -392,10 +417,12 @@ class BudgetSummaryReportDownload(models.TransientModel):
                             'cron_id': cron.id
                         })
                         cron.write({'code': "model.download_report(" +
-                                            str(req_report_file_id.id) + "," + str(lines) + ")",
-                                   'req_report_file_id': req_report_file_id})
+                                            str(req_report_file_id.id) +
+                                    "," + str(lines) + ")",
+                                    'req_report_file_id': req_report_file_id})
                         if prev_cron_id:
-                            cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+                            cron.write(
+                                {'prev_cron_id': prev_cron_id, 'active': False})
                         del code_lines_new[:5000]
                         prev_cron_id = cron.id
                     self.write({'state': 'request'})
@@ -410,3 +437,66 @@ class BudgetSummaryReportDownload(models.TransientModel):
             'target': 'new',
             'res_id': self.id,
         }
+
+    def save_favourite(self):
+        if not self.favourite_name:
+            raise UserError(_('Please enter a name to save the filter.'))
+        vals = {'state': self.state,
+                'name': self.name,
+                'report_file': self.report_file,
+                'filter_date': self.filter_date,
+                'start_date': self.start_date,
+                'end_date': self.end_date,
+                'budget_control_ids': self.budget_control_ids.ids,
+                'code_section_ids': self.code_section_ids.ids,
+                'program_ids': self.program_ids.ids,
+                'sub_program_ids': self.sub_program_ids.ids,
+                'dependency_ids': self.dependency_ids.ids,
+                'sub_dependency_ids': self.sub_dependency_ids.ids,
+                'item_ids': self.item_ids.ids,
+                'origin_ids': self.origin_ids.ids,
+                'activity_ids': self.activity_ids.ids,
+                'conpp_ids': self.conpp_ids.ids,
+                'conpa_ids': self.conpa_ids.ids,
+                'expense_type_ids': self.expense_type_ids.ids,
+                'location_ids': self.location_ids.ids,
+                'wallet_ids': self.wallet_ids.ids,
+                'project_type_ids': self.project_type_ids.ids,
+                'stage_ids': self.stage_ids.ids,
+                'agreement_type_ids': self.agreement_type_ids.ids,
+                'favourite_user_id': self.env.user.id,
+                'favourite_name': self.favourite_name
+                }
+        self.env['favourite.summary.report'].create(vals)
+        return {
+            "type": "ir.actions.do_nothing",
+        }
+
+    @api.onchange('favourite_report_id')
+    def onchange_favourite_report_id(self):
+        if self.favourite_report_id:
+            self.state = self.favourite_report_id.state
+            self.name = self.favourite_report_id.name
+            self.report_file = self.favourite_report_id.report_file
+            self.filter_date = self.favourite_report_id.filter_date
+            self.start_date = self.favourite_report_id.start_date
+            self.end_date = self.favourite_report_id.end_date
+            self.budget_control_ids = self.favourite_report_id.budget_control_ids.ids
+            self.code_section_ids = self.favourite_report_id.code_section_ids.ids
+            self.program_ids = self.favourite_report_id.program_ids.ids
+            self.sub_program_ids = self.favourite_report_id.sub_program_ids.ids
+            self.dependency_ids = self.favourite_report_id.dependency_ids.ids
+            self.sub_dependency_ids = self.favourite_report_id.sub_dependency_ids.ids
+            self.item_ids = self.favourite_report_id.item_ids.ids
+            self.origin_ids = self.favourite_report_id.origin_ids.ids
+            self.activity_ids = self.favourite_report_id.activity_ids.ids
+            self.conpp_ids = self.favourite_report_id.conpp_ids.ids
+            self.conpa_ids = self.favourite_report_id.conpa_ids.ids
+            self.expense_type_ids = self.favourite_report_id.expense_type_ids.ids
+            self.location_ids = self.favourite_report_id.location_ids.ids
+            self.wallet_ids = self.favourite_report_id.wallet_ids.ids
+            self.project_type_ids = self.favourite_report_id.project_type_ids.ids
+            self.stage_ids = self.favourite_report_id.stage_ids.ids
+            self.agreement_type_ids = self.favourite_report_id.agreement_type_ids.ids
+        else:
+            self.unlink()
