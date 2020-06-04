@@ -30,23 +30,43 @@ class ExpenditureItem(models.Model):
     _description = 'Item of Expenditure'
     _rec_name = 'item'
 
-    item = fields.Char(string='Item', size=3)
+    item = fields.Many2one('cog.conac', string='Item', size=3)
     exercise_type = fields.Selection(
         [('r', 'R'), ('c', 'C'), ('d', 'D')], string='Exercise type')
     description = fields.Text(string='Item description')
     unam_account_id = fields.Many2one('account.account', string='UNAM account')
     shcp = fields.Char(string='Expenditure Item SHCP')
     desc_shcp = fields.Char(string='Description of expenditure item of SHCP')
-    cog_id = fields.Many2one('coa.conac', string='COG CONAC')
+    cog_id = fields.Many2one('coa.conac', string='CONAC Code')
     cog_desc = fields.Char(string='Description of COG CONAC')
     assigned_account = fields.Char(string='Assigned account')
+    cog_conac = fields.Char(string='COG CONAC')
+    des_cog_conac = fields.Char(string='Description of COG CONAC')
+    concept_cog_conac = fields.Char(string='Concept COG CONAC')
 
-    _sql_constraints = [('item', 'unique(item)', 'The item must be unique.')]
+    _sql_constraints = [('unique_item', 'unique(item)', 'The item must be unique.')]
 
-    @api.constrains('item')
-    def _check_item(self):
-        if not str(self.item).isnumeric():
-            raise ValidationError(_('The Item value must be numeric value'))
+    @api.model
+    def create(self, vals):
+        item = self.search([('item', '=', vals.get('item'))])
+        if item:
+            raise ValidationError(_("The item must be unique."))
+        return super(ExpenditureItem, self).create(vals)
+
+    def write(self, vals):
+        if vals.get('item'):
+            item = self.search([('item', '=', vals.get('item'))])
+            if item:
+                raise ValidationError(_("The item must be unique."))
+        return super(ExpenditureItem, self).create(vals)
+
+    @api.onchange('item')
+    def onchange_item(self):
+        if self.item:
+            item = self.item
+            self.cog_conac = item.chapter or ''
+            self.des_cog_conac = item.name or ''
+            self.concept_cog_conac = item.concept or ''
 
     @api.onchange('unam_account_id')
     def _onchange_unam_account_id(self):
@@ -79,20 +99,6 @@ class ExpenditureItem(models.Model):
                 self.assigned_account = self.unam_account_id.name
             else:
                 self.assigned_account = False
-
-    def fill_zero(self, code):
-        return str(code).zfill(3)
-
-    @api.model
-    def create(self, vals):
-        if vals.get('item') and len(vals.get('item')) != 3:
-            vals['item'] = self.fill_zero(vals.get('item'))
-        return super(ExpenditureItem, self).create(vals)
-
-    def write(self, vals):
-        if vals.get('item') and len(vals.get('item')) != 3:
-            vals['item'] = self.fill_zero(vals.get('item'))
-        return super(ExpenditureItem, self).write(vals)
 
     def unlink(self):
         for item in self:

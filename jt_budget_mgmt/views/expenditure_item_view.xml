@@ -32,6 +32,7 @@
                             <field name="cog_id" required="1"/>
                             <field name="cog_desc_id" required="1"/>
                             <field name="assigned_account_id" required="1"/>
+
 	            		</group>
 	            	</sheet>
             	</form>

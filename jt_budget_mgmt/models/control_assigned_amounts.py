@@ -416,31 +416,45 @@ class ControlAssignedAmounts(models.Model):
                                     'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
-                                        "------>> Program Code Already Linked With Budget Line!"
+                                        "------>> Program Code Already Linked With Budget Line with same quarter!"
                                     failed_line_ids.append(line.id)
                                     continue
 
                         if not program_code:
-                            program_vals = {
-                                'year': year.id,
-                                'program_id': program.id,
-                                'sub_program_id': subprogram.id,
-                                'dependency_id': dependency.id,
-                                'sub_dependency_id': subdependency.id,
-                                'item_id': item.id,
-                                'resource_origin_id': origin_resource.id,
-                                'institutional_activity_id': institutional_activity.id,
-                                'budget_program_conversion_id': shcp.id,
-                                'conversion_item_id': conversion_item.id,
-                                'expense_type_id': expense_type.id,
-                                'location_id': geo_location.id,
-                                'portfolio_id': wallet_key.id,
-                                'project_type_id': project_type.id,
-                                'stage_id': stage.id,
-                                'agreement_type_id': agreement_type.id,
-                            }
-                            program_code = self.env['program.code'].sudo().create(
-                                program_vals)
+                            failed_row += str(line_vals) + \
+                                "-------> Program Code is not created. \n"
+                            failed_line_ids.append(line.id)
+                            continue
+                        if program_code and not program_code.budget_id:
+                            failed_row += str(line_vals) + \
+                                          "-------> Program Code is not created in selected budget. \n"
+                            failed_line_ids.append(line.id)
+                            continue
+                        if program_code and program_code.budget_id and program_code.budget_id.id != self.budget_id.id:
+                            failed_row += str(line_vals) + \
+                                          "-------> Program Code is not created in selected budget. \n"
+                            failed_line_ids.append(line.id)
+                            continue
+                        #     program_vals = {
+                        #         'year': year.id,
+                        #         'program_id': program.id,
+                        #         'sub_program_id': subprogram.id,
+                        #         'dependency_id': dependency.id,
+                        #         'sub_dependency_id': subdependency.id,
+                        #         'item_id': item.id,
+                        #         'resource_origin_id': origin_resource.id,
+                        #         'institutional_activity_id': institutional_activity.id,
+                        #         'budget_program_conversion_id': shcp.id,
+                        #         'conversion_item_id': conversion_item.id,
+                        #         'expense_type_id': expense_type.id,
+                        #         'location_id': geo_location.id,
+                        #         'portfolio_id': wallet_key.id,
+                        #         'project_type_id': project_type.id,
+                        #         'stage_id': stage.id,
+                        #         'agreement_type_id': agreement_type.id,
+                        #     }
+                        #     program_code = self.env['program.code'].sudo().create(
+                        #         program_vals)
                         if program_code:
                             pc = program_code
                             dv_obj = self.env['verifying.digit']

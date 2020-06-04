@@ -71,7 +71,7 @@ class VerifyingDigit(models.Model):
             sp = sub_program_id.sub_program or ''
             dep = dependency_id.dependency or ''
             sd = sub_dependency_id.sub_dependency or ''
-            par = item_id.item or ''
+            par = item_id.item.heading or ''
             combined_digits = '' + pr + sp + dep + sd + par
 
             odd = 0

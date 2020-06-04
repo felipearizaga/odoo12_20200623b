@@ -60,7 +60,7 @@ class VerifyingDigit(models.Model):
 
     @api.constrains('item_id')
     def _check_item_id(self):
-        if self.item_id and len(str(self.item_id.item)) != 3 and self.item_id.item not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+        if self.item_id and len(str(self.item_id.item.heading)) != 3 and self.item_id.item.heading not in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
             raise ValidationError(_('The item size must be three.'))
 
     @api.constrains('check')

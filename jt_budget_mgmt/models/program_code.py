@@ -186,8 +186,8 @@ class ProgramCode(models.Model):
                 program_code += str(pc.dependency_id.dependency)
             if pc.sub_dependency_id and pc.sub_dependency_id.sub_dependency:
                 program_code += str(pc.sub_dependency_id.sub_dependency)
-            if pc.item_id and pc.item_id.item:
-                program_code += str(pc.item_id.item)
+            if pc.item_id and pc.item_id.item.heading:
+                program_code += str(pc.item_id.item.heading)
             if pc.check_digit:
                 program_code += str(pc.check_digit)
             if pc.resource_origin_id and pc.resource_origin_id.key_origin:
@@ -254,8 +254,8 @@ class ProgramCode(models.Model):
                 program_code += str(pc.dependency_id.dependency)
             if pc.sub_dependency_id and pc.sub_dependency_id.sub_dependency:
                 program_code += str(pc.sub_dependency_id.sub_dependency)
-            if pc.item_id and pc.item_id.item:
-                program_code += str(pc.item_id.item)
+            if pc.item_id and pc.item_id.item.heading:
+                program_code += str(pc.item_id.item.heading)
             if pc.check_digit:
                 program_code += str(pc.check_digit)
             if pc.resource_origin_id and pc.resource_origin_id.key_origin:

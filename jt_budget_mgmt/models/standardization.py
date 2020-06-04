@@ -326,7 +326,10 @@ class Standardization(models.Model):
                     continue
 
                 if result_dict.get('Digito Verificador'):
-                    p_code += str(result_dict.get('Digito Verificador')).zfill(2)
+                    code = str(result_dict.get('Digito Verificador'))
+                    if '.' in code:
+                        code = code.split('.')[0]
+                    p_code += code.zfill(2)
 
                 # Validate Origin Of Resource
                 origin_resource = origin_obj.validate_origin_resource(

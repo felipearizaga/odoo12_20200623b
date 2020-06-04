@@ -453,7 +453,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 elif column in ('Exercised', 'Ejercido'):
                     columns.append({'name': 0})
                 elif column in ('Paid', 'Pagado'):
-                    columns.append({'name': 0})
+                    columns.append({'name': sum(x.available for x in all_b_lines)})
                 elif column in ('Available', 'Disponible'):
                     columns.append({'name': sum(x.available for x in all_b_lines)})
             lines.append({

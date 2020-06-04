@@ -310,7 +310,8 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                 elif bug_con.name == 'Exercised':
                                     value = 0
                                 elif bug_con.name == 'Paid':
-                                    value = 0
+                                    value = sum(
+                                        x.available for x in all_b_lines)
                                 elif bug_con.name == 'Available':
                                     value = sum(
                                         x.available for x in all_b_lines)

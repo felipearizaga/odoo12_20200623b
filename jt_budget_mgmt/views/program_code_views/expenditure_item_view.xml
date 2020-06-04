@@ -32,6 +32,9 @@
                             <field name="cog_id" readonly="1" force_save="1" options="{'no_open': True, 'no_create': True}"/>
                             <field name="cog_desc" readonly="1" force_save="1"/>
                             <field name="assigned_account" readonly="1" force_save="1"/>
+                            <field name="cog_conac" readonly="1" force_save="1"/>
+                            <field name="des_cog_conac" readonly="1" force_save="1"/>
+                            <field name="concept_cog_conac" readonly="1" force_save="1"/>
 	            		</group>
 	            	</sheet>
             	</form>
@@ -53,6 +56,9 @@
                     <field name="cog_id"/>
                     <field name="cog_desc"/>
                     <field name="assigned_account"/>
+                    <field name="cog_conac"/>
+                    <field name="des_cog_conac"/>
+                    <field name="concept_cog_conac"/>
             	</tree>
             </field>
         </record>
