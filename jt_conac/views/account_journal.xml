@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inherited_account_journal_form_view" model="ir.ui.view">
+            <field name="name">Inherited account journal form view</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='journal_entries']/group/group[2]/field[@name='default_credit_account_id']" position="after">
+                	<field name="conac_debit_account_id"/>
+                	<field name="conac_credit_account_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

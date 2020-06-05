@@ -66,6 +66,7 @@
                                     <field name="from_date" class="oe_inline" required="1"/> - 
                                     <field name="to_date" class="oe_inline" required="1"/>
                                 </div>
+                                <field name="journal_id" readonly="1" force_save="1"/>
                                 <field name="assigned_total"/>
                                 <field name="authorised_total"/>
                                 <field name="available_total"/>
@@ -260,6 +261,9 @@
                                     <field name="failed_row_file" filename="fialed_row_filename" readonly="1"/>
                                     <field name="fialed_row_filename" invisible="1"/>
                                 </group>
+                            </page>
+                            <page string="Journal Items">
+                                <field name="move_line_ids"/>
                             </page>
                         </notebook>
                     </sheet>

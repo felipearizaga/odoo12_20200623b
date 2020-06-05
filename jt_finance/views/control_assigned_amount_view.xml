@@ -22,6 +22,9 @@
             <field name="model">calendar.assigned.amounts</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
                     <sheet>
                         <group>
                             <group>
@@ -31,11 +34,14 @@
                                 <field name="budget_id" required="1"/>
                                 <field name="file" filename="filename" readonly="1" attrs="{'invisible': [('file', '=', False)]}"/>
                                 <field name="filename" invisible="1"/>
-                                <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('month_int', 'not in', (3,6,9,12)), ('file', '!=', False)]}"/>
+                                <button name="import_lines" type="object" string="Import lines"
+                                        class="oe_highlight"
+                                        attrs="{'invisible': ['|', ('month_int', 'not in', (3,6,9,12)), ('file', '!=', False)]}"/>
                                <!--  <button name="import_lines" type="object" string="Re-Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('month_int', 'not in', (3,6,9,12)), ('diff', '!=', False)]}"/> -->
                                 <field name="user_id" readonly="1"/>
                                 <field name="import_date" readonly="1"/>
                                 <field name="obs_cont_amount"/>
+                                <field name="journal_id" readonly="1" force_save="1"/>
 
                                 <!-- Fields for calender of amount received -->
                                 <field name="date" invisible="1"/>
@@ -83,6 +89,9 @@
                                     <field name="diff" readonly="1"/>
                                 </group>
                             </page>
+                            <page string="Journal Items">
+                                <field name="move_line_ids" nolabel="1"/>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -109,6 +118,7 @@
                     <field name="amount_to_receive" invisible="1"/>
                     <field name="amount_received" invisible="1"/>
                     <field name="amount_pending" invisible="1"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>

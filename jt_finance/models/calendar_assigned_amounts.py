@@ -72,6 +72,18 @@ class CalendarAssignedAmounts(models.Model):
 
     line_ids = fields.One2many('calendar.assigned.amounts.lines',
                                'calendar_assigned_amount_id', string='Calendar of assigned amount lines')
+    journal_id = fields.Many2one("account.journal", string="Journal")
+    state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft')
+    move_line_ids = fields.One2many('account.move.line', 'calender_id', string="Journal Items")
+
+    @api.model
+    def default_get(self, fields):
+        res = super(CalendarAssignedAmounts, self).default_get(fields)
+        daily_income_jour = self.env.ref('jt_conac.daily_income_jour')
+        if daily_income_jour:
+            res.update({'journal_id': daily_income_jour.id})
+        return res
+
 
     def import_lines(self):
         return {
@@ -151,3 +163,15 @@ class CalendarAssignedAmountsLines(models.Model):
     observations = fields.Text(string='Observations')
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
+
+class AccountMove(models.Model):
+
+    _inherit = 'account.move'
+
+    calender_id = fields.Many2one('calendar.assigned.amounts')
+
+class AccountMoveLine(models.Model):
+
+    _inherit = 'account.move.line'
+
+    calender_id = fields.Many2one('calendar.assigned.amounts')

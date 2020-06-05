@@ -232,7 +232,7 @@ class RequestedReports(models.Model):
                                         x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
                                                         else 0 for x in all_b_lines)
                         elif bug_con.name == 'Per Exercise':
-                            value = 0
+                            value = sum(x.available for x in all_b_lines)
                         elif bug_con.name == 'Committed':
                             value = 0
                         elif bug_con.name == 'Accrued':
@@ -240,7 +240,7 @@ class RequestedReports(models.Model):
                         elif bug_con.name == 'Exercised':
                             value = 0
                         elif bug_con.name == 'Paid':
-                            value = sum(x.available for x in all_b_lines)
+                            value = 0
                         elif bug_con.name == 'Available':
                             value = sum(x.available for x in all_b_lines)
                         ws1.write(row, col, value)
@@ -258,7 +258,7 @@ class RequestedReports(models.Model):
                         elif code_sec.section == 'sd':
                             value = code.sub_dependency_id.sub_dependency
                         elif code_sec.section == 'par':
-                            value = code.item_id.item.heading
+                            value = code.item_id.item
                         elif code_sec.section == 'dv':
                             value = code.check_digit
                         elif code_sec.section == 'or':

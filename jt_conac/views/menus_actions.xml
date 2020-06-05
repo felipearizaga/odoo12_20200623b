@@ -31,13 +31,7 @@
             sequence="0"
         />
 
-        <menuitem
-            id="menu_journal_entry"
-            name="Journal Entries"
-            parent="jt_conac.menu_miscelleneous"
-            action="account.action_move_journal_line"
-            sequence="0"
-        />
+
 
         <menuitem
             id="menu_reporting_conac"

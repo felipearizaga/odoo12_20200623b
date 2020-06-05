@@ -23,14 +23,13 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-
 class ExpenditureItem(models.Model):
 
     _name = 'expenditure.item'
     _description = 'Item of Expenditure'
     _rec_name = 'item'
 
-    item = fields.Many2one('cog.conac', string='Item', size=3)
+    item = fields.Char(string='Item', size=3)
     exercise_type = fields.Selection(
         [('r', 'R'), ('c', 'C'), ('d', 'D')], string='Exercise type')
     description = fields.Text(string='Item description')
@@ -40,14 +39,25 @@ class ExpenditureItem(models.Model):
     cog_id = fields.Many2one('coa.conac', string='CONAC Code')
     cog_desc = fields.Char(string='Description of COG CONAC')
     assigned_account = fields.Char(string='Assigned account')
+    heading = fields.Many2one('cog.conac', string="Heading")
     cog_conac = fields.Char(string='COG CONAC')
     des_cog_conac = fields.Char(string='Description of COG CONAC')
     concept_cog_conac = fields.Char(string='Concept COG CONAC')
 
-    _sql_constraints = [('unique_item', 'unique(item)', 'The item must be unique.')]
+    _sql_constraints = [('item', 'unique(item)', 'The item must be unique.')]
+
+    @api.constrains('item')
+    def _check_item(self):
+        if not str(self.item).isnumeric():
+            raise ValidationError(_('The Item value must be numeric value'))
+
+    def fill_zero(self, code):
+        return str(code).zfill(3)
 
     @api.model
     def create(self, vals):
+        if vals.get('item') and len(vals.get('item')) != 3:
+            vals['item'] = self.fill_zero(vals.get('item'))
         item = self.search([('item', '=', vals.get('item'))])
         if item:
             raise ValidationError(_("The item must be unique."))
@@ -55,18 +65,20 @@ class ExpenditureItem(models.Model):
 
     def write(self, vals):
         if vals.get('item'):
+            if len(vals.get('item')) != 3:
+                vals['item'] = self.fill_zero(vals.get('item'))
             item = self.search([('item', '=', vals.get('item'))])
             if item:
                 raise ValidationError(_("The item must be unique."))
-        return super(ExpenditureItem, self).create(vals)
+        return super(ExpenditureItem, self).write(vals)
 
-    @api.onchange('item')
+    @api.onchange('heading')
     def onchange_item(self):
-        if self.item:
-            item = self.item
-            self.cog_conac = item.chapter or ''
-            self.des_cog_conac = item.name or ''
-            self.concept_cog_conac = item.concept or ''
+        if self.heading:
+            heading = self.heading
+            self.cog_conac = heading.chapter or ''
+            self.des_cog_conac = heading.name or ''
+            self.concept_cog_conac = heading.concept or ''
 
     @api.onchange('unam_account_id')
     def _onchange_unam_account_id(self):

@@ -302,7 +302,8 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                                 x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31
                                                 else 0 for x in all_b_lines)
                                 elif bug_con.name == 'Per Exercise':
-                                    value = 0
+                                    value = sum(
+                                        x.available for x in all_b_lines)
                                 elif bug_con.name == 'Committed':
                                     value = 0
                                 elif bug_con.name == 'Accrued':
@@ -310,8 +311,7 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                 elif bug_con.name == 'Exercised':
                                     value = 0
                                 elif bug_con.name == 'Paid':
-                                    value = sum(
-                                        x.available for x in all_b_lines)
+                                    value = 0
                                 elif bug_con.name == 'Available':
                                     value = sum(
                                         x.available for x in all_b_lines)

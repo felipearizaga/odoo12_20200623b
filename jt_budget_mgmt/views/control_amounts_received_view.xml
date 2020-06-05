@@ -29,7 +29,7 @@
                                 <field name="made_by_id"/>
                                 <field name="import_date"/>
                                 <field name="observations"/>
-                            </group>        
+                            </group>
                         </group>
                         <notebook>
                             <page string="Control of amounts received lines">

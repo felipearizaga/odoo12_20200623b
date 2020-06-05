@@ -53,6 +53,10 @@
         #'data/income.statement.csv',
         #'data/expenditure.status.csv',
         #'data/states.program.csv',
+
+        'data/account_journal.xml',
+        'views/account_journal.xml',
+        'views/account_move.xml',
     ],
     'application': True,
     'installable': True,

@@ -82,6 +82,16 @@ class ExpenditureBudget(models.Model):
 
     total_quarter_budget = fields.Float(
         string='Total 1st Quarter', tracking=True, compute="_compute_total_quarter_budget")
+    journal_id = fields.Many2one('account.journal')
+    move_line_ids = fields.One2many('account.move.line', 'budget_id', string="Journal Items")
+
+    @api.model
+    def default_get(self, fields):
+        res = super(ExpenditureBudget, self).default_get(fields)
+        budget_app_jou = self.env.ref('jt_conac.budget_appr_jour')
+        if budget_app_jou:
+            res.update({'journal_id': budget_app_jou.id})
+        return res
 
 
     def _get_imported_lines_count(self):
@@ -694,6 +704,31 @@ class ExpenditureBudget(models.Model):
 
     def approve(self):
         self.verify_data()
+        if self.journal_id:
+            move_obj = self.env['account.move']
+            journal = self.journal_id
+            today = datetime.today().date()
+            budget_id = self.id
+            user = self.env.user
+            partner_id = user.partner_id.id
+            amount = sum(self.success_line_ids.mapped('authorized'))
+            company_id = user.company_id.id
+            if not journal.default_debit_account_id or not journal.default_credit_account_id \
+                or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
+                raise ValidationError(_("Please configure UNAM and CONAC account in budget journal!"))
+            unam_move_val = {'ref': self.name, 'budget_id': budget_id, 'conac_move': True,
+                             'date': today, 'journal_id': journal.id, 'company_id': company_id,
+                             'line_ids': [(0, 0, {
+                                 'account_id': journal.default_credit_account_id.id,
+                                 'credit': amount, 'budget_id': budget_id,
+                                 'partner_id': partner_id
+                             }), (0, 0, {
+                                 'account_id': journal.default_debit_account_id.id,
+                                 'debit': amount, 'budget_id': budget_id,
+                                 'partner_id': partner_id
+                             })]}
+            unam_move = move_obj.create(unam_move_val)
+            unam_move.action_post()
         self.success_line_ids.mapped('program_code_id').write(
             {'state': 'validated', 'budget_id': self.id})
         self.write({'state': 'validate'})

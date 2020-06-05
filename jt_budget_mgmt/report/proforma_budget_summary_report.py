@@ -445,7 +445,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                                     x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
                                                     else 0 for x in all_b_lines)})
                 elif column in ('Per Exercise', 'Por Ejercer'):
-                    columns.append({'name': 0})
+                    columns.append({'name': sum(x.available for x in all_b_lines)})
                 elif column in ('Committed', 'Comprometido'):
                     columns.append({'name': 0})
                 elif column in ('Accrued', 'Devengado'):
@@ -453,7 +453,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 elif column in ('Exercised', 'Ejercido'):
                     columns.append({'name': 0})
                 elif column in ('Paid', 'Pagado'):
-                    columns.append({'name': sum(x.available for x in all_b_lines)})
+                    columns.append({'name': 0})
                 elif column in ('Available', 'Disponible'):
                     columns.append({'name': sum(x.available for x in all_b_lines)})
             lines.append({
