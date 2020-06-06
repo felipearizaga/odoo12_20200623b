@@ -87,6 +87,8 @@ class Adequacies(models.Model):
             'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     adequacies_lines_ids = fields.One2many(
         'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+    move_line_ids = fields.One2many("account.move.line", 'adequacy_id', string="Journal Items")
+    journal_id = fields.Many2one('account.journal', string="Journal")
 
     _sql_constraints = [
         ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
@@ -662,8 +664,20 @@ class Adequacies(models.Model):
         self.validate_data()
         self.state = 'confirmed'
 
+    @api.onchange('adaptation_type')
+    def onchange_type(self):
+        if self.adaptation_type == 'compensated':
+            comp_adequacy_jour = self.env.ref('jt_conac.comp_adequacy_jour')
+            if comp_adequacy_jour:
+                self.journal_id = comp_adequacy_jour.id
+        else:
+            liq_adequacy_jour = self.env.ref('jt_conac.liq_adequacy_jour')
+            if liq_adequacy_jour:
+                self.journal_id = liq_adequacy_jour.id
+
     def accept(self):
         self.validate_data()
+        is_incraese = False
         for line in self.adequacies_lines_ids:
             if line.program:
                 budget_line = self.env['expenditure.budget.line'].sudo().search(
@@ -674,8 +688,84 @@ class Adequacies(models.Model):
                         final_amount = amount - line.amount
                         budget_line.write({'assigned': final_amount})
                     if line.line_type == 'increase':
+                        is_incraese = True
                         final_amount = amount + line.amount
                         budget_line.write({'assigned': final_amount})
+        if self.adaptation_type != 'compensated' and self.journal_id:
+            move_obj = self.env['account.move']
+            journal = self.journal_id
+            today = datetime.today().date()
+            user = self.env.user
+            partner_id = user.partner_id.id
+            amount = sum(self.adequacies_lines_ids.mapped('amount'))
+            company_id = user.company_id.id
+            if not journal.default_debit_account_id or not journal.default_credit_account_id \
+                    or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
+                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+            if is_incraese:
+                unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
+                                 'date': today, 'journal_id': journal.id, 'company_id': company_id,
+                                 'line_ids': [(0, 0, {
+                                     'account_id': journal.default_credit_account_id.id,
+                                     'credit': amount, 'adequacy_id': self.id,
+                                     'partner_id': partner_id
+                                 }), (0, 0, {
+                                     'account_id': journal.default_debit_account_id.id,
+                                     'debit': amount, 'adequacy_id': self.id,
+                                     'partner_id': partner_id
+                                 })]}
+            else:
+                unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
+                                 'date': today, 'journal_id': journal.id, 'company_id': company_id,
+                                 'line_ids': [(0, 0, {
+                                     'account_id': journal.default_credit_account_id.id,
+                                     'debit': amount, 'adequacy_id': self.id,
+                                     'partner_id': partner_id
+                                 }), (0, 0, {
+                                     'account_id': journal.default_debit_account_id.id,
+                                     'credit': amount, 'adequacy_id': self.id,
+                                     'partner_id': partner_id
+                                 })]}
+            unam_move = move_obj.create(unam_move_val)
+            unam_move.action_post()
+        if self.adaptation_type == 'compensated' and self.journal_id:
+            move_obj = self.env['account.move']
+            journal = self.journal_id
+            today = datetime.today().date()
+            user = self.env.user
+            partner_id = user.partner_id.id
+            company_id = user.company_id.id
+            if not journal.default_debit_account_id or not journal.default_credit_account_id \
+                    or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
+                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+            for line in self.adequacies_lines_ids:
+                amount = line.amount
+                if line.line_type == 'increase':
+                    unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
+                                     'date': today, 'journal_id': journal.id, 'company_id': company_id,
+                                     'line_ids': [(0, 0, {
+                                         'account_id': journal.default_credit_account_id.id,
+                                         'credit': amount, 'adequacy_id': self.id,
+                                         'partner_id': partner_id
+                                     }), (0, 0, {
+                                         'account_id': journal.default_debit_account_id.id,
+                                         'debit': amount, 'adequacy_id': self.id,
+                                         'partner_id': partner_id
+                                     })]}
+                else:
+                    unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
+                                     'date': today, 'journal_id': journal.id, 'company_id': company_id,
+                                     'line_ids': [(0, 0, {
+                                         'account_id': journal.default_credit_account_id.id,
+                                         'debit': amount, 'adequacy_id': self.id,
+                                         'partner_id': partner_id
+                                     }), (0, 0, {
+                                         'account_id': journal.default_debit_account_id.id,
+                                         'credit': amount, 'adequacy_id': self.id,
+                                         'partner_id': partner_id
+                                     })]}
+                unam_move = move_obj.create(unam_move_val)
+                unam_move.action_post()
         self.state = 'accepted'
 
     def reject(self):

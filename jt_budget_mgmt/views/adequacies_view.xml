@@ -39,6 +39,7 @@
                                 <field name="folio" required="1"/>
                                 <field name="budget_id" required="1"/>
                                 <field name="adaptation_type" required="1"/>
+                                <field name="journal_id" readonly="1" force_save="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', 'in', ('accepted', 'rejected')), ('import_status', '!=', 'draft')]}"/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
@@ -96,6 +97,9 @@
                                 <group string="Success Rows">
                                     <field name="success_row_ids" readonly="1" nolabel="1"/>
                                 </group>
+                            </page>
+                            <page string="Journal Items" name="move_lines">
+                                <field name="move_line_ids" nolabel="1"/>
                             </page>
                         </notebook>
                     </sheet>

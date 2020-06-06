@@ -27,9 +27,11 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     budget_id = fields.Many2one('expenditure.budget')
+    adequacy_id = fields.Many2one('adequacies')
 
 class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'
 
     budget_id = fields.Many2one('expenditure.budget')
+    adequacy_id = fields.Many2one('adequacies')
