@@ -252,29 +252,5 @@ class ImportAdequaciesLine(models.TransientModel):
                             'target': 'new',
                             'res_id': self.id,
                         }
-                move_obj = self.env['account.move']
-                journal = control_amount.journal_id
-                today = datetime.today().date()
-                user = self.env.user
-                partner_id = user.partner_id.id
-                amount = sum(control_amount.line_ids.mapped('amount_deposited'))
-                company_id = user.company_id.id
-                if not journal.default_debit_account_id or not journal.default_credit_account_id \
-                        or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
-                    raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
-                unam_move_val = {'ref': self.folio, 'calender_id': control_amount.id, 'conac_move': True,
-                                 'date': today, 'journal_id': journal.id, 'company_id': company_id,
-                                 'line_ids': [(0, 0, {
-                                     'account_id': journal.default_credit_account_id.id,
-                                     'credit': amount, 'calender_id': control_amount.id,
-                                     'partner_id': partner_id
-                                 }), (0, 0, {
-                                     'account_id': journal.default_debit_account_id.id,
-                                     'debit': amount, 'calender_id': control_amount.id,
-                                     'partner_id': partner_id
-                                 })]}
-                unam_move = move_obj.create(unam_move_val)
-                unam_move.action_post()
-                control_amount.state = 'validate'
             except UserError as e:
                 raise UserError(e)

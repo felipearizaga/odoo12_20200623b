@@ -1,4 +1,4 @@
-id,concept,approved,ext_and_red,modified,accrued,paid_out,sub_exercise,parent_id:id
+id,concept,approved_amt,ext_and_red_amt,modified_amt,accrued_amt,paid_out_amt,sub_exercise,parent_id:id
 jt_conac.1,Servicios Personales,,,,,,,
 jt_conac.2,Remuneraciones al Personal de Carácter Permanente,,,,,,,jt_conac.1
 jt_conac.3,Remuneraciones al Personal de Carácter Transitorio,,,,,,,jt_conac.1

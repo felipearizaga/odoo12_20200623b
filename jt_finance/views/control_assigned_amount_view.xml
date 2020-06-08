@@ -24,6 +24,8 @@
                 <form>
                     <header>
                         <field name="state" widget="statusbar"/>
+                        <button  class="btn btn-primary" type="object" name="validate"
+                         string="Validate" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     </header>
                     <sheet>
                         <group>

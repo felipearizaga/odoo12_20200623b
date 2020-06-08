@@ -1,11 +1,11 @@
-id,concept,approved,ext_and_red,modified,accrued,paid_out,sub_exercise,parent_id:id
-"jt_conac.1","Programas","","","","","","",""
-"jt_conac.2","DOCENCIA NIVEL SUPERIOR","","","","","","","jt_conac.1"
-"jt_conac.3","Educación de Licenciatura","","","","","","","jt_conac.2""
-"jt_conac.4","Educación de Posgrado","","","","","","","jt_conac.2""
-"jt_conac.5","Educación Continua, Abierta y a Distancia","","","","","","","jt_conac.2""
-"jt_conac.6","Desarrollo Académico en Nivel Superior","","","","","","","jt_conac.2""
-"jt_conac.7","Servicios de Apoyo Administrativo en Nivel Superior","","","","","","","jt_conac.2""
+id,concept,approved_amt,ext_and_red_amt,modified_amt,accrued_amt,paid_out_amt,sub_exercise,parent_id:id
+jt_conac.1,"Programas",,,,,,,
+jt_conac.2,"DOCENCIA NIVEL SUPERIOR",,,,,,,jt_conac.1
+jt_conac.3,"Educación de Licenciatura",,,,,,,jt_conac.2
+"jt_conac.4","Educación de Posgrado","","","","","","","jt_conac.2"
+"jt_conac.5","Educación Continua, Abierta y a Distancia","","","","","","","jt_conac.2"
+"jt_conac.6","Desarrollo Académico en Nivel Superior","","","","","","","jt_conac.2"
+"jt_conac.7","Servicios de Apoyo Administrativo en Nivel Superior","","","","","","","jt_conac.2"
 "jt_conac.8","DOCENCIA NIVEL BACHILLERATO","","","","","","","jt_conac.1"
 "jt_conac.9","Educación Media Superior","","","","","","","jt_conac.8"
 "jt_conac.10","Desarrollo Académico en Nivel Bachillerato","","","","","","","jt_conac.8"

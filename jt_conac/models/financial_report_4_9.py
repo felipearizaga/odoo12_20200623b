@@ -48,7 +48,7 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
         ]
 
     def _get_lines(self, options, line_id=None):
-        exp_obj = self.env['expenditure.status']
+        exp_obj = self.env['status.expen']
         lines = []
         hierarchy_lines = exp_obj.sudo().search(
             [('parent_id', '=', False)], order='id')

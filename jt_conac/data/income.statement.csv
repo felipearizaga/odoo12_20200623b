@@ -1,4 +1,4 @@
-id,name,estimated,exp_and_red,modified,accrued,raised,difference,parent_id:id
+id,name,estimated_amt,exp_and_red_amt,modified_amt,accrued_amt,raised_amt,difference_amt,parent_id:id
 "jt_conac.1","Rubro de Ingresos","","","","","","",""
 "jt_conac.2","Impuestos","","","","","","","jt_conac.1"
 "jt_conac.3","Cuotas y Aportaciones de Seguridad Social","","","","","","","jt_conac.1"

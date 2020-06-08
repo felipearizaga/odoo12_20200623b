@@ -29,10 +29,10 @@ class StatementOfIncome(models.Model):
     # _rec_name = 'name'
 
     name = fields.Char(string='Nombre')
-    estimated = fields.Float(string='Estimado')
-    exp_and_red = fields.Float(string='Ampliaciones y Reducciones')
-    modified = fields.Float(string='Modificado')
-    accrued = fields.Float(string='Devengado')
-    raised = fields.Float(string='Recaudado')
-    difference = fields.Float(string='Diferencia')
+    estimated_amt = fields.Float(string='Estimado')
+    exp_and_red_amt = fields.Float(string='Ampliaciones y Reducciones')
+    modified_amt = fields.Float(string='Modificado')
+    accrued_amt = fields.Float(string='Devengado')
+    raised_amt = fields.Float(string='Recaudado')
+    difference_amt = fields.Float(string='Diferencia')
     parent_id = fields.Many2one('income.statement', string='Parent')

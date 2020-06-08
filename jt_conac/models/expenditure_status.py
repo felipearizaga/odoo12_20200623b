@@ -24,15 +24,15 @@ from odoo import models, fields
 
 
 class StatusOfExpenditure(models.Model):
-    _name = 'expenditure.status'
+    _name = 'status.expen'
     _description = 'Status of Expenditure'
     _rec_name = 'concept'
 
     concept = fields.Char(string='Concepto')
-    approved = fields.Float(string='Aprobado')
-    ext_and_red = fields.Float(string='Ampliaciones/ (Reducciones)')
-    modified = fields.Float(string='Modificado')
-    accrued = fields.Float(string='Devengado')
-    paid_out = fields.Float(string='Pagado')
+    approved_amt = fields.Float(string='Aprobado')
+    ext_and_red_amt = fields.Float(string='Ampliaciones/ (Reducciones)')
+    modified_amt = fields.Float(string='Modificado')
+    accrued_amt = fields.Float(string='Devengado')
+    paid_out_amt = fields.Float(string='Pagado')
     sub_exercise = fields.Char(string='Subejercicio')
-    parent_id = fields.Many2one('expenditure.status', string='Parent')
+    parent_id = fields.Many2one('status.expenditure', string='Parent')

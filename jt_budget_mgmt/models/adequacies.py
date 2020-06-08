@@ -88,7 +88,8 @@ class Adequacies(models.Model):
     adequacies_lines_ids = fields.One2many(
         'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     move_line_ids = fields.One2many("account.move.line", 'adequacy_id', string="Journal Items")
-    journal_id = fields.Many2one('account.journal', string="Journal")
+    journal_id = fields.Many2one('account.journal', string="Daily")
+    date_of_budget_affected = fields.Date()
 
     _sql_constraints = [
         ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]

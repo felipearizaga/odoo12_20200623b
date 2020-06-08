@@ -50,9 +50,9 @@
         'data/cog.conac.csv',
         'data/debt.statement.csv',
         'data/cash.statement.csv',
-        #'data/income.statement.csv',
-        #'data/expenditure.status.csv',
-        #'data/states.program.csv',
+        'data/income.statement.csv',
+        'data/status.expen.csv',
+        'data/states.program.csv',
 
         'data/account_journal.xml',
         'views/account_journal.xml',
