@@ -421,6 +421,7 @@
                                                     'invisible': [('display_type', 'in', ('line_section', 'line_note'))],
                                                }"
                                                domain="[('company_id', '=', parent.company_id)]" />
+                                        <field name="coa_conac_id"/>
                                         <field name="partner_id"
                                                domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
                                                attrs="{'column_invisible': [('parent.type', '!=', 'entry')]}"/>
@@ -500,6 +501,7 @@
                                       <group>
                                         <field name="tax_line_id" invisible="1"/>
                                         <field name="account_id" domain="[('company_id', '=', parent.company_id), ('deprecated', '=', False)]"/>
+                                        <field name="coa_conac_id"/>
                                         <field name="partner_id" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"/>
                                         <field name="name"/>
                                         <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
@@ -582,15 +584,6 @@
                 </form>
             </field>
         </record>
-
-<!--        <record id="account.action_move_journal_line" model="ir.actions.act_window">-->
-<!--            <field name="domain">[('conac_move', '=',False)]</field>-->
-<!--        </record>-->
-
-<!--        <record id="account.action_account_moves_all" model="ir.actions.act_window">-->
-<!--            <field name="domain">[('display_type', 'not in', ('line_section', 'line_note')),-->
-<!--                ('move_id.state', '!=', 'cancel'), ('move_id.conac_move', '=', False)]</field>-->
-<!--        </record>-->
 
          <record id="action_conac_move_journal_line" model="ir.actions.act_window">
             <field name="name">Journal Entries CONAC</field>

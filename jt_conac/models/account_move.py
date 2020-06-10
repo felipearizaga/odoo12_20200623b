@@ -27,3 +27,10 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     conac_move = fields.Boolean(string="CONAC")
+
+class AccountMoveLine(models.Model):
+
+    _inherit = 'account.move.line'
+
+    conac_move = fields.Boolean(string="CONAC")
+    coa_conac_id = fields.Many2one('coa.conac', string="CODE CONAC")

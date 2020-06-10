@@ -708,10 +708,12 @@ class Adequacies(models.Model):
                                  'date': today, 'journal_id': journal.id, 'company_id': company_id,
                                  'line_ids': [(0, 0, {
                                      'account_id': journal.default_credit_account_id.id,
+                                     'coa_conac_id': journal.conac_credit_account_id.id,
                                      'credit': amount, 'adequacy_id': self.id,
                                      'partner_id': partner_id
                                  }), (0, 0, {
                                      'account_id': journal.default_debit_account_id.id,
+                                     'coa_conac_id': journal.conac_debit_account_id.id,
                                      'debit': amount, 'adequacy_id': self.id,
                                      'partner_id': partner_id
                                  })]}
@@ -720,10 +722,12 @@ class Adequacies(models.Model):
                                  'date': today, 'journal_id': journal.id, 'company_id': company_id,
                                  'line_ids': [(0, 0, {
                                      'account_id': journal.default_credit_account_id.id,
+                                     'coa_conac_id': journal.conac_credit_account_id.id,
                                      'debit': amount, 'adequacy_id': self.id,
                                      'partner_id': partner_id
                                  }), (0, 0, {
                                      'account_id': journal.default_debit_account_id.id,
+                                     'coa_conac_id': journal.conac_debit_account_id.id,
                                      'credit': amount, 'adequacy_id': self.id,
                                      'partner_id': partner_id
                                  })]}
@@ -746,10 +750,12 @@ class Adequacies(models.Model):
                                      'date': today, 'journal_id': journal.id, 'company_id': company_id,
                                      'line_ids': [(0, 0, {
                                          'account_id': journal.default_credit_account_id.id,
+                                         'coa_conac_id': journal.conac_credit_account_id.id,
                                          'credit': amount, 'adequacy_id': self.id,
                                          'partner_id': partner_id
                                      }), (0, 0, {
                                          'account_id': journal.default_debit_account_id.id,
+                                         'coa_conac_id': journal.conac_debit_account_id.id,
                                          'debit': amount, 'adequacy_id': self.id,
                                          'partner_id': partner_id
                                      })]}
@@ -758,10 +764,12 @@ class Adequacies(models.Model):
                                      'date': today, 'journal_id': journal.id, 'company_id': company_id,
                                      'line_ids': [(0, 0, {
                                          'account_id': journal.default_credit_account_id.id,
+                                         'coa_conac_id': journal.conac_credit_account_id.id,
                                          'debit': amount, 'adequacy_id': self.id,
                                          'partner_id': partner_id
                                      }), (0, 0, {
                                          'account_id': journal.default_debit_account_id.id,
+                                         'coa_conac_id': journal.conac_debit_account_id.id,
                                          'credit': amount, 'adequacy_id': self.id,
                                          'partner_id': partner_id
                                      })]}
