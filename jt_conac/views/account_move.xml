@@ -415,12 +415,12 @@
                                        context="{'default_type': context.get('default_type'), 'line_ids': line_ids, 'journal_id': journal_id, 'default_partner_id': commercial_partner_id, 'default_currency_id': currency_id != company_currency_id and currency_id or False}">
                                     <tree editable="bottom" string="Journal Items" decoration-muted="display_type in ('line_section', 'line_note')" default_order="sequence, date desc, move_name desc, id">
                                         <!-- Displayed fields -->
-                                        <field name="account_id"
-                                               attrs="{
-                                                    'required': [('display_type', 'not in', ('line_section', 'line_note'))],
-                                                    'invisible': [('display_type', 'in', ('line_section', 'line_note'))],
-                                               }"
-                                               domain="[('company_id', '=', parent.company_id)]" />
+<!--                                        <field name="account_id"-->
+<!--                                               attrs="{-->
+<!--                                                    'required': [('display_type', 'not in', ('line_section', 'line_note'))],-->
+<!--                                                    'invisible': [('display_type', 'in', ('line_section', 'line_note'))],-->
+<!--                                               }"-->
+<!--                                               domain="[('company_id', '=', parent.company_id)]" />-->
                                         <field name="coa_conac_id"/>
                                         <field name="partner_id"
                                                domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
@@ -500,7 +500,7 @@
                                     <form>
                                       <group>
                                         <field name="tax_line_id" invisible="1"/>
-                                        <field name="account_id" domain="[('company_id', '=', parent.company_id), ('deprecated', '=', False)]"/>
+<!--                                        <field name="account_id" domain="[('company_id', '=', parent.company_id), ('deprecated', '=', False)]"/>-->
                                         <field name="coa_conac_id"/>
                                         <field name="partner_id" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"/>
                                         <field name="name"/>
