@@ -277,12 +277,12 @@ class BudgetSummaryReportDownload(models.TransientModel):
                             for bug_con in self.budget_control_ids:
                                 col += 1
                                 value = 0
+                                authorized = sum(x.authorized for x in all_b_lines)
+                                annual_modified = annual_modified + authorized
                                 if bug_con.name == 'Authorized':
-                                    value = sum(
-                                        x.authorized for x in all_b_lines)
+                                    value = authorized
                                 elif bug_con.name == 'Assigned Total Annual':
-                                    value = sum(
-                                        x.assigned for x in all_b_lines)
+                                    value = sum(x.assigned for x in all_b_lines)
                                 elif bug_con.name == 'Annual Modified':
                                     value = annual_modified
                                 elif bug_con.name == 'Assigned 1st Trimester':

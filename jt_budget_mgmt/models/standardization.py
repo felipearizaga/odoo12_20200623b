@@ -733,6 +733,11 @@ class Standardization(models.Model):
                 origin_end_date_day = False
                 origin_end_date_month = False
 
+                dest_start_date_day = False
+                dest_start_date_month = False
+                dest_end_date_day = False
+                dest_end_date_month = False
+
                 date_start = str(line.origin_id.start_date).split('/')
                 if len(date_start) > 1:
                     origin_start_date_day = date_start[0]
@@ -741,7 +746,16 @@ class Standardization(models.Model):
                 if len(date_end) > 1:
                     origin_end_date_day = date_end[0]
                     origin_end_date_month = date_end[1]
+                date_start = str(line.quarter.start_date).split('/')
+                if len(date_start) > 1:
+                    dest_start_date_day = date_start[0]
+                    dest_start_date_month = date_start[1]
+                date_end = str(line.quarter.end_date).split('/')
+                if len(date_end) > 1:
+                    dest_end_date_day = date_end[0]
+                    dest_end_date_month = date_end[1]
                 origin_budget_line = False
+                dest_budget_line = False
                 for budget_line in budget_lines:
                     if not origin_budget_line:
                         if budget_line.start_date and str(budget_line.start_date.day).zfill(
@@ -750,6 +764,19 @@ class Standardization(models.Model):
                                 budget_line.end_date.day).zfill(2) == origin_end_date_day and str(
                                 budget_line.end_date.month).zfill(2) == origin_end_date_month:
                             origin_budget_line = budget_line
+                    if not dest_budget_line:
+                        if budget_line.start_date and str(budget_line.start_date.day).zfill(
+                                2) == dest_start_date_day and str(budget_line.start_date.month).zfill(
+                                2) == dest_start_date_month and budget_line.end_date and str(
+                                budget_line.end_date.day).zfill(2) == dest_end_date_day and str(
+                                budget_line.end_date.month).zfill(2) == dest_end_date_month:
+                            dest_budget_line = budget_line
+                if not dest_budget_line:
+                    raise ValidationError(_("Quarter budget line is not created for this program code: \n %s" %
+                                            line.code_id.program_code))
+                if not origin_budget_line:
+                    raise ValidationError(_("Origin budget line is not created for this program code: \n %s" %
+                                            line.code_id.program_code))
                 if origin_budget_line and line.amount > origin_budget_line.assigned:
                     raise ValidationError(_("The amount is greater than the one assigned in the budget. \n"
                             "Budget: %s \nProgram Code: %s" % (line.budget_id.name, line.code_id.program_code)))

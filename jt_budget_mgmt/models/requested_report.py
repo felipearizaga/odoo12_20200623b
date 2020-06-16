@@ -209,8 +209,10 @@ class RequestedReports(models.Model):
                     for bug_con in report.budget_control_ids:
                         col += 1
                         value = 0
+                        authorized = sum(x.authorized for x in all_b_lines)
+                        annual_modified = authorized + annual_modified
                         if bug_con.name == 'Authorized':
-                            value =  sum(x.authorized for x in all_b_lines)
+                            value =  authorized
                         elif bug_con.name == 'Assigned Total Annual':
                             value = sum(x.assigned for x in all_b_lines)
                         elif bug_con.name == 'Annual Modified':

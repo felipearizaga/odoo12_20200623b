@@ -644,11 +644,28 @@ class Adequacies(models.Model):
                     raise ValidationError(
                         "The total amount of the increases/decreases should be greater than or equal to 10000")
                 if line.line_type == 'decrease':
-                    # if self.adaptation_type == 'liquid':
-                    #     raise ValidationError(
-                    #         "In liquid adjustment, you can only increase amount of budget!")
-                    budget_line = self.env['expenditure.budget.line'].sudo().search(
-                        [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                    budget_line = False
+                    if self.date_of_budget_affected and self.adaptation_type == 'compensated':
+                        b_month = self.date_of_budget_affected.month
+                        budget_lines = self.env['expenditure.budget.line'].sudo().search(
+                            [('program_code_id', '=', line.program.id),
+                             ('expenditure_budget_id', '=', self.budget_id.id)])
+                        for b_line in budget_lines:
+                            if b_line.start_date:
+                                b_s_month = b_line.start_date.month
+                                if b_month in (1,2,3) and b_s_month in (1,2,3):
+                                    budget_line = b_line
+                                elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                                    budget_line = b_line
+                                elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                                    budget_line = b_line
+                                elif b_month in (10,11,12) and b_s_month in (10,11,12):
+                                    budget_line = b_line
+                    if not budget_line:
+                        budget_line = self.env['expenditure.budget.line'].sudo().search(
+                            [('program_code_id', '=', line.program.id),
+                             ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+
                     if budget_line and budget_line.assigned < line.amount:
                         raise ValidationError("You can not decrease amount more than assigned amount!")
 
@@ -681,17 +698,44 @@ class Adequacies(models.Model):
         is_incraese = False
         for line in self.adequacies_lines_ids:
             if line.program:
-                budget_line = self.env['expenditure.budget.line'].sudo().search(
-                    [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
-                if budget_line:
-                    amount = budget_line.assigned
-                    if line.line_type == 'decrease':
-                        final_amount = amount - line.amount
-                        budget_line.write({'assigned': final_amount})
-                    if line.line_type == 'increase':
-                        is_incraese = True
-                        final_amount = amount + line.amount
-                        budget_line.write({'assigned': final_amount})
+                if self.date_of_budget_affected and self.adaptation_type == 'compensated':
+                    b_month = self.date_of_budget_affected.month
+                    budget_line = False
+                    budget_lines = self.env['expenditure.budget.line'].sudo().search(
+                        [('program_code_id', '=', line.program.id),
+                         ('expenditure_budget_id', '=', self.budget_id.id)])
+                    for b_line in budget_lines:
+                        if b_line.start_date:
+                            b_s_month = b_line.start_date.month
+                            if b_month in (1, 2, 3) and b_s_month in (1, 2, 3):
+                                budget_line = b_line
+                            elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                                budget_line = b_line
+                            elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                                budget_line = b_line
+                            elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
+                                budget_line = b_line
+                    if budget_line:
+                        amount = budget_line.assigned
+                        if line.line_type == 'decrease':
+                            final_amount = amount - line.amount
+                            budget_line.write({'assigned': final_amount})
+                        if line.line_type == 'increase':
+                            is_incraese = True
+                            final_amount = amount + line.amount
+                            budget_line.write({'assigned': final_amount})
+                else:
+                    budget_line = self.env['expenditure.budget.line'].sudo().search(
+                        [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                    if budget_line:
+                        amount = budget_line.assigned
+                        if line.line_type == 'decrease':
+                            final_amount = amount - line.amount
+                            budget_line.write({'assigned': final_amount})
+                        if line.line_type == 'increase':
+                            is_incraese = True
+                            final_amount = amount + line.amount
+                            budget_line.write({'assigned': final_amount})
         if self.adaptation_type != 'compensated' and self.journal_id:
             move_obj = self.env['account.move']
             journal = self.journal_id
