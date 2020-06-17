@@ -10,6 +10,20 @@
                 	<field name="conac_debit_account_id"/>
                 	<field name="conac_credit_account_id"/>
                 </xpath>
+                <xpath expr="//notebook/page[@name='journal_entries']/group/group[2]" position="after">
+                    <group string="Excercise">
+                        <field name="execercise_debit_account_id"/>
+                        <field name="execercise_credit_account_id"/>
+                        <field name="conac_exe_debit_account_id"/>
+                        <field name="conac_exe_credit_account_id"/>
+                    </group>
+                     <group string="Paid">
+                        <field name="paid_debit_account_id"/>
+                        <field name="paid_credit_account_id"/>
+                        <field name="conac_paid_debit_account_id"/>
+                        <field name="conac_paid_credit_account_id"/>
+                    </group>
+                </xpath>
             </field>
         </record>
     </data>

@@ -20,21 +20,21 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
-from . import program
-from . import sub_program
-from . import dependency
-from . import sub_dependency
-from . import expenditure_item
-from . import verifying_digit
-from . import resource_origin
-from . import institutional_activity
-from . import budget_program_conversion
-from . import shcp_code
-from . import departure_conversion
-from . import expense_type
-from . import geographic_location
-from . import key_wallet
-from . import project_type
-from . import stage
-from . import agreement_type
+class PolicyKeys(models.Model):
+
+    _name = 'policy.keys'
+    _description = 'Policy Keys'
+    _rec_name = 'origin'
+
+    origin = fields.Char('Origination of the movement')
+    organization = fields.Char('Organization and Control', size=3)
+    description = fields.Text('Description')
+
+    @api.constrains('organization')
+    def check_organization(self):
+        if self.organization and len(self.organization) != 3:
+            raise UserError(
+                _('The Organization and Control must be of 3 characters only.'))

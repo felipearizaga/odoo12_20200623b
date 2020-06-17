@@ -27,5 +27,7 @@ class BudgetControl(models.Model):
 
     _name = 'budget.control'
     _description = 'Budget Control Selection Fields'
+    _order = "sequence"
 
     name = fields.Char(string='Control Column')
+    sequence = fields.Integer("Sequence")

@@ -88,6 +88,8 @@
         'wizard/affect_payment_budget_wiz_view.xml',
         'wizard/request_summary_report_wiz.xml',
 
+        'views/payment_place.xml',
+
         # Main Menu File
         'views/budget_menus.xml',
     ],

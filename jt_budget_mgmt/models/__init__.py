@@ -44,3 +44,4 @@ from . import ir_cron
 from . import favourite_summary_report
 
 from . import account
+from . import payment_place
