@@ -136,6 +136,7 @@ class RequestedReports(models.Model):
         ws1 = wb1.add_sheet('Proforma Summary Report')
         fp = BytesIO()
         header_style = xlwt.easyxf('font: bold 1')
+        total_style = xlwt.easyxf('font: bold 1;' 'borders: top thin, right thin, bottom thin, left thin;')
 
         row = 1
         col = 0
@@ -189,10 +190,22 @@ class RequestedReports(models.Model):
         row +=1
         # start = report.start_date
         # end = report.end_date
-
-
-        for ld in code_lines:
-            for code, bud_lines in ld.items():
+        need_total = False
+        tot_authrized = 0
+        tot_assign_manu = 0
+        tot_assign_fir = 0
+        tot_assign_sec = 0
+        tot_assign_third = 0
+        tot_assign_for = 0
+        tot_annual_modi = 0
+        tot_per_ex = 0
+        tot_commited = 0
+        tot_accured = 0
+        tot_excercised = 0
+        tot_paid = 0
+        tot_available = 0
+        for cd in code_lines:
+            for code, bud_lines in cd.items():
                 col = 0
                 code = code_obj.browse(code)
                 all_b_lines = bud_line_obj.browse(bud_lines)
@@ -211,40 +224,56 @@ class RequestedReports(models.Model):
                         value = 0
                         authorized = sum(x.authorized for x in all_b_lines)
                         annual_modified = authorized + annual_modified
-                        if bug_con.name == 'Authorized':
+                        if bug_con.name == 'Expenditure Item':
+                            need_total = True
+                            value = code.item_id.item
+                        elif bug_con.name == 'Authorized':
                             value =  authorized
+                            tot_authrized += authorized
                         elif bug_con.name == 'Assigned Total Annual':
                             value = sum(x.assigned for x in all_b_lines)
+                            tot_assign_manu += value
                         elif bug_con.name == 'Annual Modified':
                             value = annual_modified
+                            tot_annual_modi += value
                         elif bug_con.name == 'Assigned 1st Trimester':
                             value = sum(x.assigned if x.start_date.month == 1 and \
                                         x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
                                                         else 0 for x in all_b_lines)
+                            tot_assign_fir += value
                         elif bug_con.name == 'Assigned 2nd Trimester':
                             value = sum(x.assigned if x.start_date.month == 4 and \
                                         x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
                                                         else 0 for x in all_b_lines)
+                            tot_assign_sec += value
                         elif bug_con.name == 'Assigned 3rd Trimester':
                             value = sum(x.assigned if x.start_date.month == 7 and \
                                         x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
                                                         else 0 for x in all_b_lines)
+                            tot_assign_third += value
                         elif bug_con.name == 'Assigned 4th Trimester':
                             value = sum(x.assigned if x.start_date.month == 10 and \
                                         x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
                                                         else 0 for x in all_b_lines)
+                            tot_assign_for += value
                         elif bug_con.name == 'Per Exercise':
                             value = sum(x.available for x in all_b_lines)
+                            tot_per_ex += value
                         elif bug_con.name == 'Committed':
                             value = 0
+                            tot_commited += value
                         elif bug_con.name == 'Accrued':
                             value = 0
+                            tot_accured += value
                         elif bug_con.name == 'Exercised':
                             value = 0
+                            tot_excercised += value
                         elif bug_con.name == 'Paid':
                             value = 0
+                            tot_paid += value
                         elif bug_con.name == 'Available':
                             value = sum(x.available for x in all_b_lines)
+                            tot_available += value
                         ws1.write(row, col, value)
                     for code_sec in report.code_section_ids:
                         col += 1
@@ -289,6 +318,43 @@ class RequestedReports(models.Model):
                             value = code.agreement_type_id.number_agreement
                         ws1.write(row, col, value)
                     row +=1
+        if need_total:
+            row += 1
+            total_col = 0
+            ws1.write(row, total_col, 'Total', total_style)
+            for bug_con in report.budget_control_ids:
+                total_col += 1
+                value = ''
+                if bug_con.name == 'Expenditure Item':
+                    value = ''
+                elif bug_con.name == 'Authorized':
+                    value = tot_authrized
+                elif bug_con.name == 'Assigned Total Annual':
+                    value = tot_assign_manu
+                elif bug_con.name == 'Annual Modified':
+                    value = tot_annual_modi
+                elif bug_con.name == 'Assigned 1st Trimester':
+                    value = tot_assign_fir
+                elif bug_con.name == 'Assigned 2nd Trimester':
+                    value = tot_assign_sec
+                elif bug_con.name == 'Assigned 3rd Trimester':
+                    value = tot_assign_third
+                elif bug_con.name == 'Assigned 4th Trimester':
+                    value = tot_assign_for
+                elif bug_con.name == 'Per Exercise':
+                    value = tot_per_ex
+                elif bug_con.name == 'Committed':
+                    value = tot_commited
+                elif bug_con.name == 'Accrued':
+                    value = tot_accured
+                elif bug_con.name == 'Exercised':
+                    value = tot_excercised
+                elif bug_con.name == 'Paid':
+                    value = tot_paid
+                elif bug_con.name == 'Available':
+                    value = tot_available
+                ws1.write(row, total_col, value, total_style)
+            row += 2
         wb1.save(fp)
         out = base64.encodestring(fp.getvalue())
         report_file.file = out

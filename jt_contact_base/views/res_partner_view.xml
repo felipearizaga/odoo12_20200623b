@@ -9,12 +9,6 @@
                 <xpath expr="//group[@name='accounting_entries']" position="inside">
                     <field name="scholarship_id"/>
                 </xpath>
-<!--                <xpath expr="//page[@name='accounting']/group/group[@name='accounting_entries']"-->
-<!--                       position="inside">-->
-<!--                <xpath expr="//group[@name='accounting_entries']" position="inside">-->
-<!--                    <field name="scholarship_id"/>-->
-<!--                </xpath>-->
-<!--                    </xpath>-->
             </field>
         </record>
     </data>

@@ -188,7 +188,7 @@ class BudgetSummaryReportDownload(models.TransientModel):
         if self.agreement_type_ids:
             domain.append(('agreement_type_id', 'in', self.wallet_ids.ids))
 
-        programs = self.env['program.code'].search(domain)
+        programs = self.env['program.code'].search(domain, order='item_id')
         code_lines = []
         code_lines_new = []
         bud_line_obj = self.env['expenditure.budget.line']
@@ -201,6 +201,54 @@ class BudgetSummaryReportDownload(models.TransientModel):
                 code_lines.append({code: all_b_lines})
                 code_lines_new.append({code.id: all_b_lines.ids})
 
+        data_with_item = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+        for cl in code_lines:
+            for code, lines in cl.items():
+                key_i = int(code.item_id.item)
+                if key_i >= 100 and key_i <= 199:
+                    data_with_item[0] = {1: data_with_item[0].get(1) + [{code: lines}]}
+                elif key_i >= 200 and key_i <= 299:
+                    data_with_item[1] = {2: data_with_item[1].get(2) + [{code: lines}]}
+                elif key_i >= 300 and key_i <= 399:
+                    data_with_item[2] = {3: data_with_item[2].get(3) + [{code: lines}]}
+                elif key_i >= 400 and key_i <= 499:
+                    data_with_item[3] = {4: data_with_item[3].get(4) + [{code: lines}]}
+                elif key_i >= 500 and key_i <= 599:
+                    data_with_item[4] = {5: data_with_item[4].get(5) + [{code: lines}]}
+                elif key_i >= 600 and key_i <= 699:
+                    data_with_item[5] = {6: data_with_item[5].get(6) + [{code: lines}]}
+                elif key_i >= 700 and key_i <= 799:
+                    data_with_item[6] = {7: data_with_item[6].get(7) + [{code: lines}]}
+                elif key_i >= 800 and key_i <= 899:
+                    data_with_item[7] = {8: data_with_item[7].get(8) + [{code: lines}]}
+                elif key_i >= 900 and key_i <= 999:
+                    data_with_item[8] = {9: data_with_item[8].get(9) + [{code: lines}]}
+        code_obj = self.env['program.code']
+        data_with_item_cron = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+        for cl in code_lines_new:
+            for code, lines in cl.items():
+                code_b = code_obj.browse(code)
+                key_i = int(code_b.item_id.item)
+                if key_i >= 100 and key_i <= 199:
+                    data_with_item_cron[0] = {1: data_with_item_cron[0].get(1) + [{code: lines}]}
+                elif key_i >= 200 and key_i <= 299:
+                    data_with_item_cron[1] = {2: data_with_item_cron[1].get(2) + [{code: lines}]}
+                elif key_i >= 300 and key_i <= 399:
+                    data_with_item_cron[2] = {3: data_with_item_cron[2].get(3) + [{code: lines}]}
+                elif key_i >= 400 and key_i <= 499:
+                    data_with_item_cron[3] = {4: data_with_item_cron[3].get(4) + [{code: lines}]}
+                elif key_i >= 500 and key_i <= 599:
+                    data_with_item_cron[4] = {5: data_with_item_cron[4].get(5) + [{code: lines}]}
+                elif key_i >= 600 and key_i <= 699:
+                    data_with_item_cron[5] = {6: data_with_item_cron[5].get(6) + [{code: lines}]}
+                elif key_i >= 700 and key_i <= 799:
+                    data_with_item_cron[6] = {7: data_with_item_cron[6].get(7) + [{code: lines}]}
+                elif key_i >= 800 and key_i <= 899:
+                    data_with_item_cron[7] = {8: data_with_item_cron[7].get(8) + [{code: lines}]}
+                elif key_i >= 900 and key_i <= 999:
+                    data_with_item_cron[8] = {9: data_with_item_cron[8].get(9) + [{code: lines}]}
+
+
         if code_lines:
             if len(code_lines) <= 5000:
                 adequacies_line_obj = self.env['adequacies.lines']
@@ -208,6 +256,7 @@ class BudgetSummaryReportDownload(models.TransientModel):
                 ws1 = wb1.add_sheet('Proforma Summary Report')
                 fp = BytesIO()
                 header_style = xlwt.easyxf('font: bold 1')
+                total_style = xlwt.easyxf('font: bold 1;' 'borders: top thin, right thin, bottom thin, left thin;')
 
                 row = 1
                 col = 0
@@ -260,105 +309,174 @@ class BudgetSummaryReportDownload(models.TransientModel):
 
                 row += 1
 
-                for ld in code_lines:
-                    for code, lines in ld.items():
-                        col = 0
-                        all_b_lines = lines
-                        if all_b_lines:
-                            annual_modified = 0
-                            adequacies_lines = adequacies_line_obj.search([('program', '=', code.id),
-                                                                           ('adequacies_id.state', '=', 'accepted')])
-                            for ad_line in adequacies_lines:
-                                if ad_line.line_type == 'increase':
-                                    annual_modified += ad_line.amount
-                                elif ad_line.line_type == 'decrease':
-                                    annual_modified -= ad_line.amount
-                            ws1.write(row, col, code.program_code)
-                            for bug_con in self.budget_control_ids:
-                                col += 1
-                                value = 0
-                                authorized = sum(x.authorized for x in all_b_lines)
-                                annual_modified = annual_modified + authorized
-                                if bug_con.name == 'Authorized':
-                                    value = authorized
-                                elif bug_con.name == 'Assigned Total Annual':
-                                    value = sum(x.assigned for x in all_b_lines)
-                                elif bug_con.name == 'Annual Modified':
-                                    value = annual_modified
-                                elif bug_con.name == 'Assigned 1st Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 1 and
-                                                x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31
-                                                else 0 for x in all_b_lines)
-                                elif bug_con.name == 'Assigned 2nd Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 4 and
-                                                x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30
-                                                else 0 for x in all_b_lines)
-                                elif bug_con.name == 'Assigned 3rd Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 7 and
-                                                x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30
-                                                else 0 for x in all_b_lines)
-                                elif bug_con.name == 'Assigned 4th Trimester':
-                                    value = sum(x.assigned if x.start_date.month == 10 and
-                                                x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31
-                                                else 0 for x in all_b_lines)
-                                elif bug_con.name == 'Per Exercise':
-                                    value = sum(
-                                        x.available for x in all_b_lines)
-                                elif bug_con.name == 'Committed':
-                                    value = 0
-                                elif bug_con.name == 'Accrued':
-                                    value = 0
-                                elif bug_con.name == 'Exercised':
-                                    value = 0
-                                elif bug_con.name == 'Paid':
-                                    value = 0
-                                elif bug_con.name == 'Available':
-                                    value = sum(
-                                        x.available for x in all_b_lines)
-                                ws1.write(row, col, value)
-                            for code_sec in self.code_section_ids:
-                                col += 1
-                                value = ''
-                                if code_sec.section == 'year':
-                                    value = code.year.name
-                                elif code_sec.section == 'pr':
-                                    value = code.program_id.key_unam
-                                elif code_sec.section == 'sp':
-                                    value = code.sub_program_id.sub_program
-                                elif code_sec.section == 'dep':
-                                    value = code.dependency_id.dependency
-                                elif code_sec.section == 'sd':
-                                    value = code.sub_dependency_id.sub_dependency
-                                elif code_sec.section == 'par':
-                                    value = code.item_id.item
-                                elif code_sec.section == 'dv':
-                                    value = code.check_digit
-                                elif code_sec.section == 'or':
-                                    value = code.resource_origin_id.key_origin
-                                elif code_sec.section == 'ai':
-                                    value = code.institutional_activity_id.number
-                                elif code_sec.section == 'conpp':
-                                    value = code.budget_program_conversion_id.shcp.name
-                                elif code_sec.section == 'conpa':
-                                    value = code.conversion_item_id.federal_part
-                                elif code_sec.section == 'tg':
-                                    value = code.expense_type_id.key_expenditure_type
-                                elif code_sec.section == 'ug':
-                                    value = code.location_id.state_key
-                                elif code_sec.section == 'cc':
-                                    value = code.portfolio_id.wallet_password
-                                elif code_sec.section == 'tp':
-                                    value = code.project_type_id.project_type_identifier
-                                elif code_sec.section == 'np':
-                                    value = code.project_type_id.number
-                                elif code_sec.section == 'e':
-                                    value = code.stage_id.stage_identifier
-                                elif code_sec.section == 'tc':
-                                    value = code.agreement_type_id.agreement_type
-                                elif code_sec.section == 'nc':
-                                    value = code.agreement_type_id.number_agreement
-                                ws1.write(row, col, value)
-                            row += 1
+                for data in data_with_item:
+                    for ik, ld in data.items():
+                        need_total = False
+                        tot_authrized = 0
+                        tot_assign_manu = 0
+                        tot_assign_fir = 0
+                        tot_assign_sec = 0
+                        tot_assign_third = 0
+                        tot_assign_for = 0
+                        tot_annual_modi = 0
+                        tot_per_ex = 0
+                        tot_commited = 0
+                        tot_accured = 0
+                        tot_excercised = 0
+                        tot_paid = 0
+                        tot_available = 0
+                        if data.get(ik):
+                            for cd in ld:
+                                for code, lines in cd.items():
+                                    col = 0
+                                    all_b_lines = lines
+                                    if all_b_lines:
+                                        annual_modified = 0
+                                        adequacies_lines = adequacies_line_obj.search([('program', '=', code.id),
+                                                                                       ('adequacies_id.state', '=', 'accepted')])
+                                        for ad_line in adequacies_lines:
+                                            if ad_line.line_type == 'increase':
+                                                annual_modified += ad_line.amount
+                                            elif ad_line.line_type == 'decrease':
+                                                annual_modified -= ad_line.amount
+                                        ws1.write(row, col, code.program_code)
+                                        for bug_con in self.budget_control_ids:
+                                            col += 1
+                                            value = 0
+                                            authorized = sum(x.authorized for x in all_b_lines)
+                                            annual_modified = annual_modified + authorized
+                                            if bug_con.name == 'Expenditure Item':
+                                                need_total = True
+                                                value = code.item_id.item
+                                            elif bug_con.name == 'Authorized':
+                                                value = authorized
+                                                tot_authrized += authorized
+                                            elif bug_con.name == 'Assigned Total Annual':
+                                                value = sum(x.assigned for x in all_b_lines)
+                                                tot_assign_manu += value
+                                            elif bug_con.name == 'Annual Modified':
+                                                value = annual_modified
+                                                tot_annual_modi += value
+                                            elif bug_con.name == 'Assigned 1st Trimester':
+                                                value = sum(x.assigned if x.start_date.month == 1 and
+                                                            x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31
+                                                            else 0 for x in all_b_lines)
+                                                tot_assign_fir += value
+                                            elif bug_con.name == 'Assigned 2nd Trimester':
+                                                value = sum(x.assigned if x.start_date.month == 4 and
+                                                            x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30
+                                                            else 0 for x in all_b_lines)
+                                                tot_assign_sec += value
+                                            elif bug_con.name == 'Assigned 3rd Trimester':
+                                                value = sum(x.assigned if x.start_date.month == 7 and
+                                                            x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30
+                                                            else 0 for x in all_b_lines)
+                                                tot_assign_third += value
+                                            elif bug_con.name == 'Assigned 4th Trimester':
+                                                value = sum(x.assigned if x.start_date.month == 10 and
+                                                            x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31
+                                                            else 0 for x in all_b_lines)
+                                                tot_assign_for += value
+                                            elif bug_con.name == 'Per Exercise':
+                                                value = sum(x.available for x in all_b_lines)
+                                                tot_per_ex += value
+                                            elif bug_con.name == 'Committed':
+                                                value = 0
+                                                tot_commited += value
+                                            elif bug_con.name == 'Accrued':
+                                                value = 0
+                                                tot_accured += 0
+                                            elif bug_con.name == 'Exercised':
+                                                value = 0
+                                                tot_excercised += value
+                                            elif bug_con.name == 'Paid':
+                                                value = 0
+                                                tot_paid += value
+                                            elif bug_con.name == 'Available':
+                                                value = sum(x.available for x in all_b_lines)
+                                                tot_available += value
+                                            ws1.write(row, col, value)
+                                        for code_sec in self.code_section_ids:
+                                            col += 1
+                                            value = ''
+                                            if code_sec.section == 'year':
+                                                value = code.year.name
+                                            elif code_sec.section == 'pr':
+                                                value = code.program_id.key_unam
+                                            elif code_sec.section == 'sp':
+                                                value = code.sub_program_id.sub_program
+                                            elif code_sec.section == 'dep':
+                                                value = code.dependency_id.dependency
+                                            elif code_sec.section == 'sd':
+                                                value = code.sub_dependency_id.sub_dependency
+                                            elif code_sec.section == 'par':
+                                                value = code.item_id.item
+                                            elif code_sec.section == 'dv':
+                                                value = code.check_digit
+                                            elif code_sec.section == 'or':
+                                                value = code.resource_origin_id.key_origin
+                                            elif code_sec.section == 'ai':
+                                                value = code.institutional_activity_id.number
+                                            elif code_sec.section == 'conpp':
+                                                value = code.budget_program_conversion_id.shcp.name
+                                            elif code_sec.section == 'conpa':
+                                                value = code.conversion_item_id.federal_part
+                                            elif code_sec.section == 'tg':
+                                                value = code.expense_type_id.key_expenditure_type
+                                            elif code_sec.section == 'ug':
+                                                value = code.location_id.state_key
+                                            elif code_sec.section == 'cc':
+                                                value = code.portfolio_id.wallet_password
+                                            elif code_sec.section == 'tp':
+                                                value = code.project_type_id.project_type_identifier
+                                            elif code_sec.section == 'np':
+                                                value = code.project_type_id.number
+                                            elif code_sec.section == 'e':
+                                                value = code.stage_id.stage_identifier
+                                            elif code_sec.section == 'tc':
+                                                value = code.agreement_type_id.agreement_type
+                                            elif code_sec.section == 'nc':
+                                                value = code.agreement_type_id.number_agreement
+                                            ws1.write(row, col, value)
+                                        row += 1
+                            if need_total:
+                                row += 1
+                                total_col = 0
+                                ws1.write(row, total_col, 'Total', total_style)
+                                for bug_con in self.budget_control_ids:
+                                    total_col += 1
+                                    value = ''
+                                    if bug_con.name == 'Expenditure Item':
+                                        value = ''
+                                    elif bug_con.name == 'Authorized':
+                                        value = tot_authrized
+                                    elif bug_con.name == 'Assigned Total Annual':
+                                        value = tot_assign_manu
+                                    elif bug_con.name == 'Annual Modified':
+                                        value = tot_annual_modi
+                                    elif bug_con.name == 'Assigned 1st Trimester':
+                                        value = tot_assign_fir
+                                    elif bug_con.name == 'Assigned 2nd Trimester':
+                                        value = tot_assign_sec
+                                    elif bug_con.name == 'Assigned 3rd Trimester':
+                                        value = tot_assign_third
+                                    elif bug_con.name == 'Assigned 4th Trimester':
+                                        value = tot_assign_for
+                                    elif bug_con.name == 'Per Exercise':
+                                        value = tot_per_ex
+                                    elif bug_con.name == 'Committed':
+                                        value = tot_commited
+                                    elif bug_con.name == 'Accrued':
+                                        value = tot_accured
+                                    elif bug_con.name == 'Exercised':
+                                        value = tot_excercised
+                                    elif bug_con.name == 'Paid':
+                                        value = tot_paid
+                                    elif bug_con.name == 'Available':
+                                        value = tot_available
+                                    ws1.write(row, total_col, value, total_style)
+                                row += 2
+
                 wb1.save(fp)
                 out = base64.encodestring(fp.getvalue())
                 self.report_file = out
@@ -394,38 +512,42 @@ class BudgetSummaryReportDownload(models.TransientModel):
                 }
                 report = req_report.create(req_rep_vals)
                 if report:
-                    total_cron = math.ceil(len(code_lines_new) / 5000)
                     prev_cron_id = False
-                    for seq in range(1, total_cron + 1):
-                        nextcall = datetime.now()
-                        nextcall = nextcall + timedelta(seconds=10)
-                        lines = code_lines_new[:5000]
-                        cron_vals = {
-                            'name': 'Report Request' + str(current_time),
-                            'state': 'code',
-                            'nextcall': nextcall,
-                            'numbercall': -1,
-                            'code': "model.download_report()",
-                            'model_id': self.env.ref('jt_budget_mgmt.model_requested_reports').id,
-                            'user_id': self.env.user.id,
-                            'req_report_id': report.id
-                        }
+                    for data in data_with_item_cron:
+                        for ik, ld in data.items():
+                            if data.get(ik):
+                                bud_lines = ld
+                                total_cron = math.ceil(len(bud_lines) / 5000)
+                                for seq in range(1, total_cron + 1):
+                                    nextcall = datetime.now()
+                                    nextcall = nextcall + timedelta(seconds=10)
+                                    lines = bud_lines[:5000]
+                                    cron_vals = {
+                                        'name': 'Report Request' + str(current_time),
+                                        'state': 'code',
+                                        'nextcall': nextcall,
+                                        'numbercall': -1,
+                                        'code': "model.download_report()",
+                                        'model_id': self.env.ref('jt_budget_mgmt.model_requested_reports').id,
+                                        'user_id': self.env.user.id,
+                                        'req_report_id': report.id
+                                    }
 
-                        # Final process
-                        cron = self.env['ir.cron'].sudo().create(cron_vals)
-                        req_report_file_id = self.env['report.files'].create({
-                            'report_id': report.id,
-                            'cron_id': cron.id
-                        })
-                        cron.write({'code': "model.download_report(" +
-                                            str(req_report_file_id.id) +
-                                    "," + str(lines) + ")",
-                                    'req_report_file_id': req_report_file_id})
-                        if prev_cron_id:
-                            cron.write(
-                                {'prev_cron_id': prev_cron_id, 'active': False})
-                        del code_lines_new[:5000]
-                        prev_cron_id = cron.id
+                                    # Final process
+                                    cron = self.env['ir.cron'].sudo().create(cron_vals)
+                                    req_report_file_id = self.env['report.files'].create({
+                                        'report_id': report.id,
+                                        'cron_id': cron.id
+                                    })
+                                    cron.write({'code': "model.download_report(" +
+                                                        str(req_report_file_id.id) +
+                                                "," + str(lines) + ")",
+                                                'req_report_file_id': req_report_file_id})
+                                    if prev_cron_id:
+                                        cron.write(
+                                            {'prev_cron_id': prev_cron_id, 'active': False})
+                                    del bud_lines[:5000]
+                                    prev_cron_id = cron.id
                     self.write({'state': 'request'})
         return {
             'name': 'Report Download Progress',
