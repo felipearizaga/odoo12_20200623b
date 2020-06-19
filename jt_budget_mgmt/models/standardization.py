@@ -710,6 +710,7 @@ class Standardization(models.Model):
                     prev_cron_id = cron.id
 
     def validate_data(self):
+        user_lang = self.env.user.lang
         if len(self.line_ids.ids) == 0:
             raise ValidationError("Please Add Standardization Lines")
         if self.failed_rows > 0:
@@ -778,8 +779,13 @@ class Standardization(models.Model):
                     raise ValidationError(_("Origin budget line is not created for this program code: \n %s" %
                                             line.code_id.program_code))
                 if origin_budget_line and line.amount > origin_budget_line.assigned:
-                    raise ValidationError(_("The amount is greater than the one assigned in the budget. \n"
-                            "Budget: %s \nProgram Code: %s" % (line.budget_id.name, line.code_id.program_code)))
+                    if user_lang == 'es_MX':
+                        raise ValidationError(_("El monto es mayor que el asignado en el presupuesto. \n Presupuesto:"
+                                                " %s \nCódigo del programa de: %s" % (
+                                                line.budget_id.name, line.code_id.program_code)))
+                    else:
+                        raise ValidationError(_("The amount is greater than the one assigned in the budget. \n Budget:"
+                                                " %s \nProgram Code: %s" % (line.budget_id.name, line.code_id.program_code)))
 
     def confirm(self):
         self.validate_data()

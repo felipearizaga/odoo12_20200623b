@@ -28,6 +28,6 @@ class QuarterBudget(models.Model):
     _name = 'quarter.budget'
     _description = 'Quarter Budget'
 
-    name = fields.Char(string='Quarter')
+    name = fields.Char(string='Quarter', translate=True)
     start_date = fields.Char(string='Start Date')
     end_date = fields.Char(string='End Date')

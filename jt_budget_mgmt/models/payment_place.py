@@ -34,3 +34,12 @@ class PaymentPlace(models.Model):
     def onchange_dep_sub_dep(self):
         if self.dependancy_id and self.sub_dependancy_id:
             self.name = self.dependancy_id.dependency + self.sub_dependancy_id.sub_dependency
+
+    @api.model
+    def create(self, vals):
+        res = super(PaymentPlace, self).create(vals)
+        if vals.get('dependancy_id') and vals.get('sub_dependancy_id'):
+            dependency = self.env['dependency'].browse(vals.get('dependancy_id'))
+            sub_dependency = self.env['sub.dependency'].browse(vals.get('sub_dependancy_id'))
+            res.name = dependency.dependency + sub_dependency.sub_dependency
+        return res

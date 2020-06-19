@@ -29,11 +29,12 @@
     'maintainer': 'Jupical Technologies Pvt. Ltd.',
     'website': 'http://www.jupical.com',
     'license': 'AGPL-3',
-    'depends': ['contacts', 'account'],
+    'depends': ['contacts', 'l10n_mx', 'account', 'base'],
     'data': [
         'security/ir.model.access.csv',
         'views/scholarship_type_view.xml',
         'views/res_partner_view.xml',
+        'views/res_partner_bank_view.xml',
     ],
 
     'application': False,

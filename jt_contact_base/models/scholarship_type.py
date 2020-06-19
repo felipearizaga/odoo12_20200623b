@@ -27,4 +27,5 @@ class ScholarshipType(models.Model):
     _name = 'scholarship.type'
     _description = 'Type of Scholarship'
 
-    name = fields.Char('Type')
+    name = fields.Char('Type of Scholarship')
+    description = fields.Text("Description")

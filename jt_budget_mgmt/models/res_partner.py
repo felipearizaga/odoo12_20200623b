@@ -20,11 +20,12 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api, _
 
 
-class CategoryKey(models.Model):
-    _name = 'category.key'
-    _description = 'Category Key'
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
 
-    name = fields.Char('Category')
+    # Registration of supplier / beneficiaries
+    dependency_id = fields.Many2one('dependency', 'Dependency that captures')
+    tel_dep_capture = fields.Char('Telephone dependency capture')

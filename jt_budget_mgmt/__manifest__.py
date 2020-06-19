@@ -89,6 +89,7 @@
         'wizard/request_summary_report_wiz.xml',
 
         'views/payment_place.xml',
+        'views/res_partner_view.xml',
 
         # Main Menu File
         'views/budget_menus.xml',

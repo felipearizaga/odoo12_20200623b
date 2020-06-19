@@ -54,7 +54,7 @@ class FavouriteSummaryReport(models.Model):
 
     # Program Code Section Related fields
     code_section_ids = fields.Many2many(
-        'code.structure', string='Programming Code Section')
+        'code.structure', string='Programming Code Section', translate=True)
     program_ids = fields.Many2many('program', string='Program')
     sub_program_ids = fields.Many2many('sub.program', string='Sub-Program')
     dependency_ids = fields.Many2many('dependency', string='Dependency')

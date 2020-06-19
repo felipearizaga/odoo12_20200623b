@@ -637,12 +637,12 @@ class Adequacies(models.Model):
                 line_types = adequacies.adequacies_lines_ids.mapped('line_type')
                 line_types = list(set(line_types))
                 if len(line_types) > 1:
-                    raise ValidationError(
-                        "In liquid adjustment, you can only increase or decrease amount of budget!")
+                    raise ValidationError(_(
+                        "In liquid adjustment, you can only increase or decrease amount of budget!"))
             for line in adequacies.adequacies_lines_ids:
                 if line.amount < 10000:
-                    raise ValidationError(
-                        "The total amount of the increases/decreases should be greater than or equal to 10000")
+                    raise ValidationError(_(
+                        "The total amount of the increases/decreases should be greater than or equal to 10000"))
                 if line.line_type == 'decrease':
                     budget_line = False
                     if self.date_of_budget_affected and self.adaptation_type == 'compensated':
@@ -667,7 +667,7 @@ class Adequacies(models.Model):
                              ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
 
                     if budget_line and budget_line.assigned < line.amount:
-                        raise ValidationError("You can not decrease amount more than assigned amount!")
+                        raise ValidationError(_("You can not decrease amount more than assigned amount!"))
 
                     total_decreased += line.amount
                     counter_decreased += 1
@@ -675,8 +675,8 @@ class Adequacies(models.Model):
                     total_increased += line.amount
                     counter_increased += 1
             if self.adaptation_type == 'compensated' and total_decreased != total_increased:
-                raise ValidationError(
-                    "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!")
+                raise ValidationError(_(
+                    "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!"))
 
     def confirm(self):
         self.validate_data()

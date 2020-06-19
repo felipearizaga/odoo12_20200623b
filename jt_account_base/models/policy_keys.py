@@ -33,6 +33,16 @@ class PolicyKeys(models.Model):
     organization = fields.Char('Organization and Control', size=3)
     description = fields.Text('Description')
 
+    @api.model
+    def create(self, vals):
+        res = super(PolicyKeys, self).create(vals)
+        if vals.get('organization'):
+            len_org = len(vals.get('organization'))
+            if len_org != 3:
+                raise UserError(
+                    _('The Organization and Control must be of 3 characters only.'))
+        return res
+
     @api.constrains('organization')
     def check_organization(self):
         if self.organization and len(self.organization) != 3:

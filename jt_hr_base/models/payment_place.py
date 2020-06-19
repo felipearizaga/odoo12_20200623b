@@ -20,12 +20,20 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 class PaymentPlace(models.Model):
 
     _name = 'payment.place'
     _description = 'Place of Payment'
 
-    name = fields.Integer('Name')
+    name = fields.Char('Name', size=5)
     description = fields.Text('Description')
+
+    @api.constrains('name')
+    def _check_name(self):
+        if not str(self.name).isnumeric():
+            raise UserError(_('The name must be numeric value'))
+
+    _sql_constraints = [('name_unique', 'unique(name)', 'Name must be unique.')]

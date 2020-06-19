@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_partner_bank_form_view" model="ir.ui.view">
+            <field name="name">res.bank.form.view</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="check_name"/>
+                        <field name="bank_account_name"/>
+                        <field name="status"/>
+                        <field name="bank_status"/>
+                        <field name="registration_date"/>
+                        <field name="authorization_date"/>
+                        <field name="low_date"/>
+                        <field name="bank_registration_date"/>
+                        <field name="bank_authorization_date"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

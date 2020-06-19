@@ -22,7 +22,7 @@
 ##############################################################################
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-
+import re
 
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
@@ -31,7 +31,7 @@ class AccountJournal(models.Model):
                                      ('master', 'Master Account'),
                                      ('key', 'Key Account')],
                                     string='Type of Account')
-    branch_number = fields.Integer('Branch Number')
+    branch_number = fields.Char('Branch Number', size=4)
 
     #Bank Accounts
     customer_number = fields.Char('Customer number')
@@ -63,7 +63,11 @@ class AccountJournal(models.Model):
 
     @api.constrains('branch_number')
     def check_branch_number(self):
-        if self.branch_number and len(str(self.branch_number)) != 4:
+        if self.branch_number:
+            pattern = "^[0-9]{4}$"
+            if not re.match(pattern, self.branch_number):
+                raise UserError(_('The Branch Number should be of 4 digits.'))
+        if self.branch_number and len(self.branch_number) != 4:
             raise UserError(_('The Branch Number should be of 4 digits.'))
 
 class ExecutiveData(models.Model):

@@ -17,7 +17,12 @@
             <field name="model">scholarship.type</field>
             <field name="arch" type="xml">
                 <form>
-                    <field name="name" required="1"/>
+                    <sheet>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>

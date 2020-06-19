@@ -22,7 +22,7 @@
 ##############################################################################
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-
+import re
 
 class OperationType(models.Model):
 
@@ -30,12 +30,35 @@ class OperationType(models.Model):
     _description = 'Type of Operation'
 
     name = fields.Char('Request operation name')
-    number = fields.Integer('Operation Number')
+    op_number = fields.Char('Operation Number', size=2)
     currency_type = fields.Selection([('national', 'National Currency'), (
         'foreign', 'Foreign Currency')], string='Currency type of the transaction')
 
-    @api.constrains('number')
-    def check_number(self):
-        if self.number and len(str(self.number)) != 2:
-            raise UserError(
-                _('The Operation Number must be of 2 digits only.'))
+    def fill_zero(self, number):
+        return str(number).zfill(2)
+
+    @api.constrains('op_number')
+    def _check_number(self):
+        if not str(self.op_number).isnumeric():
+            raise UserError(_('The Operation Number must be numeric value'))
+
+    @api.model
+    def create(self, vals):
+        res = super(OperationType, self).create(vals)
+        if vals.get('op_number'):
+            number = vals.get('op_number')
+            if not str(number).isnumeric():
+                raise UserError(_('The Operation Number must be numeric value'))
+            if len(number) != 2:
+                new_no = self.fill_zero(vals.get('op_number'))
+                res.op_number = new_no
+        return res
+
+    def write(self, vals):
+        for op in self:
+            number = vals.get('op_number') or op.op_number
+            if not str(number).isnumeric():
+                raise UserError(_('The Operation Number must be numeric value'))
+            if len(number) != 2:
+                vals.update({'op_number': self.fill_zero(number)})
+        return super(OperationType, self).write(vals)

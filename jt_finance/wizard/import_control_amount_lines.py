@@ -78,6 +78,7 @@ class ImportAdequaciesLine(models.TransientModel):
         }
 
     def import_line(self):
+        user_lang = self.env.user.lang
         self.ensure_one()
         control_amount = self.env['calendar.assigned.amounts'].browse(
             self._context.get('active_id'))
@@ -172,10 +173,16 @@ class ImportAdequaciesLine(models.TransientModel):
                             diff = data_dict.get(key) - value
                             error_string += str(key) + ': ' + str(diff) + "\n"
                         elif key not in data_dict:
-                            error_string += str(key) + \
-                                ': ' + \
-                                str(value) + \
-                                ' (the program was not detected in budget)' + "\n"
+                            if user_lang == 'es_MX':
+                                error_string += str(key) + \
+                                                ': ' + \
+                                                str(value) + \
+                                                ' (el programa no se detectó en el presupuesto seleccionado)' + "\n"
+                            else:
+                                error_string += str(key) + \
+                                    ': ' + \
+                                    str(value) + \
+                                    ' (the program was not detected in budget)' + "\n"
                     for key, value in data_dict.items():
                         if key not in code_amount_dict:
                             error_string += str(key) + \

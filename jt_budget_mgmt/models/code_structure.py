@@ -50,7 +50,7 @@ class CodeStructure(models.Model):
         ('np', 'Project Number'),
         ('e', 'Stage'),
         ('tc', 'Type of Agreement'),
-        ('nc', 'Agreement Number')], string='Section of the Program Code')
+        ('nc', 'Agreement Number')], string='Section of the Program Code', translate=True)
 
     _sql_constraints = [
         ('uniq_position_priority', 'unique(position_priority)', 'The Position priority must be unique!'),

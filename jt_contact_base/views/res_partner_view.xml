@@ -1,13 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <record id="res_partner_form_view" model="ir.ui.view">
             <field name="name">res.partner.form.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group/group/label" position="before">
+                    <field name="person_type"/>
+                    <field name="beneficiary_type"/>
+                    <field name="password_beneficiary"/>
+                </xpath>
+                <xpath expr="//sheet/group/group/div" position="after">
+                    <field name="rfc"/>
+                    <field name="curp" attrs="{'invisible': [('beneficiary_type', '!=', 'alimony')]}"/>
+                    <field name="instruction"/>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/field[@name='function']" position="after">
+                    <field name="dob"/>
+                    <field name="nationality"/>
+                    <field name="tax_email" widget="email"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_partner_account_form_view" model="ir.ui.view">
+            <field name="name">res.partner.account.form.view</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="account.view_partner_property_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='accounting_entries']" position="inside">
                     <field name="scholarship_id"/>
+                </xpath>
+                 <xpath expr="//group[@name='banks']" position="replace">
+                     <group string="Bank Accounts" name="banks" colspan="4"
+                            groups="account.group_account_invoice">
+                        <field name="bank_ids" nolabel="1">
+                             <tree editable="bottom">
+                                 <field name="sequence" widget="handle"/>
+                                 <field name="bank_id"/>
+                                 <field name="acc_number"/>
+                                 <field name="branch_number"/>
+                                 <field name="l10n_mx_edi_clabe"/>
+                                 <field name="bic_swift"/>
+                                 <field name="aba"/>
+                                 <field name="key_bank"/>
+                             </tree>
+                        </field>
+                     </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_partner_search_view" model="ir.ui.view">
+            <field name="name">res.partner.search.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='group_country']" position="after">
+                    <filter name="person_type" string="Person Type" context="{'group_by': 'person_type'}"/>
+                    <filter name="beneficiary_type" string="Beneficiary Type" context="{'group_by': 'beneficiary_type'}"/>
+                    <filter name="instruction" string="Instruction with the banking institution" context="{'group_by': 'instruction'}"/>
+                </xpath>
+                <xpath expr="//search/separator[3]" position="after">
+                    <filter string="Physics" name="physics" domain="[('person_type', '=', 'physics')]"/>
+                    <filter string="Moral" name="moral" domain="[('person_type', '=', 'moral')]"/>
+                    <separator/>
+                    <filter string="Alimony" name="alimony" domain="[('beneficiary_type', '=', 'alimony')]"/>
+                    <filter string="Service Providers" name="service" domain="[('beneficiary_type', '=', 'service')]"/>
+                    <filter string="Scholarship" name="scholarship" domain="[('beneficiary_type', '=', 'scholarship')]"/>
+                    <separator/>
+                    <filter string="High" name="high" domain="[('instruction', '=', 'high')]"/>
+                    <filter string="Low" name="low" domain="[('instruction', '=', 'low')]"/>
+                    <filter string="Change" name="change" domain="[('instruction', '=', 'change')]"/>
+                    <separator/>
+                </xpath>
+                <xpath expr="//search/field[@name='user_id']" position="after">
+                    <field name="person_type"/>
+                    <field name="beneficiary_type"/>
+                    <field name="password_beneficiary"/>
+                    <field name="rfc"/>
+                    <field name="curp"/>
+                    <field name="instruction"/>
+                    <field name="dob"/>
+                    <field name="nationality"/>
+                    <field name="tax_email"/>
                 </xpath>
             </field>
         </record>
