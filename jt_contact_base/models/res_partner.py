@@ -26,9 +26,6 @@ from odoo import models, fields, api, _
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    # ScholarShip Field
-    scholarship_id = fields.Many2one('scholarship.type', string='Scholarship')
-
     # Registration of supplier / beneficiaries
     person_type = fields.Selection(
         [('physics', 'Physics'), ('moral', 'Moral')], string='Person type')
@@ -44,6 +41,15 @@ class ResPartner(models.Model):
     nationality = fields.Char('Nationality')
     tax_email = fields.Char('Tax email')
 
+    # Recording of Scholarship
+    scholar_key_payment = fields.Char('Scholar key payment')
+    scholarship_id = fields.Many2one('scholarship.type', string='Type of Scholarship')
+    scholarship_approved_month = fields.Char(string='Scholarship approved month')
+    period = fields.Char('Period')
+    # tax_regime = fields.Char('Tax Regime')
+
     _sql_constraints = [
         ('password_beneficiary_uniq', 'unique (password_beneficiary)',
-         'The Password of the beneficiary of the payment must be unique.')]
+         'The Password of the beneficiary of the payment must be unique.'),
+        ('scholar_key_payment_uniq', 'unique (scholar_key_payment)',
+         'The scholar key payment must be unique.')]

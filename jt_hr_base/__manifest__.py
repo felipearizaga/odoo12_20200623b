@@ -29,11 +29,12 @@
     'maintainer': 'Jupical Technologies Pvt. Ltd.',
     'website': 'http://www.jupical.com',
     'license': 'AGPL-3',
-    'depends': ['hr'],
+    'depends': ['hr', 'jt_contact_base'],
     'data': [
         'security/ir.model.access.csv',
         'views/hr_job_view.xml',
         'views/payment_place_view.xml',
+        'views/hr_employee_view.xml',
     ],
 
     'application': False,

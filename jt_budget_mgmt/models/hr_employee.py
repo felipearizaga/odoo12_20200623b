@@ -20,30 +20,11 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
-# Code Structure
-from . import code_structure
-from . import report_program_fields
-from . import quarter
+class HrEmployee(models.Model):
+    _inherit = 'hr.employee'
 
-from . import year_configuration
-from . import project_project
-
-# Add all objects of program code views
-from . import program_code_objects
-
-from . import program_code
-from . import expenditure_budget
-
-from . import adequacies
-from . import standardization
-from . import control_assigned_amounts
-from . import budget_control
-from . import requested_report
-from . import ir_cron
-from . import favourite_summary_report
-
-from . import account
-from . import payment_place
-from . import res_partner
-from . import hr_employee
+    dependancy_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
