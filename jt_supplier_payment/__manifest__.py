@@ -20,13 +20,21 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, fields
-
-
-class ReportProgramFields(models.Model):
-
-    _name = 'report.program.fields'
-    _description = 'Report Program Fields'
-    _rec_name = 'name'
-
-    name = fields.Char(string='Name', translate=True)
+{
+    'name': 'Supplier Payment',
+    'summary': 'Supplier Payment',
+    'version': '13.0.0.1.0',
+    'category': 'Invoicing',
+    'author': 'Jupical Technologies Pvt. Ltd.',
+    'maintainer': 'Jupical Technologies Pvt. Ltd.',
+    'website': 'http://www.jupical.com',
+    'license': 'AGPL-3',
+    'depends': ['account', 'jt_account_base'],
+    'data': [
+        'security/ir.model.access.csv',
+        # 'views/payment_request_views.xml'
+    ],
+    'application': False,
+    'installable': True,
+    'auto_install': False,
+}

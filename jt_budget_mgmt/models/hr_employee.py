@@ -28,3 +28,4 @@ class HrEmployee(models.Model):
 
     dependancy_id = fields.Many2one('dependency', string='Dependency')
     sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
+

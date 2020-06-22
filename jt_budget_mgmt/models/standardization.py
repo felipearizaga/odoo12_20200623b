@@ -773,8 +773,12 @@ class Standardization(models.Model):
                                 budget_line.end_date.month).zfill(2) == dest_end_date_month:
                             dest_budget_line = budget_line
                 if not dest_budget_line:
-                    raise ValidationError(_("Quarter budget line is not created for this program code: \n %s" %
+                    if user_lang == 'es_MX':
+                        raise ValidationError(_("Quarter budget line is not created for this program code: \n %s" %
                                             line.code_id.program_code))
+                    else:
+                        raise ValidationError(_("La línea presupuestaria trimestral no se crea para este código de programa: \n %s" %
+                                                line.code_id.program_code))
                 if not origin_budget_line:
                     raise ValidationError(_("Origin budget line is not created for this program code: \n %s" %
                                             line.code_id.program_code))

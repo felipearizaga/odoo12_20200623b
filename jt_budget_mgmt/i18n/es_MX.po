@@ -2053,9 +2053,14 @@ msgid "Number of unread messages"
 msgstr "Número de mensajes no leídos"
 
 #. module: jt_budget_mgmt
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__observation
-msgid "Observation"
-msgstr "Observaciones"
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__date_of_budget_affected
+msgid "Date Of Budget Affected"
+msgstr "Fecha del presupuesto afectado"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__date_of_liquid_adu
+msgid "Date of Liquid Adjustments"
+msgstr "Fecha de Afection"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts__observations
@@ -3949,3 +3954,98 @@ msgstr "Pagado"
 #: model:budget.control,name:jt_budget_mgmt.budget_control_13
 msgid "Available"
 msgstr "Disponible"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_1
+msgid "Year"
+msgstr "AÑO"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_2
+msgid "Program"
+msgstr "Programa"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_3
+msgid "Sub Program"
+msgstr "Subprograma"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_4
+msgid "Dependency"
+msgstr "Dependencia"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_5
+msgid "Sub Dependency"
+msgstr "Subdependencia"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_6
+msgid "Expenditure Item"
+msgstr "Partida de Gasto"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_7
+msgid "Check Digit"
+msgstr "Dígito Verificador"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_8
+msgid "Source of Resource"
+msgstr "Origen del Recurso"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_9
+msgid "Institutional Activity"
+msgstr "Actividad Institucional"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_10
+msgid "Conversion of Budgetary Program"
+msgstr "Conversion de Programa Presupuestario"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_11
+msgid "SHCP items"
+msgstr "Partida SHCP"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_12
+msgid "Type of Expenditure"
+msgstr "Tipo de Gasto"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_13
+msgid "Geographic Location"
+msgstr "Ubicación Geográfica"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_14
+msgid "Wallet Key"
+msgstr "Clave Cartera"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_15
+msgid "Type of Project"
+msgstr "Tipo de Proyecto"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_16
+msgid "Project Number"
+msgstr "Número de Proyecto"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_17
+msgid "Stage"
+msgstr "Etapa"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_18
+msgid "Type of Agreement"
+msgstr "Tipo de Convenio"
+
+#. module: jt_budget_mgmt
+#: model:report.program.fields,name:jt_budget_mgmt.program_field_19
+msgid "Agreement Number"
+msgstr "Número de Convenio"

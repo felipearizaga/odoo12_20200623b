@@ -29,11 +29,21 @@ class PaymentPlace(models.Model):
 
     dependancy_id = fields.Many2one('dependency', string='Dependency')
     sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
+    des_dependency = fields.Text("Dependency Description")
+    des_sub_dependency = fields.Text("Sub Dependency Description")
 
     @api.onchange('dependancy_id', 'sub_dependancy_id')
     def onchange_dep_sub_dep(self):
         if self.dependancy_id and self.sub_dependancy_id:
             self.name = self.dependancy_id.dependency + self.sub_dependancy_id.sub_dependency
+        if self.dependancy_id:
+            self.des_dependency = self.dependancy_id.description
+        else:
+            self.des_dependency = ''
+        if self.sub_dependancy_id:
+            self.des_sub_dependency = self.sub_dependancy_id.description
+        else:
+            self.des_sub_dependency = ''
 
     @api.model
     def create(self, vals):
@@ -42,4 +52,8 @@ class PaymentPlace(models.Model):
             dependency = self.env['dependency'].browse(vals.get('dependancy_id'))
             sub_dependency = self.env['sub.dependency'].browse(vals.get('sub_dependancy_id'))
             res.name = dependency.dependency + sub_dependency.sub_dependency
+            if dependency.description:
+                res.des_dependency = dependency.description
+            if sub_dependency.description:
+                res.des_sub_dependency = sub_dependency.description
         return res

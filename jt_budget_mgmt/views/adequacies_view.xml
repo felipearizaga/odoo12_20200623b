@@ -42,6 +42,8 @@
                                 <field name="journal_id" readonly="1" force_save="1"/>
                                 <field name="date_of_budget_affected" attrs="{'invisible': [('adaptation_type', '=', 'liquid')],
                                 'readonly': [('state', 'in', ('accepted', 'rejected'))]}"/>
+                                <field name="date_of_liquid_adu" attrs="{'invisible': [('adaptation_type', '!=', 'liquid')],
+                                'readonly': [('state', 'in', ('accepted', 'rejected'))]}"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', 'in', ('accepted', 'rejected')), ('import_status', '!=', 'draft')]}"/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>

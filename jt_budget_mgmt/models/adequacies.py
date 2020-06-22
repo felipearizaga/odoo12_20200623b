@@ -89,7 +89,8 @@ class Adequacies(models.Model):
         'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     move_line_ids = fields.One2many("account.move.line", 'adequacy_id', string="Journal Items")
     journal_id = fields.Many2one('account.journal', string="Daily")
-    date_of_budget_affected = fields.Date()
+    date_of_budget_affected = fields.Date("Date Of Budget Affected")
+    date_of_liquid_adu = fields.Date("Date of Liquid Adjustments")
 
     _sql_constraints = [
         ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
@@ -700,6 +701,32 @@ class Adequacies(models.Model):
             if line.program:
                 if self.date_of_budget_affected and self.adaptation_type == 'compensated':
                     b_month = self.date_of_budget_affected.month
+                    budget_line = False
+                    budget_lines = self.env['expenditure.budget.line'].sudo().search(
+                        [('program_code_id', '=', line.program.id),
+                         ('expenditure_budget_id', '=', self.budget_id.id)])
+                    for b_line in budget_lines:
+                        if b_line.start_date:
+                            b_s_month = b_line.start_date.month
+                            if b_month in (1, 2, 3) and b_s_month in (1, 2, 3):
+                                budget_line = b_line
+                            elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                                budget_line = b_line
+                            elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                                budget_line = b_line
+                            elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
+                                budget_line = b_line
+                    if budget_line:
+                        amount = budget_line.assigned
+                        if line.line_type == 'decrease':
+                            final_amount = amount - line.amount
+                            budget_line.write({'assigned': final_amount})
+                        if line.line_type == 'increase':
+                            is_incraese = True
+                            final_amount = amount + line.amount
+                            budget_line.write({'assigned': final_amount})
+                elif self.date_of_liquid_adu and self.adaptation_type == 'liquid':
+                    b_month = self.date_of_liquid_adu.month
                     budget_line = False
                     budget_lines = self.env['expenditure.budget.line'].sudo().search(
                         [('program_code_id', '=', line.program.id),
