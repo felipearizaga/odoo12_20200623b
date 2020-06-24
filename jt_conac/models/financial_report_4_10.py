@@ -49,6 +49,35 @@ class StatesAndProgramReports(models.AbstractModel):
 
     def _get_lines(self, options, line_id=None):
         states_obj = self.env['states.program']
+        prog_obj = self.env['program']
+        bud_obj = self.env['expenditure.budget']
+        adeq_obj = self.env['adequacies']
+        adequacies = adeq_obj.search([('state', '=', 'accepted')])
+        budget = bud_obj.search([('state', '=', 'validate')])
+        prog_dict_auth = {}
+        prog_dict_ade = {}
+        for line in budget.success_line_ids:
+            prog = line.program_id.key_unam
+            if prog in prog_dict_auth.keys():
+                prog_dict_auth.update({prog: prog_dict_auth.get(prog) + line.authorized})
+            else:
+                prog_dict_auth.update({prog: line.authorized})
+        for ade in adequacies:
+            for line in ade.adequacies_lines_ids:
+                if line.program:
+                    prog = line.program.program_id.key_unam
+                    if prog in prog_dict_ade.keys():
+                        if line.line_type == 'increase':
+                            prog_dict_ade.update({prog: prog_dict_ade.get(prog) + line.amount})
+                        else:
+                            prog_dict_ade.update({prog: prog_dict_ade.get(prog) - line.amount})
+                    else:
+                        if line.line_type == 'increase':
+                            prog_dict_ade.update({prog: line.amount})
+                        else:
+                            prog_dict_ade.update({prog: -line.amount})
+
+        prog_dict_auth = dict(sorted(prog_dict_auth.items()))
         lines = []
         hierarchy_lines = states_obj.sudo().search(
             [('parent_id', '=', False)], order='id')
@@ -66,7 +95,7 @@ class StatesAndProgramReports(models.AbstractModel):
             level_1_lines = states_obj.search([('parent_id', '=', line.id)])
             for level_1_line in level_1_lines:
                 lines.append({
-                    'id': 'level_one_%s' % level_1_line.id,
+                        'id': 'level_one_%s' % level_1_line.id,
                     'name': level_1_line.concept,
                     'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                     'level': 2,
@@ -75,8 +104,7 @@ class StatesAndProgramReports(models.AbstractModel):
                     'parent_id': 'hierarchy_' + str(line.id),
                 })
 
-                level_2_lines = states_obj.search(
-                    [('parent_id', '=', level_1_line.id)])
+                level_2_lines = states_obj.search([('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
                     lines.append({
                         'id': 'level_two_%s' % level_2_line.id,
@@ -84,18 +112,39 @@ class StatesAndProgramReports(models.AbstractModel):
                         'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                         'level': 3,
                         'unfoldable': True,
-                        'unfolded': True,
+                        'unfolded': False,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })
+                    if level_2_line.concept == 'Investigación en Humanidades y Ciencias Sociales':
+                        for prog, authorized in prog_dict_auth.items():
+                            prog = prog_obj.search([('key_unam', '=', prog)])
+                            name = prog.key_unam
+                            if prog.desc_key_unam:
+                                name += ' '
+                                name += prog.desc_key_unam
+                            adeq_amt = prog_dict_ade.get(prog.key_unam) or 0
+                            modi_amt = authorized - adeq_amt
+                            lines.append({
+                                'id': 'level_three_%s' % prog.id,
+                                'name': name,
+                                'columns': [{'name': authorized}, {'name': adeq_amt}, {'name': modi_amt}, {'name': ''},
+                                            {'name': ''}, {'name': modi_amt}],
+                                'level': 4,
+                                'unfoldable': False,
+                                'unfolded': False,
+                                'parent_id': 'level_two_%s' % level_2_line.id,
+                            })
 
-                    level_3_lines = states_obj.search(
-                        [('parent_id', '=', level_2_line.id)])
-                    for level_3_line in level_3_lines:
-                        lines.append({
-                            'id': 'level_three_%s' % level_3_line.id,
-                            'name': level_3_line.concept,
-                            'columns': [{'name': level_3_line.approved}, {'name': level_3_line.ext_and_red}, {'name': level_3_line.modified}, {'name': level_3_line.accrued}, {'name': level_3_line.paid_out}, {'name': level_3_line.sub_exercise}],
-                            'level': 4,
-                            'parent_id': 'level_two_%s' % level_2_line.id,
-                        })
+                    # level_3_lines = states_obj.search(
+                    #     [('parent_id', '=', level_2_line.id)])
+                    # for level_3_line in level_3_lines:
+                    #     print("Inside-=-=-= -=-=", level_3_line.concept)
+                    #     lines.append({
+                    #         'id': 'level_three_%s' % level_3_line.id,
+                    #         'name': level_3_line.concept,
+                    #         'columns': [{'name': level_3_line.approved}, {'name': level_3_line.ext_and_red}, {'name': level_3_line.modified}, {'name': level_3_line.accrued}, {'name': level_3_line.paid_out}, {'name': level_3_line.sub_exercise}],
+                    #         'level': 4,
+                    #         'parent_id': 'level_two_%s' % level_2_line.id,
+                    #     })
+
         return lines

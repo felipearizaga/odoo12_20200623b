@@ -21,7 +21,7 @@
 #
 ##############################################################################
 from odoo import models, fields, api, _
-
+from odoo.osv import expression
 
 class COACONAC(models.Model):
     _name = 'coa.conac'
@@ -38,6 +38,17 @@ class COACONAC(models.Model):
         ('creditor', 'Creditor'),
         ('debtor_creditor', 'Debtor / Creditor')], string='Applicability')
     parent_id = fields.Many2one('coa.conac', string='Parent')
+
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('code', '=ilike', name.split(' ')[0] + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        account_ids = self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
+        return models.lazy_name_get(self.browse(account_ids).with_user(name_get_uid))
 
     def _compute_display_name(self):
         for account in self:
