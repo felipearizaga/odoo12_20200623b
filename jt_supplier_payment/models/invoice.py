@@ -22,13 +22,12 @@
 ##############################################################################
 from odoo import models, fields, api, _
 
-class PaymentRequest(models.Model):
+class AccountMove(models.Model):
 
-    _name = 'payment.request'
-    _description = "Payment Request"
+    _inherit = 'account.move'
 
-    baneficiary_id = fields.Many2one('hr.employee')
-    partner_id = fields.Many2one("res.partner")
+    baneficiary_id = fields.Many2one('hr.employee', string="Beneficiary of the payment")
+    payment_state = fields.Selection([('draft', 'Draft')])
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
     rfc = fields.Char("RFC", related='partner_id.rfc', store=True)
     student_account = fields.Char("Student Account")
@@ -37,7 +36,7 @@ class PaymentRequest(models.Model):
     workstation_id = fields.Many2one('hr.job', "Work Station", related='baneficiary_id.job_id')
     folio = fields.Char("Folio against Receipt")
     folio_dependency = fields.Char("Folio Dependency")
-    operation_type = fields.Many2one('operation.type', "Operation Type")
+    operation_type_id = fields.Many2one('operation.type', "Operation Type")
     date_receipt = fields.Datetime("Date of Receipt")
     date_approval_request  = fields.Date("Date Approval Request")
     administrative_forms = fields.Integer("Number of Administrative Forms")
@@ -63,14 +62,12 @@ class PaymentRequest(models.Model):
     folio_invoice = fields.Char("Folio Invoice")
     user_registering = fields.Many2one('res.users')
     commitment_date = fields.Date("Commitment Date")
-    payment_req_journal_id = fields.Many2one('account.journal', "Journal")
     reason_rejection = fields.Text("Reason for Rejection")
-    invoice_date = fields.Date("Invoice Date")
-    currency_id = fields.Many2one('res.currency')
+    type = fields.Selection(selection_add=[('payment_req', 'Payment Request')])
 
     # More info Tab
-    reason_for_expendiure = fields.Text("Reason for Expenditure/Trip")
-    destination = fields.Text("Destination")
+    reason_for_expendiure = fields.Char("Reason for Expenditure/Trip")
+    destination = fields.Char("Destination")
     provenance = fields.Text("Provenance")
     zone = fields.Integer("Zone")
     rate = fields.Monetary("Rate")
@@ -79,20 +76,101 @@ class PaymentRequest(models.Model):
     rf_person = fields.Char("RFC of the person in charge")
     responsible_category_key = fields.Char("Responsible category key")
     manager_job_id = fields.Many2one('hr.job', "Manager’s job")
+    payment_line_ids = fields.One2many('account.move.line', 'payment_req_id')
 
-class PaymentRequestLine(models.Model):
+    def _get_move_display_name(self, show_ref=False):
+        ''' Helper to get the display name of an invoice depending of its type.
+        :param show_ref:    A flag indicating of the display name must include or not the journal entry reference.
+        :return:            A string representing the invoice.
+        '''
+        self.ensure_one()
+        draft_name = ''
+        if self.state == 'draft':
+            draft_name += {
+                'out_invoice': _('Draft Invoice'),
+                'out_refund': _('Draft Credit Note'),
+                'in_invoice': _('Draft Bill'),
+                'in_refund': _('Draft Vendor Credit Note'),
+                'out_receipt': _('Draft Sales Receipt'),
+                'in_receipt': _('Draft Purchase Receipt'),
+                'entry': _('Draft Entry'),
+                'payment_req': _('Draft Payment Request'),
+            }[self.type]
+            if not self.name or self.name == '/':
+                draft_name += ' (* %s)' % str(self.id)
+            else:
+                draft_name += ' ' + self.name
+        return (draft_name or self.name) + (show_ref and self.ref and ' (%s%s)' % (self.ref[:50], '...' if len(self.ref) > 50 else '') or '')
 
-    _name = 'payment.request.line'
-    _description = "Payment Request Line"
+    @api.model
+    def _get_default_journal(self):
+        ''' Get the default journal.
+        It could either be passed through the context using the 'default_journal_id' key containing its id,
+        either be determined by the default type.
+        '''
+        move_type = self._context.get('default_type', 'entry')
+        journal_type = 'general'
+        if move_type in self.get_sale_types(include_receipts=True):
+            journal_type = 'sale'
+        elif move_type in self.get_purchase_types(include_receipts=True):
+            journal_type = 'purchase'
 
-    product_id = fields.Many2one('product.product', "Product")
-    description = fields.Text("Description")
-    account_id = fields.Many2one("Account")
+        if self._context.get('default_journal_id'):
+            print ("inside if =-=-")
+            journal = self.env['account.journal'].browse(self._context['default_journal_id'])
+
+            if move_type != 'entry' and journal.type != journal_type:
+                raise UserError(_("Cannot create an invoice of type %s with a journal having %s as type.") % (
+                move_type, journal.type))
+        else:
+            print ("inside else")
+            company_id = self._context.get('force_company',
+                                           self._context.get('default_company_id', self.env.company.id))
+            domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
+
+            journal = None
+            if self._context.get('default_currency_id'):
+                currency_domain = domain + [('currency_id', '=', self._context['default_currency_id'])]
+                journal = self.env['account.journal'].search(currency_domain, limit=1)
+
+            if not journal:
+                journal = self.env['account.journal'].search(domain, limit=1)
+
+            if not journal:
+                error_msg = _('Please define an accounting miscellaneous journal in your company')
+                if journal_type == 'sale':
+                    error_msg = _('Please define an accounting sale journal in your company')
+                elif journal_type == 'purchase':
+                    error_msg = _('Please define an accounting purchase journal in your company')
+                raise UserError(error_msg)
+
+            if move_type == 'payment_req':
+                print ("fdsfsdfsdfsd", self.env.ref('jt_supplier_payment.payment_request_jour'))
+                journal = self.env.ref('jt_supplier_payment.payment_request_jour')
+        return journal
+
+    # @api.model
+    # def _get_default_journal(self):
+    #     res = super(AccountMove, self)._get_default_journal()
+    #     print ("Res =-=-", res)
+    #     move_type = self._context.get('default_type', 'entry')
+    #     print ("Move Type -=-=", move_type)
+    #     if move_type == 'payment_req':
+    #         print ("fdsfsdfsdfsd", self.env.ref('jt_supplier_payment.payment_request_jour'))
+    #         return self.env.ref('jt_supplier_payment.payment_request_jour')
+    #     else:
+    #         return res
+#
+#
+class AccountMoveLine(models.Model):
+
+    _inherit = 'account.move.line'
+
+    payment_req_id = fields.Many2one('account.move')
     egress_key_id = fields.Many2one("egress.keys", "Egress Key")
     type_of_bussiness_line = fields.Char("Type Of Bussiness Line")
     other_amounts = fields.Monetary("Other Amounts")
     amount = fields.Monetary("Amount")
-    price = fields.Monetary("Price")
-    sub_total = fields.Monetary("Sub Total")
+    price_payment = fields.Monetary("Price")
+    sub_total_payment = fields.Monetary("Sub Total")
     tax = fields.Float("Tax")
-    currency_id = fields.Many2one('res.currency')

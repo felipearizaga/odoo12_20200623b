@@ -53,3 +53,16 @@ class ResPartner(models.Model):
          'The Password of the beneficiary of the payment must be unique.'),
         ('scholar_key_payment_uniq', 'unique (scholar_key_payment)',
          'The scholar key payment must be unique.')]
+
+    def supplier_registration(self):
+        return {
+            'name': 'Supplier Registration',
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.registration',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'view_id': self.env.ref(
+                'jt_contact_base.supplier_registration_form_view').id,
+            'target': 'new',
+            'context': self._context
+        }

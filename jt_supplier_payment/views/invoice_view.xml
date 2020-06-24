@@ -1,0 +1,271 @@
+<odoo>
+    <data>
+
+        <record id="payment_req_form_view" model="ir.ui.view">
+            <field name="name">Payment Request form view</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <form>
+					<header>
+							<field name="payment_state" widget="statusbar"/>
+						</header>
+                    <sheet>
+						<field name="company_id" invisible="1"/>
+						<field name="payment_state" invisible="1"/>
+						<field name="type" invisible="1"/>
+						<field name="state" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="baneficiary_id"/>
+                                <field name="operation_type_id"/>
+                                <field name="baneficiary_key"/>
+                                <field name="rfc"/>
+                                <field name="student_account"/>
+                                <field name="transfer_key"/>
+                                <field name="category_key"/>
+                                <field name="workstation_id"/>
+                                <field name="workstation_id"/>
+                                <field name="payment_method"/>
+                                <field name="payment_method"/>
+                                <field name="payment_bank_id"/>
+                                <field name="payment_issuing_bank_id"/>
+                                <field name="payment_bank_account_id"/>
+                                <field name="payment_issuing_bank_acc_id"/>
+                                <field name="journal_id"/>
+                                <field name="currency_id"/>
+                                <field name="folio"/>
+                                <field name="invoice_uuid"/>
+                                <field name="invoice_series"/>
+                                <field name="folio_invoice"/>
+                                <field name="commitment_date"/>
+                                <field name="invoice_date"/>
+                            </group>
+                            <group>
+                                <field name="batch_folio"/>
+                                <field name="folio_dependency"/>
+                                <field name="date_receipt"/>
+                                <field name="date_approval_request"/>
+                                <field name="administrative_forms"/>
+                                <field name="no_of_document"/>
+                                <field name="sheets"/>
+                                <field name="document_type"/>
+                                <field name="upa_key"/>
+                                <field name="upa_document_type"/>
+                                <field name="responsible_id"/>
+                                <field name="administrative_secretary_id"/>
+                                <field name="holder_of_dependency_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="invoice_lines" string="Invoice Lines">
+                                <field name="payment_line_ids">
+                                    <tree>
+                                        <field name="product_id"/>
+                                        <field name="name"/>
+                                        <field name="type_of_bussiness_line"/>
+                                        <field name="egress_key_id"/>
+                                        <field name="tax"/>
+                                        <field name="other_amounts"/>
+                                        <field name="amount"/>
+                                        <field name="price_payment"/>
+                                        <field name="sub_total_payment"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="product_id"/>
+                                            <field name="name"/>
+                                            <field name="type_of_bussiness_line"/>
+                                            <field name="egress_key_id"/>
+                                        </group>
+                                        <group>
+                                            <field name="tax"/>
+                                            <field name="other_amounts"/>
+                                            <field name="amount"/>
+                                            <field name="price_payment"/>
+                                            <field name="sub_total_payment"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                            <page name="more_info" string="More Information">
+                                <group name="zone" string="Zone Responsible">
+                                    <field name="zone"/>
+                                    <field name="rate"/>
+                                    <field name="days"/>
+                                </group>
+                                <group name="reason" string="Reason">
+                                    <field name="reason_for_expendiure"/>
+                                    <field name="destination"/>
+                                    <field name="rf_person"/>
+                                </group>
+                                <group name="responsible" string="Responsible">
+                                    <field name="responsible_expend_id"/>
+                                    <field name="responsible_category_key"/>
+                                    <field name="manager_job_id"/>
+                                    <field name="provenance"/>
+                                </group>
+
+                            </page>
+                            <page name="reason_rejection" string="Reason for Rejection">
+                                <field name="reason_rejection"/>
+                            </page>
+                            <!-- Attachment preview -->
+                            <div class="o_attachment_preview"
+                                 attrs="{'invisible': ['|', '|',
+											('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')),
+											('payment_state', '!=', 'draft')]}"/>
+                            <!-- Chatter -->
+                            <div class="oe_chatter">
+                                <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                                <field name="activity_ids" widget="mail_activity"/>
+                                <field name="message_ids" widget="mail_thread"/>
+                            </div>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="payment_req_tree_view" model="ir.ui.view">
+            <field name="name">Payment Request tree view</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="baneficiary_id"/>
+                    <field name="invoice_date"/>
+                    <field name="payment_state"/>
+                    <field name="type" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="payment_action" model="ir.actions.act_window">
+            <field name="name">Request for Payment</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_type': 'payment_req'}</field>
+            <field name="domain">[('type', '=', 'payment_req')]</field>
+        </record>
+
+        <record id="payment_req_form_action" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="payment_req_form_view"/>
+            <field name="act_window_id" ref="payment_action"/>
+        </record>
+
+		<record id="action_move_out_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_out_invoice_type"/>
+        </record>
+
+		<record id="action_move_out_refund_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_out_refund_type"/>
+        </record>
+
+		<record id="action_move_in_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
+        </record>
+
+		<record id="action_move_in_refund_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_in_refund_type"/>
+        </record>
+
+		<record id="action_move_journal_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_journal_line"/>
+        </record>
+
+		<record id="action_move_out_rec_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_out_receipt_type"/>
+        </record>
+
+		<record id="action_move_in_rec_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_in_receipt_type"/>
+        </record>
+
+		<record id="payment_req_tree_action" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="payment_req_tree_view"/>
+            <field name="act_window_id" ref="payment_action"/>
+        </record>
+
+		<record id="action_move_out_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_out_invoice_type"/>
+        </record>
+
+		<record id="action_move_out_ref_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_out_refund_type"/>
+        </record>
+
+		<record id="action_move_in_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
+        </record>
+
+		<record id="action_move_in_refund_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_in_refund_type"/>
+        </record>
+
+		<record id="action_move_out_rec_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_out_receipt_type"/>
+        </record>
+
+		<record id="action_move_in_rec_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="act_window_id" ref="account.action_move_in_receipt_type"/>
+        </record>
+
+
+		<record id="action_move_journal_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_move_tree"/>
+            <field name="act_window_id" ref="account.action_move_journal_line"/>
+        </record>
+
+        <menuitem id="payment_menu" name="Payment of UPA Rectory and Sciences"
+                  parent="account_accountant.menu_accounting" sequence="10"/>
+
+        <menuitem id="payment_request_menu" name="Request for payment" parent="payment_menu"
+                  action="payment_action" sequence="1"/>
+    </data>
+</odoo>

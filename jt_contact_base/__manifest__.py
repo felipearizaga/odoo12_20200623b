@@ -35,6 +35,8 @@
         'views/scholarship_type_view.xml',
         'views/res_partner_view.xml',
         'views/res_partner_bank_view.xml',
+        'data/data.xml',
+        'wizard/supplier_registration_view.xml'
     ],
 
     'application': False,

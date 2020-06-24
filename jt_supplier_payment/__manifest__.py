@@ -31,8 +31,8 @@
     'license': 'AGPL-3',
     'depends': ['account_accountant', 'jt_account_base'],
     'data': [
-        # 'data/data.xml',
-        # 'views/invoice_view.xml'
+        'data/data.xml',
+        'views/invoice_view.xml'
     ],
     'application': False,
     'installable': True,

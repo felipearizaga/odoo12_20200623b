@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="payment_request_jour" model="account.journal">
+        <field name="name">Payment Request Journal</field>
+        <field name="code">PAR</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+
+</odoo>
