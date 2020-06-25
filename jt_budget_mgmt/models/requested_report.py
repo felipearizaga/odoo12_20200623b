@@ -372,6 +372,7 @@ class RequestedReports(models.Model):
 class ReportFiles(models.Model):
 
     _name = 'report.files'
+    _description = "Report Files"
 
     report_id = fields.Many2one('requested.reports')
     cron_id = fields.Many2one('ir.cron')

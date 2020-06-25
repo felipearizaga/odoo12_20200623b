@@ -774,12 +774,16 @@ class Standardization(models.Model):
                             dest_budget_line = budget_line
                 if not dest_budget_line:
                     if user_lang == 'es_MX':
-                        raise ValidationError(_("Quarter budget line is not created for this program code: \n %s" %
-                                            line.code_id.program_code))
+                        raise ValidationError(
+                            _("La línea presupuestaria trimestral no se crea para este código de programa: \n %s" %
+                              line.code_id.program_code))
                     else:
-                        raise ValidationError(_("La línea presupuestaria trimestral no se crea para este código de programa: \n %s" %
+                        raise ValidationError(_("Quarter budget line is not created for this program code: \n %s" %
                                                 line.code_id.program_code))
                 if not origin_budget_line:
+                    if user_lang == 'es_MX':
+                        raise ValidationError(_("La línea presupuestaria Origen no se crea para este código de "
+                                                "programa: \n %s" % line.code_id.program_code))
                     raise ValidationError(_("Origin budget line is not created for this program code: \n %s" %
                                             line.code_id.program_code))
                 if origin_budget_line and line.amount > origin_budget_line.assigned:

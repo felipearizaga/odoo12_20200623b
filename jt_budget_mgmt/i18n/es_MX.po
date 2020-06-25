@@ -1630,8 +1630,38 @@ msgstr "Partida de Gastos"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__program_id
-msgid "KEY UNAM"
-msgstr "Clave de Programa UNAM"
+msgid "Program"
+msgstr "Programa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_authorized_amt
+msgid "Authorized"
+msgstr "Autorizado"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_assigned_amt
+msgid "Assigned Total Annual"
+msgstr "Total  Asignado Anual"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_1_assigned_amt
+msgid "Assigned 1st Annual"
+msgstr "Asignado 1er Trimestre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_2_assigned_amt
+msgid "Assigned 2nd Annual"
+msgstr "Asignado 2do Trimestre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_3_assigned_amt
+msgid "Assigned 3rd Annual"
+msgstr "Asignado 3er Trimestre"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_4_assigned_amt
+msgid "Assigned 4th Annual"
+msgstr "Asignado 4to Trimestre"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__expense_type_id
@@ -1888,6 +1918,11 @@ msgid "Modifications"
 msgstr "Modificaciones"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number
+msgid "Number"
+msgstr "Número de Convenio"
+
+#. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__name
 msgid "Name"
 msgstr "Nombre Tipo de Convenio"
@@ -1964,7 +1999,6 @@ msgid "Nextcall Copy For Budget"
 msgstr ""
 
 #. module: jt_budget_mgmt
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_project__number
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__number
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__number

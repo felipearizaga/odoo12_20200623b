@@ -28,6 +28,7 @@ class StatesAndProgram(models.Model):
     _description = 'States and Program'
     _rec_name = 'concept'
 
+    code = fields.Char(string='Code')
     concept = fields.Char(string='Concepto')
     approved_amt = fields.Float(string='Aprobado')
     ext_and_red_amt = fields.Float(string='Ampliaciones/ (Reducciones)')

@@ -35,4 +35,4 @@ class StatusOfExpenditure(models.Model):
     accrued_amt = fields.Float(string='Devengado')
     paid_out_amt = fields.Float(string='Pagado')
     sub_exercise = fields.Char(string='Subejercicio')
-    parent_id = fields.Many2one('status.expenditure', string='Parent')
+    parent_id = fields.Many2one('status.expen', string='Parent')

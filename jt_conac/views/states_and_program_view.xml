@@ -8,6 +8,7 @@
                 <form>
                     <sheet>
                         <group>
+                            <field name="code" invisible="1"/>
                             <field name="concept"/>
                             <field name="approved_amt"/>
                             <field name="ext_and_red_amt"/>
@@ -27,6 +28,7 @@
             <field name="model">states.program</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="code" invisible="1"/>
                     <field name="concept"/>
                     <field name="approved_amt"/>
                     <field name="ext_and_red_amt"/>

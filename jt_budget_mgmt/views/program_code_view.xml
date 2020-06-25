@@ -120,7 +120,7 @@
                     <field name="program_code"/>
                     <field name="dependency_id"/>
                     <field name="sub_dependency_id"/>
-                    <field name="program_id" string="Program"/>
+                    <field name="program_id"/>
                     <field name="item_id"/>
                     <field name="total_authorized_amt"/>
                     <field name="total_assigned_amt"/>

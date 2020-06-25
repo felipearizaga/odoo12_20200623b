@@ -36,7 +36,7 @@ class ProgramCode(models.Model):
     year = fields.Many2one('year.configuration', string='Year (YEAR)', states={'validated': [('readonly', True)]})
 
     # Program Relations
-    program_id = fields.Many2one('program', string='KEY UNAM')
+    program_id = fields.Many2one('program', string='Program')
     desc_program = fields.Text(
         string='Description KEY UNAM', related="program_id.desc_key_unam")
 
@@ -134,7 +134,7 @@ class ProgramCode(models.Model):
     number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
 
     total_assigned_amt = fields.Float(string="Assigned Total Annual", compute="_compute_amt")
-    total_1_assigned_amt = fields.Float(string="Assigned 1st Trimester", compute="_compute_amt")
+    total_1_assigned_amt = fields.Float(string="Assigned 1st Annual", compute="_compute_amt")
     total_2_assigned_amt = fields.Float(string="Assigned 2nd Annual", compute="_compute_amt")
     total_3_assigned_amt = fields.Float(string="Assigned 3rd Annual", compute="_compute_amt")
     total_4_assigned_amt = fields.Float(string="Assigned 4th Annual", compute="_compute_amt")

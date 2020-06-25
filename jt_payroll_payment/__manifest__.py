@@ -29,10 +29,11 @@
     'maintainer': 'Jupical Technologies Pvt. Ltd.',
     'website': 'http://www.jupical.com',
     'license': 'AGPL-3',
-    'depends': [],
+    'depends': ['account_accountant'],
     'data': [
         'views/preception_deduction.xml',
         'views/res_partner_view.xml',
+        'views/calendar_payment_reg_views.xml',
         'security/ir.model.access.csv'
     ],
     'application': False,
