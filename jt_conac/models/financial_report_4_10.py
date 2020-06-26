@@ -21,7 +21,7 @@
 #
 ##############################################################################
 from odoo import models, _
-
+import unicodedata
 
 class StatesAndProgramReports(models.AbstractModel):
     _name = "jt_conac.states.and.program.report"
@@ -47,52 +47,34 @@ class StatesAndProgramReports(models.AbstractModel):
             {'name': _('Subejercicio')},
         ]
 
+    def strip_accents(self, text):
+        return ''.join(char for char in
+                       unicodedata.normalize('NFKD', text)
+                       if unicodedata.category(char) != 'Mn')
+
     def _get_lines(self, options, line_id=None):
         states_obj = self.env['states.program']
-        shcp_obj = self.env['shcp.code']
         bud_obj = self.env['expenditure.budget']
         adeq_obj = self.env['adequacies']
         adequacies = adeq_obj.search([('state', '=', 'accepted')])
         budget = bud_obj.search([('state', '=', 'validate')])
-        prog_dict_auth = {'E010': [{}], 'E007': [{}], 'E021': [{}], 'E011': [{}], 'E010-S243-K027-K009': [{}]}
+        prog_dict_auth = {}
         prog_dict_ade = {}
         for line in budget.success_line_ids:
-            prog = line.conversion_program
-            if prog == 'E010':
-                main_dict = prog_dict_auth.get('E010')[0]
-                if prog in main_dict.keys():
-                    amt = main_dict.get(prog) + line.authorized
-                    main_dict.update({prog: amt})
+            if line.program_code_id and line.program_code_id.budget_program_conversion_id and \
+                    line.program_code_id.budget_program_conversion_id.desc:
+                prog_name = line.program_code_id.budget_program_conversion_id.desc.upper()
+                prog_name = self.strip_accents(prog_name)
+                shcp = line.program_code_id.budget_program_conversion_id.shcp
+                if prog_name in prog_dict_auth.keys():
+                    prog_dict = prog_dict_auth.get(prog_name)[0]
+                    if shcp in prog_dict.keys():
+                        amt = prog_dict.get(shcp)
+                        prog_dict.update({shcp: amt + line.authorized})
+                    else:
+                        prog_dict.update({shcp: line.authorized})
                 else:
-                    main_dict.update({prog: line.authorized})
-            elif prog == 'E007':
-                main_dict = prog_dict_auth.get('E007')[0]
-                if prog in main_dict.keys():
-                    amt = main_dict.get(prog) + line.authorized
-                    main_dict.update({prog: amt})
-                else:
-                    main_dict.update({prog: line.authorized})
-            elif prog == 'E021':
-                main_dict = prog_dict_auth.get('E021')[0]
-                if prog in main_dict.keys():
-                    amt = main_dict.get(prog) + line.authorized
-                    main_dict.update({prog: amt})
-                else:
-                    main_dict.update({prog: line.authorized})
-            elif prog == 'E011':
-                main_dict = prog_dict_auth.get('E011')[0]
-                if prog in main_dict.keys():
-                    amt = main_dict.get(prog) + line.authorized
-                    main_dict.update({prog: amt})
-                else:
-                    main_dict.update({prog: line.authorized})
-            if prog in ('E010', 'S243', 'K027', 'K009'):
-                main_dict = prog_dict_auth.get('E010-S243-K027-K009')[0]
-                if prog in main_dict.keys():
-                    amt = main_dict.get(prog) + line.authorized
-                    main_dict.update({prog: amt})
-                else:
-                    main_dict.update({prog: line.authorized})
+                    prog_dict_auth.update({prog_name: [{shcp: line.authorized}]})
         for ade in adequacies:
             for line in ade.adequacies_lines_ids:
                 if line.program:
@@ -144,38 +126,21 @@ class StatesAndProgramReports(models.AbstractModel):
                         'unfolded': True,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })
-                    if level_2_line.concept == 'Investigación en Humanidades y Ciencias Sociales':
-                        prog_dict_E021 = dict(sorted(prog_dict_auth.get('E021')[0].items()))
-                        for prog, authorized in prog_dict_E021.items():
-                            prog = shcp_obj.search([('name', '=', prog)])
-                            name = prog.name
-                            if prog.desc:
+
+                    line_concept = level_2_line.concept.upper()
+                    line_concept = self.strip_accents(line_concept)
+                    if line_concept in prog_dict_auth.keys():
+                        concept_dict = prog_dict_auth.get(line_concept)[0]
+                        prog_dict_con = dict(sorted(concept_dict.items()))
+                        for shcp, authorized in prog_dict_con.items():
+                            name = shcp.name
+                            if shcp.desc:
                                 name += ' '
-                                name += prog.desc
-                            adeq_amt = prog_dict_ade.get(prog.name) if prog_dict_ade.get(prog.name) else 0
+                                name += shcp.desc
+                            adeq_amt = prog_dict_ade.get(shcp.name) if prog_dict_ade.get(shcp.name) else 0
                             modi_amt = authorized + adeq_amt
                             lines.append({
-                                'id': 'level_three_%s' % prog.id,
-                                'name': name,
-                                'columns': [{'name': authorized}, {'name': adeq_amt}, {'name': modi_amt}, {'name': ''},
-                                            {'name': ''}, {'name': modi_amt}],
-                                'level': 4,
-                                'unfoldable': False,
-                                'unfolded': False,
-                                'parent_id': 'level_two_%s' % level_2_line.id,
-                            })
-                    elif level_2_line.concept == 'Extensión y Difusión Cultural':
-                        prog_dict_E011 = dict(sorted(prog_dict_auth.get('E011')[0].items()))
-                        for prog, authorized in prog_dict_E011.items():
-                            prog = shcp_obj.search([('name', '=', prog)])
-                            name = prog.name
-                            if prog.desc:
-                                name += ' '
-                                name += prog.desc
-                            adeq_amt = prog_dict_ade.get(prog.name) if prog_dict_ade.get(prog.name) else 0
-                            modi_amt = authorized + adeq_amt
-                            lines.append({
-                                'id': 'level_three_%s' % prog.id,
+                                'id': 'level_three_%s' % shcp.id,
                                 'name': name,
                                 'columns': [{'name': authorized}, {'name': adeq_amt}, {'name': modi_amt}, {'name': ''},
                                             {'name': ''}, {'name': modi_amt}],

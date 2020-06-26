@@ -29,7 +29,8 @@
     'maintainer': 'Jupical Technologies Pvt. Ltd.',
     'website': 'http://www.jupical.com',
     'license': 'AGPL-3',
-    'depends': ['account_accountant', 'account_reports', 'project', 'jt_conac', 'web_notify', 'hr'],
+    'depends': ['account_accountant', 'account_reports', 'project', 'jt_conac', 'web_notify', 'hr',
+                'jt_payroll_payment'],
     'data': [
         # Security Files
         'security/ir.model.access.csv',
@@ -91,6 +92,7 @@
         'views/payment_place.xml',
         'views/res_partner_view.xml',
         'views/hr_employee_view.xml',
+        'views/employee_payroll_file_view.xml',
 
         # Main Menu File
         'views/budget_menus.xml',

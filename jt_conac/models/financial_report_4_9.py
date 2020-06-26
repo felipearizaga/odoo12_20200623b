@@ -21,7 +21,7 @@
 #
 ##############################################################################
 from odoo import models, _
-
+import unicodedata
 
 class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
     _name = "jt_conac.status.of.expenditure.report"
@@ -47,68 +47,35 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
             {'name': _('Subejercicio')},
         ]
 
+    def strip_accents(self, text):
+        return ''.join(char for char in
+                       unicodedata.normalize('NFKD', text)
+                       if unicodedata.category(char) != 'Mn')
+
     def _get_lines(self, options, line_id=None):
         exp_obj = self.env['status.expen']
         bud_obj = self.env['expenditure.budget']
         adeq_obj = self.env['adequacies']
-        item_obj = self.env['expenditure.item']
         budgets = bud_obj.search([('state', '=', 'validate')])
         adequacies = adeq_obj.search([('state', '=', 'accepted')])
-        item_dict_auth = {'111-199': [{}], '211-285': [{}], '321-361': [{}], '411-431': [{}], '511-531': [{}],
-                          '611-623': [{}], '721-734': [{}]}
+        item_dict_auth = {}
         item_dict_adeq = {}
         for budget in budgets:
             for line in budget.success_line_ids:
-                item = int(line.item_id.item)
-                if item >= 111 and item <= 199:
-                    main_dict = item_dict_auth.get('111-199')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
+                if line.item_id and line.item_id.heading and line.item_id.heading.name:
+                    heading_name = line.item_id.heading.name.upper()
+                    heading_name = self.strip_accents(heading_name)
+                    item = line.item_id
+                    if heading_name in item_dict_auth.keys():
+                        heading_dict = item_dict_auth.get(heading_name)[0]
+                        if item in heading_dict.keys():
+                            amt = heading_dict.get(item)
+                            heading_dict.update({item: amt + line.authorized})
+                        else:
+                            heading_dict.update({item: line.authorized})
                     else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 211 and item <= 285:
-                    main_dict = item_dict_auth.get('211-285')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 321 and item <= 361:
-                    main_dict = item_dict_auth.get('321-361')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 411 and item <= 431:
-                    main_dict = item_dict_auth.get('411-431')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 511 and item <= 531:
-                    main_dict = item_dict_auth.get('511-531')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 611 and item <= 623:
-                    main_dict = item_dict_auth.get('611-623')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
-                elif item >= 721 and item <= 731:
-                    main_dict = item_dict_auth.get('721-734')[0]
-                    if item in main_dict.keys():
-                        amt = main_dict.get(item) + line.authorized
-                        main_dict.update({item: amt})
-                    else:
-                        main_dict.update({item: line.authorized})
+                        item_dict_auth.update({heading_name: [{item: line.authorized}]})
+
         for ade in adequacies:
             for line in ade.adequacies_lines_ids:
                 if line.program:
@@ -148,30 +115,12 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                     'unfolded': True,
                     'parent_id': 'hierarchy_' + str(line.id),
                 })
-                if level_1_line.concept == 'Remuneraciones al Personal de Carácter Permanente':
-                    item_dict_111 = dict(sorted(item_dict_auth.get('111-199')[0].items()))
-                    for item, authorized in item_dict_111.items():
-                        item = item_obj.search([('item', '=', item)])
-                        name = item.item
-                        if item.description:
-                            name += ' '
-                            name += item.description
-                        adeq_amt = item_dict_adeq.get(item.item) if item_dict_adeq.get(item.item) else 0
-                        modi_amt = authorized + adeq_amt
-                        lines.append({
-                            'id': 'level_two_%s' % item.id,
-                            'name': name,
-                            'columns': [{'name': authorized}, {'name': adeq_amt}, {'name': modi_amt}, {'name': ''},
-                                        {'name': ''}, {'name': modi_amt}],
-                            'level': 3,
-                            'unfoldable': False,
-                            'unfolded': False,
-                            'parent_id': 'level_one_%s' % level_1_line.id,
-                        })
-                elif level_1_line.concept == 'Materias Primas y Materiales de Producción y Comercialización':
-                    item_dict_111 = dict(sorted(item_dict_auth.get('211-285')[0].items()))
-                    for item, authorized in item_dict_111.items():
-                        item = item_obj.search([('item', '=', item)])
+                line_concept = level_1_line.concept.upper()
+                line_concept = self.strip_accents(line_concept)
+                if line_concept in item_dict_auth.keys():
+                    concept_dict = item_dict_auth.get(line_concept)[0]
+                    item_dict_con = dict(sorted(concept_dict.items()))
+                    for item, authorized in item_dict_con.items():
                         name = item.item
                         if item.description:
                             name += ' '

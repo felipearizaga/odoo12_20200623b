@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="employee_payroll_file_search" model="ir.ui.view">
+            <field name="name">employee.payroll.file.search.view</field>
+            <field name="model">employee.payroll.file</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="beneficiary_id"/>
+                    <field name="employee_number"/>
+                    <field name="reference"/>
+                    <field name="name"/>
+                     <group expand="0" string="Group By">
+                        <filter string="Payment Method" name="group_by_payment_method"
+                                context="{'group_by': 'payment_method'}"/>
+                         <filter string="State" name="group_by_state"
+                                context="{'group_by': 'state'}"/>
+                         <filter string="Request Type" name="group_by_request_type"
+                                context="{'group_by': 'request_type'}"/>
+                         <filter string="Payroll Adjustment" name="group_by_payroll_adjustment"
+                                context="{'group_by': 'payroll_adjustment'}"/>
+                         <filter string="Beneficiary" name="group_by_beneficiary_id"
+                                context="{'group_by': 'beneficiary_id'}"/>
+                     </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="employee_payroll_file_form" model="ir.ui.view">
+            <field name="name">employee.payroll.file.form.view</field>
+            <field name="model">employee.payroll.file</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="employee_id" class="oe_edit_only"/>
+                            <h1>
+                                <field name="employee_id" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                 <label for="period_start"/>
+                                <div>
+                                    <field name="period_start" class="oe_inline"/> -
+                                    <field name="period_end" class="oe_inline"/>
+                                </div>
+                                <field name="fornight"/>
+                                <field name="bank_receiving_payment_id"/>
+                                <field name="payment_issuing_bank_id"/>
+                                <field name="receiving_bank_acc_pay_id"/>
+                                <field name="bank_acc_payment_insur_id"/>
+                                <field name="amount_payable"/>
+                            </group>
+                            <group>
+                                <field name="reference" readonly="1"/>
+                                <field name="name" readonly="1"/>
+                                <field name="employee_number"/>
+                                <field name="payment_method"/>
+                                <field name="batch_folio"/>
+                                <field name="request_type"/>
+                                <field name="payroll_adjustment"/>
+                                <field name="substate"/>
+                                <field name="beneficiary_id" domain="[('beneficiary_type', '=', 'alimony')]"/>
+                            </group>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+         <record id="employee_payroll_file_tree" model="ir.ui.view">
+            <field name="name">employee.payroll.file.tree.view</field>
+            <field name="model">employee.payroll.file</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="reference"/>
+                    <field name="employee_id"/>
+                    <field name="employee_number"/>
+                    <field name="request_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+         </record>
+
+        <record id="employee_payroll_file_action" model="ir.actions.act_window">
+            <field name="name">Upload File</field>
+            <field name="res_model">employee.payroll.file</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_emp_payroll" name="Employee Payroll"
+                  sequence="0" parent="menu_payroll_payment"/>
+
+        <menuitem id="menu_emp_payroll_file" name="Upload Files" action="employee_payroll_file_action"
+                  sequence="1" parent="menu_emp_payroll"/>
+
+    </data>
+</odoo>

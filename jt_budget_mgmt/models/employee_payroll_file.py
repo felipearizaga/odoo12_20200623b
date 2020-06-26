@@ -20,25 +20,14 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'Payroll Payment',
-    'summary': 'Payroll Payment',
-    'version': '13.0.0.1.0',
-    'category': 'Payroll',
-    'author': 'Jupical Technologies Pvt. Ltd.',
-    'maintainer': 'Jupical Technologies Pvt. Ltd.',
-    'website': 'http://www.jupical.com',
-    'license': 'AGPL-3',
-    'depends': ['account_accountant', 'hr', 'jt_contact_base'],
-    'data': [
-        'views/preception_deduction.xml',
-        'views/res_partner_view.xml',
-        'views/calendar_payment_reg_views.xml',
-        'views/employee_payroll_view.xml',
-        'security/ir.model.access.csv',
-        'data/data.xml'
-    ],
-    'application': False,
-    'installable': True,
-    'auto_install': False,
-}
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+
+class EmployeePayroll(models.Model):
+
+    _inherit = 'employee.payroll.file'
+
+    dependancy_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
+    program_code_id = fields.Many2one("program.code", string="Program Code")
+

@@ -37,7 +37,7 @@ class EmployeePayroll(models.Model):
                                       ('16', '16'), ('17', '17'), ('18', '18'), ('19', '19'), ('20', '20'),
                                       ('21', '21'), ('22', '22'), ('23', '23'), ('24', '24')],
                                 string="Fornight")
-    period_start = fields.Date("Period Start")
+    period_start = fields.Date("Period")
     period_end = fields.Date("Period End")
     reference = fields.Char("Reference")
     bank_receiving_payment_id = fields.Many2one('res.bank', string="Bank Receiving Payment")
@@ -62,4 +62,9 @@ class EmployeePayroll(models.Model):
                                           string="Payroll Adjustment")
     substate = fields.Char("SubState")
     beneficiary_id = fields.Many2one('res.partner', "Beneficiary")
-    state = fields.Selection([('draft', 'Draft'), ('revised', 'Revised'), ('done', 'Done')], string="State")
+    state = fields.Selection([('draft', 'Draft'), ('revised', 'Revised'), ('done', 'Done')], string="State",
+                             default='draft')
+
+    def revised_emp_payroll_files(self):
+        for record in self:
+            record.state = 'revised'

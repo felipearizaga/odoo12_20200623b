@@ -47,3 +47,4 @@ from . import account
 from . import payment_place
 from . import res_partner
 from . import hr_employee
+from . import employee_payroll_file
