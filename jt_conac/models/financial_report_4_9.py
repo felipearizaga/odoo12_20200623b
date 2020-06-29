@@ -22,6 +22,8 @@
 ##############################################################################
 from odoo import models, _
 import unicodedata
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
 class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
     _name = "jt_conac.status.of.expenditure.report"
@@ -53,6 +55,7 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                        if unicodedata.category(char) != 'Mn')
 
     def _get_lines(self, options, line_id=None):
+        print ("Options =-=-=", options)
         exp_obj = self.env['status.expen']
         bud_obj = self.env['expenditure.budget']
         adeq_obj = self.env['adequacies']
@@ -60,6 +63,15 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
         adequacies = adeq_obj.search([('state', '=', 'accepted')])
         item_dict_auth = {}
         item_dict_adeq = {}
+        date_from = False
+        date_to = False
+        if options.get('date'):
+            date_from = options.get('date').get('date_from')
+            date_to = options.get('date').get('date_to')
+        if isinstance(date_from, str):
+            date_from = datetime.strptime(date_from, DEFAULT_SERVER_DATE_FORMAT).date()
+        if isinstance(date_to, str):
+            date_to = datetime.strptime(date_to, DEFAULT_SERVER_DATE_FORMAT).date()
         for budget in budgets:
             for line in budget.success_line_ids:
                 if line.item_id and line.item_id.heading and line.item_id.heading.name:
@@ -77,19 +89,35 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                         item_dict_auth.update({heading_name: [{item: line.authorized}]})
 
         for ade in adequacies:
-            for line in ade.adequacies_lines_ids:
-                if line.program:
-                    item = line.program.item_id.item
-                    if item in item_dict_adeq.keys():
-                        if line.line_type == 'increase':
-                            item_dict_adeq.update({item: item_dict_adeq.get(item) + line.amount})
+            if ade.adaptation_type == 'liquid' and ade.date_of_liquid_adu >= date_from and ade.date_of_liquid_adu <= date_to:
+                for line in ade.adequacies_lines_ids:
+                    if line.program:
+                        item = line.program.item_id.item
+                        if item in item_dict_adeq.keys():
+                            if line.line_type == 'increase':
+                                item_dict_adeq.update({item: item_dict_adeq.get(item) + line.amount})
+                            else:
+                                item_dict_adeq.update({item: item_dict_adeq.get(item) - line.amount})
                         else:
-                            item_dict_adeq.update({item: item_dict_adeq.get(item) - line.amount})
-                    else:
-                        if line.line_type == 'increase':
-                            item_dict_adeq.update({item: line.amount})
+                            if line.line_type == 'increase':
+                                item_dict_adeq.update({item: line.amount})
+                            else:
+                                item_dict_adeq.update({item: -line.amount})
+            elif ade.adaptation_type != 'liquid' and ade.date_of_budget_affected >= date_from and ade.date_of_budget_affected <= date_to:
+                for line in ade.adequacies_lines_ids:
+                    if line.program:
+                        item = line.program.item_id.item
+                        if item in item_dict_adeq.keys():
+                            if line.line_type == 'increase':
+                                item_dict_adeq.update({item: item_dict_adeq.get(item) + line.amount})
+                            else:
+                                item_dict_adeq.update({item: item_dict_adeq.get(item) - line.amount})
                         else:
-                            item_dict_adeq.update({item: -line.amount})
+                            if line.line_type == 'increase':
+                                item_dict_adeq.update({item: line.amount})
+                            else:
+                                item_dict_adeq.update({item: -line.amount})
+
         lines = []
         hierarchy_lines = exp_obj.sudo().search(
             [('parent_id', '=', False)], order='id')
@@ -115,6 +143,10 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                     'unfolded': True,
                     'parent_id': 'hierarchy_' + str(line.id),
                 })
+                total_auth = 0
+                total_ade = 0
+                total_mod = 0
+                total_sub = 0
                 line_concept = level_1_line.concept.upper()
                 line_concept = self.strip_accents(line_concept)
                 if line_concept in item_dict_auth.keys():
@@ -130,14 +162,34 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                         lines.append({
                             'id': 'level_two_%s' % item.id,
                             'name': name,
-                            'columns': [{'name': authorized}, {'name': adeq_amt}, {'name': modi_amt}, {'name': ''},
-                                        {'name': ''}, {'name': modi_amt}],
+                            'columns': [{'name': '%.2f' % authorized, 'style': 'margin-left:15px;'},
+                                        {'name': '%.2f' % adeq_amt, 'style': 'margin-left:15px;'},
+                                        {'name': '%.2f' % modi_amt, 'style': 'margin-left:15px;'},
+                                        {'name': ''},
+                                        {'name': ''}, {'name': '%.2f' % modi_amt, 'style': 'margin-left:15px;'}],
                             'level': 3,
                             'unfoldable': False,
                             'unfolded': False,
                             'parent_id': 'level_one_%s' % level_1_line.id,
                         })
+                        total_auth += authorized
+                        total_ade += adeq_amt
+                        total_mod += modi_amt
+                        total_sub += modi_amt
 
+                    lines.append({
+                        'id': 'level_two_%s' % item.id,
+                        'name': _('Total'),
+                        'columns': [{'name': '%.2f' % total_auth},
+                                    {'name': '%.2f' % total_ade},
+                                    {'name': '%.2f' % total_mod}, {'name': ''},
+                                    {'name': ''}, {'name': '%.2f' % total_sub}],
+                        'level': 4,
+                        'class': 'total',
+                        'unfoldable': False,
+                        'unfolded': False,
+                        'parent_id': 'level_one_%s' % level_1_line.id,
+                    })
                 level_2_lines = exp_obj.search(
                     [('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:

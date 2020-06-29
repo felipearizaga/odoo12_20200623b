@@ -266,165 +266,157 @@ class Standardization(models.Model):
                     counter += 1
                 result_vals.append(result_dict)
 
+                list_result = list(result_dict)
+
                 # Validate year format
-                year = year_obj.validate_year(result_dict.get('AÑO', ''))
+                year = year_obj.validate_year(result_dict.get(list_result[0]))
                 if not year:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Year Format\n"
+                                  "------>> Invalid Year Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validate Program(PR)
-                program = program_obj.validate_program(
-                    result_dict.get('Programa', ''))
+                program = program_obj.validate_program(result_dict.get(list_result[1]))
                 if not program:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Program(PR) Format\n"
+                                  "------>> Invalid Program(PR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validate Sub-Program
-                subprogram = subprogram_obj.validate_subprogram(
-                    result_dict.get('SubPrograma', ''), program)
+                subprogram = subprogram_obj.validate_subprogram(result_dict.get(list_result[2]), program)
                 if not subprogram:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid SubProgram(SP) Format\n"
+                                  "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validate Dependency
-                dependency = dependancy_obj.validate_dependency(
-                    result_dict.get('Dependencia', ''))
+                dependency = dependancy_obj.validate_dependency(result_dict.get(list_result[3]))
                 if not dependency:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Dependency(DEP) Format\n"
+                                  "------>> Invalid Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validate Sub-Dependency
-                subdependency = subdependancy_obj.validate_subdependency(
-                    result_dict.get('SubDependencia', ''), dependency)
+                subdependency = subdependancy_obj.validate_subdependency(result_dict.get(list_result[4]),
+                                                                         dependency)
                 if not subdependency:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Sub Dependency(DEP) Format\n"
+                                  "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validate Item
-                item = item_obj.validate_item(result_dict.get(
-                    'Partida', ''), result_dict.get('Cve Ejercicio', ''))
+                item = item_obj.validate_item(result_dict.get(list_result[5]), result_dict.get(list_result[19]))
                 if not item:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Expense Item(PAR) Format\n"
+                                  "------>> Invalid Expense Item(PAR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
-                if not result_dict.get('Digito Verificador'):
+                if not result_dict.get(list_result[6]):
                     failed_row += str(list(result_dict.values())) + \
                                   "------>> Digito Verificador is not added!\n"
                     failed_row_ids.append(pointer)
                     continue
 
-                if result_dict.get('Digito Verificador'):
-                    code = str(result_dict.get('Digito Verificador'))
+                if result_dict.get(list_result[6]):
+                    code = str(result_dict.get(list_result[6]))
                     if '.' in code:
                         code = code.split('.')[0]
                     p_code += code.zfill(2)
 
                 # Validate Origin Of Resource
-                origin_resource = origin_obj.validate_origin_resource(
-                    result_dict.get('Digito Centraliador', ''))
+                origin_resource = origin_obj.validate_origin_resource(result_dict.get(list_result[7]))
                 if not origin_resource:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Origin Of Resource(OR) Format\n"
+                                  "------>> Invalid Origin Of Resource(OR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Institutional Activity Number
                 institutional_activity = activity_obj.validate_institutional_activity(
-                    result_dict.get('Actividad Institucional', ''))
+                    result_dict.get(list_result[8]))
                 if not institutional_activity:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Institutional Activity Number(AI) Format\n"
+                                  "------>> Invalid Institutional Activity Number(AI) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Conversion Program SHCP
-                shcp = shcp_obj.validate_shcp(
-                    result_dict.get('Conversion Programa', ''), program)
+                shcp = shcp_obj.validate_shcp(result_dict.get(list_result[9]), program)
                 if not shcp:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
+                                  "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Federal Item
-                conversion_item = dpc_obj.validate_conversion_item(
-                    result_dict.get('Conversion Partida', ''))
+                conversion_item = dpc_obj.validate_conversion_item(result_dict.get(list_result[10]))
                 if not conversion_item:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid SHCP Games(CONPA) Format\n"
+                                  "------>> Invalid SHCP Games(CONPA) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Expense Type
-                expense_type = expense_type_obj.validate_expense_type(
-                    result_dict.get('Tipo de gasto', ''))
+                expense_type = expense_type_obj.validate_expense_type(result_dict.get(list_result[11]))
                 if not expense_type:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Expense Type(TG) Format\n"
+                                  "------>> Invalid Expense Type(TG) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Expense Type
-                geo_location = location_obj.validate_geo_location(
-                    result_dict.get('Ubicación geografica', ''))
+                geo_location = location_obj.validate_geo_location(result_dict.get(list_result[12]))
                 if not geo_location:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Geographic Location (UG) Format\n"
+                                  "------>> Invalid Geographic Location (UG) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Wallet Key
-                wallet_key = wallet_obj.validate_wallet_key(
-                    result_dict.get('Clave Cartera', ''))
+                wallet_key = wallet_obj.validate_wallet_key(result_dict.get(list_result[13]))
                 if not wallet_key:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Wallet Key(CC) Format\n"
+                                  "------>> Invalid Wallet Key(CC) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Project Type
                 project_type = project_type_obj.with_context(from_adjustment=True).validate_project_type(
-                    result_dict.get('Tipo de Proyecto', ''), result_dict)
+                    result_dict.get(list_result[14]), result_dict)
                 if not project_type:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Project Type(TP) Format\n"
+                                  "------>> Invalid Project Type(TP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Stage
-                stage = stage_obj.validate_stage(
-                    result_dict.get('Etapa', ''), project_type.project_id)
+                stage = stage_obj.validate_stage(result_dict.get(list_result[16]), project_type.project_id)
                 if not stage:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Stage(E) Format\n"
+                                  "------>> Invalid Stage(E) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Agreement Type
-                agreement_type = agreement_type_obj.validate_agreement_type(result_dict.get(
-                    'Tipo de Convenio', ''), project_type.project_id, result_dict.get('No. de Convenio', ''))
+                agreement_type = agreement_type_obj.validate_agreement_type(result_dict.get(list_result[17]),
+                                                                            project_type.project_id,
+                                                                            result_dict.get(list_result[18]))
                 if not agreement_type:
                     failed_row += str(list(result_dict.values())) + \
-                        "------>> Invalid Agreement Type(TC) Format\n"
+                                  "------>> Invalid Agreement Type(TC) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Amount
                 amount = 0
                 try:
-                    amount = float(result_dict.get('Amount', ''))
+                    amount = float(result_dict.get(list_result[22]))
                     if float(amount) <= 0:
                         failed_row += str(list(result_dict.values())) + \
                             "------>> Amount should be greater than 0"
@@ -437,7 +429,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Folio
-                folio = result_dict.get('Folio', '')
+                folio = result_dict.get(list_result[20])
                 if folio:
                     try:
                         folio = int(float(folio))
@@ -460,7 +452,7 @@ class Standardization(models.Model):
                     continue
 
                 # Validation Budget
-                budget_str = result_dict.get('Budget', '')
+                budget_str = result_dict.get(list_result[21])
                 budget = budget_obj.search(
                     [('name', '=', budget_str)], limit=1)
                 if not budget:
@@ -471,7 +463,7 @@ class Standardization(models.Model):
 
                 # Validate Origin
                 origin = self.env['quarter.budget'].search(
-                    [('name', '=', result_dict.get('Origin', ''))], limit=1)
+                    [('name', '=', result_dict.get(list_result[23]))], limit=1)
                 if not origin:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Origin Not Found\n"
@@ -479,7 +471,7 @@ class Standardization(models.Model):
                     continue
 
                 quarter = self.env['quarter.budget'].search(
-                    [('name', '=', result_dict.get('Quarter', ''))], limit=1)
+                    [('name', '=', result_dict.get(list_result[24]))], limit=1)
                 if not quarter:
                     failed_row += str(list(result_dict.values())) + \
                         "------>> Quarter Not Found\n"
