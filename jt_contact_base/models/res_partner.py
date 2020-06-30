@@ -46,7 +46,6 @@ class ResPartner(models.Model):
     scholarship_id = fields.Many2one('scholarship.type', string='Type of Scholarship')
     scholarship_approved_month = fields.Char(string='Scholarship approved month')
     period = fields.Char('Period')
-    # tax_regime = fields.Char('Tax Regime')
 
     _sql_constraints = [
         ('password_beneficiary_uniq', 'unique (password_beneficiary)',

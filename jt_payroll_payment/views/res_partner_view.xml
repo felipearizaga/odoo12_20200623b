@@ -25,5 +25,39 @@
             </field>
         </record>
 
+        <!-- Menu Contacts -->
+        <menuitem id="menu_finance_contacts_main" name="Contacts"
+                  sequence="1" parent="menu_payment_finance"/>
+
+        <!-- Registration of Supplier -->
+        <menuitem id="menu_finance_contacts_supplier" name="Suppliers"
+                  action="account.res_partner_action_supplier"
+                  sequence="1" parent="menu_finance_contacts_main"/>
+
+         <record id="action_contacts_scholarship" model="ir.actions.act_window">
+            <field name="name">Contacts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form,activity</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+             <field name="domain">[('beneficiary_type', '=', 'scholarship')]</field>
+            <field name="context">{'default_is_company': True,
+                                   'default_beneficiary_type': 'scholarship'}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a contact in your address book
+              </p><p>
+                Odoo helps you to easily track all activities related to a customer.
+              </p>
+            </field>
+        </record>
+
+         <!-- Menu Scholarship -->
+        <menuitem id="menu_finance_contacts_scholarship" name="Scholarship"
+                  action="action_contacts_scholarship"
+                  sequence="2" parent="menu_finance_contacts_main"/>
+
+
+
     </data>
 </odoo>

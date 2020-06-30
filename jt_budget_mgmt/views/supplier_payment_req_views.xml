@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="supplier_payment_req_form_inherit" model="ir.ui.view">
+            <field name="name">supplier.payment.request.inherit.view</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="jt_supplier_payment.payment_req_form_view"/>
+            <field name="arch" type="xml">
+                <field name="workstation_id" position="after">
+                    <field name="dependancy_id" context="{'from_move':True}"/>
+                    <field name="sub_dependancy_id"/>
+                </field>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='type_of_bussiness_line']"
+                       position="before">
+                    <field name="program_code_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

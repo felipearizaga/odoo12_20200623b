@@ -54,6 +54,8 @@
         </record>
 
         <!-- menu for operation type -->
-        <menuitem id="operation_type_menu" name="Type of Operation" parent="account.menu_finance_configuration" sequence="0" action="operation_type_action"/>
+        <menuitem id="operation_type_menu" name="Type of Operation"
+                  parent="menu_payroll_payment_config" sequence="2"
+                  action="operation_type_action"/>
     </data>
 </odoo>

@@ -22,6 +22,7 @@
 ##############################################################################
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from datetime import datetime
 
 class EmployeePayroll(models.Model):
 
@@ -68,3 +69,23 @@ class EmployeePayroll(models.Model):
     def revised_emp_payroll_files(self):
         for record in self:
             record.state = 'revised'
+
+    def request_for_payment(self):
+        today_date = datetime.today()
+        payment_req_obj = self.env['payment.request']
+        for record in self:
+            vals = {
+                'employee_id': record.employee_id,
+                'amount': record.amount_payable,
+                'request_type': record.request_type,
+                'bank_receiving_payment_id': record.bank_receiving_payment_id,
+                'payment_receipt_bank_id': record.payment_issuing_bank_id,
+                'receipt_date': today_date,
+                'payment_method': record.payment_method,
+                'payroll_origin_id': record.payroll_origin_id,
+                'bank_acc_payment_insur_id': bank_acc_payment_insur_id,
+                'payment_issuing_bank_id': record.payment_issuing_bank_id,
+                'fornight': record.fornight
+            }
+            payment_req_obj.create(vals)
+            record.state = 'done'

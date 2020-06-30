@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_payroll_payment" name="Payroll Payment"
+                  sequence="5"/>
+
+         <menuitem id="menu_payroll_admin_process_unit" name="Administrative Process Unit"
+                  parent="menu_payroll_payment"  sequence="1"/>
+
+        <menuitem id="menu_payroll_payment_config" name="Setting" parent="menu_payroll_payment"
+                  sequence="5"/>
+
+        <menuitem id="menu_payment_of_payroll" name="Payment of Payroll"
+                  sequence="5"/>
+
+        <menuitem id="menu_setting_payment_of_payroll" name="Setting"
+                  parent="menu_payment_of_payroll"
+                  sequence="5"/>
+
+        <menuitem id="menu_emp_payroll_payment_of_payroll" name="Employee Payroll"
+                  parent="menu_payment_of_payroll"
+                  sequence="2"/>
+
+
+    </data>
+</odoo>

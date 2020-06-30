@@ -51,6 +51,7 @@
         </record>
 
         <!-- menu for egress keys -->
-        <menuitem id="egress_keys_menu" name="Egress Keys" parent="account.menu_finance_configuration" sequence="0" action="egress_keys_action"/>
+        <menuitem id="egress_keys_menu" name="Egress Keys" parent="menu_payroll_payment_config"
+                  sequence="3" action="egress_keys_action"/>
     </data>
 </odoo>

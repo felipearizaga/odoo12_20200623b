@@ -28,12 +28,27 @@ class Dependency(models.Model):
 
     _name = 'dependency'
     _description = 'Dependency'
-    _rec_name = 'dependency'
+    _rec_name = 'display_name'
 
     dependency = fields.Char(string='Dependency', size=3)
     description = fields.Text(string='Dependency description')
 
     _sql_constraints = [('dependency', 'unique(dependency)', 'The dependency must be unique.')]
+
+    def _compute_display_name(self):
+        for record in self:
+            if 'from_move' in self._context:
+                name = ''
+                if record.dependency:
+                    name += str(record.dependency)
+                if record.description:
+                    name += ' '
+                    name += str(record.description)
+                record.display_name = name
+            else:
+                record.display_name = record.dependency
+
+    display_name = fields.Char(string='Dependency Name', compute="_compute_display_name")
 
     @api.constrains('dependency')
     def _check_dependency(self):

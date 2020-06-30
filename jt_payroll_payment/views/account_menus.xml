@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Menu Bank Account -->
+        <menuitem id="menu_finance_bank_accounts" name="Bank Accounts"
+                  action="account.action_account_bank_journal_form"
+                  sequence="1" parent="menu_payment_finance_setting"/>
+
+        <!-- Menu Bank -->
+        <menuitem id="menu_finance_bank" name="Bank"
+                  action="base.action_res_bank_form"
+                  sequence="2" parent="menu_payment_finance_setting"/>
+
+        <menuitem id="menu_finance_currency" name="Currency"
+                  action="base.action_res_bank_form"
+                  sequence="3" parent="menu_payment_finance_setting"/>
+
+         <menuitem id="menu_finance_currency" action="base.action_currency_form" name="Currencies"
+                   parent="menu_payment_finance_setting" sequence="4"
+                   groups="base.group_multi_currency"/>
+
+    </data>
+</odoo>

@@ -87,7 +87,6 @@ class StatesAndProgramReports(models.AbstractModel):
                         prog_dict.update({shcp: line.authorized})
                 else:
                     prog_dict_auth.update({prog_name: [{shcp: line.authorized}]})
-        print ("dates =-=-", date_from, date_to)
         for ade in adequacies:
             if ade.adaptation_type == 'liquid' and ade.date_of_liquid_adu >= date_from and ade.date_of_liquid_adu <= date_to:
                 for line in ade.adequacies_lines_ids:

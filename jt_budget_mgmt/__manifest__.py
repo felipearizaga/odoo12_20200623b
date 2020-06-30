@@ -93,6 +93,7 @@
         'views/res_partner_view.xml',
         'views/hr_employee_view.xml',
         'views/employee_payroll_file_view.xml',
+        'views/supplier_payment_req_views.xml',
 
         # Main Menu File
         'views/budget_menus.xml',

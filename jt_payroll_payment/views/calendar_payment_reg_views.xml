@@ -93,8 +93,15 @@
             <field name="view_mode">tree,form,calendar</field>
         </record>
 
+         <menuitem id="menu_payment_finance" name="Finance"
+                  sequence="5"/>
+
+        <menuitem id="menu_payment_finance_setting" name="Setting"
+                  sequence="5" parent="menu_payment_finance"/>
+
         <!-- menus-->
-        <menuitem id="menu_cale_pay_reg" name="Calendar for payment record" action="cale_pay_reg_action"
-                  sequence="0" parent="account.menu_finance_configuration"/>
+        <menuitem id="menu_cale_pay_reg" name="Calendar for payment record"
+                  action="cale_pay_reg_action"
+                  sequence="0" parent="menu_payment_finance_setting"/>
     </data>
 </odoo>

@@ -31,3 +31,11 @@ class EmployeePayroll(models.Model):
     sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
     program_code_id = fields.Many2one("program.code", string="Program Code")
 
+class PaymentRequest(models.Model):
+
+    _inherit = 'payment.request'
+
+    dependancy_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
+    program_code_id = fields.Many2one("program.code", string="Program Code")
+

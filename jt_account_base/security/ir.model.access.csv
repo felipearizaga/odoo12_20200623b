@@ -1,5 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_policy_keys,policy_keys,model_policy_keys,,1,1,1,1
-access_operation_type,operation_type,model_operation_type,,1,1,1,1
-access_egress_keys,egress_keys,model_egress_keys,,1,1,1,1
 access_executive_data,executive_data,model_executive_data,,1,1,1,1

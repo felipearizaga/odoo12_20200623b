@@ -29,11 +29,11 @@ class AccountMove(models.Model):
     baneficiary_id = fields.Many2one('hr.employee', string="Beneficiary of the payment")
     payment_state = fields.Selection([('draft', 'Draft')])
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
-    rfc = fields.Char("RFC", related='partner_id.rfc', store=True)
+    rfc = fields.Char("RFC", related='baneficiary_id.rfc', store=True)
     student_account = fields.Char("Student Account")
     transfer_key = fields.Char("Transfer Key")
     category_key = fields.Char("Category Key", related='baneficiary_id.job_id.category_key', store=True)
-    workstation_id = fields.Many2one('hr.job', "Work Station", related='baneficiary_id.job_id')
+    workstation_id = fields.Many2one('hr.job', "Appointment", related='baneficiary_id.job_id')
     folio = fields.Char("Folio against Receipt")
     folio_dependency = fields.Char("Folio Dependency")
     operation_type_id = fields.Many2one('operation.type', "Operation Type")
@@ -51,8 +51,8 @@ class AccountMove(models.Model):
                                           ('04', '04')], string="Document Type UPA")
     batch_folio = fields.Integer("Batch Folio")
     payment_bank_id = fields.Many2one('res.bank', "Bank of receipt of payment")
-    payment_issuing_bank_id = fields.Many2one('account.journal', "Payment issuing Bank")
     payment_bank_account_id = fields.Many2one('res.partner.bank', "Payment Receipt bank account")
+    payment_issuing_bank_id = fields.Many2one('account.journal', "Payment issuing Bank")
     payment_issuing_bank_acc_id = fields.Many2one('res.partner.bank', "Payment issuing bank Account")
     responsible_id = fields.Many2one('hr.employee', 'Responsible/Irresponsible')
     administrative_secretary_id = fields.Many2one('hr.employee', 'Administrative Secretary')
@@ -60,9 +60,12 @@ class AccountMove(models.Model):
     invoice_uuid = fields.Char("Invoice UUID")
     invoice_series = fields.Char("Invoice Series")
     folio_invoice = fields.Char("Folio Invoice")
-    user_registering = fields.Many2one('res.users')
+    user_registering_id = fields.Many2one('res.users')
     commitment_date = fields.Date("Commitment Date")
+    reason_rejection_req = fields.Text("Reason for Rejecting Request")
     reason_rejection = fields.Text("Reason for Rejection")
+    reason_cancellation = fields.Text("Reason for Cancellation")
+    is_payment_request = fields.Boolean("Payment Request")
     type = fields.Selection(selection_add=[('payment_req', 'Payment Request')])
 
     # More info Tab
@@ -94,7 +97,6 @@ class AccountMove(models.Model):
                 'out_receipt': _('Draft Sales Receipt'),
                 'in_receipt': _('Draft Purchase Receipt'),
                 'entry': _('Draft Entry'),
-                'payment_req': _('Draft Payment Request'),
             }[self.type]
             if not self.name or self.name == '/':
                 draft_name += ' (* %s)' % str(self.id)
@@ -108,6 +110,7 @@ class AccountMove(models.Model):
         It could either be passed through the context using the 'default_journal_id' key containing its id,
         either be determined by the default type.
         '''
+        print ("Contxext -=-=-", self._context)
         move_type = self._context.get('default_type', 'entry')
         journal_type = 'general'
         if move_type in self.get_sale_types(include_receipts=True):
@@ -116,14 +119,12 @@ class AccountMove(models.Model):
             journal_type = 'purchase'
 
         if self._context.get('default_journal_id'):
-            print ("inside if =-=-")
             journal = self.env['account.journal'].browse(self._context['default_journal_id'])
 
             if move_type != 'entry' and journal.type != journal_type:
                 raise UserError(_("Cannot create an invoice of type %s with a journal having %s as type.") % (
                 move_type, journal.type))
         else:
-            print ("inside else")
             company_id = self._context.get('force_company',
                                            self._context.get('default_company_id', self.env.company.id))
             domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
@@ -144,24 +145,10 @@ class AccountMove(models.Model):
                     error_msg = _('Please define an accounting purchase journal in your company')
                 raise UserError(error_msg)
 
-            if move_type == 'payment_req':
-                print ("fdsfsdfsdfsd", self.env.ref('jt_supplier_payment.payment_request_jour'))
-                journal = self.env.ref('jt_supplier_payment.payment_request_jour')
+        if 'default_is_payment_request' in self._context:
+            journal = self.env.ref('jt_supplier_payment.payment_request_jour')
         return journal
 
-    # @api.model
-    # def _get_default_journal(self):
-    #     res = super(AccountMove, self)._get_default_journal()
-    #     print ("Res =-=-", res)
-    #     move_type = self._context.get('default_type', 'entry')
-    #     print ("Move Type -=-=", move_type)
-    #     if move_type == 'payment_req':
-    #         print ("fdsfsdfsdfsd", self.env.ref('jt_supplier_payment.payment_request_jour'))
-    #         return self.env.ref('jt_supplier_payment.payment_request_jour')
-    #     else:
-    #         return res
-#
-#
 class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'
