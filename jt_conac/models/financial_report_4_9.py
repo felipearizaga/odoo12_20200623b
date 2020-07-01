@@ -55,11 +55,21 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                        if unicodedata.category(char) != 'Mn')
 
     def _get_lines(self, options, line_id=None):
-        print ("Options =-=-=", options)
         exp_obj = self.env['status.expen']
         bud_obj = self.env['expenditure.budget']
         adeq_obj = self.env['adequacies']
         budgets = bud_obj.search([('state', '=', 'validate')])
+        if options.get('date') and 'period_type' in options.get('date'):
+            if options.get('date').get('period_type') == 'fiscalyear':
+                date_from = options.get('date').get('date_from')
+                date_to = options.get('date').get('date_to')
+                if isinstance(date_from, str):
+                    date_from = datetime.strptime(date_from, DEFAULT_SERVER_DATE_FORMAT).date()
+                if isinstance(date_to, str):
+                    date_to = datetime.strptime(date_to, DEFAULT_SERVER_DATE_FORMAT).date()
+                budgets = bud_obj.search([('state', '=', 'validate'),
+                                         ('from_date', '=', date_from),
+                                         ('to_date', '=', date_to)])
         adequacies = adeq_obj.search([('state', '=', 'accepted')])
         item_dict_auth = {}
         item_dict_adeq = {}
@@ -119,8 +129,12 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                                 item_dict_adeq.update({item: -line.amount})
 
         lines = []
-        hierarchy_lines = exp_obj.sudo().search(
-            [('parent_id', '=', False)], order='id')
+        hierarchy_lines = exp_obj.sudo().search([('parent_id', '=', False)], order='id')
+
+        main_total_auth = 0
+        main_total_ade = 0
+        main_total_mod = 0
+        main_total_sub = 0
 
         for line in hierarchy_lines:
             lines.append({
@@ -190,6 +204,10 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                         'unfolded': False,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })
+                    main_total_auth += total_auth
+                    main_total_ade += total_ade
+                    main_total_mod += total_mod
+                    main_total_sub += total_sub
                 level_2_lines = exp_obj.search(
                     [('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
@@ -213,4 +231,13 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                             'level': 4,
                             'parent_id': 'level_two_%s' % level_2_line.id,
                         })
+        lines.append({
+            'id': 'hierarchy_' + str(line.id),
+            'name': 'Main Total',
+            'columns': [{'name': main_total_auth}, {'name': main_total_ade},
+                        {'name': main_total_mod}, {'name': ''}, {'name': ''}, {'name': main_total_sub}],
+            'level': 1,
+            'unfoldable': False,
+            'unfolded': True,
+        })
         return lines

@@ -28,28 +28,14 @@ class SubDependency(models.Model):
 
     _name = 'sub.dependency'
     _description = 'Sub-Dependency'
-    _rec_name = 'display_name'
+    _rec_name = 'sub_dependency'
 
     dependency_id = fields.Many2one('dependency', string='Dependency')
     sub_dependency = fields.Char(string='Sub dependency', size=2)
     description = fields.Text(string='Sub dependency description')
-    display_name = fields.Char(string='Sub Dependency Name', compute="_compute_display_name")
 
     _sql_constraints = [('sub_dependency_dependency_id', 'unique(sub_dependency,dependency_id)',
                          'The sub dependency must be unique per dependency')]
-
-    def _compute_display_name(self):
-        for record in self:
-            if 'from_move' in self._context:
-                name = ''
-                if record.sub_dependency:
-                    name += str(record.sub_dependency)
-                if record.description:
-                    name += ' '
-                    name += str(record.description)
-                record.display_name = name
-            else:
-                record.display_name = record.sub_dependency
 
     @api.constrains('sub_dependency')
     def _check_sub_dependency(self):

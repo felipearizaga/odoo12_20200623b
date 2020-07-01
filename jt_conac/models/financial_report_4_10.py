@@ -55,12 +55,22 @@ class StatesAndProgramReports(models.AbstractModel):
                        if unicodedata.category(char) != 'Mn')
 
     def _get_lines(self, options, line_id=None):
-        print ("Options =-=-", options)
         states_obj = self.env['states.program']
         bud_obj = self.env['expenditure.budget']
         adeq_obj = self.env['adequacies']
         adequacies = adeq_obj.search([('state', '=', 'accepted')])
         budget = bud_obj.search([('state', '=', 'validate')])
+        if options.get('date') and 'period_type' in options.get('date'):
+            if options.get('date').get('period_type') == 'fiscalyear':
+                date_from = options.get('date').get('date_from')
+                date_to = options.get('date').get('date_to')
+                if isinstance(date_from, str):
+                    date_from = datetime.strptime(date_from, DEFAULT_SERVER_DATE_FORMAT).date()
+                if isinstance(date_to, str):
+                    date_to = datetime.strptime(date_to, DEFAULT_SERVER_DATE_FORMAT).date()
+                budget = bud_obj.search([('state', '=', 'validate'),
+                                         ('from_date', '=', date_from),
+                                         ('to_date', '=', date_to)])
         prog_dict_auth = {}
         prog_dict_ade = {}
         date_from = False
@@ -91,34 +101,58 @@ class StatesAndProgramReports(models.AbstractModel):
             if ade.adaptation_type == 'liquid' and ade.date_of_liquid_adu >= date_from and ade.date_of_liquid_adu <= date_to:
                 for line in ade.adequacies_lines_ids:
                     if line.program:
-                        prog = line.program.budget_program_conversion_id.shcp.name
-                        if prog in prog_dict_ade.keys():
-                            if line.line_type == 'increase':
-                                prog_dict_ade.update({prog: prog_dict_ade.get(prog) + line.amount})
+                        prog_name = line.program.budget_program_conversion_id.desc.upper()
+                        prog_name = self.strip_accents(prog_name)
+                        shcp = line.program.budget_program_conversion_id.shcp.name
+                        if prog_name in prog_dict_ade.keys():
+                            shcp_dict = prog_dict_ade.get(prog_name)[0]
+                            if shcp in shcp_dict.keys():
+                                if line.line_type == 'increase':
+                                    shcp_dict.update({shcp: shcp_dict.get(shcp) + line.amount})
+                                else:
+                                    shcp_dict.update({shcp: shcp_dict.get(shcp) - line.amount})
                             else:
-                                prog_dict_ade.update({prog: prog_dict_ade.get(prog) - line.amount})
+                                if line.line_type == 'increase':
+                                    shcp_dict.update({shcp: line.amount})
+                                else:
+                                    shcp_dict.update({shcp: -line.amount})
                         else:
                             if line.line_type == 'increase':
-                                prog_dict_ade.update({prog: line.amount})
+                                prog_dict_ade.update({prog_name: [{shcp: line.amount}]})
                             else:
-                                prog_dict_ade.update({prog: -line.amount})
+                                prog_dict_ade.update({prog_name: [{shcp: -line.amount}]})
+
             elif ade.adaptation_type != 'liquid' and ade.date_of_budget_affected >= date_from and ade.date_of_budget_affected <= date_to:
                 for line in ade.adequacies_lines_ids:
                     if line.program:
-                        prog = line.program.budget_program_conversion_id.shcp.name
-                        if prog in prog_dict_ade.keys():
-                            if line.line_type == 'increase':
-                                prog_dict_ade.update({prog: prog_dict_ade.get(prog) + line.amount})
+                        prog_name = line.program.budget_program_conversion_id.desc.upper()
+                        prog_name = self.strip_accents(prog_name)
+                        shcp = line.program.budget_program_conversion_id.shcp.name
+                        if prog_name in prog_dict_ade.keys():
+                            shcp_dict = prog_dict_ade.get(prog_name)[0]
+                            if shcp in shcp_dict.keys():
+                                if line.line_type == 'increase':
+                                    shcp_dict.update({shcp: shcp_dict.get(shcp) + line.amount})
+                                else:
+                                    shcp_dict.update({shcp: shcp_dict.get(shcp) - line.amount})
                             else:
-                                prog_dict_ade.update({prog: prog_dict_ade.get(prog) - line.amount})
+                                if line.line_type == 'increase':
+                                    shcp_dict.update({shcp: line.amount})
+                                else:
+                                    shcp_dict.update({shcp: -line.amount})
                         else:
                             if line.line_type == 'increase':
-                                prog_dict_ade.update({prog: line.amount})
+                                prog_dict_ade.update({prog_name: [{shcp: line.amount}]})
                             else:
-                                prog_dict_ade.update({prog: -line.amount})
+                                prog_dict_ade.update({prog_name: [{shcp: -line.amount}]})
 
         lines = []
         hierarchy_lines = states_obj.sudo().search([('parent_id', '=', False)], order='code')
+
+        main_total_auth = 0
+        main_total_ade = 0
+        main_total_mod = 0
+        main_total_sub = 0
 
         for line in hierarchy_lines:
             lines.append({
@@ -142,12 +176,12 @@ class StatesAndProgramReports(models.AbstractModel):
                     'unfolded': True,
                     'parent_id': 'hierarchy_' + line.code,
                 })
-                total_auth = 0
-                total_ade = 0
-                total_mod = 0
-                total_sub = 0
                 level_2_lines = states_obj.search([('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
+                    total_auth = 0
+                    total_ade = 0
+                    total_mod = 0
+                    total_sub = 0
                     lines.append({
                         'id': 'level_two_%s' % level_2_line.id,
                         'name': level_2_line.concept,
@@ -169,7 +203,11 @@ class StatesAndProgramReports(models.AbstractModel):
                             if shcp.desc:
                                 name += ' '
                                 name += shcp.desc
-                            adeq_amt = prog_dict_ade.get(shcp.name) if prog_dict_ade.get(shcp.name) else 0
+                            adeq_amt = 0
+                            if line_concept in prog_dict_ade.keys():
+                                shcp_dict = prog_dict_ade.get(line_concept)[0]
+                                if shcp.name in shcp_dict.keys():
+                                    adeq_amt = shcp_dict.get(shcp.name)
                             modi_amt = authorized + adeq_amt
                             lines.append({
                                 'id': 'level_three_%s' % shcp.id,
@@ -190,7 +228,6 @@ class StatesAndProgramReports(models.AbstractModel):
                             total_mod += modi_amt
                             total_sub += modi_amt
 
-                        print ("Level Two =-=-", level_2_line.concept)
                         lines.append({
                             'id': 'level_three_%s' % shcp.id,
                             'name': _('Total'),
@@ -204,6 +241,11 @@ class StatesAndProgramReports(models.AbstractModel):
                             'unfolded': False,
                             'parent_id': 'level_two_%s' % level_2_line.id,
                         })
+                        main_total_auth += total_auth
+                        main_total_ade += total_ade
+                        main_total_mod += total_mod
+                        main_total_sub += total_sub
+
                     # level_3_lines = states_obj.search(
                     #     [('parent_id', '=', level_2_line.id)])
                     # for level_3_line in level_3_lines:
@@ -215,5 +257,13 @@ class StatesAndProgramReports(models.AbstractModel):
                     #         'level': 4,
                     #         'parent_id': 'level_two_%s' % level_2_line.id,
                     #     })
-
+        lines.append({
+            'id': 'hierarchy_' + line.code,
+            'name': 'Main Total',
+            'columns': [{'name': main_total_auth}, {'name': main_total_ade}, {'name': main_total_mod},
+                        {'name': ''}, {'name': ''}, {'name': main_total_sub}],
+            'level': 1,
+            'unfoldable': False,
+            'unfolded': True,
+        })
         return lines

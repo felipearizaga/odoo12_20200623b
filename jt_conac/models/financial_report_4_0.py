@@ -50,6 +50,7 @@ class StatementOfFinancialPosition(models.AbstractModel):
         return columns
 
     def _get_lines(self, options, line_id=None):
+        move_line_obj = self.env['account.move.line']
         comparison = options.get('comparison')
         periods = []
         if comparison and comparison.get('filter') != 'no_comparison':
@@ -76,6 +77,7 @@ class StatementOfFinancialPosition(models.AbstractModel):
 
                 level_1_lines = conac_obj.search([('parent_id', '=', line.id)])
                 for level_1_line in level_1_lines:
+                    main_balance_dict = {}
                     lines.append({
                         'id': 'level_one_%s' % level_1_line.id,
                         'name': level_1_line.display_name,
@@ -86,40 +88,49 @@ class StatementOfFinancialPosition(models.AbstractModel):
                         'parent_id': 'hierarchy_' + line.code,
                     })
 
-                    level_2_lines = conac_obj.search(
-                        [('parent_id', '=', level_1_line.id)])
+                    level_2_lines = conac_obj.search([('parent_id', '=', level_1_line.id)])
                     for level_2_line in level_2_lines:
-                        level_3_lines = conac_obj.search(
-                            [('parent_id', '=', level_2_line.id)])
-                        period_balance = {}
+                        period_dict = {}
+                        level_3_lines = conac_obj.search([('parent_id', '=', level_2_line.id)])
+                        balance = 0
+                        for period in comparison.get('periods'):
+                            date_start = datetime.strptime(str(period.get('date_from')), '%Y-%m-%d').date()
+                            date_end = datetime.strptime(str(period.get('date_to')), '%Y-%m-%d').date()
+
+                            move_lines = move_line_obj.sudo().search(
+                                [('coa_conac_id', '=', level_2_line.id),
+                                 ('move_id.state', '=', posted),
+                                 ('date', '>=', date_start), ('date', '<=', date_end)])
+                            if move_lines:
+                                balance += (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                                period_dict.update({period.get('string'): balance})
                         for level_3_line in level_3_lines:
+                            for period in comparison.get('periods'):
+                                date_start = datetime.strptime(str(period.get('date_from')), '%Y-%m-%d').date()
+                                date_end = datetime.strptime(str(period.get('date_to')), '%Y-%m-%d').date()
 
-                            balance = 0
-
-                            accounts = self.env['account.account'].search([('coa_conac_id', '=', level_3_line.id)])
-                            for account in accounts:
-                                for period in comparison.get('periods'):
-                                    date_start = datetime.strptime(str(period.get('date_from')), '%Y-%m-%d').date()
-                                    date_end = datetime.strptime(str(period.get('date_to')), '%Y-%m-%d').date()
-
-                                    move_lines = self.env['account.move.line'].sudo().search([('account_id', '=', account.id), ('move_id.state', '=', posted), ('date', '>=', date_start), ('date', '<=', date_end)])
-                                    balance = sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit'))
-                                    pervious_balance = 0
-                                    if period_balance.get(period.get('string')):
-                                        pervious_balance = period_balance.get(period.get('string'))
-                                    period_balance[period.get('string')] = pervious_balance + balance
-
+                                move_lines = move_line_obj.sudo().search([('coa_conac_id', '=', level_3_line.id),
+                                                        ('move_id.state', '=', posted),
+                                                        ('date', '>=', date_start), ('date', '<=', date_end)])
+                                if move_lines:
+                                    balance += (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                                    period_dict.update({period.get('string'): balance})
+                        for pd, bal in period_dict.items():
+                            if pd in main_balance_dict.keys():
+                                main_balance_dict.update({pd: main_balance_dict.get(pd) + bal})
+                            else:
+                                main_balance_dict.update({pd: bal})
                         lines.append({
                             'id': 'level_two_%s' % level_2_line.id,
                             'name': level_2_line.display_name,
-                            'columns': [{'name': 0} for period in periods],
+                            'columns': [{'name': period_dict.get(period) if period in period_dict.keys() else 0} for period in periods],
                             'level': 3,
                             'parent_id': 'level_one_%s' % level_1_line.id,
                         })
                     lines.append({
                         'id': 'total_%s' % level_1_line.id,
                         'name': 'Total',
-                        'columns': [{'name': 0} for period in periods],
+                        'columns': [{'name': main_balance_dict.get(period) if period in main_balance_dict.keys() else 0} for period in periods],
                         'level': 2,
                         'title_hover': level_1_line.display_name,
                         'unfoldable': False,

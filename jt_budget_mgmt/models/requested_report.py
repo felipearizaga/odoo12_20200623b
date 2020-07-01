@@ -204,10 +204,12 @@ class RequestedReports(models.Model):
         tot_excercised = 0
         tot_paid = 0
         tot_available = 0
+        item_for_total = ''
         for cd in code_lines:
             for code, bud_lines in cd.items():
                 col = 0
                 code = code_obj.browse(code)
+                item_for_total = code.item_id.item
                 all_b_lines = bud_line_obj.browse(bud_lines)
                 if all_b_lines:
                     annual_modified = 0
@@ -321,7 +323,26 @@ class RequestedReports(models.Model):
         if need_total:
             row += 1
             total_col = 0
-            ws1.write(row, total_col, 'Total', total_style)
+            f_item = item_for_total[0] if item_for_total else ''
+            if f_item:
+                if f_item == '1':
+                    ws1.write(row, total_col, 'Total of Group 100 - 199', total_style)
+                elif f_item == '2':
+                    ws1.write(row, total_col, 'Total of Group 200 - 299', total_style)
+                elif f_item == '3':
+                    ws1.write(row, total_col, 'Total of Group 300 - 399', total_style)
+                elif f_item == '4':
+                    ws1.write(row, total_col, 'Total of Group 400 - 499', total_style)
+                elif f_item == '5':
+                    ws1.write(row, total_col, 'Total of Group 500 - 599', total_style)
+                elif f_item == '6':
+                    ws1.write(row, total_col, 'Total of Group 600 - 699', total_style)
+                elif f_item == '7':
+                    ws1.write(row, total_col, 'Total of Group 700 - 799', total_style)
+                elif f_item == '8':
+                    ws1.write(row, total_col, 'Total of Group 800 - 899', total_style)
+                elif f_item == '9':
+                    ws1.write(row, total_col, 'Total of Group 900 - 999', total_style)
             for bug_con in report.budget_control_ids:
                 total_col += 1
                 value = ''

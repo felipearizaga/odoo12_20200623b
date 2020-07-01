@@ -442,7 +442,24 @@ class BudgetSummaryReportDownload(models.TransientModel):
                             if need_total:
                                 row += 1
                                 total_col = 0
-                                ws1.write(row, total_col, 'Total', total_style)
+                                if ik == 1:
+                                    ws1.write(row, total_col, 'Total of Group 100 - 199', total_style)
+                                elif ik == 2:
+                                    ws1.write(row, total_col, 'Total of Group 200 - 299', total_style)
+                                elif ik == 3:
+                                    ws1.write(row, total_col, 'Total of Group 300 - 399', total_style)
+                                elif ik == 4:
+                                    ws1.write(row, total_col, 'Total of Group 400 - 499', total_style)
+                                elif ik == 5:
+                                    ws1.write(row, total_col, 'Total of Group 500 - 599', total_style)
+                                elif ik == 6:
+                                    ws1.write(row, total_col, 'Total of Group 600 - 699', total_style)
+                                elif ik == 7:
+                                    ws1.write(row, total_col, 'Total of Group 700 - 799', total_style)
+                                elif ik == 8:
+                                    ws1.write(row, total_col, 'Total of Group 800 - 899', total_style)
+                                elif ik == 9:
+                                    ws1.write(row, total_col, 'Total of Group 900 - 999', total_style)
                                 for bug_con in self.budget_control_ids:
                                     total_col += 1
                                     value = ''

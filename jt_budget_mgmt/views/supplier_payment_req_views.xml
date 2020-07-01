@@ -8,8 +8,8 @@
             <field name="inherit_id" ref="jt_supplier_payment.payment_req_form_view"/>
             <field name="arch" type="xml">
                 <field name="workstation_id" position="after">
-                    <field name="dependancy_id" context="{'from_move':True}"/>
-                    <field name="sub_dependancy_id"/>
+                    <field name="dependancy_id"/>
+                    <field name="sub_dependancy_id" />
                 </field>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='type_of_bussiness_line']"
                        position="before">
