@@ -57,7 +57,7 @@ class ProjectType(models.Model):
         if len(str(project_type_string)) > 1:
             number = ''
             if self._context.get('from_adjustment'):
-                number = result_dict.get('No. de Proyecto')
+                number = result_dict
             else:
                 number = result_dict.project_number
             project_type_str = str(project_type_string).zfill(2)
