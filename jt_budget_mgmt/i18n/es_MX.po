@@ -3927,12 +3927,12 @@ msgstr "Partida"
 #. module: jt_budget_mgmt
 #: model:budget.control,name:jt_budget_mgmt.budget_control_1
 msgid "Authorized"
-msgstr "Asignado"
+msgstr "Autorizada"
 
 #. module: jt_budget_mgmt
 #: model:budget.control,name:jt_budget_mgmt.budget_control_2
 msgid "Assigned Total Annual"
-msgstr "Total Anual Asignado "
+msgstr "Total Anual Asignado"
 
 #. module: jt_budget_mgmt
 #: model:budget.control,name:jt_budget_mgmt.budget_control_3

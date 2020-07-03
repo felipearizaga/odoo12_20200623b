@@ -93,6 +93,79 @@
         </xpath>
     </template>
 
+    <template id="template_analytic_status_table_header" inherit_id="account_reports.main_table_header" primary="True">
+        <xpath expr="//thead//tr[hasclass('o_account_report_column_header')]" position="before">
+            <tr>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="1"/>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Initial Balance</th>-->
+                <t t-foreach="model.reverse(options['comparison'].get('periods'))" t-as="column_header">
+                    <th t-att-class="'o_account_report_column_header text-center'" colspan="6">
+                        <t t-esc="column_header.get('string')"/>
+                    </th>
+                </t>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="6">
+                    <t t-esc="options['date'].get('string')"/>
+                </th>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Total</th>-->
+            </tr>
+        </xpath>
+    </template>
+
+    <template id="template_statement_financial_position_header" inherit_id="account_reports.main_table_header" primary="True">
+        <xpath expr="//thead//tr[hasclass('o_account_report_column_header')]" position="before">
+            <tr>
+                <th t-att-class="'o_account_report_column_header'"/>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Initial Balance</th>-->
+                <t t-foreach="model.reverse(options['comparison'].get('periods'))" t-as="column_header">
+                    <th t-att-class="'o_account_report_column_header'">
+                        <t t-esc="column_header.get('string')"/>
+                    </th>
+                </t>
+                <th t-att-class="'o_account_report_column_header'">
+                    <t t-esc="options['date'].get('string')"/>
+                </th>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Total</th>-->
+            </tr>
+        </xpath>
+    </template>
+
+     <template id="template_analytic_status_of_asset_header" inherit_id="account_reports.main_table_header" primary="True">
+        <xpath expr="//thead//tr[hasclass('o_account_report_column_header')]" position="before">
+            <tr>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="1"/>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Initial Balance</th>-->
+                <t t-foreach="model.reverse(options['comparison'].get('periods'))" t-as="column_header">
+                    <th t-att-class="'o_account_report_column_header text-center'" colspan="5">
+                        <t t-esc="column_header.get('string')"/>
+                    </th>
+                </t>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="5">
+                    <t t-esc="options['date'].get('string')"/>
+                </th>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Total</th>-->
+            </tr>
+        </xpath>
+    </template>
+
+    <template id="template_statement_fianancial_position_header" inherit_id="account_reports.main_table_header" primary="True">
+        <xpath expr="//thead//tr[hasclass('o_account_report_column_header')]" position="before">
+            <tr>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="1"/>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Initial Balance</th>-->
+                <t t-foreach="model.reverse(options['comparison'].get('periods'))" t-as="column_header">
+                    <th t-att-class="'o_account_report_column_header text-center'" colspan="2">
+                        <t t-esc="column_header.get('string')"/>
+                    </th>
+                </t>
+                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">
+                    <t t-esc="options['date'].get('string')"/>
+                </th>
+<!--                <th t-att-class="'o_account_report_column_header text-center'" colspan="2">Total</th>-->
+            </tr>
+        </xpath>
+    </template>
+
+
     <template id="account_reports.main_table_header">
         <!-- <t t-if="options.get('print_previous_lines')">
             <button class="text-cnter mb-0 no_print btn_print_previous_lines">Previous</button>

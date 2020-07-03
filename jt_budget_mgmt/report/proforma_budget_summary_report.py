@@ -521,7 +521,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     })
                     program_code_list.append(b_line.program_code_id)
                 if need_total:
+                    total_name = 'Total'
                     main_list_new = main_list
+                    # print ("Main List new ", main_list_new)
                     list_with_data = []
                     for l in main_list_new:
                         new_list = []
@@ -529,6 +531,24 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             new_list.append(d.get('name'))
                         list_with_data.append(new_list)
                     list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
+                    if fc == '1':
+                        total_name = 'Total of Group 100 - 199'
+                    elif fc == '2':
+                        total_name = 'Total of Group 200 - 299'
+                    elif fc == '3':
+                        total_name = 'Total of Group 300 - 399'
+                    elif fc == '4':
+                        total_name = 'Total of Group 400 - 499'
+                    elif fc == '5':
+                        total_name = 'Total of Group 500 - 599'
+                    elif fc == '6':
+                        total_name = 'Total of Group 600 - 699'
+                    elif fc == '7':
+                        total_name = 'Total of Group 700 - 799'
+                    elif fc == '8':
+                        total_name = 'Total of Group 800 - 899'
+                    elif fc == '9':
+                        total_name = 'Total of Group 900 - 999'
                     main_cols = []
                     counter = 0
                     for l in list_tot_data:

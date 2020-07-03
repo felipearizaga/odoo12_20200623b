@@ -260,51 +260,94 @@ class BudgetSummaryReportDownload(models.TransientModel):
 
                 row = 1
                 col = 0
-                ws1.write(row, col, "Program Code", header_style)
+                if self.env.user.lang == 'es_MX':
+                    ws1.write(row, col, "Código Programático", header_style)
+                else:
+                    ws1.write(row, col, "Program Code", header_style)
                 for bug_con in self.budget_control_ids:
                     col += 1
                     ws1.write(row, col, bug_con.name, header_style)
                 for code_sec in self.code_section_ids:
                     col += 1
                     value = ''
-                    if code_sec.section == 'year':
-                        value = 'Year'
-                    elif code_sec.section == 'pr':
-                        value = 'Program'
-                    elif code_sec.section == 'sp':
-                        value = 'Sub Program'
-                    elif code_sec.section == 'dep':
-                        value = 'Dependency'
-                    elif code_sec.section == 'sd':
-                        value = 'Sub Dependency'
-                    elif code_sec.section == 'par':
-                        value = 'Expenditure Item'
-                    elif code_sec.section == 'dv':
-                        value = 'Check Digit'
-                    elif code_sec.section == 'or':
-                        value = 'Source of Resource'
-                    elif code_sec.section == 'ai':
-                        value = 'Institutional Activity'
-                    elif code_sec.section == 'conpp':
-                        value = 'Conversion of Budgetary Program'
-                    elif code_sec.section == 'conpa':
-                        value = 'SHCP items'
-                    elif code_sec.section == 'tg':
-                        value = 'Type of Expenditure'
-                    elif code_sec.section == 'ug':
-                        value = 'Geographic Location'
-                    elif code_sec.section == 'cc':
-                        value = 'Wallet Key'
-                    elif code_sec.section == 'tp':
-                        value = 'Type of Project'
-                    elif code_sec.section == 'np':
-                        value = 'Project Number'
-                    elif code_sec.section == 'e':
-                        value = 'Stage'
-                    elif code_sec.section == 'tc':
-                        value = 'Type of Agreement'
-                    elif code_sec.section == 'nc':
-                        value = 'Agreement Number'
+                    if self.env.user.lang == 'es_MX':
+                        if code_sec.section == 'year':
+                            value = 'AÑO'
+                        elif code_sec.section == 'pr':
+                            value = 'Programa'
+                        elif code_sec.section == 'sp':
+                            value = 'Subprograma'
+                        elif code_sec.section == 'dep':
+                            value = 'Dependencia'
+                        elif code_sec.section == 'sd':
+                            value = 'Subdependencia'
+                        elif code_sec.section == 'par':
+                            value = 'Partida de Gasto'
+                        elif code_sec.section == 'dv':
+                            value = 'Dígito Verificador'
+                        elif code_sec.section == 'or':
+                            value = 'Origen del Recurso'
+                        elif code_sec.section == 'ai':
+                            value = 'Actividad Institucional'
+                        elif code_sec.section == 'conpp':
+                            value = 'Conversion de Programa Presupuestario'
+                        elif code_sec.section == 'conpa':
+                            value = 'Partida SHCP'
+                        elif code_sec.section == 'tg':
+                            value = 'Tipo de Gasto'
+                        elif code_sec.section == 'ug':
+                            value = 'Ubicación Geográfica'
+                        elif code_sec.section == 'cc':
+                            value = 'Clave Cartera'
+                        elif code_sec.section == 'tp':
+                            value = 'Tipo de Proyecto'
+                        elif code_sec.section == 'np':
+                            value = 'Número de Proyecto'
+                        elif code_sec.section == 'e':
+                            value = 'Etapa'
+                        elif code_sec.section == 'tc':
+                            value = 'Tipo de Convenio'
+                        elif code_sec.section == 'nc':
+                            value = 'Número de Convenio'
+                    else:
+                        if code_sec.section == 'year':
+                            value = 'Year'
+                        elif code_sec.section == 'pr':
+                            value = 'Program'
+                        elif code_sec.section == 'sp':
+                            value = 'Sub Program'
+                        elif code_sec.section == 'dep':
+                            value = 'Dependency'
+                        elif code_sec.section == 'sd':
+                            value = 'Sub Dependency'
+                        elif code_sec.section == 'par':
+                            value = 'Expenditure Item'
+                        elif code_sec.section == 'dv':
+                            value = 'Check Digit'
+                        elif code_sec.section == 'or':
+                            value = 'Source of Resource'
+                        elif code_sec.section == 'ai':
+                            value = 'Institutional Activity'
+                        elif code_sec.section == 'conpp':
+                            value = 'Conversion of Budgetary Program'
+                        elif code_sec.section == 'conpa':
+                            value = 'SHCP items'
+                        elif code_sec.section == 'tg':
+                            value = 'Type of Expenditure'
+                        elif code_sec.section == 'ug':
+                            value = 'Geographic Location'
+                        elif code_sec.section == 'cc':
+                            value = 'Wallet Key'
+                        elif code_sec.section == 'tp':
+                            value = 'Type of Project'
+                        elif code_sec.section == 'np':
+                            value = 'Project Number'
+                        elif code_sec.section == 'e':
+                            value = 'Stage'
+                        elif code_sec.section == 'tc':
+                            value = 'Type of Agreement'
+                        elif code_sec.section == 'nc':
+                            value = 'Agreement Number'
                     ws1.write(row, col, value, header_style)
 
                 row += 1
@@ -345,54 +388,54 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                             value = 0
                                             authorized = sum(x.authorized for x in all_b_lines)
                                             annual_modified = annual_modified + authorized
-                                            if bug_con.name == 'Expenditure Item':
+                                            if bug_con.name in ('Expenditure Item', 'Partida'):
                                                 need_total = True
                                                 value = code.item_id.item
-                                            elif bug_con.name == 'Authorized':
+                                            elif bug_con.name in ('Authorized', 'Autorizada'):
                                                 value = authorized
                                                 tot_authrized += authorized
-                                            elif bug_con.name == 'Assigned Total Annual':
+                                            elif bug_con.name in ('Assigned Total Annual','Total Anual Asignado'):
                                                 value = sum(x.assigned for x in all_b_lines)
                                                 tot_assign_manu += value
-                                            elif bug_con.name == 'Annual Modified':
+                                            elif bug_con.name in ('Annual Modified', 'Modificado Anual'):
                                                 value = annual_modified
                                                 tot_annual_modi += value
-                                            elif bug_con.name == 'Assigned 1st Trimester':
+                                            elif bug_con.name in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
                                                 value = sum(x.assigned if x.start_date.month == 1 and
                                                             x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31
                                                             else 0 for x in all_b_lines)
                                                 tot_assign_fir += value
-                                            elif bug_con.name == 'Assigned 2nd Trimester':
+                                            elif bug_con.name in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
                                                 value = sum(x.assigned if x.start_date.month == 4 and
                                                             x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30
                                                             else 0 for x in all_b_lines)
                                                 tot_assign_sec += value
-                                            elif bug_con.name == 'Assigned 3rd Trimester':
+                                            elif bug_con.name in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
                                                 value = sum(x.assigned if x.start_date.month == 7 and
                                                             x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30
                                                             else 0 for x in all_b_lines)
                                                 tot_assign_third += value
-                                            elif bug_con.name == 'Assigned 4th Trimester':
+                                            elif bug_con.name in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
                                                 value = sum(x.assigned if x.start_date.month == 10 and
                                                             x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31
                                                             else 0 for x in all_b_lines)
                                                 tot_assign_for += value
-                                            elif bug_con.name == 'Per Exercise':
+                                            elif bug_con.name in ('Per Exercise', 'Por Ejercer'):
                                                 value = sum(x.available for x in all_b_lines)
                                                 tot_per_ex += value
-                                            elif bug_con.name == 'Committed':
+                                            elif bug_con.name in ('Committed', 'Comprometido'):
                                                 value = 0
                                                 tot_commited += value
-                                            elif bug_con.name == 'Accrued':
+                                            elif bug_con.name in ('Accrued', 'Devengado'):
                                                 value = 0
                                                 tot_accured += 0
-                                            elif bug_con.name == 'Exercised':
+                                            elif bug_con.name in ('Exercised', 'Ejercido'):
                                                 value = 0
                                                 tot_excercised += value
-                                            elif bug_con.name == 'Paid':
+                                            elif bug_con.name in ('Paid', 'Pagado'):
                                                 value = 0
                                                 tot_paid += value
-                                            elif bug_con.name == 'Available':
+                                            elif bug_con.name in ('Available', 'Disponible'):
                                                 value = sum(x.available for x in all_b_lines)
                                                 tot_available += value
                                             ws1.write(row, col, value)
@@ -442,54 +485,74 @@ class BudgetSummaryReportDownload(models.TransientModel):
                             if need_total:
                                 row += 1
                                 total_col = 0
-                                if ik == 1:
-                                    ws1.write(row, total_col, 'Total of Group 100 - 199', total_style)
-                                elif ik == 2:
-                                    ws1.write(row, total_col, 'Total of Group 200 - 299', total_style)
-                                elif ik == 3:
-                                    ws1.write(row, total_col, 'Total of Group 300 - 399', total_style)
-                                elif ik == 4:
-                                    ws1.write(row, total_col, 'Total of Group 400 - 499', total_style)
-                                elif ik == 5:
-                                    ws1.write(row, total_col, 'Total of Group 500 - 599', total_style)
-                                elif ik == 6:
-                                    ws1.write(row, total_col, 'Total of Group 600 - 699', total_style)
-                                elif ik == 7:
-                                    ws1.write(row, total_col, 'Total of Group 700 - 799', total_style)
-                                elif ik == 8:
-                                    ws1.write(row, total_col, 'Total of Group 800 - 899', total_style)
-                                elif ik == 9:
-                                    ws1.write(row, total_col, 'Total of Group 900 - 999', total_style)
+                                if self.env.user.lang == 'es_MX':
+                                    if ik == 1:
+                                        ws1.write(row, total_col, 'Total del grupo 100 - 199', total_style)
+                                    elif ik == 2:
+                                        ws1.write(row, total_col, 'Total del grupo 200 - 299', total_style)
+                                    elif ik == 3:
+                                        ws1.write(row, total_col, 'Total del grupo 300 - 399', total_style)
+                                    elif ik == 4:
+                                        ws1.write(row, total_col, 'Total del grupo 400 - 499', total_style)
+                                    elif ik == 5:
+                                        ws1.write(row, total_col, 'Total del grupo 500 - 599', total_style)
+                                    elif ik == 6:
+                                        ws1.write(row, total_col, 'Total del grupo 600 - 699', total_style)
+                                    elif ik == 7:
+                                        ws1.write(row, total_col, 'Total del grupo 700 - 799', total_style)
+                                    elif ik == 8:
+                                        ws1.write(row, total_col, 'Total del grupo 800 - 899', total_style)
+                                    elif ik == 9:
+                                        ws1.write(row, total_col, 'Total del grupo 900 - 999', total_style)
+                                else:
+                                    if ik == 1:
+                                        ws1.write(row, total_col, 'Total of Group 100 - 199', total_style)
+                                    elif ik == 2:
+                                        ws1.write(row, total_col, 'Total of Group 200 - 299', total_style)
+                                    elif ik == 3:
+                                        ws1.write(row, total_col, 'Total of Group 300 - 399', total_style)
+                                    elif ik == 4:
+                                        ws1.write(row, total_col, 'Total of Group 400 - 499', total_style)
+                                    elif ik == 5:
+                                        ws1.write(row, total_col, 'Total of Group 500 - 599', total_style)
+                                    elif ik == 6:
+                                        ws1.write(row, total_col, 'Total of Group 600 - 699', total_style)
+                                    elif ik == 7:
+                                        ws1.write(row, total_col, 'Total of Group 700 - 799', total_style)
+                                    elif ik == 8:
+                                        ws1.write(row, total_col, 'Total of Group 800 - 899', total_style)
+                                    elif ik == 9:
+                                        ws1.write(row, total_col, 'Total of Group 900 - 999', total_style)
                                 for bug_con in self.budget_control_ids:
                                     total_col += 1
                                     value = ''
-                                    if bug_con.name == 'Expenditure Item':
+                                    if bug_con.name in ('Expenditure Item', 'Partida'):
                                         value = ''
-                                    elif bug_con.name == 'Authorized':
+                                    elif bug_con.name in ('Authorized', 'Autorizada'):
                                         value = tot_authrized
-                                    elif bug_con.name == 'Assigned Total Annual':
+                                    elif bug_con.name in ('Assigned Total Annual','Total Anual Asignado'):
                                         value = tot_assign_manu
-                                    elif bug_con.name == 'Annual Modified':
+                                    elif bug_con.name in ('Annual Modified', 'Modificado Anual'):
                                         value = tot_annual_modi
-                                    elif bug_con.name == 'Assigned 1st Trimester':
+                                    elif bug_con.name in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
                                         value = tot_assign_fir
-                                    elif bug_con.name == 'Assigned 2nd Trimester':
+                                    elif bug_con.name in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
                                         value = tot_assign_sec
-                                    elif bug_con.name == 'Assigned 3rd Trimester':
+                                    elif bug_con.name in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
                                         value = tot_assign_third
-                                    elif bug_con.name == 'Assigned 4th Trimester':
+                                    elif bug_con.name in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
                                         value = tot_assign_for
-                                    elif bug_con.name == 'Per Exercise':
+                                    elif bug_con.name in ('Per Exercise', 'Por Ejercer'):
                                         value = tot_per_ex
-                                    elif bug_con.name == 'Committed':
+                                    elif bug_con.name in ('Committed', 'Comprometido'):
                                         value = tot_commited
-                                    elif bug_con.name == 'Accrued':
+                                    elif bug_con.name in ('Accrued', 'Devengado'):
                                         value = tot_accured
-                                    elif bug_con.name == 'Exercised':
+                                    elif bug_con.name in ('Exercised', 'Ejercido'):
                                         value = tot_excercised
-                                    elif bug_con.name == 'Paid':
+                                    elif bug_con.name in ('Paid', 'Pagado'):
                                         value = tot_paid
-                                    elif bug_con.name == 'Available':
+                                    elif bug_con.name in ('Available', 'Disponible'):
                                         value = tot_available
                                     ws1.write(row, total_col, value, total_style)
                                 row += 2
