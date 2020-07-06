@@ -21,13 +21,59 @@
 #
 ##############################################################################
 from odoo import models, fields, api, _
+from odoo.exceptions import RedirectWarning, UserError, ValidationError, AccessError
 
 class AccountMove(models.Model):
 
     _inherit = 'account.move'
 
+    @api.model
+    def _get_default_journal(self):
+        ''' Get the default journal.
+        It could either be passed through the context using the 'default_journal_id' key containing its id,
+        either be determined by the default type.
+        '''
+        move_type = self._context.get('default_type', 'entry')
+        journal_type = 'general'
+        if move_type in self.get_sale_types(include_receipts=True):
+            journal_type = 'sale'
+        elif move_type in self.get_purchase_types(include_receipts=True):
+            journal_type = 'purchase'
+
+        if self._context.get('default_journal_id'):
+            journal = self.env['account.journal'].browse(self._context['default_journal_id'])
+
+            if move_type != 'entry' and journal.type != journal_type:
+                raise UserError(_("Cannot create an invoice of type %s with a journal having %s as type.") % (
+                move_type, journal.type))
+        else:
+            company_id = self._context.get('force_company',
+                                           self._context.get('default_company_id', self.env.company.id))
+            domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
+
+            journal = None
+            if self._context.get('default_currency_id'):
+                currency_domain = domain + [('currency_id', '=', self._context['default_currency_id'])]
+                journal = self.env['account.journal'].search(currency_domain, limit=1)
+
+            if not journal:
+                journal = self.env['account.journal'].search(domain, limit=1)
+
+            if not journal:
+                error_msg = _('Please define an accounting miscellaneous journal in your company')
+                if journal_type == 'sale':
+                    error_msg = _('Please define an accounting sale journal in your company')
+                elif journal_type == 'purchase':
+                    error_msg = _('Please define an accounting purchase journal in your company')
+                raise UserError(error_msg)
+
+        if 'default_is_payment_request' in self._context:
+            journal = self.env.ref('jt_supplier_payment.payment_request_jour')
+
+        return journal
+    
     baneficiary_id = fields.Many2one('hr.employee', string="Beneficiary of the payment")
-    payment_state = fields.Selection([('draft', 'Draft')])
+    payment_state = fields.Selection([('draft', 'Draft'),('registered','Registered')],default='draft',copy=False)
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
     rfc = fields.Char("RFC", related='baneficiary_id.rfc', store=True)
     student_account = fields.Char("Student Account")
@@ -80,6 +126,10 @@ class AccountMove(models.Model):
     responsible_category_key = fields.Char("Responsible category key")
     manager_job_id = fields.Many2one('hr.job', "Manager’s job")
     payment_line_ids = fields.One2many('account.move.line', 'payment_req_id')
+    journal_id = fields.Many2one('account.journal', string='Journal', required=True, readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain="[('company_id', '=', company_id)]",
+        default=_get_default_journal)
 
     def _get_move_display_name(self, show_ref=False):
         ''' Helper to get the display name of an invoice depending of its type.
@@ -104,50 +154,9 @@ class AccountMove(models.Model):
                 draft_name += ' ' + self.name
         return (draft_name or self.name) + (show_ref and self.ref and ' (%s%s)' % (self.ref[:50], '...' if len(self.ref) > 50 else '') or '')
 
-    @api.model
-    def _get_default_journal(self):
-        ''' Get the default journal.
-        It could either be passed through the context using the 'default_journal_id' key containing its id,
-        either be determined by the default type.
-        '''
-        print ("Contxext -=-=-", self._context)
-        move_type = self._context.get('default_type', 'entry')
-        journal_type = 'general'
-        if move_type in self.get_sale_types(include_receipts=True):
-            journal_type = 'sale'
-        elif move_type in self.get_purchase_types(include_receipts=True):
-            journal_type = 'purchase'
-
-        if self._context.get('default_journal_id'):
-            journal = self.env['account.journal'].browse(self._context['default_journal_id'])
-
-            if move_type != 'entry' and journal.type != journal_type:
-                raise UserError(_("Cannot create an invoice of type %s with a journal having %s as type.") % (
-                move_type, journal.type))
-        else:
-            company_id = self._context.get('force_company',
-                                           self._context.get('default_company_id', self.env.company.id))
-            domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
-
-            journal = None
-            if self._context.get('default_currency_id'):
-                currency_domain = domain + [('currency_id', '=', self._context['default_currency_id'])]
-                journal = self.env['account.journal'].search(currency_domain, limit=1)
-
-            if not journal:
-                journal = self.env['account.journal'].search(domain, limit=1)
-
-            if not journal:
-                error_msg = _('Please define an accounting miscellaneous journal in your company')
-                if journal_type == 'sale':
-                    error_msg = _('Please define an accounting sale journal in your company')
-                elif journal_type == 'purchase':
-                    error_msg = _('Please define an accounting purchase journal in your company')
-                raise UserError(error_msg)
-
-        if 'default_is_payment_request' in self._context:
-            journal = self.env.ref('jt_supplier_payment.payment_request_jour')
-        return journal
+    def action_register(self):
+        for move in self:
+            move.payment_state = 'registered'
 
 class AccountMoveLine(models.Model):
 
