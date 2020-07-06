@@ -626,6 +626,7 @@ class Adequacies(models.Model):
                 if len(line_types) > 1:
                     raise ValidationError(_(
                         "In liquid adjustment, you can only increase or decrease amount of budget!"))
+            code_list_decrese = []
             for line in adequacies.adequacies_lines_ids:
                 if line.amount < 10000:
                     raise ValidationError(_(
@@ -654,13 +655,17 @@ class Adequacies(models.Model):
                              ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
 
                     if budget_line and budget_line.assigned < line.amount:
-                        raise ValidationError(_("You can not decrease amount more than assigned amount!"))
+                        code_list_decrese.append(budget_line.program_code_id.program_code)
+                        continue
 
                     total_decreased += line.amount
                     counter_decreased += 1
                 if line.line_type == 'increase':
                     total_increased += line.amount
                     counter_increased += 1
+            if code_list_decrese:
+                raise ValidationError(_("You can not decrease amount more than assigned amount! \n %s" % \
+                                        ' '.join([str(elem) for elem in code_list_decrese]) ))
             if self.adaptation_type == 'compensated' and total_decreased != total_increased:
                 raise ValidationError(_(
                     "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!"))
@@ -682,7 +687,6 @@ class Adequacies(models.Model):
 
     def accept(self):
         self.validate_data()
-        is_incraese = False
         for line in self.adequacies_lines_ids:
             if line.program:
                 if self.date_of_budget_affected and self.adaptation_type == 'compensated':
@@ -708,7 +712,6 @@ class Adequacies(models.Model):
                             final_amount = amount - line.amount
                             budget_line.write({'assigned': final_amount})
                         if line.line_type == 'increase':
-                            is_incraese = True
                             final_amount = amount + line.amount
                             budget_line.write({'assigned': final_amount})
                 elif self.date_of_liquid_adu and self.adaptation_type == 'liquid':
@@ -734,7 +737,6 @@ class Adequacies(models.Model):
                             final_amount = amount - line.amount
                             budget_line.write({'assigned': final_amount})
                         if line.line_type == 'increase':
-                            is_incraese = True
                             final_amount = amount + line.amount
                             budget_line.write({'assigned': final_amount})
                 else:
@@ -746,7 +748,6 @@ class Adequacies(models.Model):
                             final_amount = amount - line.amount
                             budget_line.write({'assigned': final_amount})
                         if line.line_type == 'increase':
-                            is_incraese = True
                             final_amount = amount + line.amount
                             budget_line.write({'assigned': final_amount})
         if self.adaptation_type != 'compensated' and self.journal_id:
@@ -760,7 +761,7 @@ class Adequacies(models.Model):
             if not journal.default_debit_account_id or not journal.default_credit_account_id \
                     or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
                 raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
-            if is_incraese:
+            if self.adequacies_lines_ids[0].line_type == 'increase':
                 unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
                                  'date': today, 'journal_id': journal.id, 'company_id': company_id,
                                  'line_ids': [(0, 0, {
