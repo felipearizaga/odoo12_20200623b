@@ -64,7 +64,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         budget_lines = self.env['expenditure.budget.line'].search(
             [('expenditure_budget_id.state', '=', 'validate')])
 
-        pages = round(len(budget_lines) / 500)
+        pages = round(len(budget_lines) / 10)
         line_list = []
         for page in range(1, pages + 1):
             line_list.append(page)
@@ -74,7 +74,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
         if previous_options and previous_options.get('line_pages'):
             line_pages_map = dict((opt['id'], opt['selected'])
-                                  for opt in previous_options['line_pages'] if opt['id'] != 'divider' and 'selected' in opt)
+                                  for opt in previous_options['line_pages'] if
+                                  opt['id'] != 'divider' and 'selected' in opt)
         else:
             line_pages_map = {}
 
@@ -100,14 +101,15 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                            'Por Ejercer', 'Comprometido', 'Devengado', 'Ejercido', 'Pagado', 'Disponible']
         else:
             list_labels = ['Expense Item', 'Authorized', 'Assigned Total Annual', 'Assigned 1st Trimester',
-                       'Assigned 2nd Trimester', 'Assigned 3rd Trimester',
-                       'Assigned 4th Trimester', 'Annual Modified',
-                       'Per Exercise', 'Committed', 'Accrued', 'Exercised', 'Paid', 'Available']
+                           'Assigned 2nd Trimester', 'Assigned 3rd Trimester',
+                           'Assigned 4th Trimester', 'Annual Modified',
+                           'Per Exercise', 'Committed', 'Accrued', 'Exercised', 'Paid', 'Available']
         counter = 1
 
         if previous_options and previous_options.get('budget_control'):
             budget_control_map = dict((opt['id'], opt['selected'])
-                                      for opt in previous_options['budget_control'] if opt['id'] != 'divider' and 'selected' in opt)
+                                      for opt in previous_options['budget_control'] if
+                                      opt['id'] != 'divider' and 'selected' in opt)
         else:
             budget_control_map = {}
 
@@ -129,8 +131,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'code_sections') or []
         program_fields_ids = [int(acc) for acc in options['code_sections']]
         selected_program_fields = program_fields_ids \
-            and self.env['report.program.fields'].browse(program_fields_ids) \
-            or self.env['report.program.fields']
+                                  and self.env['report.program.fields'].browse(program_fields_ids) \
+                                  or self.env['report.program.fields']
         options['selected_program_fields'] = selected_program_fields.mapped(
             'name')
 
@@ -139,8 +141,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_program') or []
         program_ids = [int(acc) for acc in options['section_program']]
         selected_programs = program_ids \
-            and self.env['program'].browse(program_ids) \
-            or self.env['program']
+                            and self.env['program'].browse(program_ids) \
+                            or self.env['program']
         options['selected_programs'] = selected_programs.mapped('key_unam')
 
         # Sub Program Section filter
@@ -148,8 +150,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_sub_program') or []
         sub_program_ids = [int(acc) for acc in options['section_sub_program']]
         selected_sub_programs = sub_program_ids \
-            and self.env['sub.program'].browse(sub_program_ids) \
-            or self.env['sub.program']
+                                and self.env['sub.program'].browse(sub_program_ids) \
+                                or self.env['sub.program']
         options['selected_sub_programs'] = selected_sub_programs.mapped(
             'sub_program')
 
@@ -158,8 +160,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_dependency') or []
         dependency_ids = [int(acc) for acc in options['section_dependency']]
         selected_dependency = dependency_ids \
-            and self.env['dependency'].browse(dependency_ids) \
-            or self.env['dependency']
+                              and self.env['dependency'].browse(dependency_ids) \
+                              or self.env['dependency']
         options['selected_dependency'] = selected_dependency.mapped(
             'dependency')
 
@@ -169,8 +171,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         sub_dependency_ids = [int(acc)
                               for acc in options['section_sub_dependency']]
         selected_sub_dependency = sub_dependency_ids \
-            and self.env['sub.dependency'].browse(sub_dependency_ids) \
-            or self.env['sub.dependency']
+                                  and self.env['sub.dependency'].browse(sub_dependency_ids) \
+                                  or self.env['sub.dependency']
         options['selected_sub_dependency'] = selected_sub_dependency.mapped(
             'sub_dependency')
 
@@ -179,8 +181,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_expense_item') or []
         item_ids = [int(acc) for acc in options['section_expense_item']]
         selected_items = item_ids \
-            and self.env['expenditure.item'].browse(item_ids) \
-            or self.env['expenditure.item']
+                         and self.env['expenditure.item'].browse(item_ids) \
+                         or self.env['expenditure.item']
         options['selected_items'] = selected_items.mapped('item')
 
         # Origin Resource filter
@@ -188,8 +190,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_or') or []
         or_ids = [int(acc) for acc in options['section_or']]
         selected_origins = or_ids \
-            and self.env['resource.origin'].browse(or_ids) \
-            or self.env['resource.origin']
+                           and self.env['resource.origin'].browse(or_ids) \
+                           or self.env['resource.origin']
         options['selected_or'] = selected_origins.mapped('key_origin')
 
         # Institutional Activity filter
@@ -197,8 +199,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_ai') or []
         ai_ids = [int(acc) for acc in options['section_ai']]
         selected_acitvities = ai_ids \
-            and self.env['institutional.activity'].browse(ai_ids) \
-            or self.env['institutional.activity']
+                              and self.env['institutional.activity'].browse(ai_ids) \
+                              or self.env['institutional.activity']
         options['selected_ai'] = selected_acitvities.mapped('number')
 
         # Budget Program Conversion (CONPP) filter
@@ -206,8 +208,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_conpp') or []
         conpp_ids = [int(acc) for acc in options['section_conpp']]
         selected_conpp = conpp_ids \
-            and self.env['budget.program.conversion'].browse(conpp_ids) \
-            or self.env['budget.program.conversion']
+                         and self.env['budget.program.conversion'].browse(conpp_ids) \
+                         or self.env['budget.program.conversion']
         options['selected_conpp'] = selected_conpp.mapped(
             'shcp').mapped('name')
 
@@ -216,8 +218,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_conpa') or []
         conpa_ids = [int(acc) for acc in options['section_conpa']]
         selected_conpa = conpa_ids \
-            and self.env['departure.conversion'].browse(conpa_ids) \
-            or self.env['departure.conversion']
+                         and self.env['departure.conversion'].browse(conpa_ids) \
+                         or self.env['departure.conversion']
         options['selected_conpa'] = selected_conpa.mapped('federal_part')
 
         # Type of Expense (TG) filter
@@ -225,8 +227,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_expense') or []
         expense_ids = [int(acc) for acc in options['section_expense']]
         selected_expenses = expense_ids \
-            and self.env['expense.type'].browse(expense_ids) \
-            or self.env['expense.type']
+                            and self.env['expense.type'].browse(expense_ids) \
+                            or self.env['expense.type']
         options['selected_expenses'] = selected_expenses.mapped(
             'key_expenditure_type')
 
@@ -235,8 +237,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_ug') or []
         ug_ids = [int(acc) for acc in options['section_ug']]
         selected_ug = ug_ids \
-            and self.env['geographic.location'].browse(ug_ids) \
-            or self.env['geographic.location']
+                      and self.env['geographic.location'].browse(ug_ids) \
+                      or self.env['geographic.location']
         options['selected_ug'] = selected_ug.mapped('state_key')
 
         # Wallet Key (CC) filter
@@ -244,8 +246,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_wallet') or []
         wallet_ids = [int(acc) for acc in options['section_wallet']]
         selected_wallets = wallet_ids \
-            and self.env['key.wallet'].browse(wallet_ids) \
-            or self.env['key.wallet']
+                           and self.env['key.wallet'].browse(wallet_ids) \
+                           or self.env['key.wallet']
         options['selected_wallets'] = selected_wallets.mapped(
             'wallet_password')
 
@@ -254,8 +256,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_tp') or []
         tp_ids = [int(acc) for acc in options['section_tp']]
         selected_tp = tp_ids \
-            and self.env['project.type'].browse(tp_ids) \
-            or self.env['project.type']
+                      and self.env['project.type'].browse(tp_ids) \
+                      or self.env['project.type']
         options['selected_tp'] = selected_tp.mapped('project_type_identifier')
 
         # Project Number filter
@@ -263,8 +265,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_pn') or []
         pn_ids = [int(acc) for acc in options['section_pn']]
         selected_pn = pn_ids \
-            and self.env['project.type'].browse(pn_ids) \
-            or self.env['project.type']
+                      and self.env['project.type'].browse(pn_ids) \
+                      or self.env['project.type']
         options['selected_pn'] = selected_pn.mapped('number')
 
         # Stage filter
@@ -272,8 +274,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_stage') or []
         stage_ids = [int(acc) for acc in options['section_stage']]
         selected_stage = stage_ids \
-            and self.env['stage'].browse(stage_ids) \
-            or self.env['stage']
+                         and self.env['stage'].browse(stage_ids) \
+                         or self.env['stage']
         options['selected_stage'] = selected_stage.mapped('stage_identifier')
 
         # Agreement Type filter
@@ -281,8 +283,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'section_agreement_type') or []
         type_ids = [int(acc) for acc in options['section_agreement_type']]
         selected_type = type_ids \
-            and self.env['agreement.type'].browse(type_ids) \
-            or self.env['agreement.type']
+                        and self.env['agreement.type'].browse(type_ids) \
+                        or self.env['agreement.type']
         options['selected_type'] = selected_type.mapped('agreement_type')
 
         # Agreement Number filter
@@ -291,8 +293,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         agreement_number_ids = [int(acc)
                                 for acc in options['section_agreement_number']]
         selected_agreement_number = agreement_number_ids \
-            and self.env['agreement.type'].browse(agreement_number_ids) \
-            or self.env['agreement.type']
+                                    and self.env['agreement.type'].browse(agreement_number_ids) \
+                                    or self.env['agreement.type']
         options['selected_agreement_number'] = selected_agreement_number.mapped(
             'number_agreement')
 
@@ -334,7 +336,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         need_total = False
         for fc, budget_lines in item_list.items():
             if budget_lines:
-                main_id  = False
+                main_id = False
                 main_list = []
                 for b_line in budget_lines:
                     if not main_id:
@@ -342,39 +344,60 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     if b_line.program_code_id in program_code_list:
                         continue
                     columns = []
-                    if len(options['selected_programs']) > 0 and str(b_line.program_code_id.program_id.key_unam) not in options['selected_programs']:
+                    if len(options['selected_programs']) > 0 and str(b_line.program_code_id.program_id.key_unam) not in \
+                            options['selected_programs']:
                         continue
-                    if len(options['selected_sub_programs']) > 0 and str(b_line.program_code_id.sub_program_id.sub_program) not in options['selected_sub_programs']:
+                    if len(options['selected_sub_programs']) > 0 and str(
+                            b_line.program_code_id.sub_program_id.sub_program) not in options['selected_sub_programs']:
                         continue
-                    if len(options['selected_dependency']) > 0 and str(b_line.program_code_id.dependency_id.dependency) not in options['selected_dependency']:
+                    if len(options['selected_dependency']) > 0 and str(
+                            b_line.program_code_id.dependency_id.dependency) not in options['selected_dependency']:
                         continue
-                    if len(options['selected_sub_dependency']) > 0 and str(b_line.program_code_id.sub_dependency_id.sub_dependency) not in options['selected_sub_dependency']:
+                    if len(options['selected_sub_dependency']) > 0 and str(
+                            b_line.program_code_id.sub_dependency_id.sub_dependency) not in options[
+                        'selected_sub_dependency']:
                         continue
-                    if len(options['selected_items']) > 0 and str(b_line.program_code_id.item_id.item) not in options['selected_items']:
+                    if len(options['selected_items']) > 0 and str(b_line.program_code_id.item_id.item) not in options[
+                        'selected_items']:
                         continue
-                    if len(options['selected_or']) > 0 and str(b_line.program_code_id.resource_origin_id.key_origin) not in options['selected_or']:
+                    if len(options['selected_or']) > 0 and str(
+                            b_line.program_code_id.resource_origin_id.key_origin) not in options['selected_or']:
                         continue
-                    if len(options['selected_ai']) > 0 and str(b_line.program_code_id.institutional_activity_id.number) not in options['selected_ai']:
+                    if len(options['selected_ai']) > 0 and str(
+                            b_line.program_code_id.institutional_activity_id.number) not in options['selected_ai']:
                         continue
-                    if len(options['selected_conpp']) > 0 and str(b_line.program_code_id.budget_program_conversion_id.shcp.name) not in options['selected_conpp']:
+                    if len(options['selected_conpp']) > 0 and str(
+                            b_line.program_code_id.budget_program_conversion_id.shcp.name) not in options[
+                        'selected_conpp']:
                         continue
-                    if len(options['selected_conpa']) > 0 and str(b_line.program_code_id.conversion_item_id.federal_part) not in options['selected_conpa']:
+                    if len(options['selected_conpa']) > 0 and str(
+                            b_line.program_code_id.conversion_item_id.federal_part) not in options['selected_conpa']:
                         continue
-                    if len(options['selected_expenses']) > 0 and str(b_line.program_code_id.expense_type_id.key_expenditure_type) not in options['selected_expenses']:
+                    if len(options['selected_expenses']) > 0 and str(
+                            b_line.program_code_id.expense_type_id.key_expenditure_type) not in options[
+                        'selected_expenses']:
                         continue
-                    if len(options['selected_ug']) > 0 and str(b_line.program_code_id.location_id.state_key) not in options['selected_ug']:
+                    if len(options['selected_ug']) > 0 and str(b_line.program_code_id.location_id.state_key) not in \
+                            options['selected_ug']:
                         continue
-                    if len(options['selected_wallets']) > 0 and str(b_line.program_code_id.portfolio_id.wallet_password) not in options['selected_wallets']:
+                    if len(options['selected_wallets']) > 0 and str(
+                            b_line.program_code_id.portfolio_id.wallet_password) not in options['selected_wallets']:
                         continue
-                    if len(options['selected_tp']) > 0 and str(b_line.program_code_id.project_type_id.project_type_identifier) not in options['selected_tp']:
+                    if len(options['selected_tp']) > 0 and str(
+                            b_line.program_code_id.project_type_id.project_type_identifier) not in options[
+                        'selected_tp']:
                         continue
-                    if len(options['selected_pn']) > 0 and str(b_line.program_code_id.project_number) not in options['selected_pn']:
+                    if len(options['selected_pn']) > 0 and str(b_line.program_code_id.project_number) not in options[
+                        'selected_pn']:
                         continue
-                    if len(options['selected_stage']) > 0 and str(b_line.program_code_id.stage_id.stage_identifier) not in options['selected_stage']:
+                    if len(options['selected_stage']) > 0 and str(
+                            b_line.program_code_id.stage_id.stage_identifier) not in options['selected_stage']:
                         continue
-                    if len(options['selected_type']) > 0 and str(b_line.program_code_id.agreement_type_id.agreement_type) not in options['selected_type']:
+                    if len(options['selected_type']) > 0 and str(
+                            b_line.program_code_id.agreement_type_id.agreement_type) not in options['selected_type']:
                         continue
-                    if len(options['selected_agreement_number']) > 0 and str(b_line.program_code_id.number_agreement) not in options['selected_agreement_number']:
+                    if len(options['selected_agreement_number']) > 0 and str(
+                            b_line.program_code_id.number_agreement) not in options['selected_agreement_number']:
                         continue
 
                     # Program code struture view fields
@@ -461,7 +484,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                                                      ('start_date', '>=', start), ('end_date', '<=', end)])
                     annual_modified = 0
                     adequacies_lines = adequacies_line_obj.search([('program', '=', b_line.program_code_id.id),
-                                                            ('adequacies_id.state', '=', 'accepted')])
+                                                                   ('adequacies_id.state', '=', 'accepted')])
                     for ad_line in adequacies_lines:
                         if ad_line.line_type == 'increase':
                             annual_modified += ad_line.amount
@@ -482,19 +505,19 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             columns.append({'name': annual_modified})
                         elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
                             columns.append({'name': sum(x.assigned if x.start_date.month == 1 and \
-                                            x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
+                                                                      x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
                                                             else 0 for x in all_b_lines)})
                         elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
                             columns.append({'name': sum(x.assigned if x.start_date.month == 4 and \
-                                            x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
+                                                                      x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
                                                             else 0 for x in all_b_lines)})
                         elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
                             columns.append({'name': sum(x.assigned if x.start_date.month == 7 and \
-                                            x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
+                                                                      x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
                                                             else 0 for x in all_b_lines)})
                         elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
                             columns.append({'name': sum(x.assigned if x.start_date.month == 10 and \
-                                            x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
+                                                                      x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
                                                             else 0 for x in all_b_lines)})
                         elif column in ('Per Exercise', 'Por Ejercer'):
                             columns.append({'name': sum(x.available for x in all_b_lines)})
@@ -521,9 +544,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     })
                     program_code_list.append(b_line.program_code_id)
                 if need_total:
-                    total_name = 'Total'
                     main_list_new = main_list
-                    # print ("Main List new ", main_list_new)
                     list_with_data = []
                     for l in main_list_new:
                         new_list = []
@@ -531,24 +552,6 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             new_list.append(d.get('name'))
                         list_with_data.append(new_list)
                     list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
-                    if fc == '1':
-                        total_name = 'Total of Group 100 - 199'
-                    elif fc == '2':
-                        total_name = 'Total of Group 200 - 299'
-                    elif fc == '3':
-                        total_name = 'Total of Group 300 - 399'
-                    elif fc == '4':
-                        total_name = 'Total of Group 400 - 499'
-                    elif fc == '5':
-                        total_name = 'Total of Group 500 - 599'
-                    elif fc == '6':
-                        total_name = 'Total of Group 600 - 699'
-                    elif fc == '7':
-                        total_name = 'Total of Group 700 - 799'
-                    elif fc == '8':
-                        total_name = 'Total of Group 800 - 899'
-                    elif fc == '9':
-                        total_name = 'Total of Group 900 - 999'
                     main_cols = []
                     counter = 0
                     for l in list_tot_data:
@@ -606,6 +609,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     new_total_list = []
                 else:
                     new_total_list.append(al.get('columns'))
+
             if new_total_list:
                 list_with_data = []
                 for l in new_total_list:
@@ -613,9 +617,11 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     for d in l:
                         new_list.append(d.get('name'))
                     list_with_data.append(new_list)
+
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                 main_cols = []
                 counter = 0
+
                 for l in list_tot_data:
                     if counter > need_to_skip:
                         main_cols.append({'name': l})
@@ -634,7 +640,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             new_lines = []
             need_to_add = 0
             new_total_list = []
-            for al in lines[:10]:
+            for al in lines[:500]:
                 if al.get('name') == 'Total':
                     if new_total_list:
                         list_with_data = []
