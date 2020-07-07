@@ -84,7 +84,7 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
 
     def _get_lines(self, options, line_id=None):
         exp_obj = self.env['status.expen']
-        bud_obj = self.env['expenditure.budget']
+        bud_line_obj = self.env['expenditure.budget.line']
         adeq_obj = self.env['adequacies']
 
         comparison = options.get('comparison')
@@ -101,22 +101,30 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
             period_name = period.get('string')
             date_start = datetime.strptime(str(period.get('date_from')), DEFAULT_SERVER_DATE_FORMAT).date()
             date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
-            budgets = bud_obj.search([('state', '=', 'validate'),
-                                      ('from_date', '=', date_start),
-                                      ('to_date', '=', date_end)])
-            for budget in budgets:
-                for line in budget.success_line_ids:
-                    if line.item_id and line.item_id.heading and line.item_id.heading.name:
-                        heading_name = line.item_id.heading.name.upper()
-                        heading_name = self.strip_accents(heading_name)
-                        if period_name in period_item_auth_dict.keys():
-                            pe_dict = period_item_auth_dict.get(period_name)
-                            if heading_name in pe_dict.keys():
-                                pe_dict.update({heading_name: pe_dict.get(heading_name) + [line]})
-                            else:
-                                pe_dict.update({heading_name: [line]})
+            if period.get('period_type') == 'month':
+                budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
+                                                    ('state', '=', 'success')])
+            else:
+                budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
+                                      ('start_date', '>=', date_start), ('state', '=', 'success'),
+                                      ('end_date', '<=', date_end)])
+            for line in budget_lines:
+                if period.get('period_type') == 'month':
+                    if date_start >= line.start_date and date_end <= line.end_date:
+                        pass
+                    else:
+                        continue
+                if line.item_id and line.item_id.heading and line.item_id.heading.name:
+                    heading_name = line.item_id.heading.name.upper()
+                    heading_name = self.strip_accents(heading_name)
+                    if period_name in period_item_auth_dict.keys():
+                        pe_dict = period_item_auth_dict.get(period_name)
+                        if heading_name in pe_dict.keys():
+                            pe_dict.update({heading_name: pe_dict.get(heading_name) + [line]})
                         else:
-                            period_item_auth_dict.update({period_name: {heading_name: [line]}})
+                            pe_dict.update({heading_name: [line]})
+                    else:
+                        period_item_auth_dict.update({period_name: {heading_name: [line]}})
 
         for period, section_data in period_item_auth_dict.items():
             for section, line_list in section_data.items():
@@ -130,63 +138,49 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                 sec_dict = period_item_auth_dict.get(period)
                 sec_dict.update({section: item_dict})
 
-        # adequacies = adeq_obj.search([('state', '=', 'accepted')])
-        # item_dict_auth = {}
-        # item_dict_adeq = {}
-        # date_from = False
-        # date_to = False
-        # if options.get('date'):
-        #     date_from = options.get('date').get('date_from')
-        #     date_to = options.get('date').get('date_to')
-        # if isinstance(date_from, str):
-        #     date_from = datetime.strptime(date_from, DEFAULT_SERVER_DATE_FORMAT).date()
-        # if isinstance(date_to, str):
-        #     date_to = datetime.strptime(date_to, DEFAULT_SERVER_DATE_FORMAT).date()
-        # for budget in budgets:
-        #     for line in budget.success_line_ids:
-        #         if line.item_id and line.item_id.heading and line.item_id.heading.name:
-        #             heading_name = line.item_id.heading.name.upper()
-        #             heading_name = self.strip_accents(heading_name)
-        #             item = line.item_id
-        #             if heading_name in item_dict_auth.keys():
-        #                 heading_dict = item_dict_auth.get(heading_name)[0]
-        #                 if item in heading_dict.keys():
-        #                     amt = heading_dict.get(item)
-        #                     heading_dict.update({item: amt + line.authorized})
-        #                 else:
-        #                     heading_dict.update({item: line.authorized})
-        #             else:
-        #                 item_dict_auth.update({heading_name: [{item: line.authorized}]})
-        #
-        # for ade in adequacies:
-        #     if ade.adaptation_type == 'liquid' and ade.date_of_liquid_adu >= date_from and ade.date_of_liquid_adu <= date_to:
-        #         for line in ade.adequacies_lines_ids:
-        #             if line.program:
-        #                 item = line.program.item_id.item
-        #                 if item in item_dict_adeq.keys():
-        #                     if line.line_type == 'increase':
-        #                         item_dict_adeq.update({item: item_dict_adeq.get(item) + line.amount})
-        #                     else:
-        #                         item_dict_adeq.update({item: item_dict_adeq.get(item) - line.amount})
-        #                 else:
-        #                     if line.line_type == 'increase':
-        #                         item_dict_adeq.update({item: line.amount})
-        #                     else:
-        #                         item_dict_adeq.update({item: -line.amount})
-        #     elif ade.adaptation_type != 'liquid' and ade.date_of_budget_affected >= date_from and ade.date_of_budget_affected <= date_to:
-        #         for line in ade.adequacies_lines_ids:
-        #             if line.program:
-        #                 item = line.program.item_id.item
-        #                 if item in item_dict_adeq.keys():
-        #                     if line.line_type == 'increase':
-        #                         item_dict_adeq.update({item: item_dict_adeq.get(item) + line.amount})
-        #                     else:
-        #                         item_dict_adeq.update({item: item_dict_adeq.get(item) - line.amount})
-        #                 else:
-        #                     if line.line_type == 'increase':
-        #                         item_dict_adeq.update({item: line.amount})
-        #                     else:
-        #                         item_dict_adeq.update({item: -line.amount})
+        adequacies = adeq_obj.search([('state', '=', 'accepted')])
+        item_dict_adeq = {}
+        for period in periods:
+            period_name = period.get('string')
+            item_dict_adeq.update({period_name: {}})
+
+        for period in periods:
+            period_name = period.get('string')
+            item_dict = {}
+            date_start = datetime.strptime(str(period.get('date_from')), DEFAULT_SERVER_DATE_FORMAT).date()
+            date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
+            for ade in adequacies:
+                if ade.adaptation_type == 'liquid' and ade.date_of_liquid_adu >= date_start and \
+                        ade.date_of_liquid_adu <= date_end:
+                    for line in ade.adequacies_lines_ids:
+                        if line.program:
+                            item = line.program.item_id
+                            if item in item_dict.keys():
+                                if line.line_type == 'increase':
+                                    item_dict.update({item: item_dict.get(item) + line.amount})
+                                else:
+                                    item_dict.update({item: item_dict.get(item) - line.amount})
+                            else:
+                                if line.line_type == 'increase':
+                                    item_dict.update({item: line.amount})
+                                else:
+                                    item_dict.update({item: -line.amount})
+                elif ade.adaptation_type != 'liquid' and ade.date_of_budget_affected >= date_start and \
+                        ade.date_of_budget_affected <= date_end:
+                    for line in ade.adequacies_lines_ids:
+                        if line.program:
+                            item = line.program.item_id
+                            if item in item_dict.keys():
+                                if line.line_type == 'increase':
+                                    item_dict.update({item: item_dict.get(item) + line.amount})
+                                else:
+                                    item_dict.update({item: item_dict.get(item) - line.amount})
+                            else:
+                                if line.line_type == 'increase':
+                                    item_dict.update({item: line.amount})
+                                else:
+                                    item_dict.update({item: -line.amount})
+            item_dict_adeq.update({period_name: item_dict})
 
         lines = []
         hierarchy_lines = exp_obj.sudo().search([('parent_id', '=', False)], order='id')
@@ -235,7 +229,6 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                                     concept_dict.update({period_name: {item: amt}})
                                 if item not in item_list:
                                     item_list.append(item)
-
                 for item in item_list:
                     line_cols = []
                     for period in periods:
@@ -243,16 +236,35 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                         if period_name in concept_dict:
                             if item in concept_dict.get(period_name).keys():
                                 amt = concept_dict.get(period_name).get(item)
+                                ade_amt = 0
+                                if period_name in item_dict_adeq:
+                                    if item in item_dict_adeq.get(period_name).keys():
+                                        ade_amt = item_dict_adeq.get(period_name).get(item)
                                 if period_name in period_total:
-                                    period_total.update({period_name: period_total.get(period_name) + amt})
+                                    pe_dict = period_total.get(period_name)
+                                    period_total.update({period_name: {'auth': pe_dict.get('auth') + amt,
+                                                                       'ade': pe_dict.get('ade') + ade_amt,
+                                                                       'modi': pe_dict.get('modi') + (amt + ade_amt),
+                                                                       'sub': pe_dict.get('modi') + (amt + ade_amt)}})
                                 else:
-                                    period_total.update({period_name: amt})
+                                    period_total.update({period_name: {'auth': amt, 'ade': ade_amt,
+                                                                       'modi': amt + ade_amt,
+                                                                       'sub': amt + ade_amt}})
                                 if period_name in main_period_total:
-                                    main_period_total.update({period_name: main_period_total.get(period_name) + amt})
+                                    pe_dict = main_period_total.get(period_name)
+                                    main_period_total.update({period_name: {'auth': pe_dict.get('auth') + amt,
+                                                                       'ade': pe_dict.get('ade') + ade_amt,
+                                                                       'modi': pe_dict.get('modi') + (amt + ade_amt),
+                                                                       'sub': pe_dict.get('modi') + (amt + ade_amt)}})
                                 else:
-                                    main_period_total.update({period_name: amt})
-                                line_cols += [{'name': '%.2f' % amt, 'style': 'margin-left:15px;'}, {'name': ''}, {'name': ''},{'name': ''},
-                                              {'name': ''}, {'name': ''}]
+                                    main_period_total.update({period_name: {'auth': amt, 'ade': ade_amt,
+                                                                            'modi': amt + ade_amt,
+                                                                            'sub': amt + ade_amt}})
+                                line_cols += [{'name': '%.2f' % amt, 'style': 'margin-left:15px;'},
+                                              {'name': '%.2f' % ade_amt, 'style': 'margin-left:15px;'}, {'name': amt + ade_amt},
+                                              {'name': ''}, {'name': ''}, {'name': amt + ade_amt}]
+                            else:
+                                line_cols += [{'name': ''}] * 6
                         else:
                             line_cols += [{'name': ''}] * 6
                     name = item.item
@@ -274,8 +286,12 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                 for period in periods:
                     period_name = period.get('string')
                     if period_name in period_total:
-                        total_cols += [{'name': '%.2f' %  period_total.get(period_name), 'style': 'margin-left:15px;'}, {'name': ''}, {'name': ''},
-                                       {'name': ''},{'name': ''},{'name': ''}]
+                        pe_dict = period_total.get(period_name)
+                        total_cols += [{'name': '%.2f' %  pe_dict.get('auth'), 'style': 'margin-left:15px;'},
+                                       {'name': '%.2f' %  pe_dict.get('ade'), 'style': 'margin-left:15px;'},
+                                       {'name': '%.2f' %  pe_dict.get('modi'), 'style': 'margin-left:15px;'},
+                                       {'name': ''}, {'name': ''},
+                                       {'name': '%.2f' %  pe_dict.get('modi'), 'style': 'margin-left:15px;'}]
                         if not need_to_add:
                             need_to_add = True
                     else:
@@ -296,8 +312,12 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
         for period in periods:
             period_name = period.get('string')
             if period_name in main_period_total:
-                main_total_cols += [{'name': '%.2f' % main_period_total.get(period_name), 'style': 'margin-left:15px;'}, {'name': ''}, {'name': ''},
-                               {'name': ''}, {'name': ''}, {'name': ''}]
+                pe_dict = main_period_total.get(period_name)
+                main_total_cols += [{'name': '%.2f' %  pe_dict.get('auth'), 'style': 'margin-left:15px;'},
+                                       {'name': '%.2f' %  pe_dict.get('ade'), 'style': 'margin-left:15px;'},
+                                       {'name': '%.2f' %  pe_dict.get('modi'), 'style': 'margin-left:15px;'},
+                                       {'name': ''}, {'name': ''},
+                                       {'name': '%.2f' %  pe_dict.get('modi'), 'style': 'margin-left:15px;'}]
                 if not need_to_add:
                     need_to_add = True
             else:

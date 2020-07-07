@@ -28,8 +28,8 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
-class ExpenditureBudget(models.Model):
 
+class ExpenditureBudget(models.Model):
     _name = 'expenditure.budget'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Expenditure Budget'
@@ -56,9 +56,9 @@ class ExpenditureBudget(models.Model):
 
     # Date Periods
     from_date = fields.Date(string='From', states={
-                            'validate': [('readonly', True)]}, tracking=True)
+        'validate': [('readonly', True)]}, tracking=True)
     to_date = fields.Date(string='To', states={
-                          'validate': [('readonly', True)]}, tracking=True)
+        'validate': [('readonly', True)]}, tracking=True)
 
     def _compute_total_budget(self):
         for budget in self:
@@ -93,13 +93,13 @@ class ExpenditureBudget(models.Model):
             res.update({'journal_id': budget_app_jou.id})
         return res
 
-
     def _get_imported_lines_count(self):
         for record in self:
             record.imported_lines_count = len(record.line_ids)
             record.success_lines_count = len(record.success_line_ids)
 
-    @api.depends('success_line_ids','success_line_ids.assigned', 'success_line_ids.authorized','success_line_ids.available')
+    @api.depends('success_line_ids', 'success_line_ids.assigned', 'success_line_ids.authorized',
+                 'success_line_ids.available')
     def _compute_amt_total(self):
         """
         This function will count the total of all success rows
@@ -124,7 +124,8 @@ class ExpenditureBudget(models.Model):
     # Budget Lines
     line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
-        string='Expenditure Budget Lines', states={'validate': [('readonly', True)]}, domain=[('state', '!=', 'success')])
+        string='Expenditure Budget Lines', states={'validate': [('readonly', True)]},
+        domain=[('state', '!=', 'success')])
     success_line_ids = fields.One2many(
         'expenditure.budget.line', 'expenditure_budget_id',
         string='Expenditure Budget Lines', domain=[('state', '=', 'success')])
@@ -175,6 +176,8 @@ class ExpenditureBudget(models.Model):
         if self.from_date and self.to_date:
             if self.from_date > self.to_date:
                 raise ValidationError("Please select correct date")
+            if self.from_date.year != self.to_date.year:
+                raise ValidationError("Start date and End date must be related to same year.")
 
     def import_lines(self):
         ctx = self.env.context.copy()
@@ -272,12 +275,12 @@ class ExpenditureBudget(models.Model):
                         asigned_amount = float(line.assigned)
                         if asigned_amount < 0:
                             failed_row += str(line_vals) + \
-                                "------>> Assigned Amount should be greater than or 0!"
+                                          "------>> Assigned Amount should be greater than or 0!"
                             failed_line_ids.append(line.id)
                             continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Asigned Amount Format"
+                                      "------>> Invalid Asigned Amount Format"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -287,23 +290,44 @@ class ExpenditureBudget(models.Model):
                         authorized_amount = float(line.authorized)
                         if authorized_amount <= 0:
                             failed_row += str(line_vals) + \
-                                "------>> Authorized Amount should be greater than 0!"
+                                          "------>> Authorized Amount should be greater than 0!"
                             failed_line_ids.append(line.id)
                             continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Authorized Amount Format"
+                                      "------>> Invalid Authorized Amount Format"
                         failed_line_ids.append(line.id)
                         continue
                     line.state = 'success'
 
                 if line.state in ['fail', 'draft']:
 
+                    # Check Start and End Date
+                    if not line.start_date:
+                        failed_row += str(line_vals) + \
+                                      "------>> Please Add Start Date\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+                    if not line.end_date:
+                        failed_row += str(line_vals) + \
+                                      "------>> Please Add End Date\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+                    if line.start_date and line.end_date \
+                            and self.from_date.year != line.start_date.year \
+                            or self.to_date.year != line.end_date.year:
+                        failed_row += str(line_vals) + \
+                                      "------>> Start date and End date must be related to same year of budget date.\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
                     # Validate year format
                     year = year_obj.validate_year(line.year)
                     if not year:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Year Format\n"
+                                      "------>> Invalid Year Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -311,7 +335,7 @@ class ExpenditureBudget(models.Model):
                     program = program_obj.validate_program(line.program)
                     if not program:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Program(PR) Format\n"
+                                      "------>> Invalid Program(PR) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -320,7 +344,7 @@ class ExpenditureBudget(models.Model):
                         line.subprogram, program)
                     if not subprogram:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid SubProgram(SP) Format\n"
+                                      "------>> Invalid SubProgram(SP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -329,7 +353,7 @@ class ExpenditureBudget(models.Model):
                         line.dependency)
                     if not dependency:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Dependency(DEP) Format\n"
+                                      "------>> Invalid Dependency(DEP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -338,7 +362,7 @@ class ExpenditureBudget(models.Model):
                         line.subdependency, dependency)
                     if not subdependency:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Sub Dependency(DEP) Format\n"
+                                      "------>> Invalid Sub Dependency(DEP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -347,7 +371,7 @@ class ExpenditureBudget(models.Model):
                         line.item, line.exercise_type)
                     if not item:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Expense Item(PAR) Format\n"
+                                      "------>> Invalid Expense Item(PAR) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -356,7 +380,7 @@ class ExpenditureBudget(models.Model):
                         line.origin_resource)
                     if not origin_resource:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Origin Of Resource(OR) Format\n"
+                                      "------>> Invalid Origin Of Resource(OR) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -365,7 +389,7 @@ class ExpenditureBudget(models.Model):
                         line.ai)
                     if not institutional_activity:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Institutional Activity Number(AI) Format\n"
+                                      "------>> Invalid Institutional Activity Number(AI) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -374,7 +398,7 @@ class ExpenditureBudget(models.Model):
                         line.conversion_program, program)
                     if not shcp:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
+                                      "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -383,7 +407,7 @@ class ExpenditureBudget(models.Model):
                         line.departure_conversion)
                     if not conversion_item:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid SHCP Games(CONPA) Format\n"
+                                      "------>> Invalid SHCP Games(CONPA) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -392,7 +416,7 @@ class ExpenditureBudget(models.Model):
                         line.expense_type)
                     if not expense_type:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Expense Type(TG) Format\n"
+                                      "------>> Invalid Expense Type(TG) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -401,7 +425,7 @@ class ExpenditureBudget(models.Model):
                         line.location)
                     if not geo_location:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Geographic Location (UG) Format\n"
+                                      "------>> Invalid Geographic Location (UG) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -409,7 +433,7 @@ class ExpenditureBudget(models.Model):
                     wallet_key = wallet_obj.validate_wallet_key(line.portfolio)
                     if not wallet_key:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Wallet Key(CC) Format\n"
+                                      "------>> Invalid Wallet Key(CC) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -418,7 +442,7 @@ class ExpenditureBudget(models.Model):
                         line.project_type, line)
                     if not project_type:
                         failed_row += str(project_type) + \
-                            "------>> Invalid Project Type(TP) or Project Number Format\n"
+                                      "------>> Invalid Project Type(TP) or Project Number Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -427,7 +451,7 @@ class ExpenditureBudget(models.Model):
                         line.stage, project_type.project_id)
                     if not stage:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Stage(E) Format\n"
+                                      "------>> Invalid Stage(E) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -436,7 +460,7 @@ class ExpenditureBudget(models.Model):
                         line.agreement_type, project_type.project_id, line.agreement_number)
                     if not agreement_type:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Agreement Type(TC) or Agreement Number Format\n"
+                                      "------>> Invalid Agreement Type(TC) or Agreement Number Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -451,7 +475,7 @@ class ExpenditureBudget(models.Model):
                         #     continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Asigned Amount Format \n"
+                                      "------>> Invalid Asigned Amount Format \n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -461,19 +485,18 @@ class ExpenditureBudget(models.Model):
                         authorized_amount = float(line.authorized)
                         if authorized_amount == 0:
                             failed_row += str(line_vals) + \
-                                "------>> Authorized Amount should be greater than 0! \n"
+                                          "------>> Authorized Amount should be greater than 0! \n"
                             failed_line_ids.append(line.id)
                             continue
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Invalid Authorized Amount Format \n"
+                                      "------>> Invalid Authorized Amount Format \n"
                         failed_line_ids.append(line.id)
                         continue
 
-
                     if not line.dv:
                         failed_row += str(line_vals) + \
-                            "------>> Digito Verificador is not added! \n"
+                                      "------>> Digito Verificador is not added! \n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -502,15 +525,16 @@ class ExpenditureBudget(models.Model):
 
                             if program_code and program_code.state == 'validated':
                                 failed_row += str(line_vals) + \
-                                    "------>> Duplicated Program Code Found!"
+                                              "------>> Duplicated Program Code Found! \n"
                                 failed_line_ids.append(line.id)
                                 continue
                             if program_code and program_code.state == 'draft':
-                                budget_line = self.env['expenditure.budget.line'].search([('program_code_id', '=', program_code.id), (
-                                    'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
+                                budget_line = self.env['expenditure.budget.line'].search(
+                                    [('program_code_id', '=', program_code.id), (
+                                        'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
-                                        "------>> Program Code Already Linked With Budget Line With Selected Start/End Date! \n"
+                                                  "------>> Program Code Already Linked With Budget Line With Selected Start/End Date! \n"
                                     failed_line_ids.append(line.id)
                                     continue
 
@@ -559,7 +583,7 @@ class ExpenditureBudget(models.Model):
                             line.available = line.assigned
                     except:
                         failed_row += str(line_vals) + \
-                            "------>> Row Data Are Not Corrected or Duplicated Program Code Found! \n"
+                                      "------>> Row Data Are Not Corrected or Duplicated Program Code Found! \n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -583,7 +607,7 @@ class ExpenditureBudget(models.Model):
                     content = ''
                 content += "\n"
                 content += "...................Failed Rows " + \
-                    str(datetime.today()) + "...............\n"
+                           str(datetime.today()) + "...............\n"
                 content += str(failed_row)
                 failed_data = base64.b64encode(content.encode('utf-8'))
                 vals['failed_row_file'] = failed_data
@@ -614,13 +638,12 @@ class ExpenditureBudget(models.Model):
                     if len(self.line_ids.ids) == 0:
                         self.write({'state': 'previous'})
                     msg = (_("Budget Validation Process Ended at %s" % datetime.strftime(
-                    datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+                        datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
                     self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
                                                      'body': msg})
 
             if vals.get('failed_row_file'):
                 self.write(vals)
-
 
     def remove_cron_records(self):
         crons = self.env['ir.cron'].sudo().search(
@@ -647,7 +670,7 @@ class ExpenditureBudget(models.Model):
         msg = (_("Budget Validation Process Started at %s" % datetime.strftime(
             datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
         self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
-                             'body': msg})
+                                         'body': msg})
         if self.line_ids:
             total_cron = math.ceil(len(self.line_ids.ids) / 5000)
         else:
@@ -672,7 +695,7 @@ class ExpenditureBudget(models.Model):
 
                     # Create CRON JOB
                     cron_name = str(self.name).replace(' ', '') + \
-                        "_" + str(datetime.now()).replace(' ', '')
+                                "_" + str(datetime.now()).replace(' ', '')
                     nextcall = datetime.now()
                     nextcall = nextcall + timedelta(seconds=10)
                     lines = line_ids[:5000]
@@ -692,7 +715,7 @@ class ExpenditureBudget(models.Model):
                     # Final process
                     cron = self.env['ir.cron'].sudo().create(cron_vals)
                     cron.write({'code': "model.validate_and_add_budget_line(" +
-                                str(self.id) + "," + str(cron.id) + ")"})
+                                        str(self.id) + "," + str(cron.id) + ")"})
                     if prev_cron_id:
                         cron.write({'prev_cron_id': prev_cron_id, 'active': False})
                     line_records = self.env['expenditure.budget.line'].browse(
@@ -717,7 +740,7 @@ class ExpenditureBudget(models.Model):
             amount = sum(self.success_line_ids.mapped('authorized'))
             company_id = user.company_id.id
             if not journal.default_debit_account_id or not journal.default_credit_account_id \
-                or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
+                    or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
                 raise ValidationError(_("Please configure UNAM and CONAC account in budget journal!"))
             unam_move_val = {'ref': self.name, 'budget_id': budget_id, 'conac_move': True,
                              'date': today, 'journal_id': journal.id, 'company_id': company_id,
@@ -762,7 +785,7 @@ class ExpenditureBudget(models.Model):
         action['limit'] = 1000
         action['domain'] = [('id', 'in', self.line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
-            'jt_budget_mgmt.expenditure_budget_imported_line_search_view').id, )
+            'jt_budget_mgmt.expenditure_budget_imported_line_search_view').id,)
         return action
 
     def show_success_lines(self):
@@ -771,12 +794,11 @@ class ExpenditureBudget(models.Model):
         action['limit'] = 1000
         action['domain'] = [('id', 'in', self.success_line_ids.ids)]
         action['search_view_id'] = (self.env.ref(
-            'jt_budget_mgmt.expenditure_budget_success_line_search_view').id, )
+            'jt_budget_mgmt.expenditure_budget_success_line_search_view').id,)
         return action
 
 
 class ExpenditureBudgetLine(models.Model):
-
     _name = 'expenditure.budget.line'
     _description = 'Expenditure Budget Line'
     _rec_name = 'program_code_id'

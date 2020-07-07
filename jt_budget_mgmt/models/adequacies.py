@@ -31,7 +31,6 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class Adequacies(models.Model):
-
     _name = 'adequacies'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Adequacies'
@@ -66,7 +65,7 @@ class Adequacies(models.Model):
     folio = fields.Char(string='Folio', states={
         'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     budget_id = fields.Many2one('expenditure.budget', string='Budget', states={
-                                'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
+        'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     reason = fields.Text(string='Reason for rejection')
     cron_running = fields.Boolean(string='Running CRON?')
 
@@ -86,7 +85,8 @@ class Adequacies(models.Model):
         [('compensated', 'Compensated Adjustments'), ('liquid', 'Liquid Adjustments')], default='compensated', states={
             'accepted': [('readonly', True)], 'rejected': [('readonly', True)]}, tracking=True)
     adequacies_lines_ids = fields.One2many(
-        'adequacies.lines', 'adequacies_id', string='Adequacies Lines', states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
+        'adequacies.lines', 'adequacies_id', string='Adequacies Lines',
+        states={'accepted': [('readonly', True)], 'rejected': [('readonly', True)]})
     move_line_ids = fields.One2many("account.move.line", 'adequacy_id', string="Journal Items")
     journal_id = fields.Many2one('account.journal', string="Daily")
     date_of_budget_affected = fields.Date("Date Of Budget Affected")
@@ -121,7 +121,7 @@ class Adequacies(models.Model):
     # Import process related fields
     allow_upload = fields.Boolean(string='Allow Update XLS File?')
     budget_file = fields.Binary(string='Uploaded File', states={'accepted': [
-                                ('readonly', True)], 'rejected': [('readonly', True)]})
+        ('readonly', True)], 'rejected': [('readonly', True)]})
     filename = fields.Char(string='File name')
     import_status = fields.Selection([
         ('draft', 'Draft'),
@@ -226,7 +226,7 @@ class Adequacies(models.Model):
                 year = year_obj.validate_year(list_result[0])
                 if not year:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Year Format\n"
+                                  "------>> Invalid Year Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -234,7 +234,7 @@ class Adequacies(models.Model):
                 program = program_obj.validate_program(list_result[1])
                 if not program:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Program(PR) Format\n"
+                                  "------>> Invalid Program(PR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -242,7 +242,7 @@ class Adequacies(models.Model):
                 subprogram = subprogram_obj.validate_subprogram(list_result[2], program)
                 if not subprogram:
                     failed_row += str(list_result) + \
-                        "------>> Invalid SubProgram(SP) Format\n"
+                                  "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -250,7 +250,7 @@ class Adequacies(models.Model):
                 dependency = dependancy_obj.validate_dependency(list_result[3])
                 if not dependency:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Dependency(DEP) Format\n"
+                                  "------>> Invalid Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -258,7 +258,7 @@ class Adequacies(models.Model):
                 subdependency = subdependancy_obj.validate_subdependency(list_result[4], dependency)
                 if not subdependency:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Sub Dependency(DEP) Format\n"
+                                  "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -266,7 +266,7 @@ class Adequacies(models.Model):
                 item = item_obj.validate_item(list_result[5], list_result[19])
                 if not item:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Expense Item(PAR) Format\n"
+                                  "------>> Invalid Expense Item(PAR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -286,7 +286,7 @@ class Adequacies(models.Model):
                 origin_resource = origin_obj.validate_origin_resource(list_result[7])
                 if not origin_resource:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Origin Of Resource(OR) Format\n"
+                                  "------>> Invalid Origin Of Resource(OR) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -294,7 +294,7 @@ class Adequacies(models.Model):
                 institutional_activity = activity_obj.validate_institutional_activity(list_result[8])
                 if not institutional_activity:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Institutional Activity Number(AI) Format\n"
+                                  "------>> Invalid Institutional Activity Number(AI) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -302,7 +302,7 @@ class Adequacies(models.Model):
                 shcp = shcp_obj.validate_shcp(list_result[9], program)
                 if not shcp:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
+                                  "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -310,7 +310,7 @@ class Adequacies(models.Model):
                 conversion_item = dpc_obj.validate_conversion_item(list_result[10])
                 if not conversion_item:
                     failed_row += str(list_result) + \
-                        "------>> Invalid SHCP Games(CONPA) Format\n"
+                                  "------>> Invalid SHCP Games(CONPA) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -318,7 +318,7 @@ class Adequacies(models.Model):
                 expense_type = expense_type_obj.validate_expense_type(list_result[11])
                 if not expense_type:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Expense Type(TG) Format\n"
+                                  "------>> Invalid Expense Type(TG) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -326,7 +326,7 @@ class Adequacies(models.Model):
                 geo_location = location_obj.validate_geo_location(list_result[12])
                 if not geo_location:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Geographic Location (UG) Format\n"
+                                  "------>> Invalid Geographic Location (UG) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -334,7 +334,7 @@ class Adequacies(models.Model):
                 wallet_key = wallet_obj.validate_wallet_key(list_result[13])
                 if not wallet_key:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Wallet Key(CC) Format\n"
+                                  "------>> Invalid Wallet Key(CC) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -343,7 +343,7 @@ class Adequacies(models.Model):
                     list_result[14], list_result[15])
                 if not project_type:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Project Type(TP) Format\n"
+                                  "------>> Invalid Project Type(TP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -351,16 +351,16 @@ class Adequacies(models.Model):
                 stage = stage_obj.validate_stage(list_result[16], project_type.project_id)
                 if not stage:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Stage(E) Format\n"
+                                  "------>> Invalid Stage(E) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
                 # Validation Agreement Type
                 agreement_type = agreement_type_obj.validate_agreement_type(list_result[17],
-                        project_type.project_id, list_result[18])
+                                                                            project_type.project_id, list_result[18])
                 if not agreement_type:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Agreement Type(TC) Format\n"
+                                  "------>> Invalid Agreement Type(TC) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -370,12 +370,12 @@ class Adequacies(models.Model):
                     amount = float(list_result[20])
                     if float(amount) < 10000:
                         failed_row += str(list_result) + \
-                            "------>> Amount should be 10000 or greater than 10000\n"
+                                      "------>> Amount should be 10000 or greater than 10000\n"
                         failed_row_ids.append(pointer)
                         continue
                 except:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Amount Format or Amount should be greater than or equal to 10000"
+                                  "------>> Invalid Amount Format or Amount should be greater than or equal to 10000"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -383,7 +383,7 @@ class Adequacies(models.Model):
                 typee = str(list_result[21]).replace(' ', '').lower()
                 if typee not in ['increase', 'decrease']:
                     failed_row += str(list_result) + \
-                        "------>> Invalid Type Format\n"
+                                  "------>> Invalid Type Format\n"
                     failed_row_ids.append(pointer)
                     continue
 
@@ -415,10 +415,11 @@ class Adequacies(models.Model):
 
                         if program_code:
                             budget_line = self.env['expenditure.budget.line'].sudo().search(
-                                [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                                [('program_code_id', '=', program_code.id),
+                                 ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
                             if not budget_line:
                                 failed_row += str(list_result) + \
-                                    "------>> Budget line not found for program code!"
+                                              "------>> Budget line not found for program code!"
                                 failed_row_ids.append(pointer)
                                 continue
 
@@ -438,7 +439,7 @@ class Adequacies(models.Model):
 
                     if not program_code:
                         failed_row += str(list_result) + \
-                            "------>> Program code not found!"
+                                      "------>> Program code not found!"
                         failed_row_ids.append(pointer)
                         continue
                     success_row_ids.append(pointer)
@@ -459,7 +460,7 @@ class Adequacies(models.Model):
                     self.write({'adequacies_lines_ids': [(0, 0, line_vals)]})
                 except:
                     failed_row += str(list_result) + \
-                        "------>> Row Data Are Not Corrected or Validated Program Code Not Found!"
+                                  "------>> Row Data Are Not Corrected or Validated Program Code Not Found!"
                     failed_row_ids.append(pointer)
 
             failed_row_ids_eval = eval(self.failed_row_ids)
@@ -483,7 +484,7 @@ class Adequacies(models.Model):
                     content += io.StringIO(file_data.decode("utf-8")).read()
                 content += "\n"
                 content += "...................Failed Rows " + \
-                    str(datetime.today()) + "...............\n"
+                           str(datetime.today()) + "...............\n"
                 content += str(failed_row)
                 failed_data = base64.b64encode(content.encode('utf-8'))
                 vals['failed_row_file'] = failed_data
@@ -497,7 +498,8 @@ class Adequacies(models.Model):
                 self.write({'allow_upload': False})
 
             if cron:
-                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_adequacies').id)], limit=1)
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), (
+                'model_id', '=', self.env.ref('jt_budget_mgmt.model_adequacies').id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
                     nextcall = nextcall + timedelta(seconds=10)
@@ -510,8 +512,8 @@ class Adequacies(models.Model):
                     failed_count = self.total_rows - success_count
                     self.send_notification_msg(self.create_uid, failed_count, success_count)
                     self.create_uid.notify_info(message='Adequacies - ' + str(self.folio) +
-                        ' Lines Validation process completed. Please verify and correct lines, if any failed!',
-                        title="Adequacies", sticky=True)
+                                                        ' Lines Validation process completed. Please verify and correct lines, if any failed!',
+                                                title="Adequacies", sticky=True)
                     msg = (_("Adequacies Validation Process Ended at %s" % datetime.strftime(
                         datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
                     self.env['mail.message'].create({'model': 'adequacies', 'res_id': self.id,
@@ -556,9 +558,9 @@ class Adequacies(models.Model):
                             email_from=base_user.partner_id.email, author_id=base_user.partner_id.id)
         return True
 
-
     def remove_cron_records(self):
-        crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_adequacies').id)])
+        crons = self.env['ir.cron'].sudo().search(
+            [('model_id', '=', self.env.ref('jt_budget_mgmt.model_adequacies').id)])
         for cron in crons:
             if cron.adequacies_id and not cron.adequacies_id.cron_running:
                 try:
@@ -607,7 +609,8 @@ class Adequacies(models.Model):
 
                     # Final process
                     cron = self.env['ir.cron'].sudo().create(cron_vals)
-                    cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+                    cron.write(
+                        {'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
                     if prev_cron_id:
                         cron.write({'prev_cron_id': prev_cron_id, 'active': False})
                     prev_cron_id = cron.id
@@ -628,6 +631,25 @@ class Adequacies(models.Model):
                         "In liquid adjustment, you can only increase or decrease amount of budget!"))
             code_list_decrese = []
             for line in adequacies.adequacies_lines_ids:
+                budget_lines_check = self.env['expenditure.budget.line'].sudo().search(
+                    [('program_code_id', '=', line.program.id),
+                     ('expenditure_budget_id', '=', self.budget_id.id)])
+
+                found = False
+                for b_check in budget_lines_check:
+                    if adequacies.adaptation_type != 'compensated' and adequacies.date_of_liquid_adu and \
+                            b_check.start_date and b_check.end_date:
+                        if adequacies.date_of_liquid_adu >= b_check.start_date and adequacies.date_of_liquid_adu <= b_check.end_date:
+                            found = True
+                    elif adequacies.adaptation_type == 'compensated' and adequacies.date_of_budget_affected \
+                            and b_check.start_date and b_check.end_date:
+                        if adequacies.date_of_budget_affected >= b_check.start_date and \
+                                adequacies.date_of_budget_affected <= b_check.end_date:
+                            found = True
+                if not found:
+                    raise ValidationError(_("%s Program code is not available in %s with selected quarter!" % \
+                                            (line.program.program_code, adequacies.budget_id.name)))
+
                 if line.amount < 10000:
                     raise ValidationError(_(
                         "The total amount of the increases/decreases should be greater than or equal to 10000"))
@@ -641,13 +663,13 @@ class Adequacies(models.Model):
                         for b_line in budget_lines:
                             if b_line.start_date:
                                 b_s_month = b_line.start_date.month
-                                if b_month in (1,2,3) and b_s_month in (1,2,3):
+                                if b_month in (1, 2, 3) and b_s_month in (1, 2, 3):
                                     budget_line = b_line
                                 elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
                                     budget_line = b_line
                                 elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
                                     budget_line = b_line
-                                elif b_month in (10,11,12) and b_s_month in (10,11,12):
+                                elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
                                     budget_line = b_line
                     if not budget_line:
                         budget_line = self.env['expenditure.budget.line'].sudo().search(
@@ -665,8 +687,8 @@ class Adequacies(models.Model):
                     counter_increased += 1
             if code_list_decrese:
                 raise ValidationError(_("You can not decrease amount more than assigned amount! \n %s" % \
-                                        ' '.join([str(elem) for elem in code_list_decrese]) ))
-            if self.adaptation_type == 'compensated' and total_decreased != total_increased:
+                                        ' '.join([str(elem) for elem in code_list_decrese])))
+            if adequacies.adaptation_type == 'compensated' and total_decreased != total_increased:
                 raise ValidationError(_(
                     "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!"))
 
@@ -741,7 +763,8 @@ class Adequacies(models.Model):
                             budget_line.write({'assigned': final_amount})
                 else:
                     budget_line = self.env['expenditure.budget.line'].sudo().search(
-                        [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
+                        [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)],
+                        limit=1)
                     if budget_line:
                         amount = budget_line.assigned
                         if line.line_type == 'decrease':
@@ -847,7 +870,6 @@ class Adequacies(models.Model):
 
 
 class AdequaciesLines(models.Model):
-
     _name = 'adequacies.lines'
     _description = 'Adequacies Lines'
     _rec_name = ''

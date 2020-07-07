@@ -149,16 +149,16 @@ class ProgramCode(models.Model):
             for line in lines:
                 authorized += line.authorized
                 assigned += line.assigned
-                if line.start_date.month == 1 and \
+                if line.start_date and line.end_date and line.start_date.month == 1 and \
                     line.start_date.day == 1 and line.end_date.month == 3 and line.end_date.day == 31:
                     st_ass += line.assigned
-                elif line.start_date.month == 4 and \
+                elif line.start_date and line.end_date and line.start_date and line.end_date and line.start_date.month == 4 and \
                     line.start_date.day == 1 and line.end_date.month == 6 and line.end_date.day == 30 :
                     nd_ass += line.assigned
-                elif line.start_date.month == 7 and \
+                elif line.start_date and line.end_date and line.start_date.month == 7 and \
                     line.start_date.day == 1 and line.end_date.month == 9 and line.end_date.day == 30:
                     rd_ass += line.assigned
-                elif line.start_date.month == 10 and \
+                elif line.start_date and line.end_date and line.start_date.month == 10 and \
                     line.start_date.day == 1 and line.end_date.month == 12 and line.end_date.day == 31:
                     th_ass += line.assigned
             code.total_assigned_amt = assigned
