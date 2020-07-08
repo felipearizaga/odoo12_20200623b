@@ -9,8 +9,8 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <field name="workstation_id" position="after">
-                    <field name="dependancy_id" />
-                    <field name="sub_dependancy_id" />
+                    <field name="dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
+                    <field name="sub_dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
                 </field>
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='type_of_bussiness_line']"
                        position="before">

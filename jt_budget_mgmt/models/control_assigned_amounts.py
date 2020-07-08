@@ -122,6 +122,7 @@ class ControlAssignedAmounts(models.Model):
         if self._context.get('reimport'):
             ctx['reimport'] = True
         return {
+            'name': _("Import Lines"),
             'type': 'ir.actions.act_window',
             'res_model': 'import.assigned.amount.line',
             'view_mode': 'form',

@@ -13,7 +13,7 @@
                             <field name="country_id"/>
                             <field name="init_balance"/>
                             <field name="end_balance"/>
-                            <field name="parent_id" invisible="1"/>
+                            <field name="parent_id"/>
                         </group>
                     </sheet>
                 </form>
@@ -30,7 +30,7 @@
                     <field name="country_id"/>
                     <field name="init_balance"/>
                     <field name="end_balance"/>
-                    <field name="parent_id" invisible="1"/>
+                    <field name="parent_id"/>
                 </tree>
             </field>
         </record>

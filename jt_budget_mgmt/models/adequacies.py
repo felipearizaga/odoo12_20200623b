@@ -144,6 +144,7 @@ class Adequacies(models.Model):
 
     def import_lines(self):
         return {
+            'name': _('Import Adequacies'),
             'type': 'ir.actions.act_window',
             'res_model': 'import.adequacies.line',
             'view_mode': 'form',

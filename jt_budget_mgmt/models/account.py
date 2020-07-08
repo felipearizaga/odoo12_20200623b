@@ -28,8 +28,8 @@ class AccountMove(models.Model):
 
     budget_id = fields.Many2one('expenditure.budget')
     adequacy_id = fields.Many2one('adequacies')
-    dependancy_id = fields.Many2one('dependency', string='Dependency', readonly=[('payment_state', '!=', 'draft')])
-    sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency',readonly=[('payment_state', '!=', 'draft')])
+    dependancy_id = fields.Many2one('dependency', string='Dependency', )
+    sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
 
 class AccountMoveLine(models.Model):
 

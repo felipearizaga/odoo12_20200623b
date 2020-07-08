@@ -15,7 +15,7 @@
                             <field name="accrued_amt" widget="float"/>
                             <field name="raised_amt" widget="float"/>
                             <field name="difference_amt" widget="float"/>
-                            <field name="parent_id" invisible="1"/>
+                            <field name="parent_id"/>
                         </group>
                     </sheet>
                 </form>
@@ -34,7 +34,7 @@
                     <field name="accrued_amt"/>
                     <field name="raised_amt"/>
                     <field name="difference_amt"/>
-                    <field name="parent_id" invisible="1"/>
+                    <field name="parent_id"/>
                 </tree>
             </field>
         </record>

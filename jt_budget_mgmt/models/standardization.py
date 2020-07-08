@@ -792,6 +792,7 @@ class Standardization(models.Model):
 
     def import_lines(self):
         return {
+            'name': _('Import Standardization Lines'),
             'type': 'ir.actions.act_window',
             'res_model': 'import.standardization.line',
             'view_mode': 'form',

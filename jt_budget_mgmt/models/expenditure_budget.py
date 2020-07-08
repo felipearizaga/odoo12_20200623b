@@ -184,7 +184,7 @@ class ExpenditureBudget(models.Model):
         if self._context.get('reimport'):
             ctx['reimport'] = True
         return {
-            'name': "Import Budget Lines",
+            'name': _("Import Budget Lines"),
             'type': 'ir.actions.act_window',
             'res_model': 'import.line',
             'view_mode': 'form',

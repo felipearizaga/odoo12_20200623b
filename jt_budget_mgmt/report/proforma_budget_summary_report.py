@@ -95,7 +95,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
     def _init_filter_budget_control(self, options, previous_options=None):
         options['budget_control'] = []
         if self.env.user.lang == 'es_MX':
-            list_labels = ['Partida', 'Autorizado', 'Total Asignado Anual', 'Asignado 1er Trimestre',
+            list_labels = ['Partida de Gasto (PAR)', 'Autorizado', 'Total Asignado Anual', 'Asignado 1er Trimestre',
                            'Asignado 2do Trimestre', 'Asignado 3er Trimestre',
                            'Asignado 4to Trimestre', 'Modificado Anual',
                            'Por Ejercer', 'Comprometido', 'Devengado', 'Ejercido', 'Pagado', 'Disponible']
@@ -304,13 +304,49 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         end = datetime.strptime(
             options['date'].get('date_to'), '%Y-%m-%d').date()
 
+        domain = [('expenditure_budget_id.state', '=', 'validate'),
+             ('start_date', '>=', start), ('end_date', '<=', end)]
+
+        if len(options['selected_programs']) > 0:
+            domain.append(('program_code_id.program_id.key_unam', 'in', options['selected_programs']))
+        if len(options['selected_sub_programs']) > 0:
+            domain.append(('program_code_id.sub_program_id.sub_program', 'in', options['selected_sub_programs']))
+        if len(options['selected_dependency']) > 0:
+            domain.append(('program_code_id.dependency_id.dependency', 'in', options['selected_dependency']))
+        if len(options['selected_sub_dependency']) > 0:
+            domain.append(('program_code_id.sub_dependency_id.sub_dependency', 'in', options['selected_sub_dependency']))
+        if len(options['selected_items']) > 0:
+            domain.append(('program_code_id.item_id.item', 'in', options['selected_items']))
+        if len(options['selected_or']) > 0:
+            domain.append(('program_code_id.resource_origin_id.key_origin', 'in', options['selected_or']))
+        if len(options['selected_ai']):
+            domain.append(('program_code_id.institutional_activity_id.number', 'in', options['selected_ai']))
+        if len(options['selected_conpp']) > 0:
+            domain.append(('program_code_id.budget_program_conversion_id.shcp.name', 'in', options['selected_conpp']))
+        if len(options['selected_conpa']) > 0:
+            domain.append(('program_code_id.conversion_item_id.federal_part', 'in', options['selected_conpa']))
+        if len(options['selected_expenses']) > 0:
+            domain.append(('program_code_id.expense_type_id.key_expenditure_type', 'in', options['selected_expenses']))
+        if len(options['selected_ug']) > 0:
+            domain.append(('program_code_id.location_id.state_key', 'in', options['selected_ug']))
+        if len(options['selected_wallets']) > 0:
+            domain.append(('program_code_id.portfolio_id.wallet_password', 'in', options['selected_wallets']))
+        if len(options['selected_tp']) > 0:
+            domain.append(('program_code_id.project_type_id.project_type_identifier', 'in', options['selected_tp']))
+        if len(options['selected_pn']) > 0:
+            domain.append(('program_code_id.project_number', 'in', options['selected_pn']))
+        if len(options['selected_stage']) > 0:
+            domain.append(('program_code_id.stage_id.stage_identifier', 'in', options['selected_stage']))
+        if len(options['selected_type']) > 0:
+            domain.append(('program_code_id.agreement_type_id.agreement_type', 'in', options['selected_type']))
+        if len(options['selected_agreement_number']) > 0:
+            domain.append(('program_code_id.number_agreement', 'in', options['selected_agreement_number']))
+
         lines = []
         b_line_obj = self.env['expenditure.budget.line']
         adequacies_line_obj = self.env['adequacies.lines']
         item_list = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': []}
-        budget_lines = self.env['expenditure.budget.line'].search(
-            [('expenditure_budget_id.state', '=', 'validate'),
-             ('start_date', '>=', start), ('end_date', '<=', end)])
+        budget_lines = b_line_obj.search(domain)
         for li in budget_lines:
             if li.program_code_id and li.program_code_id.item_id:
                 key_i = int(li.program_code_id.item_id.item)
@@ -332,158 +368,131 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     item_list.update({'8': item_list.get('8') + [li]})
                 elif key_i >= 900 and key_i <= 999:
                     item_list.update({'9': item_list.get('9') + [li]})
-        program_code_list = []
-        need_total = False
+        program_code_list = [] # To prevent duplication of program code
+        need_total = False # If user select Expenditure Item then true this flag to display total
         for fc, budget_lines in item_list.items():
             if budget_lines:
-                main_id = False
+
+                main_id = False # id for line
+
+                # To append list with all columns
                 main_list = []
+
                 for b_line in budget_lines:
+                    prog_code = b_line.program_code_id
                     if not main_id:
                         main_id = b_line
-                    if b_line.program_code_id in program_code_list:
+                    if prog_code in program_code_list:
                         continue
+
                     columns = []
-                    if len(options['selected_programs']) > 0 and str(b_line.program_code_id.program_id.key_unam) not in \
-                            options['selected_programs']:
-                        continue
-                    if len(options['selected_sub_programs']) > 0 and str(
-                            b_line.program_code_id.sub_program_id.sub_program) not in options['selected_sub_programs']:
-                        continue
-                    if len(options['selected_dependency']) > 0 and str(
-                            b_line.program_code_id.dependency_id.dependency) not in options['selected_dependency']:
-                        continue
-                    if len(options['selected_sub_dependency']) > 0 and str(
-                            b_line.program_code_id.sub_dependency_id.sub_dependency) not in options[
-                        'selected_sub_dependency']:
-                        continue
-                    if len(options['selected_items']) > 0 and str(b_line.program_code_id.item_id.item) not in options[
-                        'selected_items']:
-                        continue
-                    if len(options['selected_or']) > 0 and str(
-                            b_line.program_code_id.resource_origin_id.key_origin) not in options['selected_or']:
-                        continue
-                    if len(options['selected_ai']) > 0 and str(
-                            b_line.program_code_id.institutional_activity_id.number) not in options['selected_ai']:
-                        continue
-                    if len(options['selected_conpp']) > 0 and str(
-                            b_line.program_code_id.budget_program_conversion_id.shcp.name) not in options[
-                        'selected_conpp']:
-                        continue
-                    if len(options['selected_conpa']) > 0 and str(
-                            b_line.program_code_id.conversion_item_id.federal_part) not in options['selected_conpa']:
-                        continue
-                    if len(options['selected_expenses']) > 0 and str(
-                            b_line.program_code_id.expense_type_id.key_expenditure_type) not in options[
-                        'selected_expenses']:
-                        continue
-                    if len(options['selected_ug']) > 0 and str(b_line.program_code_id.location_id.state_key) not in \
-                            options['selected_ug']:
-                        continue
-                    if len(options['selected_wallets']) > 0 and str(
-                            b_line.program_code_id.portfolio_id.wallet_password) not in options['selected_wallets']:
-                        continue
-                    if len(options['selected_tp']) > 0 and str(
-                            b_line.program_code_id.project_type_id.project_type_identifier) not in options[
-                        'selected_tp']:
-                        continue
-                    if len(options['selected_pn']) > 0 and str(b_line.program_code_id.project_number) not in options[
-                        'selected_pn']:
-                        continue
-                    if len(options['selected_stage']) > 0 and str(
-                            b_line.program_code_id.stage_id.stage_identifier) not in options['selected_stage']:
-                        continue
-                    if len(options['selected_type']) > 0 and str(
-                            b_line.program_code_id.agreement_type_id.agreement_type) not in options['selected_type']:
-                        continue
-                    if len(options['selected_agreement_number']) > 0 and str(
-                            b_line.program_code_id.number_agreement) not in options['selected_agreement_number']:
-                        continue
+                    col_data_list = [] # Used to add total
 
                     # Program code struture view fields
                     need_to_skip = 0
                     for column in options['selected_program_fields']:
-                        if column == 'Year':
-                            year = b_line.program_code_id.year and b_line.program_code_id.year.name or ''
+                        if column in ('Year', 'Año'):
+                            year = prog_code.year and prog_code.year.name or ''
                             columns.append({'name': str(year)})
+                            col_data_list.append(str(year))
                             need_to_skip += 1
-                        if column == 'Program':
-                            program = b_line.program_code_id.program_id and b_line.program_code_id.program_id.key_unam or ''
+                        if column in ('Program', 'Programa'):
+                            program = prog_code.program_id and prog_code.program_id.key_unam or ''
                             columns.append({'name': str(program)})
+                            col_data_list.append(str(program))
                             need_to_skip += 1
-                        if column == 'Sub Program':
-                            subprogram = b_line.program_code_id.sub_program_id and b_line.program_code_id.sub_program_id.sub_program or ''
+                        if column in ('Sub Program', 'Subprograma'):
+                            subprogram = prog_code.sub_program_id and prog_code.sub_program_id.sub_program or ''
                             columns.append({'name': str(subprogram)})
+                            col_data_list.append(str(subprogram))
                             need_to_skip += 1
-                        if column == 'Dependency':
-                            dependency = b_line.program_code_id.dependency_id and b_line.program_code_id.dependency_id.dependency or ''
+                        if column in ('Dependency', 'Dependencia'):
+                            dependency = prog_code.dependency_id and prog_code.dependency_id.dependency or ''
                             columns.append({'name': str(dependency)})
+                            col_data_list.append(str(dependency))
                             need_to_skip += 1
-                        if column == 'Sub Dependency':
-                            subdependency = b_line.program_code_id.sub_dependency_id and b_line.program_code_id.sub_dependency_id.sub_dependency or ''
+                        if column in ('Sub Dependency', 'Subdependencia'):
+                            subdependency = prog_code.sub_dependency_id and prog_code.sub_dependency_id.sub_dependency or ''
                             columns.append({'name': str(subdependency)})
+                            col_data_list.append(str(subdependency))
                             need_to_skip += 1
-                        if column == 'Expenditure Item':
-                            item = b_line.program_code_id.item_id and b_line.program_code_id.item_id.item or ''
+                        if column in ('Expenditure Item', 'Partida de Gasto (PAR)'):
+                            item = prog_code.item_id and prog_code.item_id.item or ''
                             columns.append({'name': str(item)})
+                            col_data_list.append(str(item))
                             need_to_skip += 1
-                        if column == 'Check Digit':
-                            check_digit = b_line.program_code_id.check_digit or ''
+                        if column in ('Check Digit', 'Dígito Verificador'):
+                            check_digit = prog_code.check_digit or ''
                             columns.append({'name': str(check_digit)})
+                            col_data_list.append(str(check_digit))
                             need_to_skip += 1
-                        if column == 'Source of Resource':
-                            sor = b_line.program_code_id.resource_origin_id and b_line.program_code_id.resource_origin_id.key_origin or ''
+                        if column in ('Source of Resource', 'Origen del Recurso'):
+                            sor = prog_code.resource_origin_id and prog_code.resource_origin_id.key_origin or ''
                             columns.append({'name': str(sor)})
+                            col_data_list.append(str(sor))
                             need_to_skip += 1
-                        if column == 'Institutional Activity':
-                            ai = b_line.program_code_id.institutional_activity_id and b_line.program_code_id.institutional_activity_id.number or ''
+                        if column in ('Institutional Activity', 'Actividad Institucional'):
+                            ai = prog_code.institutional_activity_id and prog_code.institutional_activity_id.number or ''
                             columns.append({'name': str(ai)})
+                            col_data_list.append(str(ai))
                             need_to_skip += 1
-                        if column == 'Conversion of Budgetary Program':
-                            conversion = b_line.program_code_id.budget_program_conversion_id and b_line.program_code_id.budget_program_conversion_id.shcp and b_line.program_code_id.budget_program_conversion_id.shcp.name or ''
+                        if column in ('Conversion of Budgetary Program', 'Conversión de Programa Presupuestario'):
+                            conversion = prog_code.budget_program_conversion_id and \
+                                         prog_code.budget_program_conversion_id.shcp and \
+                                         prog_code.budget_program_conversion_id.shcp.name or ''
                             columns.append({'name': str(conversion)})
+                            col_data_list.append(str(conversion))
                             need_to_skip += 1
-                        if column == 'SHCP items':
-                            shcp = b_line.program_code_id.conversion_item_id and b_line.program_code_id.conversion_item_id.federal_part or ''
+                        if column in ('SHCP items', 'Conversión Con Partida (CONPA)'):
+                            shcp = prog_code.conversion_item_id and prog_code.conversion_item_id.federal_part or ''
                             columns.append({'name': str(shcp)})
+                            col_data_list.append(str(shcp))
                             need_to_skip += 1
-                        if column == 'Type of Expenditure':
-                            expense_type = b_line.program_code_id.expense_type_id and b_line.program_code_id.expense_type_id.key_expenditure_type or ''
+                        if column in ('Type of Expenditure', 'Tipo de Gasto'):
+                            expense_type = prog_code.expense_type_id and prog_code.expense_type_id.key_expenditure_type or ''
                             columns.append({'name': str(expense_type)})
+                            col_data_list.append(str(expense_type))
                             need_to_skip += 1
-                        if column == 'Geographic Location':
-                            location = b_line.program_code_id.location_id and b_line.program_code_id.location_id.state_key or ''
+                        if column in ('Geographic Location', 'Ubicación Geográfica'):
+                            location = prog_code.location_id and prog_code.location_id.state_key or ''
                             columns.append({'name': str(location)})
+                            col_data_list.append(str(location))
                             need_to_skip += 1
-                        if column == 'Wallet Key':
-                            wallet_key = b_line.program_code_id.portfolio_id and b_line.program_code_id.portfolio_id.wallet_password or ''
+                        if column in ('Wallet Key', 'Clave Cartera'):
+                            wallet_key = prog_code.portfolio_id and prog_code.portfolio_id.wallet_password or ''
                             columns.append({'name': str(wallet_key)})
+                            col_data_list.append(str(wallet_key))
                             need_to_skip += 1
-                        if column == 'Type of Project':
-                            project_type = b_line.program_code_id.project_type_id and b_line.program_code_id.project_type_id.project_type_identifier or ''
+                        if column in ('Type of Project', 'Tipo de Proyecto'):
+                            project_type = prog_code.project_type_id and prog_code.project_type_id.project_type_identifier or ''
                             columns.append({'name': str(project_type)})
+                            col_data_list.append(str(project_type))
                             need_to_skip += 1
-                        if column == 'Project Number':
-                            project_number = b_line.program_code_id.project_number or ''
+                        if column in ('Project Number', 'Número de Proyecto'):
+                            project_number = prog_code.project_number or ''
                             columns.append({'name': str(project_number)})
+                            col_data_list.append(str(project_number))
                             need_to_skip += 1
-                        if column == 'Stage':
-                            stage = b_line.program_code_id.stage_id and b_line.program_code_id.stage_id.stage_identifier or ''
+                        if column in ('Stage', 'Etapa'):
+                            stage = prog_code.stage_id and prog_code.stage_id.stage_identifier or ''
                             columns.append({'name': str(stage)})
+                            col_data_list.append(str(stage))
                             need_to_skip += 1
-                        if column == 'Type of Agreement':
-                            agreement_type = b_line.program_code_id.agreement_type_id and b_line.program_code_id.agreement_type_id.agreement_type or ''
+                        if column in ('Type of Agreement', 'Tipo de Convenio'):
+                            agreement_type = prog_code.agreement_type_id and prog_code.agreement_type_id.agreement_type or ''
                             columns.append({'name': str(agreement_type)})
+                            col_data_list.append(str(agreement_type))
                             need_to_skip += 1
-                        if column == 'Agreement Number':
-                            agreement_number = b_line.program_code_id.number_agreement or ''
+                        if column in ('Agreement Number', 'Número de Convenio'):
+                            agreement_number = prog_code.number_agreement or ''
                             columns.append({'name': str(agreement_number)})
+                            col_data_list.append(str(agreement_number))
                             need_to_skip += 1
 
-                    all_b_lines = b_line_obj.search([('program_code_id', '=', b_line.program_code_id.id),
+                    all_b_lines = b_line_obj.search([('program_code_id', '=', prog_code.id),
                                                      ('start_date', '>=', start), ('end_date', '<=', end)])
                     annual_modified = 0
-                    adequacies_lines = adequacies_line_obj.search([('program', '=', b_line.program_code_id.id),
+                    adequacies_lines = adequacies_line_obj.search([('program', '=', prog_code.id),
                                                                    ('adequacies_id.state', '=', 'accepted')])
                     for ad_line in adequacies_lines:
                         if ad_line.line_type == 'increase':
@@ -493,64 +502,79 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     authorized = sum(x.authorized for x in all_b_lines)
                     annual_modified = annual_modified + authorized
                     for column in options['selected_budget_control']:
-                        if column in ('Partida', 'Expense Item'):
-                            year = b_line.item_id and b_line.item_id.item or ''
-                            columns.append({'name': str(year)})
+                        if column in ('Partida de Gasto (PAR)', 'Expense Item'):
+                            item = b_line.item_id and b_line.item_id.item or ''
+                            columns.append({'name': str(item)})
+                            col_data_list.append(str(item))
                             need_total = True
                         elif column in ('Authorized', 'Autorizado'):
                             columns.append({'name': authorized})
+                            col_data_list.append(authorized)
                         elif column in ('Assigned Total Annual', 'Total Asignado Anual'):
-                            columns.append({'name': sum(x.assigned for x in all_b_lines)})
+                            assigned = sum(x.assigned for x in all_b_lines)
+                            columns.append({'name': assigned})
+                            col_data_list.append(str(assigned))
                         elif column in ('Annual Modified', 'Modificado Anual'):
                             columns.append({'name': annual_modified})
+                            col_data_list.append(str(annual_modified))
                         elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
-                            columns.append({'name': sum(x.assigned if x.start_date.month == 1 and \
+                            amt = sum(x.assigned if x.start_date.month == 1 and \
                                                                       x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
-                                                            else 0 for x in all_b_lines)})
+                                                            else 0 for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                         elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
-                            columns.append({'name': sum(x.assigned if x.start_date.month == 4 and \
+                            amt = sum(x.assigned if x.start_date.month == 4 and \
                                                                       x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
-                                                            else 0 for x in all_b_lines)})
+                                                            else 0 for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                         elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
-                            columns.append({'name': sum(x.assigned if x.start_date.month == 7 and \
-                                                                      x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
-                                                            else 0 for x in all_b_lines)})
+                            amt = sum(x.assigned if x.start_date.month == 7 and \
+                                              x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
+                                    else 0 for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                         elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
-                            columns.append({'name': sum(x.assigned if x.start_date.month == 10 and \
+                            amt = sum(x.assigned if x.start_date.month == 10 and \
                                                                       x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
-                                                            else 0 for x in all_b_lines)})
+                                                            else 0 for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                         elif column in ('Per Exercise', 'Por Ejercer'):
-                            columns.append({'name': sum(x.available for x in all_b_lines)})
+                            amt = sum(x.available for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                         elif column in ('Committed', 'Comprometido'):
                             columns.append({'name': 0})
+                            col_data_list.append(str(0))
                         elif column in ('Accrued', 'Devengado'):
                             columns.append({'name': 0})
+                            col_data_list.append(str(0))
                         elif column in ('Exercised', 'Ejercido'):
                             columns.append({'name': 0})
+                            col_data_list.append(str(0))
                         elif column in ('Paid', 'Pagado'):
                             columns.append({'name': 0})
+                            col_data_list.append(str(0))
                         elif column in ('Available', 'Disponible'):
-                            columns.append({'name': sum(x.available for x in all_b_lines)})
+                            amt = sum(x.available for x in all_b_lines)
+                            columns.append({'name': amt})
+                            col_data_list.append(str(amt))
                     if need_total:
-                        main_list.append(columns)
+                        main_list.append(col_data_list)
 
                     lines.append({
                         'id': b_line.id,
-                        'name': b_line.program_code_id.program_code,
+                        'name': prog_code.program_code,
                         'columns': columns,
                         'level': 0,
                         'unfoldable': False,
                         'unfolded': True,
                     })
-                    program_code_list.append(b_line.program_code_id)
+                    program_code_list.append(prog_code)
                 if need_total:
-                    main_list_new = main_list
-                    list_with_data = []
-                    for l in main_list_new:
-                        new_list = []
-                        for d in l:
-                            new_list.append(d.get('name'))
-                        list_with_data.append(new_list)
+                    list_with_data = main_list
                     list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                     main_cols = []
                     counter = 0
