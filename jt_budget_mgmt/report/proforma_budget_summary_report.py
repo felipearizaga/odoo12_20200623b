@@ -22,7 +22,7 @@
 ##############################################################################
 from datetime import datetime
 from odoo import models, fields, api, _
-
+from odoo.tools.profiler import profile
 
 class ProformaBudgetSummaryReport(models.AbstractModel):
     _name = "proforma.budget.summary.report"
@@ -298,6 +298,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         options['selected_agreement_number'] = selected_agreement_number.mapped(
             'number_agreement')
 
+    [...]
+    @profile
+    @api.model
     def _get_lines(self, options, line_id=None):
         start = datetime.strptime(
             str(options['date'].get('date_from')), '%Y-%m-%d').date()
