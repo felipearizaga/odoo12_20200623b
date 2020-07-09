@@ -8,6 +8,13 @@
             <field name="inherit_id" ref="jt_supplier_payment.payment_req_form_view"/>
             <field name="priority">20</field>
             <field name="arch" type="xml">
+            	<xpath expr="//header/button[@name='action_register']" position="after">
+            		<button name="action_draft_budget" string="Draft" class="oe_highlight" type="object" attrs="{'invisible':[('payment_state', 'in', ('draft','cancel'))]}"/>
+            		<button name="action_validate_budget" string="Validate budget" class="oe_highlight" type="object" attrs="{'invisible':[('payment_state', '!=', 'registered')]}"/>
+            		<button name="action_cancel_budget" string="Cancel" class="oe_highlight" type="object" attrs="{'invisible':[('payment_state', 'in', ('paid','cancel'))]}"/>
+            		
+            	</xpath>
+            
                 <field name="workstation_id" position="after">
                     <field name="dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
                     <field name="sub_dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>

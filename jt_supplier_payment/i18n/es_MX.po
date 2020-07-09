@@ -1,0 +1,121 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* jt_supplier_payment
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-08 00:55+0000\n"
+"PO-Revision-Date: 2020-07-08 00:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>ATTENDED:</span></b>"
+msgstr "<b><span>ATENDIO:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Payment to supplier in</span></b>"
+msgstr "<b><span>PAGO A PROVEEDOR:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Amount:</span></b>"
+msgstr "<b><span>IMPORTE:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Supplier RFC:</span></b>"
+msgstr "<b><span>RFC Proveedor:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Date:</span>&amp;nbsp;&amp;nbsp;</b>"
+msgstr "<b><span>Fecha:</span>&amp;nbsp;&amp;nbsp;</b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Folio:</span></b>"
+msgstr "<b><span>Folio:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Provider password:</span></b>"
+msgstr "<b><span>Clave Proveedor:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Provider:</span></b>"
+msgstr "<b><span>Proveedor:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Request for:</span></b>"
+msgstr "<b><span>Solicitud de:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Subdependence:</span></b>"
+msgstr "<b><span>Subdependencia:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>Dependence:</span></b>"
+msgstr "<b><span>Dependencia:</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b>Number of Sheets:</b>&amp;nbsp;&amp;nbsp;"
+msgstr "<b>Numero de Hojas:</b>&amp;nbsp;&amp;nbsp;"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<span><b>Administrative Process Unit</b></span>"
+msgstr "<span><b>Unidad De Proceso Administrativo</b></span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<span><b>COUNTER-RECEIPT</b></span>"
+msgstr "<span><b>CONTRA-RECIBO</b></span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<span><b>GENERAL DIRECTORATE OF BUDGETARY CONTROL</b></span>"
+msgstr "<span><b>DIRECCION GENERAL DE CONTROL PRESUPUESTAL</b></span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b><span>PLEASE REVIEW THE TICKET DATA</span></b>"
+msgstr "<b><span>FOVOR DE REVISAR LOS DATOS DEL TICKET</span></b>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.report_again_receipt_template
+msgid "<b>Number of administrative forms:</b>"
+msgstr "<b>Numero de formas administrativas</b>"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

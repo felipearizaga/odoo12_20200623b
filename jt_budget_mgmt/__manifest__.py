@@ -88,7 +88,7 @@
         'wizard/import_assigned_amount_line_view.xml',
         'wizard/affect_payment_budget_wiz_view.xml',
         'wizard/request_summary_report_wiz.xml',
-
+        'wizard/budget_insufficiency_view.xml',
         'views/payment_place.xml',
         'views/res_partner_view.xml',
         'views/hr_employee_view.xml',

@@ -65,6 +65,8 @@
                                 <field name="batch_folio"/>
                                 <field name="request_type"/>
                                 <field name="payroll_adjustment"/>
+                                <field name="for_inappropriate"
+                                       attrs="{'invisible': [('payroll_adjustment', '!=', 'unfounded')]}"/>
                                 <field name="substate"/>
                                 <field name="beneficiary_id" domain="[('beneficiary_type', '=', 'alimony')]"/>
                             </group>

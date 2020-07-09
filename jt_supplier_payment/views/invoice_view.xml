@@ -9,6 +9,7 @@
                 <form>
 					<header>
 					 	<button name="action_register" string="Register" class="oe_highlight" type="object"  attrs="{'invisible': [('payment_state', '!=', 'draft')]}"/>
+					 	
                         <field name="payment_state" widget="statusbar" />
                     </header>
                     <sheet>
@@ -109,10 +110,12 @@
                                 </div>
 
                                 <field name="reason_rejection_req" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="reason_rejection" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                
                                 <field name="reason_cancellation" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                             </group>
                         </group>
+                        <label for="reason_rejection"/>
+                        <field name="reason_rejection" readonly="1" attrs="{'invisible': [('payment_state', '!=', 'rejected')]}"/>
                         <notebook>
                             <page id="invoice_tab"
                                   string="Invoice Lines"

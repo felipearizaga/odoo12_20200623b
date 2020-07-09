@@ -20,12 +20,21 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import import_line
-from . import reject
-from . import import_adequacies_line
-from . import import_standardization_line
-from . import reject_standardization_line
-from . import import_assigned_amount_line
-from . import affect_payment_budget_wiz
-from . import request_summary_report
-from . import budgetary_insufficiency_wizard
+from odoo import models, fields
+
+
+class BudegtInsufficiencWiz(models.TransientModel):
+
+    _name = 'budget.insufficien.wiz'
+    _description = 'Budgetary Insufficienc'
+
+    msg = fields.Text('Message')
+    is_budget_suf = fields.Boolean(default=False)
+    move_id = fields.Many2one('account.move','Move')
+    
+    def action_ok(self):
+        self.move_id.payment_state = 'rejected'
+        self.move_id.reason_rejection = self.msg
+        
+    def action_budget_allocation(self):
+        self.move_id.payment_state = 'approved_payment'

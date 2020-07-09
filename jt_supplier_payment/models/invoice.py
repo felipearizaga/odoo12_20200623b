@@ -73,7 +73,11 @@ class AccountMove(models.Model):
         return journal
     
     baneficiary_id = fields.Many2one('hr.employee', string="Beneficiary of the payment")
-    payment_state = fields.Selection([('draft', 'Draft'),('registered','Registered')],default='draft',copy=False)
+    payment_state = fields.Selection([('draft', 'Draft'),('registered','Registered'),
+                                      ('approved_payment','Approved for payment'),
+                                      ('paid','Paid'),
+                                      ('rejected','Rejected'),
+                                      ('cancel','Cancel')],default='draft',copy=False)
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
     rfc = fields.Char("RFC", related='baneficiary_id.rfc', store=True)
     student_account = fields.Char("Student Account")
@@ -158,6 +162,7 @@ class AccountMove(models.Model):
         for move in self:
             move.payment_state = 'registered'
 
+            
 class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'

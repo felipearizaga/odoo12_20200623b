@@ -32,7 +32,10 @@
     'depends': ['jt_payroll_payment'],
     'data': [
         'data/data.xml',
-        'views/invoice_view.xml'
+        'data/paper_format.xml',
+        'views/invoice_view.xml',
+        'views/report_receipt_template.xml',
+        'views/report_again_receipt.xml',
     ],
     'application': False,
     'installable': True,
