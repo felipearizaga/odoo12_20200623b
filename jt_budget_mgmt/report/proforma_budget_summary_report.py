@@ -298,6 +298,14 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         options['selected_agreement_number'] = selected_agreement_number.mapped(
             'number_agreement')
 
+
+
+
+    def _get_sum_trimster(self, all_b_lines, s_month, s_day, e_month, e_day):
+
+        return sum(x.assigned if x.start_date.month == s_month and \
+                                x.start_date.day == s_day and x.end_date.month == e_month and x.end_date.day == e_day \
+                      else 0 for x in all_b_lines)
     [...]
     @profile
     @api.model
@@ -505,65 +513,32 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     authorized = sum(x.authorized for x in all_b_lines)
                     annual_modified = annual_modified + authorized
                     for column in options['selected_budget_control']:
+                        amt = 0
                         if column in ('Partida de Gasto (PAR)', 'Expense Item'):
-                            item = b_line.item_id and b_line.item_id.item or ''
-                            columns.append({'name': str(item)})
-                            col_data_list.append(str(item))
+                            amt = b_line.item_id and b_line.item_id.item or ''
                             need_total = True
                         elif column in ('Authorized', 'Autorizado'):
-                            columns.append({'name': authorized})
-                            col_data_list.append(authorized)
+                            amt = authorized
                         elif column in ('Assigned Total Annual', 'Total Asignado Anual'):
                             assigned = sum(x.assigned for x in all_b_lines)
-                            columns.append({'name': assigned})
-                            col_data_list.append(str(assigned))
+                            amt = assigned
                         elif column in ('Annual Modified', 'Modificado Anual'):
-                            columns.append({'name': annual_modified})
-                            col_data_list.append(str(annual_modified))
+                            amt = annual_modified
                         elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
-                            amt = sum(x.assigned if x.start_date.month == 1 and \
-                                                                      x.start_date.day == 1 and x.end_date.month == 3 and x.end_date.day == 31 \
-                                                            else 0 for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
+                            amt = self._get_sum_trimster(all_b_lines, 1, 1, 3, 31)
                         elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
-                            amt = sum(x.assigned if x.start_date.month == 4 and \
-                                                                      x.start_date.day == 1 and x.end_date.month == 6 and x.end_date.day == 30 \
-                                                            else 0 for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
+                            amt = self._get_sum_trimster(all_b_lines, 4, 1, 6, 30)
                         elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
-                            amt = sum(x.assigned if x.start_date.month == 7 and \
-                                              x.start_date.day == 1 and x.end_date.month == 9 and x.end_date.day == 30 \
-                                    else 0 for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
+                            amt = self._get_sum_trimster(all_b_lines, 7, 1, 9, 30)
                         elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
-                            amt = sum(x.assigned if x.start_date.month == 10 and \
-                                                                      x.start_date.day == 1 and x.end_date.month == 12 and x.end_date.day == 31 \
-                                                            else 0 for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
+                            amt = self._get_sum_trimster(all_b_lines, 10, 1, 12, 31)
                         elif column in ('Per Exercise', 'Por Ejercer'):
                             amt = sum(x.available for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
-                        elif column in ('Committed', 'Comprometido'):
-                            columns.append({'name': 0})
-                            col_data_list.append(str(0))
-                        elif column in ('Accrued', 'Devengado'):
-                            columns.append({'name': 0})
-                            col_data_list.append(str(0))
-                        elif column in ('Exercised', 'Ejercido'):
-                            columns.append({'name': 0})
-                            col_data_list.append(str(0))
-                        elif column in ('Paid', 'Pagado'):
-                            columns.append({'name': 0})
-                            col_data_list.append(str(0))
                         elif column in ('Available', 'Disponible'):
                             amt = sum(x.available for x in all_b_lines)
-                            columns.append({'name': amt})
-                            col_data_list.append(str(amt))
+
+                        columns.append({'name': amt})
+                        col_data_list.append(str(amt))
                     if need_total:
                         main_list.append(col_data_list)
 
