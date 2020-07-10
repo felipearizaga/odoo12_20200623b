@@ -86,7 +86,8 @@ class StatusOfActivities(models.AbstractModel):
         if options.get('unposted_in_period'):
             posted = 'posted'
 
-        last_total_dict = {}
+        last_total_dict = {} # in this report we are calculatiing main total like Total of 4 code account minus
+                                # total of 5 code accounts)
         for line in hierarchy_lines:
             if line.code in ('4.0.0.0', '5.0.0.0'):
                 lines.append({
@@ -161,9 +162,20 @@ class StatusOfActivities(models.AbstractModel):
                             else:
                                 main_balance_dict.update({pd: bal})
                             if pd in last_total_dict.keys():
-                                last_total_dict.update({pd: last_total_dict.get(pd) + bal})
+                                pe_dict = last_total_dict.get(pd)
+                                if line.code.startswith('4') and '4' in pe_dict.keys():
+                                    pe_dict.update({'4': pe_dict.get('4') + bal})
+                                elif line.code.startswith('5') and '5' in pe_dict.keys():
+                                    pe_dict.update({'5': pe_dict.get('5') + bal})
+                                elif line.code.startswith('5') and '5' not in pe_dict.keys():
+                                    pe_dict.update({'5': bal})
+                                # last_total_dict.update({pd: last_total_dict.get(pd) + bal})
                             else:
-                                last_total_dict.update({pd: bal})
+                                if line.code.startswith('4'):
+                                    last_total_dict.update({pd: {'4': bal}})
+                                else:
+                                    pe_total_dict = last_total_dict.get(pd)
+                                    pe_total_dict.update({'5': bal})
 
                         for pe in periods:
                             if pe.get('string') in period_dict.keys():
@@ -198,7 +210,16 @@ class StatusOfActivities(models.AbstractModel):
         main_total_col = []
         for pe in periods:
             if pe.get('string') in last_total_dict.keys():
-                main_total_col.append({'name': last_total_dict.get(pe.get('string'))})
+                pe_dict = last_total_dict.get(pe.get('string'))
+                if '4' in pe_dict.keys() and '5' in pe_dict.keys():
+                    if pe_dict.get('5') < 0 and pe_dict.get('4') > 0:
+                        main_total_col.append({'name': pe_dict.get('4') + pe_dict.get('5')})
+                    else:
+                        main_total_col.append({'name': pe_dict.get('4') - pe_dict.get('5')})
+                elif '4' in pe_dict.keys() and '5' not in pe_dict.keys():
+                    main_total_col.append({'name': pe_dict.get('4')})
+                elif '4' not in pe_dict.keys() and '5' in pe_dict.keys():
+                    main_total_col.append({'name': pe_dict.get('5')})
             else:
                 main_total_col.append({'name': 0})
         lines.append({

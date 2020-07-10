@@ -79,6 +79,8 @@
         'views/control_assigned_amounts_view.xml',
         'views/requested_reports_view.xml',
 
+        #Report Views
+        'views/report_payment_request.xml',
         # Wizard Files
         'wizard/import_line_view.xml',
         'wizard/reject_view.xml',

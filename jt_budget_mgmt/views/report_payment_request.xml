@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="payment_request_report_document_inherit_2" inherit_id="jt_supplier_payment.payment_request_report_document">
+            <xpath expr="//div[@id='informations']/div[@name='folio_dependency']" position="before">
+                 <div class="col-3" name="dependency">
+                     <strong>Dependency:</strong>
+                     <p class="m-0" t-if="o.dependancy_id"  t-field="o.dependancy_id.dependency"/>
+                 </div>
+                 <div class="col-3" name="subdependence">
+                     <strong>Subdependence:</strong>
+                     <p class="m-0" t-if="o.sub_dependancy_id" t-field="o.sub_dependancy_id.sub_dependency"/>
+                 </div>
+            </xpath>
+        </template>
+   
+	</data>
+</odoo>

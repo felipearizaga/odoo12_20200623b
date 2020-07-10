@@ -36,6 +36,7 @@
         'views/invoice_view.xml',
         'views/report_receipt_template.xml',
         'views/report_again_receipt.xml',
+        'views/payment_request_report.xml',
     ],
     'application': False,
     'installable': True,

@@ -11,5 +11,16 @@
             file="jt_supplier_payment.report_again_receipt_template"
             paperformat="jt_supplier_payment.report_receipt_paperformat"
         />
+        <!-- QWeb Reports -->
+        <report
+            id="payment_request_report"
+            model="account.move"
+            string="Payment Request Receipt"
+            report_type="qweb-pdf"
+            name="jt_supplier_payment.payment_request_report_template"
+            file="jt_supplier_payment.payment_request_report_template"
+            
+        />
+        
 	</data>
 </odoo>
