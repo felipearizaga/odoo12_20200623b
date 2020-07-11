@@ -75,7 +75,9 @@ class AccountMove(models.Model):
     baneficiary_id = fields.Many2one('hr.employee', string="Beneficiary of the payment")
     payment_state = fields.Selection([('draft', 'Draft'),('registered','Registered'),
                                       ('approved_payment','Approved for payment'),
+                                      ('for_payment_procedure','For Payment Procedure'),
                                       ('paid','Paid'),
+                                      ('done','Done'),
                                       ('rejected','Rejected'),
                                       ('cancel','Cancel')],default='draft',copy=False)
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
@@ -162,6 +164,19 @@ class AccountMove(models.Model):
         for move in self:
             move.payment_state = 'registered'
 
+
+
+#     def remove_journal_line(self):
+#         if self.
+
+#     @api.onchange('invoice_line_ids')
+#     def _onchange_invoice_line_ids(self):
+#         res = super(AccountMove,self)._onchange_invoice_line_ids()
+#         if self.is_payment_request:
+#             #{'subtype_ids': [(3, sid) for sid in old_sids]}
+#             #self.line_ids = [(3, sid) for sid in self.line_ids.ids]
+#             self.line_ids = [(5,self.line_ids.ids)]
+#         return res
             
 class AccountMoveLine(models.Model):
 

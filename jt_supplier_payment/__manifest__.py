@@ -37,6 +37,7 @@
         'views/report_receipt_template.xml',
         'views/report_again_receipt.xml',
         'views/payment_request_report.xml',
+        'views/account_journal_view.xml',
     ],
     'application': False,
     'installable': True,

@@ -38,3 +38,4 @@ class BudegtInsufficiencWiz(models.TransientModel):
         
     def action_budget_allocation(self):
         self.move_id.payment_state = 'approved_payment'
+        self.move_id.create_journal_line()

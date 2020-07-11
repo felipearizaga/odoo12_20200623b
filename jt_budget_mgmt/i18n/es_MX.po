@@ -4129,3 +4129,20 @@ msgstr ""
 #, python-format
 msgid "to print report."
 msgstr "imprimir Reporte."
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.payment_request_report_document_inherit_2
+msgid "<span>Programmatic Code</span>"
+msgstr "<span>Código programático</span>"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.payment_request_report_document_inherit_2
+msgid "<strong>Dependency:</strong>"
+msgstr "<strong>Dependencia:</strong>"
+
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.payment_request_report_document_inherit_2
+msgid "<strong>Subdependence:</strong>"
+msgstr "<strong>Subdependencia:</strong>"
+

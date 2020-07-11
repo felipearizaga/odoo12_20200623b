@@ -302,6 +302,23 @@ class ExpenditureBudget(models.Model):
 
                 if line.state in ['fail', 'draft']:
 
+#     @api.constrains('start_date')
+#     def check_budget_quarter(self):
+#         if self.start_date and self.expenditure_budget_id:
+#             
+#             b_s_month = self.start_date.month
+#             if b_s_month not in (1, 2, 3) and self.expenditure_budget_id.state =='draft':
+#                 raise ValidationError("You can only import and add lines for first quarter only!")
+
+                    # Check Date Quarter
+                    if line.start_date:
+                        b_s_month = line.start_date.month
+                        if b_s_month not in (1, 2, 3):
+                            failed_row += str(line_vals) + \
+                                          "------>> You can only import and add lines for first quarter only\n"
+                            failed_line_ids.append(line.id)
+                            continue
+
                     # Check Start and End Date
                     if not line.start_date:
                         failed_row += str(line_vals) + \
@@ -873,6 +890,7 @@ class ExpenditureBudgetLine(models.Model):
             for line in self:
                 line.available = vals.get('assigned')
         return super(ExpenditureBudgetLine, self).write(vals)
+        
 
     @api.model
     def create(self, vals):
@@ -880,5 +898,6 @@ class ExpenditureBudgetLine(models.Model):
         if res and res.assigned:
             res.available = res.assigned
         return res
+            
 
     # ALTER TABLE expenditure_budget_line DROP CONSTRAINT expenditure_budget_line_uniq_program_code_id;

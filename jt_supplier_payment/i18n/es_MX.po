@@ -99,6 +99,139 @@ msgstr "<b><span>FOVOR DE REVISAR LOS DATOS DEL TICKET</span></b>"
 msgid "<b>Number of administrative forms:</b>"
 msgstr "<b>Numero de formas administrativas</b>"
 
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Account</span>"
+msgstr "<span>Cuenta</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Amount</span>"
+msgstr "<span>Importe</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.external_layout_standard_payment
+msgid "<span>Administrative Secretary</span>"
+msgstr "<span>Secretario administrativo</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.external_layout_standard_payment
+msgid "<span>COORDINATION OF UPA'S Documentary review</span>"
+msgstr "<span>COORDINACIÓN DE LA REVISIÓN DOCUMENTAL DE LA UPA</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Description</span>"
+msgstr "<span>Descripción</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Egress key</span>"
+msgstr "<span>Clave de egreso</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.external_layout_standard_payment
+msgid "<span>Head of the dependence</span>"
+msgstr "<span>Titular de la dependencia</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Other amounts</span>"
+msgstr "<span>Otras Importe</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Taxes</span>"
+msgstr "<span>Impuestos</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Type of business</span>"
+msgstr "<span>Tipo de giro</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<span>Unit</span>"
+msgstr "<span>Precio Unitario</span>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong class=\"mr16\">Subtotal</strong>"
+msgstr "<strong class=\"mr16\">Subtotal</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Currency:</strong>"
+msgstr "<strong>Moneda:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Date:</strong>"
+msgstr "<strong>Fecha:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Dependency Folio:</strong>"
+msgstr "<strong>Folio de dependencia:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Documents:</strong>"
+msgstr "<strong>Documentos:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Forms:</strong>"
+msgstr "<strong>Formas:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Name:</strong>"
+msgstr "<strong>Nombre:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Password:</strong>"
+msgstr "<strong>Clave:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Payment method:</strong>"
+msgstr "<strong>Forma de pago:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>RFC:</strong>"
+msgstr "<strong>RFC:</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Subtotal</strong>"
+msgstr "<strong>Subtotal</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "<strong>Total</strong>"
+msgstr "<strong>Total</strong>"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "Beneficiary Data"
+msgstr "Datos del beneficiario"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.payment_request_report_document
+msgid "Data for Discharge"
+msgstr "Datos Para El Egreso"
+
+#. module: jt_supplier_payment
+#: model_terms:ir.ui.view,arch_db:jt_supplier_payment.external_layout_standard_payment
+msgid "Supplier Payment Request"
+msgstr "Solicitud de pago a proveedor"
+
+
+
+
 
 
 

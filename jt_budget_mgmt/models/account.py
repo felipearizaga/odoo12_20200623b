@@ -82,7 +82,24 @@ class AccountMove(models.Model):
         self.ensure_one()
         self.payment_state = 'cancel'
 
-        
+    def create_journal_line(self):
+        #self.line_ids = False
+        self.line_ids = [(0, 0, {
+                                     'account_id': self.journal_id.default_credit_account_id.id,
+                                     'coa_conac_id': self.journal_id.conac_credit_account_id.id,
+                                     'credit': self.amount_total, 
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 }), 
+                        (0, 0, {
+                                     'account_id': self.journal_id.default_debit_account_id.id,
+                                     'coa_conac_id': self.journal_id.conac_debit_account_id.id,
+                                     'debit': self.amount_total,
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 })]
+          
+        self.conac_move = True
 class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'

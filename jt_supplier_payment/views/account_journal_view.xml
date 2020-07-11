@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inherited_account_journal_form_view_payment" model="ir.ui.view">
+            <field name="name">Inherited account journal form view Payment</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='journal_entries']/group/group[2]" position="after">
+                    <group string="Accured">
+                        <field name="accured_debit_account_id"/>
+                        <field name="accured_credit_account_id"/>
+                        <field name="conac_accured_debit_account_id" readonly="1" force_save="1"/>
+                        <field name="conac_accured_credit_account_id" readonly="1" force_save="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

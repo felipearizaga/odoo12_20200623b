@@ -12,6 +12,18 @@
                      <p class="m-0" t-if="o.sub_dependancy_id" t-field="o.sub_dependancy_id.sub_dependency"/>
                  </div>
             </xpath>
+            <xpath expr="//table[@name='invoice_line_table']/thead[1]/tr[1]/th[@name='th_account']" position="after">
+                 <th name="th_code" class="text-left">
+                 	<span>Programmatic Code</span>
+                 </th>
+            
+            </xpath>
+            <xpath expr="//td[@name='account_invoice_line_account']" position="after">
+                   <td name="account_invoice_line_code">
+                       <span class="text-left" t-if="line.program_code_id" t-field="line.program_code_id.name"/>
+                   </td>
+            </xpath>
+            
         </template>
    
 	</data>

@@ -26,8 +26,8 @@ import xlrd
 from datetime import datetime
 from odoo.modules.module import get_resource_path
 from xlrd import open_workbook
-from odoo.exceptions import UserError
-
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.misc import ustr
 
 class ImportLine(models.TransientModel):
 
@@ -124,6 +124,7 @@ class ImportLine(models.TransientModel):
                                 else:
                                     value = False
                             except:
+                                
                                 pass
 
                         if field_headers[counter] == 'end_date':
@@ -171,5 +172,10 @@ class ImportLine(models.TransientModel):
                         'import_status': 'in_progress',
                         'line_ids': data,
                     })
+
+            except ValueError as e:
+                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+            except ValidationError as e:
+                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
             except UserError as e:
-                raise UserError(e)
+                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
