@@ -79,6 +79,9 @@ class ImportAssignedAmountLine(models.TransientModel):
         }
 
     def import_line(self):
+        if not self.file:
+            raise UserError(_('Please Upload File.'))
+
         assigned_amount = self.env['control.assigned.amounts'].browse(
             self._context.get('active_id'))
         if assigned_amount.folio != self.folio:

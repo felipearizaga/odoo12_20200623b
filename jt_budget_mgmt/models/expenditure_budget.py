@@ -313,7 +313,17 @@ class ExpenditureBudget(models.Model):
                     # Check Date Quarter
                     if line.start_date:
                         b_s_month = line.start_date.month
-                        if b_s_month not in (1, 2, 3):
+                        b_s_day = line.start_date.day
+                        if b_s_month != 1 or b_s_day!=1:
+                            failed_row += str(line_vals) + \
+                                          "------>> You can only import and add lines for first quarter only\n"
+                            failed_line_ids.append(line.id)
+                            continue
+                        
+                    if line.end_date:
+                        b_s_month = line.end_date.month
+                        b_s_day = line.end_date.day
+                        if b_s_month != 3 or b_s_day!=31:
                             failed_row += str(line_vals) + \
                                           "------>> You can only import and add lines for first quarter only\n"
                             failed_line_ids.append(line.id)
@@ -886,14 +896,15 @@ class ExpenditureBudgetLine(models.Model):
             self.available = self.assigned
 
     def write(self, vals):
-        if vals.get('assigned'):
+        if 'assigned' in vals:
             for line in self:
-                line.available = vals.get('assigned')
+                line.available = vals.get('assigned',0)
         return super(ExpenditureBudgetLine, self).write(vals)
         
 
     @api.model
     def create(self, vals):
+        
         res = super(ExpenditureBudgetLine, self).create(vals)
         if res and res.assigned:
             res.available = res.assigned

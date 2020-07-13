@@ -164,7 +164,12 @@ class AccountMove(models.Model):
         for move in self:
             move.payment_state = 'registered'
 
-
+    def check_operation_name(self):
+        if self.operation_type_id and self.operation_type_id.name:
+            my_str = "Payment to supplier"
+            if self.operation_type_id.name.upper() == my_str.upper():
+                return True
+        return False
 
 #     def remove_journal_line(self):
 #         if self.
@@ -190,3 +195,4 @@ class AccountMoveLine(models.Model):
     price_payment = fields.Monetary("Price")
     sub_total_payment = fields.Monetary("Sub Total")
     tax = fields.Float("Tax")
+

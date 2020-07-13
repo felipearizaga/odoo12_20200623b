@@ -214,23 +214,24 @@
         sequence="1"
     />
 
-    <!-- menu for program code -->
-    <menuitem
-        id="menu_program_code"
-        name="Program code"
-        parent="menu_budgets"
-        action="action_program_code"
-        sequence="1"
-    />
-
     <!-- menu for expenditure budget -->
     <menuitem
         id="menu_expenditure_budget"
         name="Expenditure budget"
         parent="menu_budgets"
         action="action_expenditure_budget"
+        sequence="1"
+    />
+
+    <!-- menu for program code -->
+    <menuitem
+        id="menu_program_code"
+        name="Program code"
+        parent="menu_budgets"
+        action="action_program_code"
         sequence="2"
     />
+
 
     <!-- menu for modifications -->
     <menuitem

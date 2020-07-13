@@ -570,10 +570,14 @@ msgid "Close"
 msgstr "Cerrado"
 
 #. module: jt_budget_mgmt
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_shcp_code__name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization_line__code_id
 msgid "Code"
 msgstr "Código SHCP"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_shcp_code__name
+msgid "Code"
+msgstr "Clave Conversión de Programa Presupuestario"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_code_structure
@@ -950,13 +954,25 @@ msgstr ""
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__desc_stage
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__description
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__desc_stage
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_shcp_code__desc
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc_stage
 msgid "Description"
 msgstr "Tipo de Convenio"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc
+msgid "Description"
+msgstr "Descripción de la Etapa"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_institutional_activity__description
+msgid "Description"
+msgstr "Descripción de Actividad Institucional"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_shcp_code__desc
+msgid "Description"
+msgstr "Descripción Conversión de Programa Presupuestario"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_budget_program_conversion
@@ -986,7 +1002,7 @@ msgstr "Descripción de Origen de Recurso"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_project__desc_stage
 msgid "Description Stage"
-msgstr "Descripción de Tipo de Proyecto"
+msgstr "Descripción de la Etapa"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_project_type
@@ -2256,13 +2272,21 @@ msgstr ""
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_project__number
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__number
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__number
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.institutional_activity_search_view
 msgid "Number"
 msgstr "Número de Convenio"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_project__number
+msgid "Number"
+msgstr "Número de proyecto"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__number
+msgid "Number"
+msgstr "Clave Conversión de Programa Presupuestario"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number_agreement

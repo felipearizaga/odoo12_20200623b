@@ -53,24 +53,14 @@ class EmployeePayroll(models.Model):
                                      ('add_benifit', 'Additional Benifit'),
                                      ('alimony', 'Payment Special payroll payments Alimony'),
                                      ('payment', 'Payment')], "Type of request for payroll payment")
-    payroll_adjustment = fields.Selection([('leave_uni_worker', 'Leave of the university worker'),
-                                           ('lincense_without_salary', 'Leave without any Salary'),
+    payroll_adjustment = fields.Selection([('withdrawal', 'Withdrawal from the university worker'),
+                                           ('leave_without_pay', 'Leave without Pay'),
                                            ('judical', 'Judicial Instruction'),
                                            ('add_payment', 'Additional Payments'),
                                            ('salary_mod_inc', 'Salary modification: Increases'),
                                            ('salary_mod_dec', 'Salary modification: Decreases'),
-                                           ('salary_mod_don', 'Salary modification: Donation'),
-                                           ('unfounded', 'Unfounded')],
+                                           ('salary_mod_don', 'Salary modification: Donation')],
                                           string="Payroll Adjustment")
-    for_inappropriate = fields.Selection([('key_1', 'Key 1: No check collected'),
-                                          ('key_2', 'Key 2: Low'),
-                                          ('key_3', 'Key 3: Leave Without Pay'),
-                                          ('key_4', 'Key 4: Special Cases'),
-                                          ('key_5', 'Key 5: For Partial or Intermediate'),
-                                          ('key_6', 'Key 6: Termination Key 6: For having been processed any payment '
-                                                    'that corresponds to the worker'),
-                                          ('key_7', 'Key 7: Due to a change in the date of termination or because it '
-                                                    'does not Not applyproceed'),])
     substate = fields.Char("SubState")
     beneficiary_id = fields.Many2one('res.partner', "Beneficiary")
     state = fields.Selection([('draft', 'Draft'), ('revised', 'Revised'), ('done', 'Done')], string="State",

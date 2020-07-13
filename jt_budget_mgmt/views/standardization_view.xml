@@ -166,7 +166,7 @@
             <field name="name">standardization.tree.view</field>
             <field name="model">standardization</field>
             <field name="arch" type="xml">
-            	<tree>
+            	<tree import="0">
             		<field name="folio"/>
                     <field name="record_number"/>
                     <field name="imported_record_number"/>

@@ -75,6 +75,9 @@ class ImportAdequaciesLine(models.TransientModel):
 
     def import_line(self):
         self.ensure_one()
+        if not self.file:
+            raise UserError(_('Please Upload File.'))
+        
         adequacies = self.env['adequacies'].browse(
             self._context.get('active_id'))
         if adequacies.folio != self.folio:

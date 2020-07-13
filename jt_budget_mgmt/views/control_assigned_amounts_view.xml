@@ -263,7 +263,7 @@
             <field name="name">control.assigned.amounts.tree.view</field>
             <field name="model">control.assigned.amounts</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree import="0">
                     <field name="name"/>
                     <field name="folio"/>
                     <field name="budget_id"/>

@@ -77,6 +77,10 @@ class ImportStandardizationLine(models.TransientModel):
         return res
 
     def import_line(self):
+
+        if not self.file:
+            raise UserError(_('Please Upload File.'))
+        
         standardization = self.env['standardization'].browse(
             self._context.get('active_id'))
         if standardization.folio != self.folio:

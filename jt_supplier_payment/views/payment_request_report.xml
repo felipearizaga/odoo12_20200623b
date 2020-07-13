@@ -71,10 +71,12 @@
 
     </template>
         <template id="payment_request_report_document">
+        	<t t-if="o.check_operation_name()">	
             <t t-call="jt_supplier_payment.external_layout_payment_request">
                 <t t-set="o" t-value="o.with_context(lang=lang)"/>
                 <div class="page">
-
+					
+					
                     <div id="informations" class="row">
                         <div class="col-3" name="folio_dependency">
                             <strong>Dependency Folio:</strong>
@@ -256,6 +258,10 @@
                         </div>
                     </div>
                 </div>
+            </t>
+            </t>
+            <t t-if="o.check_operation_name()==False">	
+            	 <h4 align="center">This report is only for Payment to supplier operation type</h4>
             </t>
         </template>
 

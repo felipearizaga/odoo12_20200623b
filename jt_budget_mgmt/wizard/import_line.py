@@ -53,9 +53,9 @@ class ImportLine(models.TransientModel):
 
     def download_file(self):
         file_path = get_resource_path(
-            'jt_budget_mgmt', 'static/file/import_line', 'import_line.xlsx')
+            'jt_budget_mgmt', 'static/file/import_line', 'import_line_sample.xlsx')
         file = False
-        with open(file_path, 'rb') as file_date:
+        with open(file_path, 'rb') as file_date:                
             file = base64.b64encode(file_date.read())
         self.dwnld_filename = 'import_line.xlsx'
         self.dwnld_file = file
@@ -74,6 +74,8 @@ class ImportLine(models.TransientModel):
     def import_line(self):
         budget = self.env['expenditure.budget'].browse(
             self._context.get('active_ids'))
+        if not self.file:
+            raise UserError(_('Please Upload File.'))
         if budget.name != self.budget_name:
             raise UserError(_('Budget name does not match.'))
         elif self.file:
@@ -149,16 +151,16 @@ class ImportLine(models.TransientModel):
                         amt = result_dict.get('authorized', 0)
                         if float(amt) <= 0:
                             raise UserError(_("Authorized Amount should be greater than 0!"))
-
+                        total_budget_amount += float(amt)
                     if 'assigned' in result_dict:
                         amt = result_dict.get('assigned', 0)
                         if float(amt) < 0:
                             raise UserError(_("Assigned Amount should be greater than or 0!"))
-                        total_budget_amount += float(amt)
+                        
                     result_vals.append((0, 0, result_dict))
                 if round(total_budget_amount, 2) != self.total_budget:
                     raise UserError(
-                        _('The sum of the assigned amounts is not equal to the total of the budget'))
+                        _('The sum of the Authorized amounts is not equal to the total of the budget'))
 
                 data = result_vals
                 if budget:

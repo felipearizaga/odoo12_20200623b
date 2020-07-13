@@ -22,7 +22,7 @@
             <field name="name">expenditure.budget.form.view</field>
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
-                <form>
+                <form duplicate="0">
                     <center><div attrs="{'invisible': [('cron_running', '=', False)]}" class="alert alert-primary" role="alert">
                         Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
@@ -31,7 +31,7 @@
                         <button name="confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'previous')]}"/>
                         <button name="approve" type="object" string="Approve" class="oe_highlight" states='confirm'/>
                         <button name="reject" type="object" string="Reject" class="oe_highlight" states='confirm'/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,previous,confirm,validate"/>
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
@@ -282,7 +282,7 @@
             <field name="name">expenditure.budget.tree.view</field>
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree import="0">
                     <field name="name"/>
                     <field name="user_id" readonly="1"/>
                     <field name="total_budget"/>

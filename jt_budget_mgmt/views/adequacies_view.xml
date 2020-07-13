@@ -20,7 +20,7 @@
             <field name="name">adequacies.form.view</field>
             <field name="model">adequacies</field>
             <field name="arch" type="xml">
-                <form>
+                <form duplicate="0">
                      <center><div attrs="{'invisible': [('cron_running', '!=', True)]}" class="alert alert-primary" role="alert">
                         Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
@@ -40,11 +40,9 @@
                                 <field name="budget_id" required="1"/>
                                 <field name="adaptation_type" required="1"/>
                                 <field name="journal_id" readonly="1" force_save="1"/>
-                                <field name="date_of_budget_affected" attrs="{'invisible': [('adaptation_type', '=', 'liquid')],
-                                'readonly': [('state', 'in', ('accepted', 'rejected'))],
+                                <field name="date_of_budget_affected" readonly="1" attrs="{'invisible': [('adaptation_type', '=', 'liquid')],
                                 'required': [('adaptation_type', '!=', 'liquid')],}"/>
-                                <field name="date_of_liquid_adu" attrs="{'invisible': [('adaptation_type', '!=', 'liquid')],
-                                'readonly': [('state', 'in', ('accepted', 'rejected'))],
+                                <field name="date_of_liquid_adu" readonly="1" attrs="{'invisible': [('adaptation_type', '!=', 'liquid')],
                                 'required': [('adaptation_type', '=', 'liquid')],}"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', 'in', ('accepted', 'rejected')), ('import_status', '!=', 'draft')]}"/>
                                 <field name="reason" states='rejected'/>
@@ -123,13 +121,13 @@
             <field name="name">adequacies.tree.view</field>
             <field name="model">adequacies</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree import="0">
                     <field name="folio"/>
                     <field name="budget_id"/>
-                    <field name="reason"/>
+                    <field name="reason" invisible="1"/>
                     <field name="record_number"/>
                     <field name="imported_record_number"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state"/>
                     <field name="adequacies_lines_ids" invisible="1"/>
                     <field name="imported_record_number" invisible="1"/>
                     <field name="record_number" invisible="1"/>
