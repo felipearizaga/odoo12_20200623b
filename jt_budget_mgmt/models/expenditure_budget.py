@@ -63,7 +63,7 @@ class ExpenditureBudget(models.Model):
     def _compute_total_budget(self):
         for budget in self:
             budget.total_budget = sum(
-                budget.success_line_ids.mapped('assigned'))
+                budget.success_line_ids.mapped('authorized'))
 
     total_budget = fields.Float(
         string='Total budget', tracking=True, compute="_compute_total_budget")

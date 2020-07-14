@@ -65,8 +65,11 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
         for line in hierarchy_lines:
 
             # Root Level
+            line_code = ''
+            if line.code:
+                line_code = line.code 
             lines.append({
-                'id': 'hierarchy_' + line.code,
+                'id': 'hierarchy_' + line_code,
                 'name': line.display_name,
                 'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
                 'level': 1,
@@ -84,7 +87,7 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
                     'level': 2,
                     'unfoldable': True,
                     'unfolded': True,
-                    'parent_id': 'hierarchy_' + line.code,
+                    'parent_id': 'hierarchy_' + line_code,
                 })
 
                 # Level-2 Lines

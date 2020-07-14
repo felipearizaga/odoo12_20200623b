@@ -954,10 +954,14 @@ msgstr ""
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__desc_stage
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__desc_stage
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc_stage
 msgid "Description"
 msgstr "Tipo de Convenio"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__desc_stage
+msgid "Description"
+msgstr "Descripción Tipo de Proyecto"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_stage__desc
@@ -2286,7 +2290,7 @@ msgstr "Número de proyecto"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_project_type__number
 msgid "Number"
-msgstr "Clave Conversión de Programa Presupuestario"
+msgstr "Número de Proyecto"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__number_agreement
@@ -2980,7 +2984,7 @@ msgstr "Conversión Con Partida (CONPA)"
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_shcp_code
 #: model:ir.model,name:jt_budget_mgmt.model_shcp_code
 msgid "SHCP Program Code"
-msgstr "Código SHCP"
+msgstr "Clave Conversión de Programa Presupuestario"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__code_structure__section__conpa
