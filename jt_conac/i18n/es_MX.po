@@ -533,7 +533,7 @@ msgstr "Líneas de factura"
 #: code:addons/jt_conac/models/financial_report_1_5.py:0 model:ir.model.fields,field_description:jt_conac.field_coa_conac__item
 #, python-format
 msgid "Item"
-msgstr "Partida"
+msgstr "Rubro"
 
 #. module: jt_conac
 #: model:ir.model,name:jt_conac.model_account_journal

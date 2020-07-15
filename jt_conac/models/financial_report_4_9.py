@@ -322,12 +322,23 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
                     need_to_add = True
             else:
                 main_total_cols += [{'name': ''}] * 6
-        lines.append({
-            'id': 'hierarchy_' + str(line.id),
-            'name': 'Main Total',
-            'columns': main_total_cols,
-            'level': 1,
-            'unfoldable': False,
-            'unfolded': True,
-        })
+        if self.env.user.lang == 'es_MX':                
+            lines.append({
+                'id': 'hierarchy_' + str(line.id),
+                'name': 'Gran Total',
+                'columns': main_total_cols,
+                'level': 1,
+                'unfoldable': False,
+                'unfolded': True,
+            })
+        else:
+            lines.append({
+                'id': 'hierarchy_' + str(line.id),
+                'name': 'Main Total',
+                'columns': main_total_cols,
+                'level': 1,
+                'unfoldable': False,
+                'unfolded': True,
+            })
+            
         return lines

@@ -219,13 +219,25 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                 main_total_col += [{'name': 0}, {'name': amt}]
             else:
                 main_total_col += [{'name': 0}, {'name': 0}]
-        lines.append({
-            'id': 'total_%s' % level_1_line.id,
-            'name': 'Main Total',
-            'columns': main_total_col,
-            'level': 2,
-            'title_hover': level_1_line.display_name,
-            'unfoldable': False,
-            'unfolded': True,
-        })
+        if self.env.user.lang == 'es_MX':
+            lines.append({
+                'id': 'total_%s' % level_1_line.id,
+                'name': 'Gran Total',
+                'columns': main_total_col,
+                'level': 2,
+                'title_hover': level_1_line.display_name,
+                'unfoldable': False,
+                'unfolded': True,
+            })
+        else:
+            lines.append({
+                'id': 'total_%s' % level_1_line.id,
+                'name': 'Main Total',
+                'columns': main_total_col,
+                'level': 2,
+                'title_hover': level_1_line.display_name,
+                'unfoldable': False,
+                'unfolded': True,
+            })
+            
         return lines
