@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+      <record id="view_balance_check_wizard" model="ir.ui.view">
+            <field name="name">balance.check.wizard.view</field>
+            <field name="model">balance.check.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Generate Batch Sheet">
+                	    <field name="is_balance" invisible="1"/>
+                    	<field name="wizard_id" invisible="1"/>
+                    <group>
+                    	<h2 attrs="{'invisible':[('is_balance','=',False)]}">Sufficient Balance</h2>
+                    	<h2 attrs="{'invisible':[('is_balance','=',True)]}">Insufficient Balance</h2>
+                    </group>
+                    <group>
+                    		<h5 attrs="{'invisible':[('is_balance','=',False)]}">the selected bank account has sufficient balance to execute</h5>
+                    		<h5 attrs="{'invisible':[('is_balance','=',True)]}">the selected bank account does not have sufficient balance to execute payment.It is necessary to make a bank transfer request.</h5>
+                    </group>
+                    <footer>
+                        <button string="Accept" name="accept" type="object" class="oe_highlight" attrs="{'invisible':[('is_balance','=',False)]}"/>
+                        <button string="Generate Report" name="generate_report" type="object" class="oe_highlight" attrs="{'invisible':[('is_balance','=',True)]}"/>
+                    </footer>
+                </form>
+            </field>
+        </record>            
+	</data>
+</odoo>

@@ -177,7 +177,7 @@ msgstr "Aplicación"
 #: code:addons/jt_conac/models/financial_report_4_6.py:0
 #, python-format
 msgid "Application"
-msgstr "Solicitud"
+msgstr "Aplicación"
 
 #. module: jt_conac
 #: code:addons/jt_conac/models/financial_report_4_10.py:0 code:addons/jt_conac/models/financial_report_4_9.py:0
@@ -563,7 +563,7 @@ msgstr "Asientos Contables"
 #. module: jt_conac
 #: model:ir.ui.menu,name:jt_conac.menu_journals_conac
 msgid "Journals"
-msgstr "Revistas"
+msgstr "Diarios"
 
 #. module: jt_conac
 #: model:ir.model.fields,field_description:jt_conac.field_cash_statement____last_update model:ir.model.fields,field_description:jt_conac.field_coa_conac____last_update

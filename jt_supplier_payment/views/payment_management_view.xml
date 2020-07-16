@@ -40,7 +40,7 @@
       </record>
            
 	  <record id="supplier_payment_programming_action" model="ir.actions.act_window">
-            <field name="name">Payment Programming</field>
+            <field name="name">Payment Schedule</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_move_filter_inherit_payment"/>
@@ -62,7 +62,7 @@
             <field name="act_window_id" ref="supplier_payment_programming_action"/>
         </record>
 	
-        <menuitem id="supplier_payment_request_menu_programm" name="Payment Programming"
+        <menuitem id="supplier_payment_request_menu_programm" name="Payment Schedule"
                   action="supplier_payment_programming_action"
                   parent="supplier_payment_management_menu" sequence="3"/>
 	
