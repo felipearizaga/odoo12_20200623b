@@ -31,11 +31,11 @@ class ProjectType(models.Model):
     _rec_name = 'project_type_identifier'
 
     project_id = fields.Many2one('project.project', string='Project type identifier')
-    project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
+    project_type_identifier = fields.Char(string='Project Type Identifier', store=True, related="project_id.project_type_identifier")
     desc_stage = fields.Char(string='Description', related="project_id.name")
     number = fields.Char(string='Number', related="project_id.number")
     stage_identifier = fields.Char(string="Stage Identifier", related="project_id.stage_identifier")
-    agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
+    agreement_type = fields.Char(string='Agreement Type', store=True, related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
     number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
 

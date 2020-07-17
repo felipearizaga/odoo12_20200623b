@@ -37,9 +37,9 @@ class AgreementType(models.Model):
                                           related="project_id.project_type_identifier")
     desc_stage = fields.Text(string='Description', related="project_id.desc_stage")
     stage_identifier = fields.Char(string="Stage Identifier", related="project_id.stage_identifier")
-    agreement_type = fields.Char(string='Agreement Type', related="project_id.agreement_type")
+    agreement_type = fields.Char(string='Agreement Type', store=True, related="project_id.agreement_type")
     name_agreement = fields.Text(string='Name Agreement', related="project_id.name_agreement")
-    number_agreement = fields.Char(related='project_id.number_agreement', string='Number Agreement')
+    number_agreement = fields.Char(related='project_id.number_agreement', store=True, string='Number Agreement')
 
     @api.constrains('project_id')
     def _check_project_id(self):

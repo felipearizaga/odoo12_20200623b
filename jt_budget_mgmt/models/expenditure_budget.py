@@ -233,22 +233,28 @@ class ExpenditureBudget(models.Model):
             success_line_ids = []
 
             # Objects
-            year_obj = self.env['year.configuration']
-            program_obj = self.env['program']
-            subprogram_obj = self.env['sub.program']
-            dependancy_obj = self.env['dependency']
-            subdependancy_obj = self.env['sub.dependency']
-            item_obj = self.env['expenditure.item']
-            origin_obj = self.env['resource.origin']
-            activity_obj = self.env['institutional.activity']
-            shcp_obj = self.env['budget.program.conversion']
-            dpc_obj = self.env['departure.conversion']
-            expense_type_obj = self.env['expense.type']
-            location_obj = self.env['geographic.location']
-            wallet_obj = self.env['key.wallet']
-            project_type_obj = self.env['project.type']
-            stage_obj = self.env['stage']
-            agreement_type_obj = self.env['agreement.type']
+
+            program_code_model = self.env['program.code'].sudo()
+            year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
+            program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
+            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
+            subdependancy_obj = self.env['sub.dependency'].search_read([],
+                                                                       fields=['id', 'dependency_id', 'sub_dependency'])
+            item_obj = self.env['expenditure.item'].search_read([], fields=['id', 'item', 'exercise_type'])
+            origin_obj = self.env['resource.origin'].search_read([], fields=['id', 'key_origin'])
+            activity_obj = self.env['institutional.activity'].search_read([], fields=['id', 'number'])
+            shcp_obj = self.env['budget.program.conversion'].search_read([], fields=['id', 'unam_key_id', 'shcp'])
+            dpc_obj = self.env['departure.conversion'].search_read([], fields=['id', 'federal_part'])
+            expense_type_obj = self.env['expense.type'].search_read([], fields=['id', 'key_expenditure_type'])
+            location_obj = self.env['geographic.location'].search_read([], fields=['id', 'state_key'])
+            wallet_obj = self.env['key.wallet'].search_read([], fields=['id', 'wallet_password'])
+            project_type_obj = self.env['project.type'].search_read([],
+                                                                    fields=['id', 'project_type_identifier', 'number'])
+            stage_obj = self.env['stage'].search_read([], fields=['id', 'stage_identifier'])
+            agreement_type_obj = self.env['agreement.type'].search_read([], fields=['id', 'agreement_type',
+                                                                                    'number_agreement'])
+
 
             lines_to_execute = self.line_ids
             cron = False
@@ -259,8 +265,6 @@ class ExpenditureBudget(models.Model):
                         [('cron_id', '=', cron.id)])
 
             for line in lines_to_execute:
-                if counter == 5000:
-                    break
                 counter += 1
                 line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item,
                              line.dv, line.origin_resource, line.ai, line.conversion_program,
@@ -351,7 +355,16 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate year format
-                    year = year_obj.validate_year(line.year)
+                    year = False
+                    if len(str(line.year)) > 3:
+                        year_str = str(line.year)[:4]
+                        if year_str.isnumeric():
+                            year = list(filter(lambda yr: yr['name']==year_str, year_obj))
+                            if year:
+                                year = year[0]['id']
+                            else:
+                                if not self._context.get('from_adequacies'):
+                                    year = self.env['year.configuration'].create({'name': year_str}).id
                     if not year:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Year Format\n"
@@ -359,7 +372,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Program(PR)
-                    program = program_obj.validate_program(line.program)
+                    program = False
+                    if len(str(line.program)) > 1:
+                        program_str = str(line.program).zfill(2)
+                        if program_str.isnumeric():
+                            program = list(filter(lambda prog: prog['key_unam'] == program_str, program_obj))
+                            program = program[0]['id'] if program else False
                     if not program:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Program(PR) Format\n"
@@ -367,8 +385,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Sub-Program
-                    subprogram = subprogram_obj.validate_subprogram(
-                        line.subprogram, program)
+
+                    subprogram = False
+                    if len(str(line.subprogram)) > 1:
+                        subprogram_str = str(line.subprogram).zfill(2)
+                        if subprogram_str.isnumeric():
+                            subprogram = list(filter(lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][0] == program, subprogram_obj))
+                            subprogram = subprogram[0]['id'] if subprogram else False
                     if not subprogram:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid SubProgram(SP) Format\n"
@@ -376,8 +399,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Dependency
-                    dependency = dependancy_obj.validate_dependency(
-                        line.dependency)
+                    dependency = False
+                    if len(str(line.dependency)) > 2:
+                        dependency_str = str(line.dependency).zfill(3)
+                        if dependency_str.isnumeric():
+                            dependency =  list(filter(lambda dep:dep['dependency'] == dependency_str, dependancy_obj))
+                            dependency = dependency[0]['id'] if dependency else False
                     if not dependency:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Dependency(DEP) Format\n"
@@ -385,8 +412,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Sub-Dependency
-                    subdependency = subdependancy_obj.validate_subdependency(
-                        line.subdependency, dependency)
+                    subdependency = False
+                    subdependency_str = str(line.subdependency).zfill(2)
+                    if subdependency_str.isnumeric():
+                        subdependency = list(filter(lambda sdo: sdo['sub_dependency'] == subdependency_str and sdo['dependency_id'][0] == dependency, subdependancy_obj))
+                        subdependency = subdependency[0]['id'] if subdependency else False
+
                     if not subdependency:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Sub Dependency(DEP) Format\n"
@@ -394,8 +425,18 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Item
-                    item = item_obj.validate_item(
-                        line.item, line.exercise_type)
+                    item = False
+                    if len(str(line.item)) > 2:
+                        item_string = str(line.item).zfill(3)
+                        typee = str(line.exercise_type).lower()
+                        if typee not in ['r', 'c', 'd']:
+                            typee = 'r'
+                        if item_string.isnumeric():
+                            item = list(filter(lambda itm: itm['item'] == item_string and itm['exercise_type'] == typee, item_obj))
+                            if not item:
+                                item = list(filter(lambda itm: itm['item'] == item_string, item_obj))
+                            if item:
+                                item = item[0]['id']
                     if not item:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Expense Item(PAR) Format\n"
@@ -403,8 +444,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validate Origin Of Resource
-                    origin_resource = origin_obj.validate_origin_resource(
-                        line.origin_resource)
+                    origin_resource = False
+                    if len(str(line.origin_resource)) > 0:
+                        origin_resource_str = str(line.origin_resource).replace('.', '').zfill(2)
+                        if origin_resource_str.isnumeric():
+                            origin_resource = list(filter(lambda ores: ores['key_origin']==origin_resource_str, origin_obj))
+                            origin_resource = origin_resource[0]['id'] if origin_resource else False
+
                     if not origin_resource:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Origin Of Resource(OR) Format\n"
@@ -412,8 +458,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Institutional Activity Number
-                    institutional_activity = activity_obj.validate_institutional_activity(
-                        line.ai)
+                    institutional_activity = False
+                    if len(str(line.ai)) > 2:
+                        institutional_activity_str = str(line.ai).zfill(5)
+                        if institutional_activity_str.isnumeric():
+                            institutional_activity = list(filter(lambda inact: inact['number']==institutional_activity_str, activity_obj))
+                            institutional_activity = institutional_activity[0]['id'] if institutional_activity else False
                     if not institutional_activity:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Institutional Activity Number(AI) Format\n"
@@ -421,8 +471,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Conversion Program SHCP
-                    shcp = shcp_obj.validate_shcp(
-                        line.conversion_program, program)
+                    shcp = False
+                    if len(str(line.conversion_program)) > 3:
+                        shcp_str = str(line.conversion_program)
+                        if len(shcp_str) == 4 and (re.match("[A-Z]{1}\d{3}", str(shcp_str).upper())):
+                            shcp = list(filter(lambda tmp: tmp['shcp'][1] == shcp_str and tmp['unam_key_id'][0]==program, shcp_obj))
+                            shcp = shcp[0]['id'] if shcp else False
+
                     if not shcp:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
@@ -430,8 +485,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Federal Item
-                    conversion_item = dpc_obj.validate_conversion_item(
-                        line.departure_conversion)
+                    conversion_item = False
+                    if len(str(line.departure_conversion)) > 4:
+                        conversion_item_str = str(line.departure_conversion).zfill(4)
+                        if conversion_item_str.isnumeric():
+                            conversion_item = list(filter(lambda coit: coit['federal_part'] == conversion_item_str, dpc_obj))
+                            conversion_item = conversion_item[0]['id'] if conversion_item else False
                     if not conversion_item:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid SHCP Games(CONPA) Format\n"
@@ -439,8 +498,12 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Expense Type
-                    expense_type = expense_type_obj.validate_expense_type(
-                        line.expense_type)
+                    expense_type = False
+                    if len(str(line.expense_type)) > 1:
+                        expense_type_str = str(line.expense_type).zfill(2)
+                        if expense_type_str.isnumeric():
+                            expense_type = list(filter(lambda exty: exty['key_expenditure_type'] == expense_type_str, expense_type_obj))
+                            expense_type = expense_type[0]['id'] if expense_type else False
                     if not expense_type:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Expense Type(TG) Format\n"
@@ -448,8 +511,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Expense Type
-                    geo_location = location_obj.validate_geo_location(
-                        line.location)
+                    geo_location = False
+                    if len(str(line.location)) > 1:
+                        location_str = str(line.location).zfill(2)
+                        if location_str.isnumeric():
+                            geo_location = list(filter(lambda geol: geol['state_key'] == location_str, location_obj))
+                            geo_location = geo_location[0]['id'] if geo_location else False
+
                     if not geo_location:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Geographic Location (UG) Format\n"
@@ -457,7 +525,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Wallet Key
-                    wallet_key = wallet_obj.validate_wallet_key(line.portfolio)
+                    wallet_key = False
+                    if len(str(line.portfolio)) > 3:
+                        wallet_key_str = str(line.portfolio).zfill(4)
+                        if wallet_key_str.isnumeric():
+                            wallet_key = list(filter(lambda wlke: wlke['wallet_password'] == wallet_key_str, wallet_obj))
+                            wallet_key = wallet_key[0]['id'] if wallet_key else False
+
                     if not wallet_key:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Wallet Key(CC) Format\n"
@@ -465,8 +539,18 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Project Type
-                    project_type = project_type_obj.validate_project_type(
-                        line.project_type, line)
+                    project_type = False
+                    if len(str(line.project_type)) > 1:
+                        number = ''
+                        if self._context.get('from_adjustment'):
+                            number = line.get('No. de Proyecto')
+                        else:
+                            number = line.project_number
+                        project_type_str = str(line.project_type).zfill(2)
+                        if project_type_str.isnumeric():
+                            project_type = list(filter(lambda pt: pt['project_type_identifier'] == project_type_str and pt['number'] == number, project_type_obj))
+                            project_type = project_type[0]['id'] if project_type else False
+
                     if not project_type:
                         failed_row += str(project_type) + \
                                       "------>> Invalid Project Type(TP) or Project Number Format\n"
@@ -474,8 +558,13 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Stage
-                    stage = stage_obj.validate_stage(
-                        line.stage, project_type.project_id)
+                    stage = False
+                    if len(str(line.stage)) > 1:
+                        stage_str = str(line.stage).zfill(2)
+                        if stage_str.isnumeric():
+                            stage = list(filter(lambda stg: stg['stage_identifier'] == stage_str, stage_obj))
+                            stage = stage[0]['id'] if stage else False
+
                     if not stage:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Stage(E) Format\n"
@@ -483,8 +572,14 @@ class ExpenditureBudget(models.Model):
                         continue
 
                     # Validation Agreement Type
-                    agreement_type = agreement_type_obj.validate_agreement_type(
-                        line.agreement_type, project_type.project_id, line.agreement_number)
+                    agreement_type = False
+                    if len(str(line.agreement_type)) > 1:
+                        agreement_type_str = str(line.agreement_type).zfill(2)
+                        if agreement_type_str.isnumeric():
+                            agreement_type = list(filter(lambda aty: aty['agreement_type'] == agreement_type_str and aty['number_agreement'] == line.agreement_number, agreement_type_obj))
+                            ('project_id.agreement_type', '=', )
+                            agreement_type = agreement_type[0]['id'] if agreement_type else False
+
                     if not agreement_type:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Agreement Type(TC) or Agreement Number Format\n"
@@ -529,26 +624,16 @@ class ExpenditureBudget(models.Model):
 
                     try:
                         program_code = False
-                        if year and program and subprogram and dependency and subdependency and item and origin_resource and institutional_activity and shcp and conversion_item and expense_type and geo_location and wallet_key and project_type and stage and agreement_type:
-                            program_code = self.env['program.code'].sudo().search([
-                                ('year', '=', year.id),
-                                ('program_id', '=', program.id),
-                                ('sub_program_id', '=', subprogram.id),
-                                ('dependency_id', '=', dependency.id),
-                                ('sub_dependency_id', '=', subdependency.id),
-                                ('item_id', '=', item.id),
-                                ('resource_origin_id', '=', origin_resource.id),
-                                ('institutional_activity_id',
-                                 '=', institutional_activity.id),
-                                ('budget_program_conversion_id', '=', shcp.id),
-                                ('conversion_item_id', '=', conversion_item.id),
-                                ('expense_type_id', '=', expense_type.id),
-                                ('location_id', '=', geo_location.id),
-                                ('portfolio_id', '=', wallet_key.id),
-                                ('project_type_id', '=', project_type.id),
-                                ('stage_id', '=', stage.id),
-                                ('agreement_type_id', '=', agreement_type.id),
-                            ], limit=1)
+                        if year and program and subprogram and dependency and subdependency and item and origin_resource \
+                                 and institutional_activity and shcp and conversion_item and expense_type and geo_location and \
+                                                            wallet_key and project_type and stage and agreement_type:
+                            #preppare search key to get the match.
+                            search_key_fields = (
+                                         year, program, subprogram, dependency, subdependency, item,
+                                         origin_resource, institutional_activity, shcp, conversion_item,
+                                         expense_type, geo_location, wallet_key, project_type, stage, agreement_type)
+                            search_key = ';'.join([str(skey) for skey in search_key_fields])
+                            program_code = program_code_model.search([('search_key', '=', search_key)], limit=1)
 
                             if program_code and program_code.state == 'validated':
                                 failed_row += str(line_vals) + \
@@ -567,25 +652,26 @@ class ExpenditureBudget(models.Model):
 
                         if not program_code:
                             program_vals = {
-                                'year': year.id,
-                                'program_id': program.id,
-                                'sub_program_id': subprogram.id,
-                                'dependency_id': dependency.id,
-                                'sub_dependency_id': subdependency.id,
-                                'item_id': item.id,
-                                'resource_origin_id': origin_resource.id,
-                                'institutional_activity_id': institutional_activity.id,
-                                'budget_program_conversion_id': shcp.id,
-                                'conversion_item_id': conversion_item.id,
-                                'expense_type_id': expense_type.id,
-                                'location_id': geo_location.id,
-                                'portfolio_id': wallet_key.id,
-                                'project_type_id': project_type.id,
-                                'stage_id': stage.id,
-                                'agreement_type_id': agreement_type.id,
+                                'year': year,
+                                'program_id': program,
+                                'sub_program_id': subprogram,
+                                'dependency_id': dependency,
+                                'sub_dependency_id': subdependency,
+                                'item_id': item,
+                                'resource_origin_id': origin_resource,
+                                'institutional_activity_id': institutional_activity,
+                                'budget_program_conversion_id': shcp,
+                                'conversion_item_id': conversion_item,
+                                'expense_type_id': expense_type,
+                                'location_id': geo_location,
+                                'portfolio_id': wallet_key,
+                                'project_type_id': project_type,
+                                'stage_id': stage,
+                                'agreement_type_id': agreement_type,
                             }
-                            program_code = self.env['program.code'].sudo().create(
+                            program_code = program_code_model.with_context().create(
                                 program_vals)
+
                         if program_code:
                             pc = program_code
                             dv_obj = self.env['verifying.digit']
@@ -703,53 +789,15 @@ class ExpenditureBudget(models.Model):
         else:
             total_cron = math.ceil(len(self.success_line_ids.ids) / 5000)
         if total_cron != 0:
-            if total_cron == 1:
-                if self.success_rows != self.total_rows:
-                    self.validate_and_add_budget_line()
+            if self.success_rows != self.total_rows:
+                self.validate_and_add_budget_line()
                 total_lines = len(self.success_line_ids.filtered(
-                    lambda l: l.state == 'success'))
-                if total_lines == self.total_rows:
-                    self.state = 'previous'
+                lambda l: l.state == 'success'))
+
+            if total_lines == self.total_rows:
+                self.state = 'previous'
                 msg = (_("Budget Validation Process Ended at %s" % datetime.strftime(
-                    datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
-                self.env['mail.message'].create({'model': 'expenditure.budget', 'res_id': self.id,
-                                                 'body': msg})
-            else:
-                self.write({'cron_running': True})
-                prev_cron_id = False
-                line_ids = self.line_ids.ids
-                for seq in range(1, total_cron + 1):
-
-                    # Create CRON JOB
-                    cron_name = str(self.name).replace(' ', '') + \
-                                "_" + str(datetime.now()).replace(' ', '')
-                    nextcall = datetime.now()
-                    nextcall = nextcall + timedelta(seconds=10)
-                    lines = line_ids[:5000]
-
-                    cron_vals = {
-                        'name': cron_name,
-                        'state': 'code',
-                        'nextcall': nextcall,
-                        'nextcall_copy': nextcall,
-                        'numbercall': -1,
-                        'code': "model.validate_and_add_budget_line()",
-                        'model_id': self.env.ref('jt_budget_mgmt.model_expenditure_budget').id,
-                        'user_id': self.env.user.id,
-                        'budget_id': self.id
-                    }
-
-                    # Final process
-                    cron = self.env['ir.cron'].sudo().create(cron_vals)
-                    cron.write({'code': "model.validate_and_add_budget_line(" +
-                                        str(self.id) + "," + str(cron.id) + ")"})
-                    if prev_cron_id:
-                        cron.write({'prev_cron_id': prev_cron_id, 'active': False})
-                    line_records = self.env['expenditure.budget.line'].browse(
-                        lines)
-                    line_records.write({'cron_id': cron.id})
-                    del line_ids[:5000]
-                    prev_cron_id = cron.id
+                      datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
 
     def confirm(self):
         self.verify_data()

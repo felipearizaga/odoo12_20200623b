@@ -227,6 +227,21 @@ class ProgramCode(models.Model):
     program_code = fields.Text(string='Programmatic Code', compute="_compute_program_code")
     program_code_copy = fields.Text(string='Programmatic Code')
 
+    search_key = fields.Text(string='Search Key', index=True, store=True, compute="_compute_program_search_key")
+
+    @api.depends('year', 'program_id', 'sub_program_id', 'dependency_id', 'sub_dependency_id',
+                 'item_id', 'resource_origin_id', 'institutional_activity_id', 'budget_program_conversion_id',
+                 'conversion_item_id', 'expense_type_id', 'location_id', 'portfolio_id', 'project_type_id',
+                 'stage_id', 'agreement_type_id')
+    def _compute_program_search_key(self):
+        for record in self:
+            key_fields = ('year', 'program_id', 'sub_program_id', 'dependency_id', 'sub_dependency_id',
+                          'item_id', 'resource_origin_id', 'institutional_activity_id', 'budget_program_conversion_id',
+                          'conversion_item_id', 'expense_type_id', 'location_id', 'portfolio_id', 'project_type_id',
+                          'stage_id', 'agreement_type_id')
+            record.search_key = ';'.join([str(record[fld].id) if fld in record else '' for fld in key_fields])
+
+
     state = fields.Selection(
         [('draft', 'Draft'), ('validated', 'Validated')], default='draft', string='Status')
 
