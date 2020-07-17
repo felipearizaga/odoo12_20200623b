@@ -13,7 +13,7 @@ class AccountPayment(models.Model):
             return ''
         
         record_ids = self.env['account.move'].browse(active_ids)
-        if not record_ids or any(invoice.payment_state != 'approved_payment' for invoice in record_ids):
+        if not record_ids or any(invoice.payment_state != 'approved_payment' and invoice.is_payment_request for invoice in record_ids):
             raise UserError(_("You can only register payment for  Approved for payment request"))
         
 #         if not record_ids or any(invoice.state != 'posted' for invoice in record_ids):

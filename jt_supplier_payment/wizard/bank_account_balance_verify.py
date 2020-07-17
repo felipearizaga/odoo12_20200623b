@@ -25,7 +25,7 @@ class BankBalanceCheck(models.TransientModel):
         if self.account_id:
             values= self.env['account.move.line'].search([('account_id', '=', self.account_id.id),('move_id.state', '=', 'posted')])
             account_balance = sum(x.debit-x.credit for x in values)
-            if account_balance <= self.total_amount:
+            if account_balance >= self.total_amount:
                 self.is_balance = True
                 return {
                 'name': 'Balance',
@@ -55,15 +55,11 @@ class BankBalanceCheck(models.TransientModel):
             
     def schedule_payment(self):
         
-        
-        #payment_record = self.env['account.payment.register'].create({'journal_id':self.journal_id.id,'invoice_ids':[(6, 0, self.invoice_ids.ids)]})
         payment_record = self.env['account.payment.register'].with_context(active_ids=self.invoice_ids.ids).create({'journal_id':self.journal_id.id,'invoice_ids':[(6, 0, self.invoice_ids.ids)]})
         Payment = self.env['account.payment']
         payments = Payment.create(payment_record.get_payments_vals())
-        #d = payment_record.get_payments_vals()
-        #payment_record.create_payments()
-        #payments = payment_record.create(payment_record.get_payments_vals())
-        #print ("=====",d)
+        if self.invoice_ids:
+            self.invoice_ids.write({'payment_state': 'for_payment_procedure'})
         
         
         

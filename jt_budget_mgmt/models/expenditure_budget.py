@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
-
+import re
 
 class ExpenditureBudget(models.Model):
     _name = 'expenditure.budget'
@@ -788,6 +788,10 @@ class ExpenditureBudget(models.Model):
             total_cron = math.ceil(len(self.line_ids.ids) / 5000)
         else:
             total_cron = math.ceil(len(self.success_line_ids.ids) / 5000)
+
+        total_lines = len(self.success_line_ids.filtered(
+        lambda l: l.state == 'success'))
+            
         if total_cron != 0:
             if self.success_rows != self.total_rows:
                 self.validate_and_add_budget_line()

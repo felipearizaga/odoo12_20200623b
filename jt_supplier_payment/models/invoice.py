@@ -137,6 +137,13 @@ class AccountMove(models.Model):
         domain="[('company_id', '=', company_id)]",
         default=_get_default_journal)
 
+#     @api.onchange('baneficiary_id')
+#     def onchange_baneficiary(self):
+#         if self.baneficiary_id and not self.baneficiary_id.address_id:
+#             raise ValidationError("Please configure partner into baneficiary")
+#         elif self.baneficiary_id:
+#             self.partner_id = self.baneficiary_id.address_id.id
+        
     def _get_move_display_name(self, show_ref=False):
         ''' Helper to get the display name of an invoice depending of its type.
         :param show_ref:    A flag indicating of the display name must include or not the journal entry reference.
