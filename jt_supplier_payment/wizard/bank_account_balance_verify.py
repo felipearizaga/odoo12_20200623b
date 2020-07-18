@@ -36,7 +36,7 @@ class BankBalanceCheck(models.TransientModel):
                 'domain': [],
                 'type': 'ir.actions.act_window',
                 'target': 'new',
-                'context':{'default_is_balance':True,'default_wizard_id':self.id},
+                'context':{'default_account_balance':account_balance,'default_is_balance':True,'default_wizard_id':self.id},
             } 
             else:
                 self.is_balance = False
@@ -49,7 +49,7 @@ class BankBalanceCheck(models.TransientModel):
                 'domain': [],
                 'type': 'ir.actions.act_window',
                 'target': 'new',
-                'context':{'default_is_balance':False,'default_wizard_id':self.id},
+                'context':{'default_account_balance':account_balance,'default_is_balance':False,'default_wizard_id':self.id},
                 }
             
             
