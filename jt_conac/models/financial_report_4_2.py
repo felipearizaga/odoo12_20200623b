@@ -23,6 +23,7 @@
 from odoo import models, api, _
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.tools.misc import formatLang
 
 class StatusOfActivities(models.AbstractModel):
     _name = "jt_conac.status.of.activities.report"
@@ -66,6 +67,26 @@ class StatusOfActivities(models.AbstractModel):
         # OVERRIDE to filter only bank / cash journals.
         return []
 
+    def _format(self, value,figure_type):
+        if self.env.context.get('no_format'):
+            return value
+        value['no_format_name'] = value['name']
+        
+        if figure_type == 'float':
+            currency_id = self.env.company.currency_id
+            if currency_id.is_zero(value['name']):
+                # don't print -0.0 in reports
+                value['name'] = abs(value['name'])
+                value['class'] = 'number text-muted'
+            value['name'] = formatLang(self.env, value['name'], currency_obj=currency_id)
+            value['class'] = 'number'
+            return value
+        if figure_type == 'percents':
+            value['name'] = str(round(value['name'] * 100, 1)) + '%'
+            value['class'] = 'number'
+            return value
+        value['name'] = round(value['name'], 1)
+        return value
     def _get_lines(self, options, line_id=None):
         move_line_obj = self.env['account.move.line']
         conac_obj = self.env['coa.conac']
@@ -182,9 +203,9 @@ class StatusOfActivities(models.AbstractModel):
                                 
                         for pe in periods:
                             if pe.get('string') in period_dict.keys():
-                                amt_columns.append({'name': period_dict.get(pe.get('string'))})
+                                amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
                             else:
-                                amt_columns.append({'name': 0})
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
                         lines.append({
                             'id': 'level_two_%s' % level_2_line.id,
                             'name': level_2_line.display_name,
@@ -196,9 +217,9 @@ class StatusOfActivities(models.AbstractModel):
                     total_col = []
                     for pe in periods:
                         if pe.get('string') in main_balance_dict.keys():
-                            total_col.append({'name': main_balance_dict.get(pe.get('string'))})
+                            total_col.append(self._format({'name': main_balance_dict.get(pe.get('string'))},figure_type='float'))
                         else:
-                            total_col.append({'name': 0})
+                            total_col.append(self._format({'name': 0.00},figure_type='float'))
                     lines.append({
                         'id': 'total_%s' % level_1_line.id,
                         'name': 'Total',
@@ -214,9 +235,11 @@ class StatusOfActivities(models.AbstractModel):
         
         for pe in periods:
             if pe.get('string') in last_total_dict.keys():
-                main_total_col.append({'name': last_total_dict.get(pe.get('string'))})
+                temp_total = self._format({'name': last_total_dict.get(pe.get('string'))},figure_type='float')
+                main_total_col.append(temp_total)
             else:
-                main_total_col.append({'name': 0})
+                main_total_col.append(self._format({'name': 0.00},figure_type='float'))
+                
         if self.env.user.lang == 'es_MX':
             lines.append({
                 'id': 'total_%s' % level_1_line.id,

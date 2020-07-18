@@ -23,6 +23,7 @@
 from odoo import models, api, _
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.tools.misc import formatLang
 
 class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
     _name = "jt_conac.statement.of.changes.report"
@@ -67,6 +68,27 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                            {'name': _('Application')},
             ]
         return columns
+    
+    def _format(self, value,figure_type):
+        if self.env.context.get('no_format'):
+            return value
+        value['no_format_name'] = value['name']
+        
+        if figure_type == 'float':
+            currency_id = self.env.company.currency_id
+            if currency_id.is_zero(value['name']):
+                # don't print -0.0 in reports
+                value['name'] = abs(value['name'])
+                value['class'] = 'number text-muted'
+            value['name'] = formatLang(self.env, value['name'], currency_obj=currency_id)
+            value['class'] = 'number'
+            return value
+        if figure_type == 'percents':
+            value['name'] = str(round(value['name'] * 100, 1)) + '%'
+            value['class'] = 'number'
+            return value
+        value['name'] = round(value['name'], 1)
+        return value
 
     def _get_lines(self, options, line_id=None):
         move_line_obj = self.env['account.move.line']
@@ -185,9 +207,11 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                             for pe in periods:
                                 if pe.get('string') in period_dict.keys():
                                     amt = period_dict.get(pe.get('string'))
-                                    amt_columns += [{'name': 0}, {'name': amt}]
+                                    amt_columns += [self._format({'name': 0.00},figure_type='float'), 
+                                                    self._format({'name': amt},figure_type='float')]
                                 else:
-                                    amt_columns += [{'name': 0}, {'name': 0}]
+                                    amt_columns += [self._format({'name': 0.00},figure_type='float'),
+                                                     self._format({'name': 0.00},figure_type='float')]
                             lines.append({
                                 'id': 'level_three_%s' % level_3_line.id,
                                 'name': level_3_line.display_name,
@@ -199,9 +223,11 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
                         for pe in periods:
                             if pe.get('string') in main_balance_dict.keys():
                                 amt = main_balance_dict.get(pe.get('string'))
-                                total_col += [{'name': 0}, {'name': amt}]
+                                total_col += [self._format({'name': 0.00},figure_type='float'),
+                                               self._format({'name': amt},figure_type='float')]
                             else:
-                                total_col += [{'name': 0}, {'name': 0}]
+                                total_col += [self._format({'name': 0.00},figure_type='float'), 
+                                              self._format({'name': 0.00},figure_type='float')]
                         lines.append({
                             'id': 'total_%s' % level_1_line.id,
                             'name': 'Total',
@@ -216,9 +242,11 @@ class StatementOfChangesInTheFinancialPosition(models.AbstractModel):
         for pe in periods:
             if pe.get('string') in last_total_dict.keys():
                 amt = last_total_dict.get(pe.get('string'))
-                main_total_col += [{'name': 0}, {'name': amt}]
+                main_total_col += [self._format({'name': 0.00},figure_type='float'),
+                                   self._format({'name': amt},figure_type='float')]
             else:
-                main_total_col += [{'name': 0}, {'name': 0}]
+                main_total_col += [self._format({'name': 0.00},figure_type='float'), 
+                                   self._format({'name': 0.00},figure_type='float')]
         if self.env.user.lang == 'es_MX':
             lines.append({
                 'id': 'total_%s' % level_1_line.id,

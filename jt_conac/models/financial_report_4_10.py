@@ -24,6 +24,7 @@ from odoo import models, _
 import unicodedata
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.tools.misc import formatLang
 
 class StatesAndProgramReports(models.AbstractModel):
     _name = "jt_conac.states.and.program.report"
@@ -77,6 +78,27 @@ class StatesAndProgramReports(models.AbstractModel):
                        unicodedata.normalize('NFKD', text)
                        if unicodedata.category(char) != 'Mn')
 
+    def _format(self, value,figure_type):
+        if self.env.context.get('no_format'):
+            return value
+        value['no_format_name'] = value['name']
+        
+        if figure_type == 'float':
+            currency_id = self.env.company.currency_id
+            if currency_id.is_zero(value['name']):
+                # don't print -0.0 in reports
+                value['name'] = abs(value['name'])
+                value['class'] = 'number text-muted'
+            value['name'] = formatLang(self.env, value['name'], currency_obj=currency_id)
+            value['class'] = 'number'
+            return value
+        if figure_type == 'percents':
+            value['name'] = str(round(value['name'] * 100, 1)) + '%'
+            value['class'] = 'number'
+            return value
+        value['name'] = round(value['name'], 1)
+        return value
+
     def _get_lines(self, options, line_id=None):
         states_obj = self.env['states.program']
         bud_line_obj = self.env['expenditure.budget.line']
@@ -112,6 +134,7 @@ class StatesAndProgramReports(models.AbstractModel):
                         continue
                 if line.program_code_id and line.program_code_id.budget_program_conversion_id and \
                         line.program_code_id.budget_program_conversion_id.desc:
+                    
                     heading_name = line.program_code_id.budget_program_conversion_id.desc.upper()
                     heading_name = self.strip_accents(heading_name)
                     if period_name in period_shcp_auth_dict.keys():
@@ -284,10 +307,11 @@ class StatesAndProgramReports(models.AbstractModel):
                                         main_period_total.update({period_name: {'auth': amt, 'ade': ade_amt,
                                                                        'modi': amt + ade_amt,
                                                                        'sub': amt + ade_amt}})
-                                    line_cols += [{'name': '%.2f' % amt, 'style': 'margin-left:15px;'},
-                                              {'name': '%.2f' % ade_amt, 'style': 'margin-left:15px;'},
-                                              {'name': amt + ade_amt},
-                                              {'name': ''}, {'name': ''}, {'name': amt + ade_amt}]
+                                    line_cols += [self._format({'name': amt},figure_type='float'),
+                                              self._format({'name': ade_amt},figure_type='float'),
+                                              self._format({'name': amt + ade_amt},figure_type='float'),
+                                              {'name': ''}, {'name': ''},
+                                              self._format({'name': amt + ade_amt},figure_type='float')]                                              
                                 else:
                                     line_cols += [{'name': ''}] * 6
                             else:
@@ -312,12 +336,11 @@ class StatesAndProgramReports(models.AbstractModel):
                         period_name = period.get('string')
                         if period_name in period_total:
                             pe_dict = period_total.get(period_name)
-                            total_cols += [
-                                {'name': '%.2f' % pe_dict.get('auth'), 'style': 'margin-left:15px;'},
-                                {'name': '%.2f' % pe_dict.get('ade'), 'style': 'margin-left:15px;'},
-                                {'name': '%.2f' % pe_dict.get('modi'), 'style': 'margin-left:15px;'},
-                                {'name': ''}, {'name': ''},
-                                {'name': '%.2f' % pe_dict.get('modi'), 'style': 'margin-left:15px;'}]
+                            total_cols += [self._format({'name': pe_dict.get('auth')},figure_type='float'),
+                                    self._format({'name': pe_dict.get('ade')},figure_type='float'),
+                                    self._format({'name': pe_dict.get('modi')},figure_type='float'),
+                                    {'name': ''},{'name': ''},
+                                    self._format({'name': pe_dict.get('modi')},figure_type='float')]
                             if not need_to_add:
                                 need_to_add = True
                         else:
@@ -339,13 +362,11 @@ class StatesAndProgramReports(models.AbstractModel):
             period_name = period.get('string')
             if period_name in main_period_total:
                 pe_dict = main_period_total.get(period_name)
-                main_total_cols += [
-                    {'name': '%.2f' % pe_dict.get('auth'), 'style': 'margin-left:15px;'},
-                    {'name': '%.2f' % pe_dict.get('ade'), 'style': 'margin-left:15px;'},
-                    {'name': '%.2f' % pe_dict.get('modi'), 'style': 'margin-left:15px;'},
-                    {'name': ''}, {'name': ''},
-                    {'name': '%.2f' % pe_dict.get('modi'), 'style': 'margin-left:15px;'}
-                ]
+                main_total_cols += [self._format({'name': pe_dict.get('auth')},figure_type='float'),
+                                    self._format({'name': pe_dict.get('ade')},figure_type='float'),
+                                    self._format({'name': pe_dict.get('modi')},figure_type='float'),
+                                    {'name': ''},{'name': ''},
+                                    self._format({'name': pe_dict.get('modi')},figure_type='float')]                                    
                 if not need_to_add:
                     need_to_add = True
             else:
