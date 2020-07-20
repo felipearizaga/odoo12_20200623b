@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+  		<record id="inherited_view_account_payment_form" model="ir.ui.view">
+            <field name="name">Inherited view account payment form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+            	<field name="communication" position="after">
+            		<field name="payment_bank_id"/>
+            		<field name="payment_bank_account_id"/>
+            	</field>
+            	<field name="journal_id" position="after">
+            		<field name="payment_issuing_bank_acc_id"/>
+            		<field name="batch_folio"/>
+            		<field name="folio"/>
+            	</field>
+	            <xpath expr="//sheet/group[1]" position="after">
+	            	<notebook>
+	            		<page string="Banamex" name="banamex"></page>
+	            		<page string="BBVA Bancomer Net Cash" name="bbva_net_cash"></page>
+	            		<page string="BBVA Bancomer SIT" name="bbva_sit"></page>
+	            		<page string="HSBC" name="hsbc"></page>
+	            		<page string="Santander" name="santander"></page>
+	            		<page string="JP Morgan" name="jp_morgan"></page>
+	            	</notebook>
+	            </xpath>
+			</field>
+		</record>
+
+	  <record id="supplier_payment_account_action" model="ir.actions.act_window">
+            <field name="name">Payments</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="account.view_account_payment_search"/>
+            <field name="context">{'default_payment_type': 'outbound','default_partner_type': 
+            	'supplier','search_default_outbound_filter': 1,
+            	'res_partner_search_mode': 'supplier','search_default_journal': 1}
+            </field>
+        </record>
+
+        <menuitem id="supplier_account_payment_req" name="Payments"
+                  action="supplier_payment_account_action"
+                  parent="supplier_payment_management_menu" sequence="20"/>
+    
+	</data>
+</odoo>

@@ -5,6 +5,12 @@ class AccountPayment(models.Model):
 
     _inherit = 'account.payment'
 
+    payment_bank_id = fields.Many2one('res.bank', "Bank of receipt of payment")
+    payment_bank_account_id = fields.Many2one('res.partner.bank', "Payment Receipt bank account")
+    payment_issuing_bank_acc_id = fields.Many2one('res.partner.bank', "Payment issuing bank Account")
+    batch_folio = fields.Integer("Batch Folio")
+    folio = fields.Char("Folio against Receipt")
+    
     def action_register_payment(self):
         res =super(AccountPayment,self).action_register_payment()
         

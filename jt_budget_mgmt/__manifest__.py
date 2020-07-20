@@ -66,6 +66,7 @@
         'views/program_code_views/project_type_view.xml',
         'views/program_code_views/stages_view.xml',
         'views/program_code_views/agreement_type_view.xml',
+        'views/account_payment_view.xml',
 
         # Root Views
         'views/quarter_budget_view.xml',

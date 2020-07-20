@@ -8,4 +8,60 @@
         <field name="type">sale</field>
     </record>
 
+   <record id="banamex_jour" model="account.journal">
+        <field name="name">Banamex</field>
+        <field name="code">BM</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    
+    <record id="bbva_tnn_ptc_jour" model="account.journal">
+        <field name="name">BBVA Bancomer Net Cash (TNN or PTC)</field>
+        <field name="code">BBVAT</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="bbva_tsc_pcs_jour" model="account.journal">
+        <field name="name">BBVA Bancomer Net Cash (TSC or PCS)</field>
+        <field name="code">BBVAP</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="bbva_sit_jour" model="account.journal">
+        <field name="name">BBVA Bancomer SIT</field>
+        <field name="code">SIT</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="hsbc_jour" model="account.journal">
+        <field name="name">HSBC</field>
+        <field name="code">HSBC</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="santander_jour" model="account.journal">
+        <field name="name">Santander</field>
+        <field name="code">ST</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="jp_morgan_wires_jour" model="account.journal">
+        <field name="name">JP Morgan WIRES / BOOKTX</field>
+        <field name="code">JPMW</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="jp_morgan_us_jour" model="account.journal">
+        <field name="name">JP Morgan US Drawdowns</field>
+        <field name="code">JPMS</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    <record id="jp_morgan_advice_jour" model="account.journal">
+        <field name="name">JP Morgan Advice to Receive</field>
+        <field name="code">JPMA</field>
+        <field name="currency_id" ref="base.MXN"/>
+        <field name="type">bank</field>
+    </record>
+    
 </odoo>

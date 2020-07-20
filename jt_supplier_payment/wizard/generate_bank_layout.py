@@ -20,33 +20,36 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from odoo import models, fields,_
+from odoo.exceptions import UserError, ValidationError
 
-# Code Structure
-from . import code_structure
-from . import report_program_fields
-from . import quarter
+class GenerateBankLayout(models.TransientModel):
 
-from . import year_configuration
-from . import project_project
+    _name = 'generate.bank.layout'    
+    _description = 'Generate Bank Layout'
+    
+    journal_id = fields.Many2one('account.journal','Select the file to generate')
+    payment_ids = fields.Many2many('account.payment','Payments')
+   
 
-# Add all objects of program code views
-from . import program_code_objects
+    def action_generate_bank_layout(self):
+        active_ids = self.env.context.get('active_ids')
+        if not active_ids:
+            return ''
+        
+        return {
+            'name': _('Generate Bank Layout'),
+            'res_model': 'generate.bank.layout',
+            'view_mode': 'form',
+            'view_id': self.env.ref('jt_supplier_payment.view_generate_bank_layout').id,
+            'context': {'default_payment_ids':[(6,0,active_ids)]},
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+        }    
 
-from . import program_code
-from . import expenditure_budget
-
-from . import adequacies
-from . import standardization
-from . import control_assigned_amounts
-from . import budget_control
-from . import requested_report
-from . import ir_cron
-from . import favourite_summary_report
-
-from . import account
-from . import payment_place
-from . import res_partner
-from . import hr_employee
-from . import employee_payroll_file
-
-from . import account_payment
+    def generate_bank_layout(self):
+        print ("calll")
+    
+    
+    
+    

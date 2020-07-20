@@ -33,6 +33,7 @@
     'data': [
         'data/data.xml',
         'data/paper_format.xml',
+        'security/ir.model.access.csv',
         'views/invoice_view.xml',
         'views/report_receipt_template.xml',
         'views/report_again_receipt.xml',
@@ -42,6 +43,10 @@
         'wizard/generate_batch_sheet_view.xml',
         'wizard/bank_balance_check.xml',
         'wizard/message_balance.xml',
+        'views/bank_transfer_request.xml',
+        'views/account_payment_view.xml',
+        "wizard/generate_bank_layout_view.xml",
+        'views/res_partner_bank_view.xml',
     ],
     'application': False,
     'installable': True,

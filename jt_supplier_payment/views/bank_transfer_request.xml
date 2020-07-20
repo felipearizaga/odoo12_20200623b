@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="bank_transfer_request_tree_view" model="ir.ui.view">
+            <field name="name">Bank Transfer Request Tree View</field>
+            <field name="model">bank.transfer.request</field>
+            <field name="arch" type="xml">
+                <tree>
+             			<field name="batch_folio"/>
+             			<field name="application_date"/>
+             			<field name="bank_id"/>
+             			<field name="bank_account_id"/>
+             			<field name="currency_id"/>
+             			<field name="amount"/>
+             			<field name="area_req_transfer"/>
+             			<field name="user_id"/>
+             			<field name="req_transfer"/>
+             			<field name="operation_type_id"/>
+             			<field name="observation"/>
+                </tree>
+            </field>
+        </record>
+			    
+        <record id="bank_transfer_request_view" model="ir.ui.view">
+            <field name="name">Bank Transfer Request View</field>
+            <field name="model">bank.transfer.request</field>
+            <field eval="100" name="priority"/>
+            <field name="arch" type="xml">
+                <form>
+                	<group>
+                		<group>
+                			<field name="batch_folio"/>
+                			<field name="application_date"/>
+                			<field name="bank_id"/>
+                			<field name="bank_account_id"/>
+                			<field name="currency_id"/>
+                			<field name="amount"/>
+                		</group>
+                		<group>
+                			<field name="area_req_transfer"/>
+                			<field name="user_id"/>
+                			<field name="req_transfer"/>
+                			<field name="operation_type_id"/>
+                			<field name="observation"/>
+                		</group>
+                	</group>
+				</form>
+			</field>
+		</record>
+
+	  <record id="bank_transfer_request_action" model="ir.actions.act_window">
+            <field name="name">Bank Transfer Request</field>
+            <field name="res_model">bank.transfer.request</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+	
+        <menuitem id="menu_bank_transfer_request" name="Bank Transfer Request"
+                  action="bank_transfer_request_action"
+                  parent="supplier_payment_management_menu" sequence="10"/>
+		
+	</data>
+</odoo>
