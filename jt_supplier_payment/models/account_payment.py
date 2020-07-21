@@ -10,7 +10,33 @@ class AccountPayment(models.Model):
     payment_issuing_bank_acc_id = fields.Many2one('res.partner.bank', "Payment issuing bank Account")
     batch_folio = fields.Integer("Batch Folio")
     folio = fields.Char("Folio against Receipt")
+    reason_for_rejection = fields.Text('Reason For Rejection')
+    reason_for_cancel = fields.Text('Reason For Cancellation')
+    payment_state = fields.Selection([('draft', 'Draft'), 
+                              ('for_payment_procedure','For Payment Procedure'),
+                               ('posted', 'Validated'), 
+                              ('reconciled', 'Reconciled'), 
+                              ('rejected','Rejected'),
+                              ('cancelled', 'Cancelled')], 
+                              readonly=True, default='draft', copy=False, string="Status")
+ 
+    def cancel(self):
+        result = super(AccountPayment,self).cancel()
+        if self.env.context and self.env.context.get('call_from_reject',False):
+            return result
+        self.write({'payment_state': 'cancelled'})
+        return result
     
+    def post(self):
+        result = super(AccountPayment,self).post()
+        self.write({'payment_state': 'posted'})
+        return result
+ 
+    def action_draft(self):
+        result = super(AccountPayment,self).action_draft()
+        self.write({'payment_state': 'draft'})
+        return result
+               
     def action_register_payment(self):
         res =super(AccountPayment,self).action_register_payment()
         

@@ -77,6 +77,7 @@ class AccountMove(models.Model):
                                       ('approved_payment','Approved for payment'),
                                       ('for_payment_procedure','For Payment Procedure'),
                                       ('paid','Paid'),
+                                      ('payment_not_applied','Payment not Applied'),
                                       ('done','Done'),
                                       ('rejected','Rejected'),
                                       ('cancel','Cancel')],default='draft',copy=False)

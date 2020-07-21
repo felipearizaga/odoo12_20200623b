@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+    
+    	<record id="inherited_view_account_payment_tree" model="ir.ui.view">
+            <field name="name">Inherited view account payment tree</field>
+            <field name="model">account.payment</field>
+            <field name="mode">primary</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="before">
+            		<field name="payment_state"/>
+            	</field>
+            	<field name="state" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</field>
+            </field>
+        </record>
   		<record id="inherited_view_account_payment_form" model="ir.ui.view">
             <field name="name">Inherited view account payment form</field>
             <field name="model">account.payment</field>
+            <field name="priority">100</field>
+            <field name="mode">primary</field>
             <field name="inherit_id" ref="account.view_account_payment_form"/>
             <field name="arch" type="xml">
+            	<field name="state" position="before">
+            		<field name="payment_state" widget="statusbar"/>
+            	</field>
+            	<field name="state" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</field>
             	<field name="communication" position="after">
             		<field name="payment_bank_id"/>
             		<field name="payment_bank_account_id"/>
@@ -14,6 +38,8 @@
             		<field name="payment_issuing_bank_acc_id"/>
             		<field name="batch_folio"/>
             		<field name="folio"/>
+            		<field name="reason_for_rejection" readonly="1" attrs="{'invisible':[('payment_state','!=','rejected')]}"/>
+            		<field name="reason_for_cancel" readonly="1" attrs="{'invisible':[('payment_state','!=','cancelled')]}"/>
             	</field>
 	            <xpath expr="//sheet/group[1]" position="after">
 	            	<notebook>
@@ -39,6 +65,18 @@
             </field>
         </record>
 
+		<record id="payment_req_tree_action_suppliers_finance" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="inherited_view_account_payment_tree"/>
+            <field name="act_window_id" ref="supplier_payment_account_action"/>
+        </record>
+        <record id="payment_req_form_action_suppliers_finance" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="inherited_view_account_payment_form"/>
+            <field name="act_window_id" ref="supplier_payment_account_action"/>
+        </record>
         <menuitem id="supplier_account_payment_req" name="Payments"
                   action="supplier_payment_account_action"
                   parent="supplier_payment_management_menu" sequence="20"/>

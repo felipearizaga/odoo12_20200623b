@@ -8,7 +8,16 @@ class AccountJournal(models.Model):
     conac_accured_credit_account_id = fields.Many2one('coa.conac', "Accured CONAC Credit Account")
     accured_debit_account_id = fields.Many2one('account.account', "Accured Debit Account")
     conac_accured_debit_account_id = fields.Many2one('coa.conac', "Accured CONAC Debit Account")
-
+    bank_format = fields.Selection([('banamex','Banamex'),
+                                    ('bbva_tnn_ptc','BBVA Bancomer Net Cash (TNN or PTC)'),
+                                    ('bbva_tsc_pcs','BBVA Bancomer Net Cash (TSC or PCS)'),
+                                    ('bbva_sit','BBVA Bancomer SIT'),
+                                    ('hsbc','HSBC'),
+                                    ('santander','Santander'),
+                                    ('jpmw','JP Morgan WIRES / BOOKTX'),
+                                    ('jpmu','JP Morgan US Drawdowns'),
+                                    ('jpma','JP Morgan Advice to Receive'),
+                                    ])
 
     @api.onchange('accured_credit_account_id', 'accured_debit_account_id')
     def onchange_accured_account(self):

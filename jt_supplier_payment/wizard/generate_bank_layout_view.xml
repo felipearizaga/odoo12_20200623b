@@ -10,6 +10,8 @@
                     <group>
                     	<field name="journal_id" required="1" domain="[('type','=','bank')]"/>
                     	<field name="payment_ids" invisible="1"/>
+                    	<field name="file_name" invisible="1"/>
+                    	<field name="file_data" readonly="1" filename="file_name" attrs="{'invisible':[('file_data','=',False)]}"/>
                     </group>
                     <footer>
                         <button string="Generate" name="generate_bank_layout" type="object" class="oe_highlight"/>
