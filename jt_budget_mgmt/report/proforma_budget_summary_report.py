@@ -45,6 +45,11 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
     filter_budget_control = None
     filter_program_code_section = None
 
+    def _get_reports_buttons(self):
+        return [
+            {'name': _('Print Preview'), 'sequence': 1, 'action': 'print_pdf', 'file_export_type': _('PDF')},
+            {'name': _('Export (XLSX)'), 'sequence': 2, 'action': 'print_xlsx', 'file_export_type': _('XLSX')},
+        ]
     # Set columns based on dynamic options
     def _get_columns_name(self, options):
         column_list = []
@@ -641,6 +646,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             new_lines = []
             need_to_add = 0
             new_total_list = []
+            new_total_list_all = []
             for al in lines[:500]:
                 if al.get('name') == 'Total':
                     if new_total_list:
@@ -661,13 +667,15 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             counter += 1
                         al.update({
                             'id': 0,
-                            'name': _('Total'),
+                            'name': _('SubTotal'),
                             'class': 'total',
                             'level': 2,
                             'columns': main_cols,
                         })
+                             
                     new_total_list = []
                     new_lines.append(al)
+                    new_total_list_all.append(al.get('columns'))
                 else:
                     new_total_list.append(al.get('columns'))
                     new_lines.append(al)
@@ -690,11 +698,49 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     counter += 1
                 new_lines.append({
                     'id': 0,
+                    'name': _('Subtotal'),
+                    'class': 'total',
+                    'level': 2,
+                    'columns': main_cols,
+                })
+           
+        #====== New Total Page =======#
+            if new_total_list_all:
+                need_to_add += 1
+                list_with_data = []
+                for l in new_total_list_all:
+                    new_list = []
+                    for d in l:
+                        if d.get('name') == '':
+                            new_list.append(0.0)
+                        else:
+                            new_list.append(d.get('name'))
+                        
+                    list_with_data.append(new_list)
+                list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
+                main_cols = []
+                counter = 0
+                for l in list_tot_data:
+                    if counter > need_to_skip:
+                        main_cols.append({'name': l})
+                    else:
+                        main_cols.append({'name': ''})
+                    counter += 1
+                new_lines.append({
+                    'id': 0,
                     'name': _('Total'),
                     'class': 'total',
                     'level': 2,
                     'columns': main_cols,
                 })
+
+            #new_lines.append({
+            #        'id': 0,
+            #        'name': _('Total'),
+            #        'class': 'total',
+            #        'level': 2,
+            #        'columns': main_cols,
+            #    })
             return new_lines[:501]
         else:
             if len(all_list) > 0:

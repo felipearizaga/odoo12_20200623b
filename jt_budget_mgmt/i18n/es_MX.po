@@ -629,11 +629,15 @@ msgstr "Configuración"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__expenditure_budget__state__confirm
-#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.agreement_type_form_view
 msgid "Confirm"
 msgstr "Confirmado"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
+msgid "Confirm"
+msgstr "Confirmar."
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.adequacies_form_view
@@ -2216,7 +2220,6 @@ msgid "Modifications"
 msgstr "Modificaciones"
 
 #. module: jt_budget_mgmt
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts__name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__favourite_name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__name
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_import_assigned_amount_line__name
@@ -2228,9 +2231,14 @@ msgid "Name"
 msgstr "Nombre Tipo de Convenio"
 
 #. module: jt_budget_mgmt
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__name
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts__name
 msgid "Name"
 msgstr "Nombre de Estacionalidad"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__name
+msgid "Name"
+msgstr "Nombre de Convenio"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_agreement_type__name_agreement

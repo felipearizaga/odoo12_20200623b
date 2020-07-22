@@ -119,6 +119,16 @@ msgid "Calendar of assigned amounts lines"
 msgstr "Líneas de Calendario de Montos Asignados"
 
 #. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_form_view
+msgid "Validate"
+msgstr "Validar"
+
+#. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_view
+msgid "Validate"
+msgstr "Validar"
+
+#. module: jt_finance
 #: model_terms:ir.ui.view,arch_db:jt_finance.import_control_amount_line_form_view
 msgid "Cancel"
 msgstr "Cancelado"
@@ -146,6 +156,17 @@ msgid "Created by"
 msgstr "Creado por"
 
 #. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_form_view
+msgid "Validate"
+msgstr "Validar"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__move_line_ids
+#: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_form_view
+msgid "Journal Items"
+msgstr "Asientos contables"
+
+#. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__create_date
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__create_date
 #: model:ir.model.fields,field_description:jt_finance.field_import_control_amount_lines__create_date
@@ -171,6 +192,12 @@ msgstr "Fecha de Depósito"
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__diff
 msgid "Difference"
 msgstr "Diferencia"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__journal_id
+msgid "Journal"
+msgstr "Diario"
+
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__display_name
@@ -369,10 +396,14 @@ msgstr "Número de registros no coinciden con archivo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__obs_calender_amount
-#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__obs_cont_amount
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__observations
 msgid "Observations"
 msgstr "Observaciones"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__obs_cont_amount
+msgid "Observations"
+msgstr "Justificación del Movimiento"
 
 #. module: jt_finance
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__october
