@@ -23,6 +23,7 @@
 from odoo import models, fields,_
 from odoo.exceptions import UserError, ValidationError
 import base64
+from datetime import datetime, timedelta
 
 class GenerateBankLayout(models.TransientModel):
 
@@ -53,18 +54,14 @@ class GenerateBankLayout(models.TransientModel):
         file_name = 'banamex.txt'
         
         for payment in self.payment_ids:
-            file_data = '03'
+            file_data += '03'
             if payment.journal_id.account_type:
                 if payment.journal_id.account_type=='check':
                     file_data += '01'
                     if payment.journal_id.branch_number:
-                        if len(payment.journal_id.branch_number) == 4:
-                            file_data += payment.journal_id.branch_number
-                        else:
-                            for r in (4 - len(payment.journal_id.branch_number) == 4):
-                                file_data +='0'
-                            file_data += payment.journal_id.branch_number
-                        
+                        file_data += payment.journal_id.branch_number.zfill(4)
+                    else: 
+                        file_data += '0000'                        
                 elif payment.journal_id.account_type=='card':
                     file_data += '03'
                     file_data += '0000'
@@ -73,6 +70,76 @@ class GenerateBankLayout(models.TransientModel):
                     file_data += '0000'
                 else:
                     file_data += '0000'
+            if payment.journal_id.bank_account_id:
+                file_data += payment.journal_id.bank_account_id.acc_number.zfill(20)
+            else:
+                temp =''
+                file_data +=temp.zfill(20)
+            #==== Receipt Bank DATA ===========
+            if payment.payment_bank_account_id:
+                if payment.journal_id.account_type=='check':
+                    file_data += '01'
+                    if payment.payment_bank_account_id.branch_number:
+                        file_data += payment.payment_bank_account_id.branch_number.zfill(4)
+                    else: 
+                        file_data += '0000'                        
+                elif payment.journal_id.account_type=='card':
+                    file_data += '03'
+                    file_data += '0000'
+                elif payment.journal_id.account_type=='master_acc':
+                    file_data += '06'
+                    file_data += '0000'
+                else:
+                    file_data += '00'
+                    file_data += '0000'
+            if payment.payment_bank_account_id:
+                file_data += payment.payment_bank_account_id.acc_number.zfill(20)
+            else:
+                temp =''
+                file_data +=temp.zfill(20)
+                
+            #====== Amount Data =========
+            amount = round(payment.amount, 2)
+            amount = str(amount).split('.')
+            file_data +=str(amount[0]).zfill(12)
+            file_data +=str(amount[1]).zfill(2)
+            
+            #====== Currency Data =========
+            if payment.currency_id:
+                if payment.currency_id.name=='USD':
+                    file_data +='005'
+                elif payment.currency_id.name=='MXN':
+                    file_data +='001'
+            #====== Description =========
+            temp_desc = ''
+            if payment.banamex_description:
+                temp_desc = payment.banamex_description
+            file_data += temp_desc.ljust(24, " ")
+    
+            #====== banamex_concept =========
+            temp_desc = ''
+            if payment.banamex_concept:
+                temp_desc = payment.banamex_concept
+            file_data += temp_desc.ljust(34, " ")
+    
+            #====== banamex_reference =========
+            temp_desc = ''
+            if payment.banamex_reference:
+                temp_desc = payment.banamex_reference
+            file_data += temp_desc.ljust(10, " ")
+            
+            #====== Currency constant =========
+            file_data += "000"
+            #====== Current Dat time=========
+            currect_time = datetime.today()
+            
+            file_data +=str(currect_time.day)
+            file_data +=str(currect_time.month).zfill(2)
+            file_data +=str(currect_time.year)[:2]
+            file_data +=str(currect_time.hour)
+            file_data +=str(currect_time.minute)
+            file_data +="\n"
+            
         gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
         self.file_data = gentextfile
         self.file_name = file_name

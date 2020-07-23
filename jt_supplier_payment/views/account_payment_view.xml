@@ -43,7 +43,13 @@
             	</field>
 	            <xpath expr="//sheet/group[1]" position="after">
 	            	<notebook>
-	            		<page string="Banamex" name="banamex"></page>
+	            		<page string="Banamex" name="banamex">
+	            			<group>
+	            				<field name="banamex_description"/>
+	            				<field name="banamex_concept"/>
+	            				<field name="banamex_reference"/>
+	            			</group>
+	            		</page>
 	            		<page string="BBVA Bancomer Net Cash" name="bbva_net_cash"></page>
 	            		<page string="BBVA Bancomer SIT" name="bbva_sit"></page>
 	            		<page string="HSBC" name="hsbc"></page>

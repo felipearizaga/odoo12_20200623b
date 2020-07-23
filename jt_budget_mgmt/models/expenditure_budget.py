@@ -86,6 +86,13 @@ class ExpenditureBudget(models.Model):
     move_line_ids = fields.One2many('account.move.line', 'budget_id', string="Journal Items")
 
     @api.model
+    def fields_get(self, fields=None, attributes=None):
+        fields = super(ExpenditureBudget, self).fields_get(fields, attributes=attributes)
+        for key, value in fields.items():
+            value.update({'searchable':False})
+        return fields 
+
+    @api.model
     def default_get(self, fields):
         res = super(ExpenditureBudget, self).default_get(fields)
         budget_app_jou = self.env.ref('jt_conac.budget_appr_jour')

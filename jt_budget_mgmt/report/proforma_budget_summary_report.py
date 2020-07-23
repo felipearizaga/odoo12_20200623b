@@ -715,7 +715,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             new_list.append(0.0)
                         else:
                             new_list.append(d.get('name'))
-                        
+                         
                     list_with_data.append(new_list)
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                 main_cols = []
@@ -734,13 +734,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     'columns': main_cols,
                 })
 
-            #new_lines.append({
-            #        'id': 0,
-            #        'name': _('Total'),
-            #        'class': 'total',
-            #        'level': 2,
-            #        'columns': main_cols,
-            #    })
+
             return new_lines[:501]
         else:
             if len(all_list) > 0:

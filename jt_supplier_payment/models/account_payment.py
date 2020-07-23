@@ -20,6 +20,10 @@ class AccountPayment(models.Model):
                               ('cancelled', 'Cancelled')], 
                               readonly=True, default='draft', copy=False, string="Status")
  
+    banamex_description = fields.Text('Description',size=24)
+    banamex_concept = fields.Text('Concept',size=34)
+    banamex_reference = fields.Text('Reference',size=10)
+    
     def cancel(self):
         result = super(AccountPayment,self).cancel()
         if self.env.context and self.env.context.get('call_from_reject',False):

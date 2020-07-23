@@ -61,7 +61,6 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
         lines = []
         hierarchy_lines = conac_obj.sudo().search(
             [('parent_id', '=', False)], order='code')
-
         for line in hierarchy_lines:
 
             # Root Level
@@ -76,6 +75,15 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
                 'unfoldable': False,
                 'unfolded': True,
             })
+            accounts = self.env['account.account'].search([('coa_conac_id', '=', line.id)])
+            for account in accounts:
+                lines.append({
+                    'id': 'level_four_%s' % account.id,
+                    'name': account.display_name,
+                    'columns': [{'name': ''}, {'name': account.user_type_id and account.user_type_id.name or ''}, {'name': line.gender}, {'name': account.group_id and account.group_id.name or ''}, {'name': line.item}],
+                    'level': 3,
+                    'parent_id': 'level_three_%s' % line.id,
+                })
 
             # Level-1 lines
             level_1_lines = conac_obj.search([('parent_id', '=', line.id)])
@@ -89,6 +97,15 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
                     'unfolded': True,
                     'parent_id': 'hierarchy_' + line_code,
                 })
+                accounts = self.env['account.account'].search([('coa_conac_id', '=', level_1_line.id)])
+                for account in accounts:
+                    lines.append({
+                        'id': 'level_four_%s' % account.id,
+                        'name': account.display_name,
+                        'columns': [{'name': ''}, {'name': account.user_type_id and account.user_type_id.name or ''}, {'name': level_1_line.gender}, {'name': account.group_id and account.group_id.name or ''}, {'name': level_1_line.item}],
+                        'level': 3,
+                        'parent_id': 'level_three_%s' % level_1_line.id,
+                    })
 
                 # Level-2 Lines
                 level_2_lines = conac_obj.search(
@@ -103,6 +120,15 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
                         'unfolded': True,
                         'parent_id': 'level_one_%s' % level_1_line.id,
                     })
+                    accounts = self.env['account.account'].search([('coa_conac_id', '=', level_2_line.id)])
+                    for account in accounts:
+                        lines.append({
+                            'id': 'level_four_%s' % account.id,
+                            'name': account.display_name,
+                            'columns': [{'name': ''}, {'name': account.user_type_id and account.user_type_id.name or ''}, {'name': level_2_line.gender}, {'name': account.group_id and account.group_id.name or ''}, {'name': level_2_line.item}],
+                            'level': 4,
+                            'parent_id': 'level_three_%s' % level_2_line.id,
+                        })
 
                     # Level-3 Lines
                     level_3_lines = conac_obj.search(

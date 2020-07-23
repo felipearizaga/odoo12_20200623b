@@ -7,12 +7,14 @@
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
                 <search string="Expenditure Budget">
+                	<!--
                     <field name="name"/>
                     <field name="state"/>
                     <group expand="1" string="Group By">
                         <filter string="Budget name" name='budget_name' context="{'group_by':'name'}"/>
                         <filter string="Status" name='status_groupby' context="{'group_by':'state'}"/>
                     </group>
+                     -->
                 </search>
             </field>
         </record>
@@ -302,6 +304,7 @@
             <field name="res_model">expenditure.budget</field>
             <field name="view_mode">tree,form,search</field>
             <field name="view_id" ref="expenditure_budget_tree_view"/>
+            <field name="search_view_id" ref="expenditure_budget_search_view"/>
             <field name="context">{}</field>
         </record>
 
