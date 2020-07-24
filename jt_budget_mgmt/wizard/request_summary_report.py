@@ -194,59 +194,75 @@ class BudgetSummaryReportDownload(models.TransientModel):
         bud_line_obj = self.env['expenditure.budget.line']
         start = self.start_date
         end = self.end_date
+#         data_with_item = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+#         data_with_item_cron = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+        
         for code in programs:
+            #key_i = int(code.item_id.item)
             all_b_lines = bud_line_obj.search([('program_code_id', '=', code.id),
                                                ('expenditure_budget_id.state', '=', 'validate'), ('start_date', '>=', start), ('end_date', '<=', end)])
             if all_b_lines:
-                code_lines.append({code: all_b_lines})
-                code_lines_new.append({code.id: all_b_lines.ids})
-
+                
+                code_lines.append({code: all_b_lines})                
+                #code_lines_new.append({code.id: all_b_lines.ids})
+                              
         data_with_item = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+        data_with_item_cron = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
         for cl in code_lines:
             for code, lines in cl.items():
                 key_i = int(code.item_id.item)
                 if key_i >= 100 and key_i <= 199:
                     data_with_item[0] = {1: data_with_item[0].get(1) + [{code: lines}]}
+                    data_with_item_cron[0] = {1: data_with_item_cron[0].get(1) + [{code.id: lines.ids}]}
                 elif key_i >= 200 and key_i <= 299:
                     data_with_item[1] = {2: data_with_item[1].get(2) + [{code: lines}]}
+                    data_with_item_cron[1] = {2: data_with_item_cron[1].get(2) + [{code.id: lines.ids}]}
                 elif key_i >= 300 and key_i <= 399:
                     data_with_item[2] = {3: data_with_item[2].get(3) + [{code: lines}]}
+                    data_with_item_cron[2] = {3: data_with_item_cron[2].get(3) + [{code.id: lines.ids}]}
                 elif key_i >= 400 and key_i <= 499:
                     data_with_item[3] = {4: data_with_item[3].get(4) + [{code: lines}]}
+                    data_with_item_cron[3] = {4: data_with_item_cron[3].get(4) + [{code.id: lines.ids}]}
                 elif key_i >= 500 and key_i <= 599:
                     data_with_item[4] = {5: data_with_item[4].get(5) + [{code: lines}]}
+                    data_with_item_cron[4] = {5: data_with_item_cron[4].get(5) + [{code.id: lines.ids}]}
                 elif key_i >= 600 and key_i <= 699:
                     data_with_item[5] = {6: data_with_item[5].get(6) + [{code: lines}]}
+                    data_with_item_cron[5] = {6: data_with_item_cron[5].get(6) + [{code.id: lines.ids}]}
                 elif key_i >= 700 and key_i <= 799:
                     data_with_item[6] = {7: data_with_item[6].get(7) + [{code: lines}]}
+                    data_with_item_cron[6] = {7: data_with_item_cron[6].get(7) + [{code.id: lines.ids}]}
                 elif key_i >= 800 and key_i <= 899:
                     data_with_item[7] = {8: data_with_item[7].get(8) + [{code: lines}]}
+                    data_with_item_cron[7] = {8: data_with_item_cron[7].get(8) + [{code.id: lines.ids}]}
                 elif key_i >= 900 and key_i <= 999:
                     data_with_item[8] = {9: data_with_item[8].get(9) + [{code: lines}]}
-        code_obj = self.env['program.code']
-        data_with_item_cron = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
-        for cl in code_lines_new:
-            for code, lines in cl.items():
-                code_b = code_obj.browse(code)
-                key_i = int(code_b.item_id.item)
-                if key_i >= 100 and key_i <= 199:
-                    data_with_item_cron[0] = {1: data_with_item_cron[0].get(1) + [{code: lines}]}
-                elif key_i >= 200 and key_i <= 299:
-                    data_with_item_cron[1] = {2: data_with_item_cron[1].get(2) + [{code: lines}]}
-                elif key_i >= 300 and key_i <= 399:
-                    data_with_item_cron[2] = {3: data_with_item_cron[2].get(3) + [{code: lines}]}
-                elif key_i >= 400 and key_i <= 499:
-                    data_with_item_cron[3] = {4: data_with_item_cron[3].get(4) + [{code: lines}]}
-                elif key_i >= 500 and key_i <= 599:
-                    data_with_item_cron[4] = {5: data_with_item_cron[4].get(5) + [{code: lines}]}
-                elif key_i >= 600 and key_i <= 699:
-                    data_with_item_cron[5] = {6: data_with_item_cron[5].get(6) + [{code: lines}]}
-                elif key_i >= 700 and key_i <= 799:
-                    data_with_item_cron[6] = {7: data_with_item_cron[6].get(7) + [{code: lines}]}
-                elif key_i >= 800 and key_i <= 899:
-                    data_with_item_cron[7] = {8: data_with_item_cron[7].get(8) + [{code: lines}]}
-                elif key_i >= 900 and key_i <= 999:
-                    data_with_item_cron[8] = {9: data_with_item_cron[8].get(9) + [{code: lines}]}
+                    data_with_item_cron[8] = {9: data_with_item_cron[8].get(9) + [{code.id: lines.ids}]}
+                                        
+#        code_obj = self.env['program.code']
+#         data_with_item_cron = [{1: []}, {2: []}, {3: []}, {4: []}, {5: []}, {6: []}, {7: []}, {8: []}, {9: []}]
+#         for cl in code_lines_new:
+#             for code, lines in cl.items():
+#                 code_b = code_obj.browse(code)
+#                 key_i = int(code_b.item_id.item)
+#                 if key_i >= 100 and key_i <= 199:
+#                     data_with_item_cron[0] = {1: data_with_item_cron[0].get(1) + [{code: lines}]}
+#                 elif key_i >= 200 and key_i <= 299:
+#                     data_with_item_cron[1] = {2: data_with_item_cron[1].get(2) + [{code: lines}]}
+#                 elif key_i >= 300 and key_i <= 399:
+#                     data_with_item_cron[2] = {3: data_with_item_cron[2].get(3) + [{code: lines}]}
+#                 elif key_i >= 400 and key_i <= 499:
+#                     data_with_item_cron[3] = {4: data_with_item_cron[3].get(4) + [{code: lines}]}
+#                 elif key_i >= 500 and key_i <= 599:
+#                     data_with_item_cron[4] = {5: data_with_item_cron[4].get(5) + [{code: lines}]}
+#                 elif key_i >= 600 and key_i <= 699:
+#                     data_with_item_cron[5] = {6: data_with_item_cron[5].get(6) + [{code: lines}]}
+#                 elif key_i >= 700 and key_i <= 799:
+#                     data_with_item_cron[6] = {7: data_with_item_cron[6].get(7) + [{code: lines}]}
+#                 elif key_i >= 800 and key_i <= 899:
+#                     data_with_item_cron[7] = {8: data_with_item_cron[7].get(8) + [{code: lines}]}
+#                 elif key_i >= 900 and key_i <= 999:
+#                     data_with_item_cron[8] = {9: data_with_item_cron[8].get(9) + [{code: lines}]}
 
 
         if code_lines:

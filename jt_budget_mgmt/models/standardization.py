@@ -191,6 +191,43 @@ class Standardization(models.Model):
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
 
+    def check_program_item_games(self,program_code,item_name=False):
+        item_name = item_name
+        if not item_name and program_code and program_code.item_id:
+            item_name = program_code.item_id.item
+        program_code_msg = program_code and program_code.program_code or ''
+        user_lang = self.env.user.lang
+        
+        if item_name:
+
+            if item_name >= '100' and item_name <= '199':
+                if item_name not in ('180','191','154','197'):
+                    if user_lang == 'es_MX':
+                        raise ValidationError(
+                            _("Del grupo de partida 100 solo se permiten registrar laspartidas(180, 191, 154, 197 y 197): \n %s" %
+                              program_code_msg))
+                    else:
+                        raise ValidationError(_("Form the group 100,only the following games are allowed (180,191,154,197 and 197): \n %s" %
+                                                program_code_msg))
+                    
+            if item_name >= '700' and item_name <= '799':
+                if user_lang == 'es_MX':
+                    raise ValidationError(
+                        _("No se pueden crear recalendarizaciones de la partida 700: \n %s" %
+                          program_code_msg))
+                else:
+                    raise ValidationError(_("Cannot create reschedule of party group 700: \n %s" %
+                                            program_code_msg))
+
+            if item_name >= '300' and item_name <= '399':
+                if user_lang == 'es_MX':
+                    raise ValidationError(
+                        _("No se pueden crear recalendarizaciones de la partida 300: \n %s" %
+                          program_code_msg))
+                else:
+                    raise ValidationError(_("Cannot create reschedule of party group 300: \n %s" %
+                                            program_code_msg))
+
     def validate_and_add_budget_line(self, record_id=False, cron_id=False):
         if record_id:
             self = self.env['standardization'].browse(int(record_id))
@@ -498,6 +535,7 @@ class Standardization(models.Model):
                         ], limit=1)
 
                         if program_code:
+                            self.check_program_item_games(program_code,False)
                             budget_line = self.env['expenditure.budget.line'].sudo().search(
                                 [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', budget.id)], limit=1)
                             if not budget_line:
@@ -696,6 +734,7 @@ class Standardization(models.Model):
                         cron.write({'prev_cron_id': prev_cron_id, 'active': False})
                     prev_cron_id = cron.id
 
+        
     def validate_data(self):
         user_lang = self.env.user.lang
         if len(self.line_ids.ids) == 0:
@@ -713,6 +752,9 @@ class Standardization(models.Model):
 
         bugdet_l_obj = self.env['expenditure.budget.line']
         for line in self.line_ids:
+            if line.code_id:
+                self.check_program_item_games(line.code_id)
+                                
             if line.amount and line.origin_id and line.code_id and line.budget_id:
                 budget_lines = bugdet_l_obj.search([('expenditure_budget_id', '=', line.budget_id.id),
                                                     ('program_code_id', '=', line.code_id.id)])

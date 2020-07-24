@@ -37,7 +37,7 @@ class ExpenditureItem(models.Model):
     shcp = fields.Char(string='Expenditure Item SHCP')
     desc_shcp = fields.Char(string='Description of expenditure item of SHCP')
     cog_id = fields.Many2one('coa.conac', string='CONAC Code')
-    cog_desc = fields.Char(string='Description of COG CONAC')
+    cog_desc = fields.Char(string='Account name COG CONAC')
     assigned_account = fields.Char(string='Assigned account')
     heading = fields.Many2one('cog.conac', string="Heading")
     cog_conac = fields.Char(string='COG CONAC')

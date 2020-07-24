@@ -427,7 +427,7 @@ msgstr "Presupuesto de Egresos"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.requested_report_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Budget Control"
-msgstr "Control de Presupuestos"
+msgstr "Estacionalidad Trimestral"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_budget_control
@@ -1038,9 +1038,13 @@ msgstr "Descripción Tipo de Gasto"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__cog_desc
+msgid "Account name COG CONAC"
+msgstr "Nombre de cuenta CONAC"
+
+#. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__des_cog_conac
 msgid "Description of COG CONAC"
-msgstr "Nombre de cuenta CONAC"
+msgstr "Descripción de COG CONAC"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__desc_conversion_item
@@ -1055,7 +1059,7 @@ msgstr "Descripción de Partida de Gasto"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__desc_shcp
 msgid "Description of expenditure item of SHCP"
-msgstr "Descripción de Conversión con Partida"
+msgstr "Descripción de Categoría SHCP"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_budget_program_conversion__desc
@@ -1276,7 +1280,7 @@ msgstr "Partida de Gasto (PAR)"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_item__shcp
 msgid "Expenditure Item SHCP"
-msgstr "Conversión con Partida"
+msgstr "Categoría SHCP"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_expenditure_budget
@@ -1797,10 +1801,14 @@ msgstr "Importación"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__imported_lines_count
-#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
 msgid "Imported Lines"
-msgstr "Líneas no Importadas"
+msgstr "Líneas de Presupuesto"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
+msgid "Imported Lines"
+msgstr "Líneas de Estacionalidad"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__imported_sessional
@@ -2583,19 +2591,26 @@ msgstr "Resumen Presupuesto Proforma"
 #: model:ir.model,name:jt_budget_mgmt.model_program
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies_lines__program
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts_lines__program
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__program
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__program_id
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__program_ids
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__program_id
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__program_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__program_ids
-#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__code_structure__section__pr
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_search_view
 #: model:report.program.fields,name:jt_budget_mgmt.program_field_2
 #, python-format
 msgid "Program"
 msgstr "Código Presupuestal"
+
+#. module: jt_budget_mgmt
+#. openerp-web
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__code_structure__section__pr
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__program_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__program
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__program_id
+#, python-format
+msgid "Program"
+msgstr "Programa"
+
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_program
@@ -4126,6 +4141,8 @@ msgid ""
 "You can not decrease amount more than assigned amount! \n"
 " %s "
 msgstr ""
+#"No puede disminuir más de la cantidad asignada del código programático! \n"
+#" %s " 
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/dependency.py:0
