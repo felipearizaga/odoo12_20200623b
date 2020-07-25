@@ -89,7 +89,7 @@ class ExpenditureBudget(models.Model):
     def fields_get(self, fields=None, attributes=None):
         fields = super(ExpenditureBudget, self).fields_get(fields, attributes=attributes)
         for key, value in fields.items():
-            value.update({'searchable':False})
+            value.update({'searchable':False,'sortable':False})
         return fields 
 
     @api.model

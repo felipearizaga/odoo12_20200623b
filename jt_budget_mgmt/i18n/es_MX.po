@@ -4141,8 +4141,8 @@ msgid ""
 "You can not decrease amount more than assigned amount! \n"
 " %s "
 msgstr ""
-#"No puede disminuir más de la cantidad asignada del código programático! \n"
-#" %s " 
+"No puede disminuir más de la cantidad asignada del código programático! \n"
+" %s " 
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/program_code_objects/dependency.py:0

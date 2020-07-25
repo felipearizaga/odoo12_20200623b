@@ -635,6 +635,28 @@ class Adequacies(models.Model):
                 budget_lines_check = self.env['expenditure.budget.line'].sudo().search(
                     [('program_code_id', '=', line.program.id),
                      ('expenditure_budget_id', '=', self.budget_id.id)])
+                budget_line_assign = False
+                if adequacies.adaptation_type == 'compensated':
+                    b_month = adequacies.date_of_budget_affected.month
+                else:
+                    b_month = adequacies.date_of_liquid_adu.month
+                for b_line in budget_lines_check:
+                    if b_line.start_date:
+                        b_s_month = b_line.start_date.month
+                        if b_month in (1, 2, 3) and b_s_month in (1, 2, 3):
+                            budget_line_assign = b_line
+                        elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                            budget_line_assign = b_line
+                        elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                            budget_line_assign = b_line
+                        elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
+                            budget_line_assign = b_line
+                if budget_line_assign:
+                    total_assing_amount = sum(x.assigned for x in budget_line_assign)
+                    if total_assing_amount <=0 :
+                        raise ValidationError(_("You are not allowed to adjustments for zero or negative assign amount of program code! %s " % \
+                                            (line.program.program_code)))
+                        
 
                 found = False
                 for b_check in budget_lines_check:
@@ -651,9 +673,9 @@ class Adequacies(models.Model):
                     raise ValidationError(_("%s Program code is not available in %s with selected quarter!" % \
                                             (line.program.program_code, adequacies.budget_id.name)))
 
-                if line.amount < 10000:
-                    raise ValidationError(_(
-                        "The total amount of the increases/decreases should be greater than or equal to 10000"))
+#                 if line.amount < 10000:
+#                     raise ValidationError(_(
+#                         "The total amount of the increases/decreases should be greater than or equal to 10000"))
                 if line.line_type == 'decrease':
                     budget_line = False
                     if self.date_of_budget_affected and self.adaptation_type == 'compensated':
@@ -677,6 +699,7 @@ class Adequacies(models.Model):
                             [('program_code_id', '=', line.program.id),
                              ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
 
+                        
                     if budget_line and budget_line.assigned < line.amount:
                         code_list_decrese.append(budget_line.program_code_id.program_code)
                         continue
@@ -687,7 +710,12 @@ class Adequacies(models.Model):
                     total_increased += line.amount
                     counter_increased += 1
             if code_list_decrese:
-                raise ValidationError(_("You can not decrease amount more than assigned amount! \n %s" % \
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("No puede disminuir más de la cantidad asignada del código programático! \n %s" % \
+                                        ' '.join([str(elem) for elem in code_list_decrese])))
+                    
+                else:
+                    raise ValidationError(_("You can not decrease amount more than assigned amount! \n %s" % \
                                         ' '.join([str(elem) for elem in code_list_decrese])))
             if adequacies.adaptation_type == 'compensated' and total_decreased != total_increased:
                 raise ValidationError(_(

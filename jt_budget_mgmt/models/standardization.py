@@ -201,13 +201,13 @@ class Standardization(models.Model):
         if item_name:
 
             if item_name >= '100' and item_name <= '199':
-                if item_name not in ('180','191','154','197'):
+                if item_name not in ('180','191','154','196','197'):
                     if user_lang == 'es_MX':
                         raise ValidationError(
-                            _("Del grupo de partida 100 solo se permiten registrar laspartidas(180, 191, 154, 197 y 197): \n %s" %
+                            _("Del grupo de partida 100 solo se permiten registrar laspartidas(180, 191, 154, 196 y 197): \n %s" %
                               program_code_msg))
                     else:
-                        raise ValidationError(_("Form the group 100,only the following games are allowed (180,191,154,197 and 197): \n %s" %
+                        raise ValidationError(_("Form the group 100,only the following games are allowed (180,191,154,196 and 197): \n %s" %
                                                 program_code_msg))
                     
             if item_name >= '700' and item_name <= '799':
@@ -301,7 +301,6 @@ class Standardization(models.Model):
                 for colx, cell in enumerate(row, 1):
                     list_result.append(cell.value)
                     counter += 1
-
                 # Validate year format
                 year = year_obj.validate_year(list_result[0])
                 if not year:
@@ -341,7 +340,48 @@ class Standardization(models.Model):
                                   "------>> Invalid Sub Dependency(DEP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
-
+                
+                #Validate item games group
+                if list_result[5]:
+                    user_lang = self.env.user.lang
+                    item_name = list_result[5] 
+                    if item_name >= '100' and item_name <= '199':
+                        if item_name not in ('180','191','154','196','197'):
+                            if user_lang == 'es_MX':
+                                failed_row += str(list_result) + \
+                                              "------>> Del grupo de partida 100 solo se permiten registrar las partidas(180,191, 154, 196 y 197)\n"
+                                failed_row_ids.append(pointer)
+                                continue
+                            else:
+                                failed_row += str(list_result) + \
+                                              "------>> Form the group 100,only the following games are allowed (180,191,154,197 and 197):\n"
+                                failed_row_ids.append(pointer)
+                                continue
+                                                            
+                    elif item_name >= '700' and item_name <= '799':
+                        if user_lang == 'es_MX':
+                            failed_row += str(list_result) + \
+                                          "------>> No se pueden crear recalendarizaciones de la partida 700\n"
+                            failed_row_ids.append(pointer)
+                            continue
+                        else:
+                            failed_row += str(list_result) + \
+                                          "------>> Cannot create reschedule of party group 700:\n"
+                            failed_row_ids.append(pointer)
+                            continue
+        
+                    elif item_name >= '300' and item_name <= '399':
+                        if user_lang == 'es_MX':
+                            failed_row += str(list_result) + \
+                                          "------>> No se pueden crear recalendarizaciones de la partida 300\n"
+                            failed_row_ids.append(pointer)
+                            continue
+                        else:
+                            failed_row += str(list_result) + \
+                                          "------>> Cannot create reschedule of party group 300:\n"
+                            failed_row_ids.append(pointer)
+                            continue
+                    
                 # Validate Item
                 item = item_obj.validate_item(list_result[5], list_result[19])
                 if not item:
