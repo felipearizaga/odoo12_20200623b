@@ -23,6 +23,7 @@
 from datetime import datetime
 from odoo import models, fields, api, _
 from odoo.tools.profiler import profile
+from odoo.tools.misc import formatLang
 
 class ProformaBudgetSummaryReport(models.AbstractModel):
     _name = "proforma.budget.summary.report"
@@ -305,7 +306,6 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
 
 
-
     def _get_sum_trimster(self, all_b_lines, s_month, s_day, e_month, e_day):
         return sum(x.assigned if x.start_date.month == s_month and \
                                 x.start_date.day == s_day and x.end_date.month == e_month and x.end_date.day == e_day \
@@ -540,9 +540,11 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             amt = sum(x.available for x in all_b_lines)
                         elif column in ('Available', 'Disponible'):
                             amt = sum(x.available for x in all_b_lines)
-
-                        columns.append({'name': amt})
-                        col_data_list.append(str(amt))
+                           
+                        if isinstance(amt, float) or isinstance(amt, int):
+                            columns.append({'class':'number','float_name': amt,'name': formatLang(self.env, amt, currency_obj=False)})
+                        else:
+                            columns.append({'float_name': amt,'name': amt})
                     if need_total:
                         main_list.append(col_data_list)
 
@@ -562,9 +564,10 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     counter = 0
                     for l in list_tot_data:
                         if counter != 0:
-                            main_cols.append({'name': l})
+                            main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
+                            
                         else:
-                            main_cols.append({'name': ''})
+                            main_cols.append({'name': '','float_name': ''})
                         counter += 1
                     if main_cols:
                         lines.append({
@@ -594,16 +597,16 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         for l in new_total_list:
                             new_list = []
                             for d in l:
-                                new_list.append(d.get('name'))
+                                new_list.append(d.get('float_name'))
                             list_with_data.append(new_list)
                         list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                         main_cols = []
                         counter = 0
                         for l in list_tot_data:
                             if counter > need_to_skip:
-                                main_cols.append({'name': l})
+                                main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
                             else:
-                                main_cols.append({'name': ''})
+                                main_cols.append({'name': '','float_name': ''})
                             counter += 1
                         al.update({
                             'id': 0,
@@ -621,7 +624,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 for l in new_total_list:
                     new_list = []
                     for d in l:
-                        new_list.append(d.get('name'))
+                        new_list.append(d.get('float_name'))
                     list_with_data.append(new_list)
 
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
@@ -630,9 +633,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
                 for l in list_tot_data:
                     if counter > need_to_skip:
-                        main_cols.append({'name': l})
+                        main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
                     else:
-                        main_cols.append({'name': ''})
+                        main_cols.append({'name': '','float_name': ''})
                     counter += 1
                 all_list.append({
                     'id': 0,
@@ -654,16 +657,16 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         for l in new_total_list:
                             new_list = []
                             for d in l:
-                                new_list.append(d.get('name'))
+                                new_list.append(d.get('float_name'))
                             list_with_data.append(new_list)
                         list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                         main_cols = []
                         counter = 0
                         for l in list_tot_data:
                             if counter > need_to_skip:
-                                main_cols.append({'name': l})
+                                main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
                             else:
-                                main_cols.append({'name': ''})
+                                main_cols.append({'name': '','float_name': ''})
                             counter += 1
                         al.update({
                             'id': 0,
@@ -685,16 +688,16 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 for l in new_total_list:
                     new_list = []
                     for d in l:
-                        new_list.append(d.get('name'))
+                        new_list.append(d.get('float_name'))
                     list_with_data.append(new_list)
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                 main_cols = []
                 counter = 0
                 for l in list_tot_data:
                     if counter > need_to_skip:
-                        main_cols.append({'name': l})
+                        main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
                     else:
-                        main_cols.append({'name': ''})
+                        main_cols.append({'name': '','float_name': ''})
                     counter += 1
                 new_lines.append({
                     'id': 0,
@@ -714,7 +717,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         if d.get('name') == '':
                             new_list.append(0.0)
                         else:
-                            new_list.append(d.get('name'))
+                            new_list.append(d.get('float_name'))
                          
                     list_with_data.append(new_list)
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
@@ -722,9 +725,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 counter = 0
                 for l in list_tot_data:
                     if counter > need_to_skip:
-                        main_cols.append({'name': l})
+                        main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
                     else:
-                        main_cols.append({'name': ''})
+                        main_cols.append({'name': '','float_name': ''})
                     counter += 1
                 new_lines.append({
                     'id': 0,

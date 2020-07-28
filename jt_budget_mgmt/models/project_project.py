@@ -46,11 +46,11 @@ class ProjectProject(models.Model):
     # _sql_constraints = [('uniq_number_agreement', 'unique(number_agreement)',
     #                      'The Number Agreement must be unique!')]
 
-    @api.constrains('project_type_identifier')
-    def _check_project_type_identifier(self):
-        if not str(self.project_type_identifier).isnumeric():
-            raise ValidationError(
-                _('The Project Type Identifier must be numeric value'))
+#     @api.constrains('project_type_identifier')
+#     def _check_project_type_identifier(self):
+#         if not str(self.project_type_identifier).isnumeric():
+#             raise ValidationError(
+#                 _('The Project Type Identifier must be numeric value'))
 
     @api.constrains('number')
     def _check_number(self):
@@ -63,11 +63,11 @@ class ProjectProject(models.Model):
             raise ValidationError(
                 _('The Stage Identifier must be numeric value'))
 
-    @api.constrains('agreement_type')
-    def _check_agreement_type(self):
-        if not str(self.agreement_type).isnumeric():
-            raise ValidationError(
-                _('The Agreement Type must be numeric value'))
+#     @api.constrains('agreement_type')
+#     def _check_agreement_type(self):
+#         if not str(self.agreement_type).isnumeric():
+#             raise ValidationError(
+#                 _('The Agreement Type must be numeric value'))
 
     @api.constrains('number_agreement')
     def _check_number_agreement(self):

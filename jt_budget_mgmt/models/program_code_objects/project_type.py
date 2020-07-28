@@ -61,9 +61,9 @@ class ProjectType(models.Model):
             else:
                 number = result_dict.project_number
             project_type_str = str(project_type_string).zfill(2)
-            if project_type_str.isnumeric():
-                project_type = self.search(
+            #if project_type_str.isnumeric():
+            project_type = self.search(
                     [('project_id.project_type_identifier', '=', project_type_str), ('number', '=', number)], limit=1)
-                if project_type:
-                    return project_type
+            if project_type:
+                return project_type
         return False
