@@ -24,6 +24,18 @@ class AccountPayment(models.Model):
     banamex_concept = fields.Text('Concept',size=34)
     banamex_reference = fields.Text('Reference',size=10)
     
+    net_cash_reference = fields.Char('Reference',size=7)
+    net_cash_availability = fields.Selection([('SPEI','SPEI'),('CECOBAN','CECOBAN')],string='Availability')
+    
+    sit_file_key = fields.Char('File Key')
+    sit_operation_code = fields.Selection([('payment_on_account_bancomer','Payment on account bancomer'),
+                                           ('payment_interbank','Payment interbank account next day')],string="Operation Code")
+    sit_reference =fields.Char(size=25,string="SIT Reference")
+    sit_reason_for_payment = fields.Char(size=37,string="Reason For Payment")
+    sit_additional_data = fields.Char('Additional Data')
+    
+    santander_payment_concept = fields.Text('Payment Concept')
+    
     def cancel(self):
         result = super(AccountPayment,self).cancel()
         if self.env.context and self.env.context.get('call_from_reject',False):

@@ -50,10 +50,27 @@
 	            				<field name="banamex_reference"/>
 	            			</group>
 	            		</page>
-	            		<page string="BBVA Bancomer Net Cash" name="bbva_net_cash"></page>
-	            		<page string="BBVA Bancomer SIT" name="bbva_sit"></page>
+	            		<page string="BBVA Bancomer Net Cash" name="bbva_net_cash">
+	            			<group>
+	            				<field name="net_cash_reference"/>
+	            				<field name="net_cash_availability"/>
+	            			</group>
+	            		</page>
+	            		<page string="BBVA Bancomer SIT" name="bbva_sit">
+	            			<group>
+	            				<field name="sit_file_key"/>
+	            				<field name="sit_operation_code"/>
+	            				<field name="sit_reference" attrs="{'invisible':[('sit_operation_code','!=','payment_interbank')],'required':[('sit_operation_code','=','payment_interbank')]}"/>
+	            				<field name="sit_reason_for_payment" attrs="{'invisible':[('sit_operation_code','!=','payment_interbank')],'required':[('sit_operation_code','=','payment_interbank')]}"/>
+	            				<field name="sit_additional_data"/>
+	            			</group>
+	            		</page>
 	            		<page string="HSBC" name="hsbc"></page>
-	            		<page string="Santander" name="santander"></page>
+	            		<page string="Santander" name="santander">
+	            			<group>
+	            				<field name="santander_payment_concept"/>
+	            			</group>
+	            		</page>
 	            		<page string="JP Morgan" name="jp_morgan"></page>
 	            	</notebook>
 	            </xpath>
