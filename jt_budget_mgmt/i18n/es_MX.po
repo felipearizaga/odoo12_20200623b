@@ -374,13 +374,17 @@ msgstr "Total Autorizado"
 #. module: jt_budget_mgmt
 #: model:budget.control,name:jt_budget_mgmt.budget_control_1
 #: model:ir.actions.server,name:jt_budget_mgmt.authorized_action
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_authorized_amt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization__authorized_count
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__standardization_line__state__authorized
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.standardization_line_search_view
 msgid "Authorized"
 msgstr "Autorizada"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_program_code__total_authorized_amt
+msgid "Authorized"
+msgstr "Autorizado"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__authorized
@@ -421,13 +425,17 @@ msgstr "Presupuesto de Egresos"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__budget_control_ids
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__budget_control_ids
-#: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__budget_control_ids
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_budget_control
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__budget_control_ids
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.requested_report_form_view
-#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Budget Control"
 msgstr "Estacionalidad Trimestral"
+
+#. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__budget_control_ids
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
+msgid "Budget Control"
+msgstr "Control de Presupuestos"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_budget_control

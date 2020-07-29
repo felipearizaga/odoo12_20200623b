@@ -170,9 +170,26 @@ class ProgramCode(models.Model):
 
     @api.constrains('program_code')
     def _check_program_code(self):
-        if len(self.program_code) != 60:
-            raise ValidationError('Program code must be 60 characters!')
-
+        for record in self: 
+            if len(record.program_code) != 60:
+                raise ValidationError('Program code must be 60 characters!')
+ 
+    @api.depends('year','year.name','program_id','program_id.key_unam',
+                 'sub_program_id','sub_program_id.sub_program',
+                 'dependency_id','dependency_id.dependency',
+                 'sub_dependency_id','sub_dependency_id.sub_dependency',
+                 'item_id','item_id.item','check_digit',
+                 'resource_origin_id','resource_origin_id.key_origin',             
+                 'institutional_activity_id','institutional_activity_id.number',
+                 'budget_program_conversion_id','budget_program_conversion_id.shcp','budget_program_conversion_id.shcp.name',
+                 'conversion_item_id','conversion_item_id.federal_part',
+                 'expense_type_id','expense_type_id.key_expenditure_type',
+                 'location_id','location_id.state_key',
+                 'portfolio_id','portfolio_id.wallet_password',
+                 'project_type_id','project_type_id.project_type_identifier','project_type_id.number',
+                 'stage_id','stage_id.stage_identifier',
+                 'agreement_type_id','agreement_type_id.agreement_type','agreement_type_id.number_agreement',
+                 )
     def _compute_program_code(self):
         for pc in self:
             program_code = ''
@@ -224,7 +241,7 @@ class ProgramCode(models.Model):
             pc.program_code = program_code
             pc.program_code_copy = program_code
 
-    program_code = fields.Text(string='Programmatic Code', compute="_compute_program_code")
+    program_code = fields.Text(string='Programmatic Code', compute="_compute_program_code",store=True)
     program_code_copy = fields.Text(string='Programmatic Code')
 
     search_key = fields.Text(string='Search Key', index=True, store=True, compute="_compute_program_search_key")

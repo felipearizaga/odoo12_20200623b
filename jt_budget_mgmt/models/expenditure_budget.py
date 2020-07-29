@@ -554,9 +554,9 @@ class ExpenditureBudget(models.Model):
                         else:
                             number = line.project_number
                         project_type_str = str(line.project_type).zfill(2)
-                        if project_type_str.isnumeric():
-                            project_type = list(filter(lambda pt: pt['project_type_identifier'] == project_type_str and pt['number'] == number, project_type_obj))
-                            project_type = project_type[0]['id'] if project_type else False
+                        
+                        project_type = list(filter(lambda pt: pt['project_type_identifier'] == project_type_str and pt['number'] == number, project_type_obj))
+                        project_type = project_type[0]['id'] if project_type else False
 
                     if not project_type:
                         failed_row += str(project_type) + \
@@ -582,10 +582,9 @@ class ExpenditureBudget(models.Model):
                     agreement_type = False
                     if len(str(line.agreement_type)) > 1:
                         agreement_type_str = str(line.agreement_type).zfill(2)
-                        if agreement_type_str.isnumeric():
-                            agreement_type = list(filter(lambda aty: aty['agreement_type'] == agreement_type_str and aty['number_agreement'] == line.agreement_number, agreement_type_obj))
-                            ('project_id.agreement_type', '=', )
-                            agreement_type = agreement_type[0]['id'] if agreement_type else False
+                        agreement_type = list(filter(lambda aty: aty['agreement_type'] == agreement_type_str and aty['number_agreement'] == line.agreement_number, agreement_type_obj))
+                        ('project_id.agreement_type', '=', )
+                        agreement_type = agreement_type[0]['id'] if agreement_type else False
 
                     if not agreement_type:
                         failed_row += str(line_vals) + \

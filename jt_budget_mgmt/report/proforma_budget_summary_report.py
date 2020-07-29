@@ -590,6 +590,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     pass
         if need_total:
             new_total_list = []
+            new_total_list_all = []
             for al in all_list:
                 if al.get('name') == 'Total':
                     if new_total_list:
@@ -597,7 +598,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         for l in new_total_list:
                             new_list = []
                             for d in l:
-                                new_list.append(d.get('float_name'))
+                                new_list.append(d.get('float_name',0.0))
                             list_with_data.append(new_list)
                         list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                         main_cols = []
@@ -610,12 +611,13 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             counter += 1
                         al.update({
                             'id': 0,
-                            'name': _('Total'),
+                            'name': _('Subtotal'),
                             'class': 'total',
                             'level': 2,
                             'columns': main_cols,
                         })
                     new_total_list = []
+                    new_total_list_all.append(al.get('columns'))
                 else:
                     new_total_list.append(al.get('columns'))
 
@@ -624,7 +626,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 for l in new_total_list:
                     new_list = []
                     for d in l:
-                        new_list.append(d.get('float_name'))
+                        new_list.append(d.get('float_name',0.0))
                     list_with_data.append(new_list)
 
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
@@ -639,13 +641,45 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     counter += 1
                 all_list.append({
                     'id': 0,
-                    'name': _('Total'),
+                    'name': _('Subtotal'),
                     'class': 'total',
                     'level': 2,
                     'columns': main_cols,
                 })
+                new_total_list_all.append(main_cols)
             if len(all_list) > 0:
+
+            #====== New Total Page =======#
+                if new_total_list_all:
+                    # need_to_add += 1
+                    list_with_data = []
+                    for l in new_total_list_all:
+                        new_list = []
+                        for d in l:
+                            if d.get('name') == '':
+                                new_list.append(0.0)
+                            else:
+                                new_list.append(d.get('float_name',0.0))
+                             
+                        list_with_data.append(new_list)
+                    list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
+                    main_cols = []
+                    counter = 0
+                    for l in list_tot_data:
+                        if counter > need_to_skip:
+                            main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
+                        else:
+                            main_cols.append({'name': '','float_name': ''})
+                        counter += 1
+                    all_list.append({
+                        'id': 0,
+                        'name': _('Total'),
+                        'class': 'total',
+                        'level': 2,
+                        'columns': main_cols,
+                    })
                 return all_list
+            
             new_lines = []
             need_to_add = 0
             new_total_list = []
@@ -657,7 +691,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         for l in new_total_list:
                             new_list = []
                             for d in l:
-                                new_list.append(d.get('float_name'))
+                                new_list.append(d.get('float_name',0.0))
                             list_with_data.append(new_list)
                         list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                         main_cols = []
@@ -688,7 +722,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 for l in new_total_list:
                     new_list = []
                     for d in l:
-                        new_list.append(d.get('float_name'))
+                        new_list.append(d.get('float_name',0.0))
                     list_with_data.append(new_list)
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
                 main_cols = []
@@ -706,7 +740,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     'level': 2,
                     'columns': main_cols,
                 })
-           
+                new_total_list_all.append(main_cols)
         #====== New Total Page =======#
             if new_total_list_all:
                 need_to_add += 1
@@ -717,7 +751,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                         if d.get('name') == '':
                             new_list.append(0.0)
                         else:
-                            new_list.append(d.get('float_name'))
+                            new_list.append(d.get('float_name',0.0))
                          
                     list_with_data.append(new_list)
                 list_tot_data = list(map(sum, map(lambda l: map(float, l), zip(*list_with_data))))
@@ -737,8 +771,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     'columns': main_cols,
                 })
 
-
-            return new_lines[:501]
+            return new_lines[:502]
         else:
             if len(all_list) > 0:
                 return all_list
