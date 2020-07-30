@@ -7,14 +7,25 @@
             <field name="model">expenditure.budget</field>
             <field name="arch" type="xml">
                 <search string="Expenditure Budget">
-                	<!--
+                	
                     <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="total_budget"/>
                     <field name="state"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                    <filter string="Draft" name="state_draft" domain="[('state','=', 'draft')]"/>
+                    <filter string="Privous" name="state_previous" domain="[('state','=', 'previous')]"/>
+                    <filter string="Confirm" name="state_confirm" domain="[('state','=', 'confirm')]"/>
+                    <filter string="Validate" name="state_validate" domain="[('state','=', 'validate')]"/>
+                    <filter string="Done" name="state_done" domain="[('state','=', 'done')]"/>
                     <group expand="1" string="Group By">
-                        <filter string="Budget name" name='budget_name' context="{'group_by':'name'}"/>
+                        <filter string="Responsible" name='responsible' context="{'group_by':'user_id'}"/>
                         <filter string="Status" name='status_groupby' context="{'group_by':'state'}"/>
+                        <filter string="From Date" name='from_date' context="{'group_by':'from_date'}"/>
+                        <filter string="To Date" name='to_date' context="{'group_by':'to_date'}"/>
                     </group>
-                     -->
+                    
                 </search>
             </field>
         </record>
