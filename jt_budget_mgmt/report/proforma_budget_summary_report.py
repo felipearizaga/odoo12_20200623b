@@ -305,6 +305,365 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             'number_agreement')
 
 
+    def check_item_range(self,item_range):
+        key_i = int(item_range)
+        if key_i >= 100 and key_i <= 199:
+            return 1
+        elif key_i >= 200 and key_i <= 299:
+            return 2
+        elif key_i >= 300 and key_i <= 399:
+            return 3
+        elif key_i >= 400 and key_i <= 499:
+            return 4
+        elif key_i >= 500 and key_i <= 599:
+            return 5
+        elif key_i >= 600 and key_i <= 699:
+            return 6
+        elif key_i >= 700 and key_i <= 799:
+            return 7
+        elif key_i >= 800 and key_i <= 899:
+            return 8
+        elif key_i >= 900 and key_i <= 999:
+            return 9
+ 
+        
+    def all_lines_data(self,budget_line,options,lines,start,end):
+        #print ("Start Time====",datetime.today())
+        need_columns = []
+        need_columns_with_format = []
+        program_codes = budget_line.mapped('program_code_id')
+        need_col_data_list = [] # Used to add total
+        col_query = 'select pc.id,pc.program_code' 
+        from_query = ' from program_code pc,expenditure_item exioder'
+        where_query = ' where pc.id in %s and exioder.id=pc.item_id and exioder.item >= %s and exioder.item <= %s'
+        order_by = ' order by exioder.item'
+        tuple_where_data = []
+        need_total = False
+        # Program code struture view fields
+        need_to_skip = 0
+        for column in options['selected_program_fields']:
+            if column in ('Year', 'Año'):
+                need_columns.append('year')
+                col_query+=',yc.name as year'
+                from_query += ',year_configuration yc'
+                where_query += ' and pc.year=yc.id'
+
+                need_to_skip += 1
+            if column in ('Program', 'Programa'):
+                #program = prog_code.program_id and prog_code.program_id.key_unam or ''
+                need_columns.append('program')
+                col_query+=',pp.key_unam as program'
+                from_query += ',program pp'
+                where_query += ' and pc.program_id=pp.id'
+                need_to_skip += 1
+            if column in ('Sub Program', 'Subprograma'):
+                # subprogram = prog_code.sub_program_id and prog_code.sub_program_id.sub_program or ''
+                need_columns.append('sub_program')
+                col_query+=',sp.sub_program as sub_program'
+                from_query += ',sub_program sp'
+                where_query += ' and pc.sub_program_id=sp.id'
+                need_to_skip += 1
+            if column in ('Dependency', 'Dependencia'):
+                #dependency = prog_code.dependency_id and prog_code.dependency_id.dependency or ''
+                need_columns.append('dependency')
+                col_query+=',dp.dependency as dependency'
+                from_query += ',dependency dp'
+                where_query += ' and pc.dependency_id=dp.id'
+                need_to_skip += 1
+            if column in ('Sub Dependency', 'Subdependencia'):
+                #subdependency = prog_code.sub_dependency_id and prog_code.sub_dependency_id.sub_dependency or ''
+                need_columns.append('sub_dependency')
+                col_query+=',sdp.sub_dependency as sub_dependency'
+                from_query += ',sub_dependency sdp'
+                where_query += ' and pc.sub_dependency_id=sdp.id'
+                need_to_skip += 1
+            if column in ('Expenditure Item', 'Partida de Gasto (PAR)'):
+                #item = prog_code.item_id and prog_code.item_id.item or ''
+                need_columns.append('exp_name')
+                col_query+=',expi.item as exp_name'
+                from_query += ',expenditure_item expi'
+                where_query += ' and pc.item_id=expi.id'
+                need_to_skip += 1
+            if column in ('Check Digit', 'Dígito Verificador'):
+                #check_digit = prog_code.check_digit or ''
+                need_columns.append('check_digit')
+                col_query+=',pc.check_digit as check_digit'
+                #from_query += ',expenditure_item expi'
+                #where_query += ' and pc.item_id=expi.id'
+                need_to_skip += 1
+            if column in ('Source of Resource', 'Origen del Recurso'):
+                #sor = prog_code.resource_origin_id and prog_code.resource_origin_id.key_origin or ''
+                need_columns.append('resource_origin_id')
+                col_query+=',ro.key_origin as resource_origin_id'
+                from_query += ',resource_origin ro'
+                where_query += ' and pc.resource_origin_id=ro.id'
+                need_to_skip += 1
+            if column in ('Institutional Activity', 'Actividad Institucional'):
+                #ai = prog_code.institutional_activity_id and prog_code.institutional_activity_id.number or ''
+                need_columns.append('institutional_activity_id')
+                col_query+=',inac.number as institutional_activity_id'
+                from_query += ',institutional_activity inac'
+                where_query += ' and pc.institutional_activity_id=inac.id'
+                need_to_skip += 1
+            if column in ('Conversion of Budgetary Program', 'Conversión de Programa Presupuestario'):
+                #conversion = prog_code.budget_program_conversion_id and \
+                #             prog_code.budget_program_conversion_id.shcp and \
+                #             prog_code.budget_program_conversion_id.shcp.name or ''
+                need_columns.append('conversion_program')
+                col_query+=',shcp.name as conversion_program'
+                from_query += ',shcp_code shcp,budget_program_conversion bpc'
+                where_query += ' and pc.budget_program_conversion_id=bpc.id and shcp.id=bpc.shcp'
+                need_to_skip += 1
+            if column in ('SHCP items', 'Conversión Con Partida (CONPA)'):
+                #shcp = prog_code.conversion_item_id and prog_code.conversion_item_id.federal_part or ''
+                need_columns.append('shcp_item')
+                col_query+=',dc.federal_part as shcp_item'
+                from_query += ',departure_conversion as dc'
+                where_query += ' and pc.conversion_item_id=dc.id'
+                need_to_skip += 1
+            if column in ('Type of Expenditure', 'Tipo de Gasto'):
+                #expense_type = prog_code.expense_type_id and prog_code.expense_type_id.key_expenditure_type or ''
+                need_columns.append('type_of_expenditure')
+                col_query+=',et.key_expenditure_type as type_of_expenditure'
+                from_query += ',expense_type as et'
+                where_query += ' and pc.expense_type_id=et.id'
+                need_to_skip += 1
+            if column in ('Geographic Location', 'Ubicación Geográfica'):
+                #location = prog_code.location_id and prog_code.location_id.state_key or ''
+                need_columns.append('geographic_location')
+                col_query+=',gl.state_key as geographic_location'
+                from_query += ',geographic_location as gl'
+                where_query += ' and pc.location_id=gl.id'
+                need_to_skip += 1
+            if column in ('Wallet Key', 'Clave Cartera'):
+                #wallet_key = prog_code.portfolio_id and prog_code.portfolio_id.wallet_password or ''
+                need_columns.append('wallet_key')
+                col_query+=',kw.wallet_password as wallet_key'
+                from_query += ',key_wallet as kw'
+                where_query += ' and pc.portfolio_id=kw.id'
+                need_to_skip += 1
+            if column in ('Type of Project', 'Tipo de Proyecto'):
+                #project_type = prog_code.project_type_id and prog_code.project_type_id.project_type_identifier or ''
+                need_columns.append('type_of_project')
+                col_query+=',ptype.project_type_identifier as type_of_project'
+                from_query += ',project_type as ptype'
+                where_query += ' and pc.project_type_id=ptype.id'
+                need_to_skip += 1
+            if column in ('Project Number', 'Número de Proyecto'):
+                #project_number = prog_code.project_number or ''
+                need_columns.append('project_number')
+                col_query+=',projectp.number as project_number'
+                from_query += ',project_type as ptypen,project_project projectp'
+                where_query += ' and pc.project_type_id=ptypen.id and projectp.id=ptypen.project_id'
+                need_to_skip += 1
+            if column in ('Stage', 'Etapa'):
+                #stage = prog_code.stage_id and prog_code.stage_id.stage_identifier or ''
+                need_columns.append('stage_identofier')
+                col_query+=',si.stage_identifier as stage_identofier'
+                from_query += ',stage as si'
+                where_query += ' and pc.stage_id=si.id'
+                need_to_skip += 1
+            if column in ('Type of Agreement', 'Tipo de Convenio'):
+                #agreement_type = prog_code.agreement_type_id and prog_code.agreement_type_id.agreement_type or ''
+                need_columns.append('type_of_agreement')
+                col_query+=',atype.agreement_type as type_of_agreement'
+                from_query += ',agreement_type as atype'
+                where_query += ' and pc.agreement_type_id=atype.id'
+                need_to_skip += 1
+            if column in ('Agreement Number', 'Número de Convenio'):
+                #agreement_number = prog_code.number_agreement or ''
+                need_columns.append('number_of_agreement')
+                col_query+=',atypen.number_agreement as number_of_agreement'
+                from_query += ',agreement_type as atypen'
+                where_query += ' and pc.agreement_type_id=atypen.id'
+                need_to_skip += 1
+
+
+        for column in options['selected_budget_control']:
+#             amt = 0
+            if column in ('Partida de Gasto (PAR)', 'Expense Item'):
+                #amt = b_line.item_id and b_line.item_id.item or ''
+                need_columns.append('exp_item')
+                col_query+=',expic.item as exp_item'
+                from_query += ',expenditure_item expic'
+                where_query += ' and pc.item_id=expic.id'
+                need_total = True
+            elif column in ('Authorized', 'Autorizado'):
+                need_columns_with_format.append('authorized')
+                col_query += ',(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized'
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+            elif column in ('Assigned Total Annual', 'Total Asignado Anual'):
+                need_columns_with_format.append('assigned')
+                col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned'
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+                
+            elif column in ('Annual Modified', 'Modificado Anual'):
+                need_columns_with_format.append('annual_modified')
+                col_query += ',(select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE -al.amount END),0) from adequacies_lines al,adequacies a where a.state=%s and al.program = pc.id and a.id=al.adequacies_id))+(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as annual_modified'
+                tuple_where_data.append('increase')
+                tuple_where_data.append('accepted')
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+                
+            elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
+                start_date = start.replace(month=1, day=1)
+                end_date = end.replace(month=3, day=31)
+                need_columns_with_format.append('assigned_1st')
+                col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_1st'
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
+            elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
+                start_date = start.replace(month=4, day=1)
+                end_date = end.replace(month=6, day=30)
+                need_columns_with_format.append('assigned_2nd')
+                col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_2nd'
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
+                
+            elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
+                start_date = start.replace(month=7, day=1)
+                end_date = end.replace(month=9, day=30)
+                need_columns_with_format.append('assigned_3rd')
+                col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_3rd'
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
+                
+            elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
+                start_date = start.replace(month=10, day=1)
+                end_date = end.replace(month=12, day=31)
+                need_columns_with_format.append('assigned_4th')
+                col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_4th'
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
+                
+            elif column in ('Per Exercise', 'Por Ejercer'):
+                need_columns_with_format.append('per_exercise')
+                col_query += ',(select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as per_exercise'
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+            elif column in ('Committed', 'Comprometido'):
+                need_columns_with_format.append('committed')
+                col_query += ',0.00 as Committed'
+            elif column in ('Accrued', 'Devengado'):
+                need_columns_with_format.append('accrued')
+                col_query += ',0.00 as accrued'
+            elif column in ('Exercised', 'Ejercido'):
+                need_columns_with_format.append('exercised')
+                col_query += ',0.00 as exercised'
+            elif column in ('Paid', 'Pagado'):
+                need_columns_with_format.append('paid')
+                col_query += ',0.00 as paid'                
+            elif column in ('Available', 'Disponible'):
+                need_columns_with_format.append('available')
+                col_query += ',(select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as available'
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+            
+        tuple_where_data.append(tuple(program_codes.ids))
+        tuple_where_data.append('100')
+        tuple_where_data.append('999')
+        sql_query =  col_query +  from_query + where_query + order_by
+        self.env.cr.execute(sql_query,tuple(tuple_where_data))
+        my_datas = self.env.cr.dictfetchall()
+        subtotal_dict = {}
+        total_dict = {}
+        pre_exp_range = 0
+
+        #======= get the data count =========#
+        selected_line_pages = options['selected_line_pages']
+        selected_my_data = []
+        
+        for s in selected_line_pages:
+            s = int(s)
+            start = (s - 1) * 500
+            end = s * 500
+            
+            selected_my_data = selected_my_data + my_datas[start:end]
+        
+        if not selected_line_pages:
+            selected_my_data = my_datas[:500]
+        for data in selected_my_data:
+            columns_in = []
+            if need_total:
+                exp_range = self.check_item_range(data.get('exp_item'))
+                if pre_exp_range!=0 and pre_exp_range!=exp_range:
+                    if subtotal_dict:
+                        main_cols = []
+                        for c in need_columns:
+                            main_cols.append({'name': '','float_name': ''})
+                        for c in need_columns_with_format:
+                            amt=formatLang(self.env, subtotal_dict.get(c,0.0), currency_obj=False)
+                            main_cols.append({'name':amt,'class':'number','float_name': subtotal_dict.get(c,0.0),})
+            
+                        lines.append({
+                                'id': 0,
+                                'name': _('Subtotal'),
+                                'class': 'total',
+                                'level': 2,
+                                'columns': main_cols,
+                            })
+                    
+                    subtotal_dict = {}
+                pre_exp_range=exp_range
+            
+            for c in need_columns:
+                columns_in.append({'name':data.get(c)})
+            for c in need_columns_with_format:
+                amt=formatLang(self.env, data.get(c,0.0), currency_obj=False)
+                columns_in.append({'name':amt,'class':'number','float_name': data.get(c,0.0),})
+                if need_total:
+                    if subtotal_dict.get(c,0.0):
+                        subtotal_dict.update({c:subtotal_dict.get(c,0.0)+data.get(c,0.0)})
+                    else:
+                        subtotal_dict.update({c:data.get(c,0.0)})
+                    if total_dict.get(c,0.0):
+                        total_dict.update({c:total_dict.get(c,0.0)+data.get(c,0.0)})
+                    else:
+                        total_dict.update({c:data.get(c,0.0)})
+                    
+            lines.append({
+                           'id': data.get('id'),
+                           'name':data.get('program_code'),
+                           'columns': columns_in,
+                           'level': 0,
+                           'unfoldable': False,
+                           'unfolded': True,
+                       })
+        if subtotal_dict and need_total:
+            main_cols = []
+            for c in need_columns:
+                main_cols.append({'name': '','float_name': ''})
+            for c in need_columns_with_format:
+                amt=formatLang(self.env, subtotal_dict.get(c,0.0), currency_obj=False)
+                main_cols.append({'name':amt,'class':'number','float_name': subtotal_dict.get(c,0.0),})
+
+            lines.append({
+                    'id': 0,
+                    'name': _('Subtotal'),
+                    'class': 'total',
+                    'level': 2,
+                    'columns': main_cols,
+                })
+            
+        if total_dict and need_total:
+            main_cols = []
+            for c in need_columns:
+                main_cols.append({'name': '','float_name': ''})
+            for c in need_columns_with_format:
+                amt=formatLang(self.env, total_dict.get(c,0.0), currency_obj=False)
+                main_cols.append({'name':amt,'class':'number','float_name': total_dict.get(c,0.0),})
+
+            lines.append({
+                    'id': 0,
+                    'name': _('Total'),
+                    'class': 'total',
+                    'level': 2,
+                    'columns': main_cols,
+                })
+   
+        return lines,need_total,need_to_skip
 
     def _get_sum_trimster(self, all_b_lines, s_month, s_day, e_month, e_day):
         return sum(x.assigned if x.start_date.month == s_month and \
@@ -362,6 +721,17 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         adequacies_line_obj = self.env['adequacies.lines']
         item_list = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': []}
         budget_lines = b_line_obj.search(domain)
+
+        #=================================== Start Haresh Test Code==============
+        need_total = False
+        need_to_skip = 0
+        lines = []
+        if budget_lines:
+            lines,need_total,need_to_skip = self.all_lines_data(budget_lines,options,lines,start,end)
+        return lines
+        #================================= End Haresh Test Code ==========================
+
+        
         for li in budget_lines:
             if li.program_code_id and li.program_code_id.item_id:
                 key_i = int(li.program_code_id.item_id.item)
@@ -387,22 +757,22 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         need_total = False # If user select Expenditure Item then true this flag to display total
         for fc, budget_lines in item_list.items():
             if budget_lines:
-
+ 
                 main_id = False # id for line
-
+ 
                 # To append list with all columns
                 main_list = []
-
+ 
                 for b_line in budget_lines:
                     prog_code = b_line.program_code_id
                     if not main_id:
                         main_id = b_line
                     if prog_code in program_code_list:
                         continue
-
+ 
                     columns = []
                     col_data_list = [] # Used to add total
-
+ 
                     # Program code struture view fields
                     need_to_skip = 0
                     for column in options['selected_program_fields']:
@@ -503,7 +873,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             columns.append({'name': str(agreement_number)})
                             col_data_list.append(str(agreement_number))
                             need_to_skip += 1
-
+ 
                     all_b_lines = b_line_obj.search([('program_code_id', '=', prog_code.id),
                                                      ('start_date', '>=', start), ('end_date', '<=', end)])
                     annual_modified = 0
@@ -540,14 +910,14 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             amt = sum(x.available for x in all_b_lines)
                         elif column in ('Available', 'Disponible'):
                             amt = sum(x.available for x in all_b_lines)
-                           
+                            
                         if isinstance(amt, float) or isinstance(amt, int):
                             columns.append({'class':'number','float_name': amt,'name': formatLang(self.env, amt, currency_obj=False)})
                         else:
                             columns.append({'float_name': amt,'name': amt})
                     if need_total:
                         main_list.append(col_data_list)
-
+ 
                     lines.append({
                         'id': b_line.id,
                         'name': prog_code.program_code,
@@ -565,7 +935,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     for l in list_tot_data:
                         if counter != 0:
                             main_cols.append({'class':'number','name': formatLang(self.env, l, currency_obj=False),'float_name': l})
-                            
+                             
                         else:
                             main_cols.append({'name': '','float_name': ''})
                         counter += 1
@@ -577,6 +947,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                             'level': 2,
                             'columns': main_cols,
                         })
+                        
         selected_line_pages = options['selected_line_pages']
         all_list = []
         for s in selected_line_pages:

@@ -62,6 +62,12 @@ class ProgramCode(models.Model):
     desc_item = fields.Text(string='Description of Item',
                             related="item_id.description")
 
+    @api.depends('program_id','program_id.key_unam',
+                 'sub_program_id','sub_program_id.sub_program',
+                 'dependency_id','dependency_id.dependency',
+                 'sub_dependency_id','sub_dependency_id.sub_dependency',
+                 'item_id','item_id.item'
+                 )
     def _compute_check_digit(self):
         dv_obj = self.env['verifying.digit']
         for pc in self:
@@ -72,7 +78,7 @@ class ProgramCode(models.Model):
                 pc.check_digit = vd
 
     check_digit = fields.Char(
-        string='Check Digit (DV)', size=2, compute="_compute_check_digit")
+        string='Check Digit (DV)', size=2, compute="_compute_check_digit",store=True)
 
     # Resource Origin Relation
     resource_origin_id = fields.Many2one(
