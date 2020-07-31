@@ -168,11 +168,9 @@ class BudgetSummaryReportDownload(models.TransientModel):
         if self.origin_ids:
             domain.append(('resource_origin_id', 'in', self.origin_ids.ids))
         if self.activity_ids:
-            domain.append(('institutional_activity_id',
-                           'in', self.activity_ids.ids))
+            domain.append(('institutional_activity_id', 'in', self.activity_ids.ids))
         if self.conpp_ids:
-            domain.append(('budget_program_conversion_id',
-                           'in', self.conpp_ids.ids))
+            domain.append(('budget_program_conversion_id', 'in', self.conpp_ids.ids))
         if self.conpa_ids:
             domain.append(('conversion_item_id', 'in', self.conpa_ids.ids))
         if self.expense_type_ids:

@@ -199,7 +199,6 @@ class Standardization(models.Model):
         user_lang = self.env.user.lang
         
         if item_name:
-
             if item_name >= '100' and item_name <= '199':
                 if item_name not in ('180','191','154','196','197'):
                     if user_lang == 'es_MX':
@@ -211,13 +210,14 @@ class Standardization(models.Model):
                                                 program_code_msg))
                     
             if item_name >= '700' and item_name <= '799':
-                if user_lang == 'es_MX':
-                    raise ValidationError(
-                        _("No se pueden crear recalendarizaciones de la partida 700: \n %s" %
-                          program_code_msg))
-                else:
-                    raise ValidationError(_("Cannot create reschedule of party group 700: \n %s" %
-                                            program_code_msg))
+                if item_name == '711':
+                    if user_lang == 'es_MX':
+                        raise ValidationError(
+                            _("Forma el grupo 700, solo el juego 711 no está permitido: \n %s" %
+                              program_code_msg))
+                    else:
+                        raise ValidationError(_("Form the group 700, only 711 game is not allowed: \n %s" %
+                                                program_code_msg))
 
             if item_name >= '300' and item_name <= '399':
                 if user_lang == 'es_MX':

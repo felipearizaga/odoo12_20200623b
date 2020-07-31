@@ -669,8 +669,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         return sum(x.assigned if x.start_date.month == s_month and \
                                 x.start_date.day == s_day and x.end_date.month == e_month and x.end_date.day == e_day \
                       else 0 for x in all_b_lines)
-    [...]
-    @profile
+
     @api.model
     def _get_lines(self, options, line_id=None):
         start = datetime.strptime(
