@@ -359,16 +359,17 @@ class Standardization(models.Model):
                                 continue
                                                             
                     elif item_name >= '700' and item_name <= '799':
-                        if user_lang == 'es_MX':
-                            failed_row += str(list_result) + \
-                                          "------>> No se pueden crear recalendarizaciones de la partida 700\n"
-                            failed_row_ids.append(pointer)
-                            continue
-                        else:
-                            failed_row += str(list_result) + \
-                                          "------>> Cannot create reschedule of party group 700:\n"
-                            failed_row_ids.append(pointer)
-                            continue
+                        if item_name == '711':                        
+                            if user_lang == 'es_MX':
+                                failed_row += str(list_result) + \
+                                              "------>> Forma el grupo 700, solo el juego 711 no está permitido\n"
+                                failed_row_ids.append(pointer)
+                                continue
+                            else:
+                                failed_row += str(list_result) + \
+                                              "------>> Form the group 700, only 711 game is not allowed:\n"
+                                failed_row_ids.append(pointer)
+                                continue
         
                     elif item_name >= '300' and item_name <= '399':
                         if user_lang == 'es_MX':

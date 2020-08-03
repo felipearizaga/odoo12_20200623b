@@ -65,13 +65,30 @@
 	            				<field name="sit_additional_data"/>
 	            			</group>
 	            		</page>
-	            		<page string="HSBC" name="hsbc"></page>
+	            		<page string="HSBC" name="hsbc">
+	            			<group>
+	            				<field name="hsbc_reference"/>
+	            			</group>
+	            		</page>
 	            		<page string="Santander" name="santander">
 	            			<group>
 	            				<field name="santander_payment_concept"/>
 	            			</group>
 	            		</page>
-	            		<page string="JP Morgan" name="jp_morgan"></page>
+	            		<page string="JP Morgan" name="jp_morgan">
+	            			<group>
+	            				<group>
+	            					<field name="jp_method"/>
+	            					<field name="jp_bank_transfer"/>
+	            					<field name="jp_id_type"/>
+	            					<field name="jp_id_type_beneficiary_bank"/>
+	            					<field name="jp_charges"/>
+	            				</group>
+	            				<group>
+	            					<field name="jp_drawdown_type"/>
+	            				</group>
+	            			</group>
+	            		</page>
 	            	</notebook>
 	            </xpath>
 			</field>

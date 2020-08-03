@@ -125,9 +125,12 @@ class ImportLine(models.TransientModel):
                                     value = start_date
                                 else:
                                     value = False
-                            except:
-                                
-                                pass
+                            except ValueError as e:
+                                raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))
+                            except ValidationError as e:
+                                raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))
+                            except UserError as e:
+                                raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))            
 
                         if field_headers[counter] == 'end_date':
                             try:
@@ -140,9 +143,12 @@ class ImportLine(models.TransientModel):
                                     value = end_date
                                 else:
                                     value = False
-                            except:
-                                pass
-
+                            except ValueError as e:
+                                raise ValidationError(_("End Date Format Does Not match : %s")% (ustr(e)))
+                            except ValidationError as e:
+                                raise ValidationError(_("End Date Format Does Not match :%s")% (ustr(e)))
+                            except UserError as e:
+                                raise ValidationError(_("End Date Format Does Not match : %s")% (ustr(e)))            
                         result_dict.update(
                             {field_headers[counter]: value})
                         counter += 1
@@ -170,10 +176,18 @@ class ImportLine(models.TransientModel):
                         budget.success_line_ids.filtered(
                             lambda l: l.state != 'manual').unlink()
                         budget.write({'state': 'draft'})
-                    budget.write({
-                        'import_status': 'in_progress',
-                        'line_ids': data,
-                    })
+                    try:
+                        budget.write({
+                            'import_status': 'in_progress',
+                            'line_ids': data,
+                        })
+
+                    except ValueError as e:
+                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                    except ValidationError as e:
+                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                    except UserError as e:
+                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
 
             except ValueError as e:
                 raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))

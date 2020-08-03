@@ -36,6 +36,27 @@ class AccountPayment(models.Model):
     
     santander_payment_concept = fields.Text('Payment Concept')
     
+    hsbc_reference = fields.Text('HSBC Reference',size=40)
+    
+    jp_method = fields.Selection([('WIRES','WIRES'),('BOOKTX','BOOKTX')],string='Method')
+    jp_bank_transfer = fields.Selection([('non_financial_institution','Non Financial Institution'),
+                                         ('financial_institution','Financial Institutions')
+                                         ],string="Bank To Bank Transfer")
+    jp_id_type = fields.Selection([('clabe','CLABE'),
+                                    ('debit_card','Debit Card'),
+                                    ('vostro','Vostro')
+                                         ],string="ID Type Beneficiary")
+    jp_id_type_beneficiary_bank = fields.Selection([('None','None'),
+                                    ('SPEI','SPEI'),
+                                    ('SWIFT','SWIFT')
+                                         ],string="ID Type Beneficiary Bank")
+    jp_charges = fields.Selection([('shared','Shared'),
+                                    ('beneficiary','Beneficiary'),
+                                    ('remitter','Remitter')
+                                         ],string="Charges")
+    jp_drawdown_type = fields.Selection([('WIRE','WIRE'),
+                                    ('BOOK','BOOK')],string="Drawdown Type")
+    
     def cancel(self):
         result = super(AccountPayment,self).cancel()
         if self.env.context and self.env.context.get('call_from_reject',False):
