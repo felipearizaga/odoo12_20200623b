@@ -40,12 +40,7 @@ class AccountJournal(models.Model):
     contract_number = fields.Char('Contract number')
     opening_date = fields.Date('Opening date')
     cancellation_date = fields.Date('Cancellation date')
-    concept = fields.Selection([('payroll', 'Payroll'),
-                                ('suppliers', 'Suppliers'),
-                                ('productive_accounts', 'Productive accounts'),
-                                ('investments', 'Investments'),
-                                ('income', 'Income'), ('expenses', 'Expenses')
-                                ], string='Concept')
+    concept_id = fields.Many2one('bank.account.concept',string='Concept')
     has_checkbook = fields.Boolean(
         default=False, string='Do you have a checkbook?')
     checkbook_type = fields.Selection(
@@ -54,7 +49,7 @@ class AccountJournal(models.Model):
     contract = fields.Binary('Attach contract')
     min_balance = fields.Monetary(string='Minimum Balance', tracking=True)
     executive_ids = fields.One2many('executive.data', 'journal_id')
-    clabe_account = fields.Char(string='CLABE Account')
+    clabe_account = fields.Char(related='bank_account_id.l10n_mx_edi_clabe',string='CLABE Account')
 
     @api.constrains('min_balance')
     def check_min_balance(self):

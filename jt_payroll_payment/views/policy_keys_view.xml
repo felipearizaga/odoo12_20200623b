@@ -53,8 +53,5 @@
             <field name="context">{}</field>
         </record>
 
-        <!-- menu for policy keys -->
-        <menuitem id="policy_keys_menu" name="Policy Keys" parent="menu_payroll_payment_config"
-                  sequence="1" action="policy_keys_action"/>
     </data>
 </odoo>

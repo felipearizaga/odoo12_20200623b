@@ -1,5 +1,6 @@
 from . import policy_keys
 from . import egress_keys
+from . import upa_catalog
 from . import operation_type
 from . import preception_deduction
 from . import res_partner

@@ -13,7 +13,7 @@
                     <field name="provider_id"/>
                     <field name="fornight_does"/>
                     <separator/>
-                    <filter string="Business Day" name="business_day" domain="[('type_pay', '=', 'Business Day')]"/>
+                    <filter string="Non Business Day" name="non_business_day" domain="[('type_pay', '=', 'Non Business Day')]"/>
                     <filter string="Payment schedule" name="pay_schedule" domain="[('type_pay', '=', 'Payment schedule')]"/>
                     <separator/>
                     <filter string="Payroll" name="payroll" domain="[('type_of_payment', '=', 'payroll')]"/>
@@ -67,7 +67,7 @@
                             </group>
                             <group>
                                 <field name="date"/>
-                                <field name="cause" attrs="{'invisible': [('type_pay', '!=', 'Business Day')]}"/>
+                                <field name="cause" attrs="{'invisible': [('type_pay', '!=', 'Non Business Day')]}"/>
                                 <field name="fornight_does" attrs="{'invisible': [('type_of_payment', '!=', 'payroll')]}"/>
                             </group>
                         </group>

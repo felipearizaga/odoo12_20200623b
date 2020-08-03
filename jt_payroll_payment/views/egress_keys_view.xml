@@ -50,8 +50,5 @@
             <field name="context">{}</field>
         </record>
 
-        <!-- menu for egress keys -->
-        <menuitem id="egress_keys_menu" name="Egress Keys" parent="menu_payroll_payment_config"
-                  sequence="3" action="egress_keys_action"/>
     </data>
 </odoo>

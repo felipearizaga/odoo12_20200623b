@@ -46,18 +46,18 @@ class SupplierRegistration(models.TransientModel):
             contents = ""
             for partner in partners:
                 contents += "03"
-                if partner.account_type:
-                    if partner.account_type == 'checks':
+                if partner.bank_ids[:1].account_type:
+                    if partner.bank_ids[:1].account_type == 'checks':
                         contents += "01"
-                        if partner.branch_number:
-                            contents += str(partner.branch_number).zfill(4)
-                    if partner.account_type == 'card':
+                        if partner.bank_ids[:1].branch_number:
+                            contents += str(partner.bank_ids[:1].branch_number).zfill(4)
+                    if partner.bank_ids[:1].account_type == 'card':
                         contents += "03"
-                        if partner.branch_number:
+                        if partner.bank_ids[:1].branch_number:
                             contents += "0000"
-                    if partner.account_type == 'master_acc':
+                    if partner.bank_ids[:1].account_type == 'master_acc':
                         contents += "06"
-                        if partner.branch_number:
+                        if partner.bank_ids[:1].branch_number:
                             contents += "0000"
                 if partner.bank_ids:
                     contents += partner.bank_ids[:1].acc_number.zfill(20)
@@ -85,8 +85,8 @@ class SupplierRegistration(models.TransientModel):
                 contents += "   "
                 contents += "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "
                 contents += "DAP"
-                if partner.password:
-                    contents += partner.password
+                if partner.password_beneficiary:
+                    contents += partner.password_beneficiary
                 contents += "PDA"
                 contents += "00000000000000000000"
                 contents += "000000000000000"
@@ -102,36 +102,37 @@ class SupplierRegistration(models.TransientModel):
                 if partner.currency_id:
                     if partner.currency_id.name == 'MXN':
                         contents += "MXN"
-                        if partner.bic_swift:
-                            contents += partner.bic_swift.zfill(11)
+                        if partner.bank_ids[:1].bic_swift:
+                            contents += partner.bank_ids[:1].bic_swift.zfill(11)
+                        
                     if partner.currency_id.name == 'USD':
                         contents += "USD"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == 'EUR':
                         contents += "EUR"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == "CAD":
                         contents += "CAD"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == "CHF":
                         contents += "CHF"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == "SEK":
                         contents += "SEK"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == "GBP":
                         contents += "GBP"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                     if partner.currency_id.name == "JPY":
                         contents += "JPY"
-                        if partner.aba:
-                            contents += partner.aba.zfill(9)
+                        if partner.bank_ids[:1].aba:
+                            contents += partner.bank_ids[:1].aba.zfill(9)
                 contents += "FA"
                 contents += "00000000000000001"
                 if partner.email and len(partner.email) < 50:
@@ -152,8 +153,8 @@ class SupplierRegistration(models.TransientModel):
                     lst = []
                     if partner.bank_ids[:1].acc_number:
                         lst.append(partner.bank_ids[:1].acc_number.zfill(10))
-                    if partner.password:
-                        lst.append(partner.password.zfill(10))
+                    if partner.password_beneficiary:
+                        lst.append(partner.password_beneficiary.zfill(10))
                     if partner.currency_id.name == 'MXN':
                         lst.append(1)
                     if partner.currency_id.name == 'USD':

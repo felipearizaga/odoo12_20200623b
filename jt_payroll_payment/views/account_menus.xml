@@ -20,5 +20,25 @@
                    parent="menu_payment_finance_setting" sequence="4"
                    groups="base.group_multi_currency"/>
 
+        <menuitem id="menu_bank_account_concept" name="Bank Account Concept"
+                  action="jt_account_base.bank_account_concept_action"
+                  sequence="5" parent="menu_payment_finance_setting"/>
+
+        <!-- menu for egress keys -->
+        <menuitem id="egress_keys_menu" name="Egress Keys" parent="menu_payment_finance_setting"
+                  sequence="6" action="egress_keys_action"/>
+
+        <!-- menu for operation type -->
+        <menuitem id="operation_type_menu" name="Type of Operation"
+                  parent="menu_payment_finance_setting" sequence="7"
+                  action="operation_type_action"/>
+
+        <!-- menu for policy keys -->
+        <menuitem id="policy_keys_menu" name="Policy Keys" parent="menu_payment_finance_setting"
+                  sequence="8" action="policy_keys_action"/>
+
+        <!-- menu for policy keys -->
+        <menuitem id="upa_catalog_menu" name="UPA Catalog" parent="menu_payment_finance_setting"
+                  sequence="9" action="upa_catalog_action"/>
     </data>
 </odoo>

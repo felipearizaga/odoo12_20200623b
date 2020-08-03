@@ -30,11 +30,13 @@ class ResPartner(models.Model):
     person_type = fields.Selection(
         [('physics', 'Physics'), ('moral', 'Moral')], string='Person type')
     beneficiary_type = fields.Selection([('alimony', 'Alimony'), (
-        'service', 'Service Providers'), ('scholarship', 'Scholarship')],
+        'scholar', 'Scholar'), ('national_provider', 'National provider'),
+        ('foreign_supplier','Foreign supplier'),('fixed_fund','Fixed Fund')
+        ],
                                         string='Beneficiary type')
     password_beneficiary = fields.Char('Password of the beneficiary of the payment')
-    rfc = fields.Char('RFC')
-    curp = fields.Char('CURP')
+    #rfc = fields.Char('RFC')
+    #curp = fields.Char('CURP')
     instruction = fields.Selection([('high', 'High'), ('low', 'Low'), (
         'change', 'Change')], string='Instruction with the banking institution')
     dob = fields.Date('Date of birth')

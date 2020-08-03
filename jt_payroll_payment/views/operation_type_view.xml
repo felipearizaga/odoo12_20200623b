@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="op_number"/>
                     <field name="currency_type"/>
+                    <field name="upa_catalog_id"/>
                 </search>
             </field>
         </record>
@@ -25,6 +26,7 @@
                             <field name="name" required="1"/>
                             <field name="op_number"/>
                             <field name="currency_type"/>
+                            <field name="upa_catalog_id"/>
                         </group>
                     </sheet>
                 </form>
@@ -40,6 +42,7 @@
                     <field name="name"/>
                     <field name="op_number"/>
                     <field name="currency_type"/>
+                    <field name="upa_catalog_id"/>
                 </tree>
             </field>
         </record>
@@ -53,9 +56,5 @@
             <field name="context">{}</field>
         </record>
 
-        <!-- menu for operation type -->
-        <menuitem id="operation_type_menu" name="Type of Operation"
-                  parent="menu_payroll_payment_config" sequence="2"
-                  action="operation_type_action"/>
     </data>
 </odoo>

@@ -33,7 +33,8 @@ class OperationType(models.Model):
     op_number = fields.Char('Operation Number', size=2)
     currency_type = fields.Selection([('national', 'National Currency'), (
         'foreign', 'Foreign Currency')], string='Currency type of the transaction')
-
+    upa_catalog_id = fields.Many2one('upa.catalog','UPA Catalog')
+    
     def fill_zero(self, number):
         return str(number).zfill(2)
 
