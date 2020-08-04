@@ -213,7 +213,7 @@ class Standardization(models.Model):
                 if item_name == '711':
                     if user_lang == 'es_MX':
                         raise ValidationError(
-                            _("Forma el grupo 700, solo el juego 711 no está permitido: \n %s" %
+                            _("Forma el grupo 700, solo el Partida 711 no está permitido: \n %s" %
                               program_code_msg))
                     else:
                         raise ValidationError(_("Form the group 700, only 711 game is not allowed: \n %s" %
@@ -362,7 +362,7 @@ class Standardization(models.Model):
                         if item_name == '711':                        
                             if user_lang == 'es_MX':
                                 failed_row += str(list_result) + \
-                                              "------>> Forma el grupo 700, solo el juego 711 no está permitido\n"
+                                              "------>> Forma el grupo 700, solo el Partida 711 no está permitido\n"
                                 failed_row_ids.append(pointer)
                                 continue
                             else:

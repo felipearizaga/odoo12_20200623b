@@ -23,6 +23,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import re
+from datetime import datetime
 
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
@@ -48,9 +49,12 @@ class AccountJournal(models.Model):
     signatures = fields.Binary('Account Authorization Signatures')
     contract = fields.Binary('Attach contract')
     min_balance = fields.Monetary(string='Minimum Balance', tracking=True)
+    min_balance_start_date = fields.Date('Start Date')
+    min_balance_end_date = fields.Date('End Date')
     executive_ids = fields.One2many('executive.data', 'journal_id')
     clabe_account = fields.Char(related='bank_account_id.l10n_mx_edi_clabe',string='CLABE Account')
-
+    update_history_ids = fields.One2many('minimum.balance.history', 'journal_id')
+    
     @api.constrains('min_balance')
     def check_min_balance(self):
         if self.min_balance and self.min_balance < 0:
@@ -65,6 +69,31 @@ class AccountJournal(models.Model):
         if self.branch_number and len(self.branch_number) != 4:
             raise UserError(_('The Branch Number should be of 4 digits.'))
 
+    def create_update_history_record(self):
+        for record in self:
+            start_date = 0
+            end_date = 0
+            if record.min_balance_start_date:
+                start_date = record.min_balance_start_date.day
+            if record.min_balance_end_date:
+                end_date = record.min_balance_end_date.day
+             
+            vals = {'start':start_date,'ends':end_date,'journal_id':record.id,'amount':record.min_balance,'update_date':datetime.today()}
+            self.env['minimum.balance.history'].create(vals)
+            
+    @api.model
+    def create(self,vals):
+        res = super(AccountJournal,self).create(vals)
+        if 'min_balance' in vals and vals.get('min_balance',0) != 0:
+            res.create_update_history_record()
+        return res
+        
+    def write(self,vals):
+        res = super(AccountJournal,self).write(vals)
+        if 'min_balance' in vals:
+            self.create_update_history_record()
+        return res
+    
 class ExecutiveData(models.Model):
 
     _name = 'executive.data'
@@ -76,3 +105,16 @@ class ExecutiveData(models.Model):
     telephone = fields.Char('Telephone')
     address = fields.Char('Address')
     email = fields.Char('Email')
+    
+class MinimumBalanceHistory(models.Model):
+    
+    _name = 'minimum.balance.history' 
+    _description = "Minimum Balance History"
+        
+    start = fields.Integer('Start')
+    ends = fields.Integer('Ends')
+    amount = fields.Monetary(string='Amount')
+    update_date = fields.Date('Update Date')
+    journal_id = fields.Many2one('account.journal','Journal')
+    currency_id = fields.Many2one(related='journal_id.currency_id')
+

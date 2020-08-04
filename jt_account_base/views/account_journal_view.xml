@@ -24,6 +24,8 @@
                     <field name="unam_account_name"/>
                     <field name="contract_number"/>
                     <field name="min_balance"/>
+                    <field name="min_balance_start_date"/>
+                    <field name="min_balance_end_date"/>
                     <field name="clabe_account"/>
                 </xpath>
                 <xpath expr="//group/group[2]" position="inside">
@@ -56,6 +58,28 @@
                                     </group>
                                 </form>
                             </field>
+                        </page>
+                        <page string="Updates" name="update_history">
+                        	<field name="update_history_ids" nolabel="1" readonly="1">
+                        		<tree>
+                        			<field name="start"/>
+                        			<field name="ends"/>
+                        			<field name="amount"/>
+                        			<field name="update_date"/>
+                        			<field name="journal_id" invisible="1"/>
+                        			<field name="currency_id" invisible="1"/>
+                        		</tree>
+                        		<form>
+                        			<group>
+	                        			<field name="start"/>
+	                        			<field name="ends"/>
+	                        			<field name="amount"/>
+	                        			<field name="update_date"/>
+	                        			<field name="journal_id" invisible="1"/>
+	                        			<field name="currency_id" invisible="1"/>
+                        			</group>                        		
+                        		</form>
+                        	</field>
                         </page>
                     </notebook>
                 </xpath>

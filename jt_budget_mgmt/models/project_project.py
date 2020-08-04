@@ -129,9 +129,14 @@ class ProjectProject(models.Model):
 
     def unlink(self):
         for project in self:
+            user_lang = self.env.user.lang
             project_type = self.env['project.type'].search([('project_id', '=', project.id)], limit=1)
             if project_type:
-                raise ValidationError('You can not delete project which are mapped with project types!')
+                if user_lang == 'es_MX':
+                    raise ValidationError('¡No puede eliminar proyectos asignados con el catálogo Tipo de Proyecto!!')
+                else:
+                    raise ValidationError('You can not delete project which are mapped with project types!')
+                
             stage = self.env['stage'].search([('project_id', '=', project.id)], limit=1)
             if stage:
                 raise ValidationError('You can not delete project which are mapped with stage identifier!')
