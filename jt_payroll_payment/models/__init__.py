@@ -7,3 +7,4 @@ from . import res_partner
 from . import calendar_payment_reg
 from . import employee_payroll
 from . import payment_request
+from . import upa_document_type

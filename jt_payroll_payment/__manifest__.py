@@ -36,6 +36,7 @@
         'views/operation_type_view.xml',
         'views/egress_keys_view.xml',
         'views/upa_catalog_view.xml',
+        'views/upa_document_type.xml',
         'views/calendar_payment_reg_views.xml',
         'views/preception_deduction.xml',
         'views/res_partner_view.xml',

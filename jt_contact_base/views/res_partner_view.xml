@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+		
 
+        <record id="view_partner_property_form_inherit_view" model="ir.ui.view">
+            <field name="name">res.partner.form.view.inherit.fiscal</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//group[@name='fiscal_information']" position="replace">
+            		
+            	</xpath>
+			</field>
+		</record>		
         <record id="res_partner_form_view" model="ir.ui.view">
             <field name="name">res.partner.form.view</field>
             <field name="model">res.partner</field>
@@ -25,13 +36,14 @@
                     <field name="tax_email" widget="email"/>
                 </xpath>
                  <xpath expr="//notebook/page[@name='internal_notes']" position="after">
-                    <page string='Scholarship Information' attrs="{'invisible': [('beneficiary_type', '!=', 'scholarship')]}">
+                    <page string='Scholarship Information' attrs="{'invisible': [('beneficiary_type', '!=', 'scholar')]}">
                         <group>
                             <group>
                                 <field name="scholar_key_payment"/>
                                 <field name="scholarship_id"/>
                                 <field name="scholarship_approved_month"/>
                                 <field name="period"/>
+                                <field name="property_account_position_id" options="{'no_create': True, 'no_open': True}"/>
                             </group>
                         </group>
                     </page>

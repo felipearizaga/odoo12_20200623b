@@ -917,6 +917,7 @@ class GenerateBankLayout(models.TransientModel):
         gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
         self.file_data = gentextfile
         self.file_name = file_name
+        
     def jp_morgan_us_drawdowns_file_format(self):
         file_name = 'jp_morgan_us_drawdowns.csv'
         record_count = 0
@@ -983,8 +984,34 @@ class GenerateBankLayout(models.TransientModel):
             partner_name = ''
             if payment.partner_id:
                 partner_name = payment.partner_id.name
-            file_data +=partner_name   
+            file_data +=partner_name  
+            #====== Address 1 ======# 
             file_data += ','
+            #======== N/A =======#
+            file_data += ','
+            #====== City ======#
+            file_data += ','
+            #===== Country ======#
+            file_data += 'MX'
+            file_data += ','
+            #===== ID Type =======#
+            if payment.jp_drawdown_type and payment.jp_drawdown_type=='Drawdown':
+                if payment.payment_bank_id:
+                    bank_code = ''
+                    if payment.payment_bank_id.bic:
+                        bank_code = payment.payment_bank_id.bic
+                    file_data += bank_code            
+                file_data += ','
+            else:
+                file_data += ','
+            #======== Journal Account =======#
+            if payment.jp_drawdown_type and payment.jp_drawdown_type=='Drawdown':
+                if self.journal_id.bank_account_id:
+                    file_data +=self.journal_id.bank_account_id.acc_number
+                file_data += ','
+            else:
+                file_data += ','
+                
             file_data += '\n'            
         gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
         self.file_data = gentextfile

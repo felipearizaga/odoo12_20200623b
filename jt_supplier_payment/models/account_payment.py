@@ -55,7 +55,7 @@ class AccountPayment(models.Model):
                                     ('remitter','Remitter')
                                          ],string="Charges")
     jp_drawdown_type = fields.Selection([('WIRE','WIRE'),
-                                    ('BOOK','BOOK')],string="Drawdown Type")
+                                    ('BOOK','BOOK'),('Drawdown','Drawdown')],string="Drawdown Type")
     
     def cancel(self):
         result = super(AccountPayment,self).cancel()

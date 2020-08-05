@@ -33,6 +33,15 @@ class PolicyKeys(models.Model):
     organization = fields.Char('Organization and Control', size=3)
     description = fields.Text('Description')
 
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = rec.origin or ''
+            if rec.organization and self.env.context and self.env.context.get('show_for_supplier_payment',False): 
+                name = rec.organization
+            result.append((rec.id, name))
+        return result
+
     @api.model
     def create(self, vals):
         res = super(PolicyKeys, self).create(vals)

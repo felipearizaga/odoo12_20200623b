@@ -35,6 +35,15 @@ class Dependency(models.Model):
 
     _sql_constraints = [('dependency', 'unique(dependency)', 'The dependency must be unique.')]
 
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = rec.dependency or ''
+            if rec.description and self.env.context and self.env.context.get('show_for_supplier_payment',False): 
+                name += ' ' + rec.description
+            result.append((rec.id, name))
+        return result
+    
     @api.constrains('dependency')
     def _check_dependency(self):
         if not str(self.dependency).isnumeric():

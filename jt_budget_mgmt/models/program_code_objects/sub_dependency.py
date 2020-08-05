@@ -37,6 +37,15 @@ class SubDependency(models.Model):
     _sql_constraints = [('sub_dependency_dependency_id', 'unique(sub_dependency,dependency_id)',
                          'The sub dependency must be unique per dependency')]
 
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = rec.sub_dependency or ''
+            if rec.description and self.env.context and self.env.context.get('show_for_supplier_payment',False): 
+                name += ' ' + rec.description
+            result.append((rec.id, name))
+        return result
+
     @api.constrains('sub_dependency')
     def _check_sub_dependency(self):
         if not str(self.sub_dependency).isnumeric():

@@ -32,6 +32,7 @@
     'depends': ['jt_payroll_payment','jt_contact_base'],
     'data': [
         'data/data.xml',
+        'data/ir_sequence_data.xml',
         'data/paper_format.xml',
         'security/ir.model.access.csv',
         'views/invoice_view.xml',

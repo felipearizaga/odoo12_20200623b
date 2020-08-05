@@ -16,9 +16,16 @@
             	</xpath>
             
                 <field name="workstation_id" position="after">
-                    <field name="dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
-                    <field name="sub_dependancy_id" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
+                    <field name="dependancy_id" context="{'show_for_supplier_payment':True}" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
+                    <field name="sub_dependancy_id" context="{'show_for_supplier_payment':True}" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
                 </field>
+                <field name="administrative_secretary_id" position="attributes">
+                	<attribute name="domain">[('dependancy_id','=',dependancy_id)]</attribute>
+                </field>
+                <field name="holder_of_dependency_id" position="attributes">
+                	<attribute name="domain">[('dependancy_id','=',dependancy_id)]</attribute>
+                </field>
+                
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='type_of_bussiness_line']"
                        position="before">
                     <field name="program_code_id" />

@@ -694,6 +694,24 @@ class Adequacies(models.Model):
                                     budget_line = b_line
                                 elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
                                     budget_line = b_line
+                                    
+                    if self.date_of_liquid_adu and self.adaptation_type == 'liquid':
+                        b_month = self.date_of_liquid_adu.month
+                        budget_lines = self.env['expenditure.budget.line'].sudo().search(
+                            [('program_code_id', '=', line.program.id),
+                             ('expenditure_budget_id', '=', self.budget_id.id)])
+                        for b_line in budget_lines:
+                            if b_line.start_date:
+                                b_s_month = b_line.start_date.month
+                                if b_month in (1, 2, 3) and b_s_month in (1, 2, 3):
+                                    budget_line = b_line
+                                elif b_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                                    budget_line = b_line
+                                elif b_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                                    budget_line = b_line
+                                elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
+                                    budget_line = b_line
+                                    
                     if not budget_line:
                         budget_line = self.env['expenditure.budget.line'].sudo().search(
                             [('program_code_id', '=', line.program.id),

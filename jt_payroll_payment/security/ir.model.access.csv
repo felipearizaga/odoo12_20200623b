@@ -8,3 +8,4 @@ access_calendar_payment_regis,calendar.payment.regis,model_calendar_payment_regi
 access_employee_payroll_file,employee.payroll.file,model_employee_payroll_file,,1,1,1,1
 access_payment_request,payment.request,model_payment_request,,1,1,1,1
 access_upa_catalog,upa.catalog,model_upa_catalog,,1,1,1,1
+access_upa_document_type,upa.document.type,model_upa_document_type,,1,1,1,1

@@ -54,7 +54,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Success Budget Lines" attrs="{'invisible': [('success_line_ids', '=', [])]}">
+                            <page string="Lines of Successful Seasonality" attrs="{'invisible': [('success_line_ids', '=', [])]}">
                                 <field name="success_line_ids">
                                     <tree decoration-success="state == 'success'" create="false" edit="true" delete="false">
                                         <!-- Hidden fields -->
@@ -112,7 +112,7 @@
                                     </form>
                                 </field>
                             </page>
-                            <page string="Imported Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'process'])]}">
+                            <page string="Seasonality Lines" attrs="{'invisible': [('state', 'not in', ['draft', 'process'])]}">
                                 <field name="line_ids" attrs="{'readonly': [('cron_running', '=', True)]}"
                                     context="{'default_budget_id': budget_id}">
                                     <tree decoration-danger="state == 'fail'">

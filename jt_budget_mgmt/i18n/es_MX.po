@@ -1815,8 +1815,8 @@ msgstr "Líneas de Presupuesto"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
-msgid "Imported Lines"
-msgstr "Líneas de Estacionalidad"
+msgid "Seasonality Lines"
+msgstr "Líneas de estacionalidad"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__imported_sessional
@@ -3341,10 +3341,14 @@ msgid "Success"
 msgstr "Éxito"
 
 #. module: jt_budget_mgmt
-#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
 msgid "Success Budget Lines"
 msgstr "Líneas de Presupuesto Exitosas"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.control_assigned_amounts_form_view
+msgid "Lines of Successful Seasonality"
+msgstr "Líneas de estacionalidad exitosa"
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__success_lines_count
