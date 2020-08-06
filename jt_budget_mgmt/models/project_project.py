@@ -94,8 +94,16 @@ class ProjectProject(models.Model):
         if vals.get('number_agreement') and len(vals.get('number_agreement')) != 6:
             vals['number_agreement'] = self.fill_zero(
                 vals.get('number_agreement'), 6)
-        return super(ProjectProject, self).create(vals)
-
+        res = super(ProjectProject, self).create(vals)
+        
+        if res.project_type_identifier:
+            self.env['project.type'].create({'project_id':res.id})
+        if res.stage_identifier:
+            self.env['stage'].create({'project_id':res.id})
+        if res.agreement_type:
+            self.env['agreement.type'].create({'project_id':res.id})
+            
+        return res
     def write(self, vals):
         if vals.get('project_type_identifier') and len(vals.get('project_type_identifier')) != 2:
             vals['project_type_identifier'] = self.fill_zero(

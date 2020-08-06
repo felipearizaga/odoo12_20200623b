@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <menuitem id="menu_payroll_payment" name="Payroll Payment"
+        <menuitem id="menu_payroll_payment" name="Payment"
                   sequence="5"/>
 
          <menuitem id="menu_payroll_admin_process_unit" name="Administrative Process Unit"

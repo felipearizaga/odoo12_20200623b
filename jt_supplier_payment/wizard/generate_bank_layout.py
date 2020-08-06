@@ -943,7 +943,7 @@ class GenerateBankLayout(models.TransientModel):
                 file_data +=self.journal_id.bank_account_id.acc_number
             file_data += ','
             #======= N/A ==========#
-            file_data += ',,,,,'
+            file_data += ','
             #======== Currency =========#
             file_data += "USD"
             file_data += ','
@@ -957,7 +957,7 @@ class GenerateBankLayout(models.TransientModel):
             file_data +=str(amount[1])
             file_data += ','
             #======= N/A ==========#
-            file_data += ',,,,,,,,'
+            file_data += ','
 
             # ===== Drawdown Type ========#
             if payment.jp_drawdown_type:
@@ -984,7 +984,8 @@ class GenerateBankLayout(models.TransientModel):
             partner_name = ''
             if payment.partner_id:
                 partner_name = payment.partner_id.name
-            file_data +=partner_name  
+            file_data +=partner_name
+            file_data += ','  
             #====== Address 1 ======# 
             file_data += ','
             #======== N/A =======#
@@ -1011,13 +1012,161 @@ class GenerateBankLayout(models.TransientModel):
                 file_data += ','
             else:
                 file_data += ','
-                
+
+            #======== Bank of receipt of payment =======#
+            if payment.jp_drawdown_type and payment.jp_drawdown_type=='Drawdown':
+                if payment.payment_bank_id:
+                    file_data += payment.payment_bank_id.name
+                file_data += ','
+            else:
+                file_data += ','
+
+            #======== Bank Address 1 =======#
+            if payment.jp_drawdown_type and payment.jp_drawdown_type=='Drawdown':
+                if payment.payment_bank_id and payment.payment_bank_id.street:
+                    file_data += payment.payment_bank_id.street
+                file_data += ','
+            else:
+                file_data += ','
+            #===== N/A=======#
+            file_data += ','
+            #===== City=======#
+            file_data += ','
+            #=====Country=======#
+            file_data += ','
+            #===== N/A=======#
+            file_data += ','
+            #===== Internal Reference=======#
+            file_data += ','
+            #===== N/A=======#
+            file_data += ','
+            #===== Details1=======#
+            file_data += ','
+            #===== Details2=======#
+            file_data += ','
+            #===== Details3=======#
+            file_data += ','
+            #===== Details4=======#
+            file_data += ','
+            #===== N/A=======#
+            file_data += ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+            #===== Note=======#
+            file_data += ','
+            #===== N/A=======#
+            file_data += ','
             file_data += '\n'            
         gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
         self.file_data = gentextfile
         self.file_name = file_name
         
-                      
+    def jp_morgan_advice_to_receive_file_format(self):
+        file_name = 'jp_morgan_advice_to_receive.csv'
+        record_count = 0
+        total_amount = 0
+        file_data = ''
+        for payment in self.payment_ids:
+            record_count += 1
+            #========Input Type=======#
+            file_data += 'P'
+            file_data += ','
+            #========Receipt Method=======#
+            file_data += 'ATR'
+            file_data += ','
+            # ======== BIC /SWIFT ======
+            if payment.payment_bank_id:
+                bank_code = ''
+                if payment.payment_bank_id.bic:
+                    bank_code = payment.payment_bank_id.bic
+                file_data += bank_code            
+            file_data += ','
+            #==========Bank Account ========#
+            if self.journal_id.bank_account_id:
+                file_data +=self.journal_id.bank_account_id.acc_number
+            file_data += ','
+            #======= N/A=========#
+            file_data += ','
+            #====== Currency Data =========
+            if payment.currency_id:
+                file_data += payment.currency_id.name
+            file_data += ','
+            #====== Amount Data =========#
+            amount = "%.2f" % payment.amount
+            amount = str(amount).split('.')
+            file_data +=str(amount[0])
+            file_data +='.'
+            file_data +=str(amount[1])
+            file_data += ','
+            #====== N/A =========#
+            file_data += ',,,,,'
+            #======== Payment Date =========
+            if payment.payment_date:
+                file_data +=str(payment.payment_date.year)
+                file_data +=str(payment.payment_date.month).zfill(2)
+                file_data +=str(payment.payment_date.day)
+            file_data += ','
+            #======= N/A=========#
+            file_data += ',,,,,,,,,,,,,,,,,,,,,,,,,,'
+            #===== ID Type =======#
+            if payment.jp_drawdown_type and payment.jp_drawdown_type=='Drawdown':
+                if payment.payment_bank_id:
+                    bank_code = ''
+                    if payment.payment_bank_id.bic:
+                        bank_code = payment.payment_bank_id.bic
+                    file_data += bank_code            
+                file_data += ','
+            else:
+                file_data += ','
+            #====== ID Value =======#
+            file_data += ','
+            #======== Bank of receipt of payment =======#
+            if payment.payment_bank_id:
+                file_data += payment.payment_bank_id.name
+                file_data += ','
+            else:
+                file_data += ','
+            #===== Address 1 ========#
+            file_data += ','
+            #===== Address 2 ========#
+            file_data += ','
+            #===== Address 3 ========#
+            file_data += ','
+            # ==== Country Name =======
+            country_code = ''
+            if payment.payment_bank_id and payment.payment_bank_id.country:
+                country_code = payment.payment_bank_id.country.code or ''
+            file_data +=country_code   
+            file_data += ','
+            #========== N/A=========
+            file_data += ',,,,,,,,,'
+            #========= Name========3
+            file_data += 'UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO'
+            file_data += ','
+            #====== Address 1 =======#
+            file_data += ','
+            #====== Address 2 =======#
+            file_data += ','
+            #====== City =======#
+            file_data += ','
+            #====== Country =======#
+            file_data += ','
+            #====== N/A =======#
+            file_data += ',,,,,,,,,,,,,'
+            #====== N/A =======#
+            file_data += ','
+            #======Internal Reference =======#
+            file_data += ','
+            #======N/A =======#
+            file_data += ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+            #======= Note ========#
+            file_data += ','
+            #======== N/A =======#
+            file_data += ','
+            file_data += '\n'   
+            
+        gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
+        self.file_data = gentextfile
+        self.file_name = file_name
+        
     def generate_bank_layout(self):
 #        for payment in self.payment_ids:
 #             if payment.journal_id.id != self.journal_id.id:
@@ -1036,9 +1185,14 @@ class GenerateBankLayout(models.TransientModel):
             self.hsbc_file_format()
         elif self.journal_id.bank_format == 'jpmw':
             self.jp_morgan_wires_file_format()
+        elif self.journal_id.bank_format == 'jpma':
+            self.jp_morgan_advice_to_receive_file_format()
         elif self.journal_id.bank_format == 'jpmu':
             self.jp_morgan_us_drawdowns_file_format()
-        
+        else:
+            self.file_data = False
+            self.file_name = False
+
         return {
             'name': _('Generate Bank Layout'),
             'res_model': 'generate.bank.layout',
