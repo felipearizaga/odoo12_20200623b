@@ -367,3 +367,18 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
             })
             
         return lines
+
+    def _get_report_name(self):
+        return _("Analytical Status of the Expenditure Budget Exercise")
+
+    @api.model
+    def _get_super_columns(self, options):
+        date_cols = options.get('date') and [options['date']] or []
+        date_cols += (options.get('comparison') or {}).get('periods', [])
+        #columns = [{'string': _('Initial Balance')}]
+        #print ("date_cols=====",date_cols)
+        columns = reversed(date_cols)
+        #print ("columns====",columns)
+        return {'columns': columns, 'x_offset': 1, 'merge': 6}
+ 
+    

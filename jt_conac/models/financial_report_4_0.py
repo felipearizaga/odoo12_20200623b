@@ -247,3 +247,16 @@ class StatementOfFinancialPosition(models.AbstractModel):
                 'unfolded': True,
             })
         return lines
+
+    def _get_report_name(self):
+        return _("Statement of Financial Position")
+
+    @api.model
+    def _get_super_columns(self, options):
+        date_cols = options.get('date') and [options['date']] or []
+        date_cols += (options.get('comparison') or {}).get('periods', [])
+        columns = reversed(date_cols)
+        return {'columns': columns, 'x_offset': 1, 'merge': 1}
+    
+        
+    

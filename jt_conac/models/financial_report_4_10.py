@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, _
+from odoo import models, _,api
 import unicodedata
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
@@ -392,3 +392,14 @@ class StatesAndProgramReports(models.AbstractModel):
             })
             
         return lines
+    def _get_report_name(self):
+        return _("States and Program Reports")
+
+    @api.model
+    def _get_super_columns(self, options):
+        date_cols = options.get('date') and [options['date']] or []
+        date_cols += (options.get('comparison') or {}).get('periods', [])
+        columns = reversed(date_cols)
+        return {'columns': columns, 'x_offset': 1, 'merge': 6}
+     
+    

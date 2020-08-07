@@ -44,3 +44,4 @@ from . import financial_report_4_10
 
 from . import account_journal
 from . import account_move
+from . import account_report_manager

@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, _, fields
+from odoo import models, _, fields,api
 
 
 class MXReportAccountCoaCONAC(models.AbstractModel):
@@ -175,3 +175,8 @@ class MXReportAccountCoaCONAC(models.AbstractModel):
         return '%s_%s_COA_CONAC' % (
             date_report.year,
             str(date_report.month).zfill(2))
+
+    @api.model
+    def _get_super_columns(self, options):
+        return {'columns': {}, 'x_offset': 1, 'merge': 1}
+    

@@ -145,26 +145,34 @@ msgid "Ampliaciones/ (Reducciones)"
 msgstr "Ampliaciones/Reducciones"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_8.py:0
 #: model:ir.actions.client,name:jt_conac.action_analytical_income_statement_report model:ir.model,name:jt_conac.model_jt_conac_analytical_income_statement_report
 #: model:ir.ui.menu,name:jt_conac.menu_analytical_income_statement_report
+#, python-format
 msgid "Analytical Income Statement"
 msgstr "Estado Analítico de Ingresos"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_5.py:0
 #: model:ir.actions.client,name:jt_conac.action_analytical_status_of_debts_report model:ir.model,name:jt_conac.model_jt_conac_analytical_status_of_debts_report
 #: model:ir.ui.menu,name:jt_conac.menu_analytical_status_of_debts_report
+#, python-format
 msgid "Analytical Statement of Debt and Other Liabilities"
 msgstr "Estado Analítico de la Deuda y Otros Pasivos"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_4.py:0
 #: model:ir.actions.client,name:jt_conac.action_analytical_status_of_assets_report model:ir.model,name:jt_conac.model_jt_conac_analytical_status_of_assets_report
 #: model:ir.ui.menu,name:jt_conac.menu_analytical_status_of_assets_report
+#, python-format
 msgid "Analytical Status of Assets"
 msgstr "Estado Analítico del Activo"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_9.py:0
 #: model:ir.actions.client,name:jt_conac.action_status_of_expenditure_report model:ir.model,name:jt_conac.model_jt_conac_status_of_expenditure_report
 #: model:ir.ui.menu,name:jt_conac.menu_status_of_expenditure_report
+#, python-format
 msgid "Analytical Status of the Expenditure Budget Exercise"
 msgstr "Estado Analítico del Ejercicio del Presupuesto de Egresos"
 
@@ -775,8 +783,10 @@ msgid "Source Document"
 msgstr "Documento fuente"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_3.py:0
 #: model:ir.actions.client,name:jt_conac.action_state_of_variation_report model:ir.model,name:jt_conac.model_jt_conac_state_of_variation_report
 #: model:ir.ui.menu,name:jt_conac.menu_state_of_variation_report
+#, python-format
 msgid "State of Variation in the Public Treasury"
 msgstr "Estado de Variación en la Hacienda Pública"
 
@@ -786,14 +796,18 @@ msgid "Statement of Cash"
 msgstr "Estado de Flujos de Efectivo"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_7.py:0
 #: model:ir.actions.client,name:jt_conac.action_statement_of_cash_report model:ir.model,name:jt_conac.model_jt_conac_statement_of_cash_report
 #: model:ir.ui.menu,name:jt_conac.menu_statement_of_cash_report
+#, python-format
 msgid "Statement of Cash Flows"
 msgstr "Estado de Flujos de Efectivo"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_6.py:0
 #: model:ir.actions.client,name:jt_conac.action_statement_of_changes_report model:ir.model,name:jt_conac.model_jt_conac_statement_of_changes_report
 #: model:ir.ui.menu,name:jt_conac.menu_statement_of_changes_report
+#, python-format
 msgid "Statement of Changes in the Financial Position"
 msgstr "Estado de Cambios en la Situación Financiera"
 
@@ -803,8 +817,10 @@ msgid "Statement of Debt"
 msgstr "Estado Analítico de la Deuda y Otros Pasivos"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_0.py:0
 #: model:ir.actions.client,name:jt_conac.action_financial_position_report model:ir.model,name:jt_conac.model_jt_conac_financial_position_report
 #: model:ir.ui.menu,name:jt_conac.menu_financial_position_report
+#, python-format
 msgid "Statement of Financial Position"
 msgstr "Estado de Situación Financiera"
 
@@ -819,14 +835,18 @@ msgid "States and Program"
 msgstr "Estados e Informes Programáticos"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_10.py:0
 #: model:ir.actions.client,name:jt_conac.action_states_and_program_report model:ir.model,name:jt_conac.model_jt_conac_states_and_program_report
 #: model:ir.ui.menu,name:jt_conac.menu_states_and_program_report
+#, python-format
 msgid "States and Program Reports"
 msgstr "Estados e Informes Programáticos"
 
 #. module: jt_conac
+#: code:addons/jt_conac/models/financial_report_4_2.py:0
 #: model:ir.actions.client,name:jt_conac.action_status_of_activities_report model:ir.model,name:jt_conac.model_jt_conac_status_of_activities_report
 #: model:ir.ui.menu,name:jt_conac.menu_status_of_activities_report
+#, python-format
 msgid "Status of Activities"
 msgstr "Estado de Actividades"
 

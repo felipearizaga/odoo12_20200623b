@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, _
+from odoo import models,api, _
 
 
 class StateOfVariation(models.AbstractModel):
@@ -90,3 +90,13 @@ class StateOfVariation(models.AbstractModel):
                                 'parent_id': 'level_two_%s' % level_2_line.id,
                             })
         return lines
+
+    def _get_report_name(self):
+        return _("State of Variation in the Public Treasury")
+
+    @api.model
+    def _get_super_columns(self, options):
+        
+        columns = [{'string': self._get_report_name()}]
+        return {'columns': columns, 'x_offset': 0, 'merge': 1}
+    

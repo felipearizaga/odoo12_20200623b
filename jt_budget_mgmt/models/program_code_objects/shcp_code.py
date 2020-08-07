@@ -33,6 +33,8 @@ class SHCPCode(models.Model):
     name = fields.Char("Code")
     desc = fields.Text(string='Description')
 
+    _sql_constraints = [('shcp_code', 'unique(name)', 'The SHCP Program Code must be unique.')]
+    
     @api.constrains('name')
     def _check_name(self):
         if self.name:

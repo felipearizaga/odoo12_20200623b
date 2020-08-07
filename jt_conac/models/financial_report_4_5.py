@@ -20,7 +20,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, _
+from odoo import models,api, _
 
 
 class AnalyticalStatementOfDebtAndOtherLiabilities(models.AbstractModel):
@@ -127,3 +127,12 @@ class AnalyticalStatementOfDebtAndOtherLiabilities(models.AbstractModel):
                             'parent_id': 'level_two_%s' % level_2_line.id,
                         })
         return lines
+    
+    def _get_report_name(self):
+        return _("Analytical Statement of Debt and Other Liabilities")
+
+    @api.model
+    def _get_super_columns(self, options):
+        columns = {}
+        return columns 
+        
