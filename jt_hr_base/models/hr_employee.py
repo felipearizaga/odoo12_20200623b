@@ -59,6 +59,7 @@ class HrEmployee(models.Model):
     # Private Information Page Fields
     street = fields.Char('Street')
     street2 = fields.Char('Street 2')
+    colonia = fields.Char('Colonia')
     city = fields.Char('City')
     state_id = fields.Many2one('res.country.state', string='State')
     zip_code = fields.Char('Zip')
@@ -71,14 +72,14 @@ class HrEmployee(models.Model):
     road = fields.Selection([('old_road', 'Old Road'), ('andador', 'Andador'),
                              ('highway', 'Highway'), ('avenue', 'Avenue'),
                              ('boulevard', 'Boulevard'), ('street', 'Street'),
-                             ('closed_circuit', 'Closed Circuit'),
-                             ('alley_road', 'Alley Road'),
-                             ('high_road', 'High Road'),
-                             ('carriage_way', 'Carriage Way'),
-                             ('roundabout', 'Roundabout'), ('stroll', 'Stroll'),
+                             ('closed', 'Closed'),('circuit','Circuit'),
+                             ('alley_road', 'Alley Road'),('camino','Camino'),
+                             ('high_road', 'High Road'),('calzada','Calzada'),
+                             ('glorieta', 'Glorieta'),
+                             ('Paseo', 'paseo'),
                              ('prolongation', 'Prolongation'),
-                             ('private_return', 'Private Return'),
-                             ('valley', 'Valley via Town')], string='Type of Road')
+                             ('private', 'Private'),('return','Return'),
+                             ('valle', 'Valle'),('via','Via'),('villa','Villa')], string='Type of Road')
 
     marital = fields.Selection(
         selection_add=[('free_union', 'Free Union'), ('separate', 'Separate')])

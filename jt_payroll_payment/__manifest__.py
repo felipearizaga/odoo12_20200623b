@@ -43,6 +43,7 @@
         'views/employee_payroll_view.xml',
         'views/employee_menus.xml',
         'views/account_menus.xml',
+        'wizard/bank_layout_employee_view.xml',
         'security/ir.model.access.csv',
         'data/data.xml'
     ],

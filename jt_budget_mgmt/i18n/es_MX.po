@@ -1536,7 +1536,7 @@ msgstr "Seguidores (Terceros)"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__from_date
 msgid "From"
-msgstr "Período"
+msgstr "Initial Date"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_geographic_location
@@ -2601,7 +2601,6 @@ msgstr "Resumen Presupuesto Proforma"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_control_assigned_amounts_lines__program
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__program_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__program_ids
-#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_search_view
 #, python-format
 msgid "Program"
@@ -2611,6 +2610,7 @@ msgstr "Código Presupuestal"
 #. openerp-web
 #: model:report.program.fields,name:jt_budget_mgmt.program_field_2
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__program_ids
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
 msgid "Program"
 msgstr "Programa"
 

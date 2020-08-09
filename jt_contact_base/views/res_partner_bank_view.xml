@@ -21,5 +21,16 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="res_partner_bank_form_view_l10n_code_inherit" model="ir.ui.view">
+            <field name="name">res.bank.form.view.l10n.code</field>
+            <field name="model">res.bank</field>
+            <field name="inherit_id" ref="l10n_mx.view_res_bank_inherit_l10n_mx_edi_bank"/>
+            <field name="arch" type="xml">
+            	<field name="l10n_mx_edi_code" position="attributes">
+            		<attribute name='string'>Bank Key</attribute>
+            	</field>
+        	</field>
+        </record>
     </data>
 </odoo>

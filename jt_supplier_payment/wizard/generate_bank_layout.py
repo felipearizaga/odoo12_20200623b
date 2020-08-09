@@ -1168,9 +1168,9 @@ class GenerateBankLayout(models.TransientModel):
         self.file_name = file_name
         
     def generate_bank_layout(self):
-#        for payment in self.payment_ids:
-#             if payment.journal_id.id != self.journal_id.id:
-#                 raise UserError(_("The selected layout does NOT match the bank of the selected payments"))
+        for payment in self.payment_ids:
+            if payment.journal_id.id != self.journal_id.id:
+                raise UserError(_("The selected layout does NOT match the bank of the selected payments"))
         if self.journal_id.bank_format == 'banamex':
             self.banamex_file_format()
         elif self.journal_id.bank_format == 'bbva_tnn_ptc':

@@ -30,6 +30,7 @@ class ExpenditureItem(models.Model):
     _rec_name = 'item'
 
     item = fields.Char(string='Item', size=3)
+    item_group = fields.Integer(compute='get_item_group',store=True)
     exercise_type = fields.Selection(
         [('r', 'R'), ('c', 'C'), ('d', 'D')], string='Exercise type')
     description = fields.Text(string='Item description')
@@ -46,6 +47,14 @@ class ExpenditureItem(models.Model):
 
     _sql_constraints = [('item', 'unique(item)', 'The item must be unique.')]
 
+    @api.depends('item')
+    def get_item_group(self):
+        for rec in self:
+            if rec.item:
+                rec.item_group =int(rec.item[0])
+            else:
+                rec.item_group = 0
+                 
     @api.constrains('item')
     def _check_item(self):
         if not str(self.item).isnumeric():

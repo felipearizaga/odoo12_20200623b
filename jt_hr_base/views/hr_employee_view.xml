@@ -46,6 +46,7 @@
                     <div class="o_address_format">
                         <field name="street" placeholder="Street..." class="o_address_street"/>
                         <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                        <field name="colonia" placeholder="Colonia..." class="o_address_street"/>
                         <field name="city" placeholder="City" class="o_address_city"/>
                         <field name="state_id" class="o_address_state" placeholder="State"/>
                         <field name="zip_code" placeholder="ZIP" class="o_address_zip"/>

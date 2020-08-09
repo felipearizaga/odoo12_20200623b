@@ -336,9 +336,13 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         col_query = 'select pc.id,pc.program_code' 
         from_query = ' from program_code pc,expenditure_item exioder'
         where_query = ' where pc.id in %s and exioder.id=pc.item_id and exioder.item >= %s and exioder.item <= %s'
-        order_by = ' order by exioder.item'
+        order_by = ' order by exioder.item_group'
         tuple_where_data = []
         need_total = False
+        order_dep = False
+        order_sub_dep = False
+        order_program = False
+        order_sub_program = False
         # Program code struture view fields
         need_to_skip = 0
         for column in options['selected_program_fields']:
@@ -355,6 +359,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',pp.key_unam as program'
                 from_query += ',program pp'
                 where_query += ' and pc.program_id=pp.id'
+                order_program = ',pp.key_unam'
                 need_to_skip += 1
             if column in ('Sub Program', 'Subprograma'):
                 # subprogram = prog_code.sub_program_id and prog_code.sub_program_id.sub_program or ''
@@ -362,6 +367,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',sp.sub_program as sub_program'
                 from_query += ',sub_program sp'
                 where_query += ' and pc.sub_program_id=sp.id'
+                order_sub_program = ',sp.sub_program'
                 need_to_skip += 1
             if column in ('Dependency', 'Dependencia'):
                 #dependency = prog_code.dependency_id and prog_code.dependency_id.dependency or ''
@@ -369,6 +375,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',dp.dependency as dependency'
                 from_query += ',dependency dp'
                 where_query += ' and pc.dependency_id=dp.id'
+                order_dep = ',dp.dependency'
                 need_to_skip += 1
             if column in ('Sub Dependency', 'Subdependencia'):
                 #subdependency = prog_code.sub_dependency_id and prog_code.sub_dependency_id.sub_dependency or ''
@@ -376,6 +383,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',sdp.sub_dependency as sub_dependency'
                 from_query += ',sub_dependency sdp'
                 where_query += ' and pc.sub_dependency_id=sdp.id'
+                order_sub_dep = ',sdp.sub_dependency'
                 need_to_skip += 1
             if column in ('Expenditure Item', 'Partida de Gasto (PAR)'):
                 #item = prog_code.item_id and prog_code.item_id.item or ''
@@ -484,7 +492,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             if column in ('Partida de Gasto (PAR)', 'Expense Item'):
                 #amt = b_line.item_id and b_line.item_id.item or ''
                 need_columns.append('exp_item')
-                col_query+=',expic.item as exp_item'
+                col_query+=',expic.item as exp_item,expic.item_group as item_group'
                 from_query += ',expenditure_item expic'
                 where_query += ' and pc.item_id=expic.id'
                 need_total = True
@@ -564,13 +572,26 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         tuple_where_data.append(tuple(program_codes.ids))
         tuple_where_data.append('100')
         tuple_where_data.append('999')
+        
+        if order_dep:
+            order_by+= order_dep
+        if order_sub_dep:
+            order_by+= order_sub_dep
+        if order_program:
+            order_by+= order_program
+        if order_sub_program:
+            order_by+= order_sub_program
+            
         sql_query =  col_query +  from_query + where_query + order_by
         self.env.cr.execute(sql_query,tuple(tuple_where_data))
         my_datas = self.env.cr.dictfetchall()
         subtotal_dict = {}
         total_dict = {}
         pre_exp_range = 0
-
+        pre_dependency = 0
+        pre_sub_dependency = 0
+        pre_program = 0
+        pre_subprogram = 0
         #======= get the data count =========#
         selected_line_pages = options['selected_line_pages']
         selected_my_data = []
@@ -586,9 +607,21 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
             selected_my_data = my_datas[:500]
         for data in selected_my_data:
             columns_in = []
+            is_add_subtotal = False
             if need_total:
                 exp_range = self.check_item_range(data.get('exp_item'))
                 if pre_exp_range!=0 and pre_exp_range!=exp_range:
+                    is_add_subtotal = True 
+                if pre_dependency!=0 and data.get('dependency',0) and data.get('dependency',0) != pre_dependency:
+                    is_add_subtotal = True
+                if pre_sub_dependency!=0 and data.get('sub_dependency',0) and data.get('sub_dependency',0) != pre_sub_dependency:
+                    is_add_subtotal = True
+                if pre_subprogram!=0 and data.get('sub_program',0) and data.get('sub_program',0) != pre_subprogram:
+                    is_add_subtotal = True
+                if pre_program!=0 and data.get('program',0) and data.get('program',0) != pre_program:
+                    is_add_subtotal = True
+                
+                if is_add_subtotal:
                     if subtotal_dict:
                         main_cols = []
                         for c in need_columns:
@@ -604,10 +637,14 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                                 'level': 2,
                                 'columns': main_cols,
                             })
-                    
+                
                     subtotal_dict = {}
                 pre_exp_range=exp_range
-            
+                pre_dependency = data.get('dependency',0)
+                pre_sub_dependency = data.get('sub_dependency',0)
+                pre_subprogram = data.get('sub_program',0)
+                pre_program = data.get('program',0)
+                
             for c in need_columns:
                 columns_in.append({'name':data.get(c)})
             for c in need_columns_with_format:

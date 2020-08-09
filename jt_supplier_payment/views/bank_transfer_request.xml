@@ -7,7 +7,8 @@
             <field name="model">bank.transfer.request</field>
             <field name="arch" type="xml">
                 <tree>
-             			<field name="batch_folio"/>
+                		<field name="name" context="{'show_for_bank_transfer':True}"/>
+             			<field name="move_id"/>
              			<field name="application_date"/>
              			<field name="bank_id"/>
              			<field name="bank_account_id"/>
@@ -16,7 +17,7 @@
              			<field name="area_req_transfer"/>
              			<field name="user_id"/>
              			<field name="req_transfer"/>
-             			<field name="operation_type_id"/>
+             			<field name="operation_type"/>
              			<field name="observation"/>
                 </tree>
             </field>
@@ -28,9 +29,14 @@
             <field eval="100" name="priority"/>
             <field name="arch" type="xml">
                 <form>
-                	<group>
+					<div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>                
+	               	<group>
                 		<group>
-                			<field name="batch_folio"/>
+                			<field name="move_id"  context="{'show_for_bank_transfer':True}" required="1" domain="[('type', '=', 'in_invoice'), ('is_payment_request', '=', True)]"/>
                 			<field name="application_date"/>
                 			<field name="bank_id"/>
                 			<field name="bank_account_id"/>
@@ -39,9 +45,9 @@
                 		</group>
                 		<group>
                 			<field name="area_req_transfer"/>
-                			<field name="user_id"/>
+                			<field name="user_id" readonly="1"/>
                 			<field name="req_transfer"/>
-                			<field name="operation_type_id"/>
+                			<field name="operation_type"/>
                 			<field name="observation"/>
                 		</group>
                 	</group>
@@ -53,6 +59,7 @@
             <field name="name">Bank Transfer Request</field>
             <field name="res_model">bank.transfer.request</field>
             <field name="view_mode">tree,form</field>
+            <field name="context">{'show_for_bank_transfer':True}</field>
         </record>
 	
         <menuitem id="menu_bank_transfer_request" name="Bank Transfer Request"

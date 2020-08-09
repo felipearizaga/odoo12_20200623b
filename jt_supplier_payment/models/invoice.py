@@ -325,6 +325,17 @@ class AccountMove(models.Model):
                 return True
         return False
 
+    def name_get(self):
+        res = super(AccountMove,self).name_get()
+        if self.env.context and self.env.context.get('show_for_bank_transfer',False):
+            result = []
+            for rec in self:
+                name = rec.batch_folioch or ''
+                result.append((rec.id, name))
+            return result
+        else:
+            return res
+
 #     def remove_journal_line(self):
 #         if self.
 
