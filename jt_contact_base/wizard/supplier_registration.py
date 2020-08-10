@@ -49,7 +49,10 @@ class SupplierRegistration(models.TransientModel):
             contents += "UNIVERSIDAD AUTONOMADE MEXICO"
             contents += "\n"
             for partner in partners:
-                contents += "High"
+                if self.env.user.lang == 'es_MX':
+                    contents += "Alta"
+                else:    
+                    contents += "High"
                 if partner.bank_ids[:1].branch_number:
                     contents += str(partner.bank_ids[:1].branch_number).zfill(4)
                 else:
@@ -68,7 +71,10 @@ class SupplierRegistration(models.TransientModel):
                     partner_name = partner.name
                 contents += partner_name.ljust(55) 
                 contents += "999999999999"
-                contents += "daily"
+                if self.env.user.lang == 'es_MX':
+                    contents += "Diario"
+                else:
+                    contents += "daily"
                 if partner.email:
                     contents += partner.email.ljust(30)
                 else : 
@@ -115,25 +121,43 @@ class SupplierRegistration(models.TransientModel):
             changes_rec = partners.filtered(lambda x:x.instruction == 'change')
             
             if high_rec:
-                contents += 'HIGH'.ljust(10)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'ALTAS'.ljust(10)
+                else:
+                    contents += 'HIGH'.ljust(10)
             elif low_rec:
-                contents += 'LOW'.ljust(10)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'BAJAS'.ljust(10)
+                else:
+                    contents += 'LOW'.ljust(10)
             elif changes_rec:
-                contents += 'CHANGES'.ljust(10)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'CAMBIOS'.ljust(10)
+                else:
+                    contents += 'CHANGES'.ljust(10)
             else:
                 contents += ''.ljust(10)
 
             if high_rec:
-                contents += 'HIGH SUPPLIER'.ljust(20)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'ALTAPROVEEDOR'.ljust(20)
+                else:
+                    contents += 'HIGH SUPPLIER'.ljust(20)
             elif low_rec:
-                contents += 'LOW SUPPLIER'.ljust(20)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'BAJAPROVEEDOR'.ljust(20)
+                else:
+                    contents += 'LOW SUPPLIER'.ljust(20)
             elif changes_rec:
-                contents += 'CHANGES SUPPLIER'.ljust(20)
+                if self.env.user.lang == 'es_MX':
+                    contents += 'CAMBIOPROVEEDOR'.ljust(20)
+                else:
+                    contents += 'CHANGES SUPPLIER'.ljust(20)
             else:
                 contents += ''.ljust(20)
                 
             #====== Response Code =====#
-            contents += '  '
+            contents += '00'
             #====== Description Code Replay =====#
             contents +=  ''.ljust(20)
             #====== Filler =====#
@@ -186,8 +210,8 @@ class SupplierRegistration(models.TransientModel):
                     contents += ''.ljust(10)
                 elif partner.person_type and partner.person_type=='moral':
                     contents += 'M'
-                    if partner.parent_id:
-                        contents += partner.parent_id.name.rjust(50)
+                    if partner.name:
+                        contents += partner.name.rjust(50)
                     else:
                         contents += ''.ljust(50)
                     contents += datetime.now().date().strftime('%Y-%m-%d')

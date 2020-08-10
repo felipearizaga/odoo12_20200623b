@@ -31,7 +31,7 @@
                     <field name="instruction" attrs="{'invisible':[('beneficiary_type','not in',('national_provider','foreign_supplier'))]}"/>
                 </xpath>
                 <xpath expr="//sheet/group/group[2]/field[@name='function']" position="after">
-                    <field name="dob"/>
+                    <field name="dob" attrs="{'invisible':[('beneficiary_type','not in',('national_provider','foreign_supplier'))]}"/>
                     <field name="nationality"/>
                     <field name="tax_email" widget="email"/>
                 </xpath>
@@ -62,7 +62,7 @@
 	                     <group name="banks" colspan="4"
 	                            groups="account.group_account_invoice">
 	                        <field name="bank_ids" nolabel="1">
-	                             <tree editable="bottom">
+	                             <tree>
 	                                 <field name="sequence" widget="handle"/>
 	                                 <field name="bank_id"/>
 	                                 <field name="acc_number"/>
