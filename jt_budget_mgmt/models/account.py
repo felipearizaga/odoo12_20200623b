@@ -32,6 +32,14 @@ class AccountMove(models.Model):
     dependancy_id = fields.Many2one('dependency', string='Dependency')
     sub_dependancy_id = fields.Many2one('sub.dependency', 'Sub Dependency')
 
+    def action_register(self):
+        for move in self:
+            invoice_lines = move.invoice_line_ids.filtered(lambda x:not x.program_code_id)
+            if invoice_lines:
+                raise ValidationError("Please add program code into invoice lines")
+        return super(AccountMove,self).action_register()
+
+        
     def action_validate_budget(self):
         self.ensure_one()
         str_msg = "Budgetary Insufficiency For Program Code\n\n"
@@ -93,10 +101,12 @@ class AccountMove(models.Model):
     def action_draft_budget(self):
         self.ensure_one()
         self.payment_state = 'draft'
+        self.button_draft()
     
     def action_cancel_budget(self):
         self.ensure_one()
         self.payment_state = 'cancel'
+        self.button_cancel()
 
     def create_journal_line(self):
         #self.line_ids = False

@@ -75,7 +75,7 @@
                         <b><span>Provider:</span></b>
                         <h6>
                             <![CDATA[&nbsp;]]><![CDATA[&nbsp;]]>
-                            <span t-field="o.baneficiary_id.name"/>
+                            <span t-field="o.partner_id.name"/>
                         </h6>
                         <h6>
                             <div align="right">

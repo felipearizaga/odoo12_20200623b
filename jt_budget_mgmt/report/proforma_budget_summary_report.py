@@ -360,6 +360,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 from_query += ',program pp'
                 where_query += ' and pc.program_id=pp.id'
                 order_program = ',pp.key_unam'
+                order_by+=order_program
                 need_to_skip += 1
             if column in ('Sub Program', 'Subprograma'):
                 # subprogram = prog_code.sub_program_id and prog_code.sub_program_id.sub_program or ''
@@ -368,6 +369,8 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 from_query += ',sub_program sp'
                 where_query += ' and pc.sub_program_id=sp.id'
                 order_sub_program = ',sp.sub_program'
+                order_by+=order_sub_program
+                
                 need_to_skip += 1
             if column in ('Dependency', 'Dependencia'):
                 #dependency = prog_code.dependency_id and prog_code.dependency_id.dependency or ''
@@ -376,6 +379,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 from_query += ',dependency dp'
                 where_query += ' and pc.dependency_id=dp.id'
                 order_dep = ',dp.dependency'
+                order_by+=order_dep
                 need_to_skip += 1
             if column in ('Sub Dependency', 'Subdependencia'):
                 #subdependency = prog_code.sub_dependency_id and prog_code.sub_dependency_id.sub_dependency or ''
@@ -384,6 +388,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 from_query += ',sub_dependency sdp'
                 where_query += ' and pc.sub_dependency_id=sdp.id'
                 order_sub_dep = ',sdp.sub_dependency'
+                order_by+=order_sub_dep
                 need_to_skip += 1
             if column in ('Expenditure Item', 'Partida de Gasto (PAR)'):
                 #item = prog_code.item_id and prog_code.item_id.item or ''
@@ -391,11 +396,17 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',expi.item as exp_name'
                 from_query += ',expenditure_item expi'
                 where_query += ' and pc.item_id=expi.id'
+                order_expen_item = ',expi.item'
+                order_by+=order_expen_item
+                
                 need_to_skip += 1
             if column in ('Check Digit', 'Dígito Verificador'):
                 #check_digit = prog_code.check_digit or ''
                 need_columns.append('check_digit')
                 col_query+=',pc.check_digit as check_digit'
+                order_check_digit = ',pc.check_digit'
+                order_by+=order_check_digit
+                
                 #from_query += ',expenditure_item expi'
                 #where_query += ' and pc.item_id=expi.id'
                 need_to_skip += 1
@@ -405,6 +416,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',ro.key_origin as resource_origin_id'
                 from_query += ',resource_origin ro'
                 where_query += ' and pc.resource_origin_id=ro.id'
+                order_resource_origin = ',ro.key_origin'
+                order_by+=order_resource_origin
+                
                 need_to_skip += 1
             if column in ('Institutional Activity', 'Actividad Institucional'):
                 #ai = prog_code.institutional_activity_id and prog_code.institutional_activity_id.number or ''
@@ -412,6 +426,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',inac.number as institutional_activity_id'
                 from_query += ',institutional_activity inac'
                 where_query += ' and pc.institutional_activity_id=inac.id'
+                order_activity_number = ',inac.number'
+                order_by+=order_activity_number
+                
                 need_to_skip += 1
             if column in ('Conversion of Budgetary Program', 'Conversión de Programa Presupuestario'):
                 #conversion = prog_code.budget_program_conversion_id and \
@@ -421,6 +438,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',shcp.name as conversion_program'
                 from_query += ',shcp_code shcp,budget_program_conversion bpc'
                 where_query += ' and pc.budget_program_conversion_id=bpc.id and shcp.id=bpc.shcp'
+                order_conversion_program = ',shcp.name'
+                order_by+=order_conversion_program
+                
                 need_to_skip += 1
             if column in ('SHCP items', 'Conversión Con Partida (CONPA)'):
                 #shcp = prog_code.conversion_item_id and prog_code.conversion_item_id.federal_part or ''
@@ -428,6 +448,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',dc.federal_part as shcp_item'
                 from_query += ',departure_conversion as dc'
                 where_query += ' and pc.conversion_item_id=dc.id'
+                order_federal_part = ',dc.federal_part'
+                order_by+=order_federal_part
+                
                 need_to_skip += 1
             if column in ('Type of Expenditure', 'Tipo de Gasto'):
                 #expense_type = prog_code.expense_type_id and prog_code.expense_type_id.key_expenditure_type or ''
@@ -435,6 +458,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',et.key_expenditure_type as type_of_expenditure'
                 from_query += ',expense_type as et'
                 where_query += ' and pc.expense_type_id=et.id'
+                order_key_expenditure_type = ',et.key_expenditure_type'
+                order_by+=order_key_expenditure_type
+                
                 need_to_skip += 1
             if column in ('Geographic Location', 'Ubicación Geográfica'):
                 #location = prog_code.location_id and prog_code.location_id.state_key or ''
@@ -442,6 +468,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',gl.state_key as geographic_location'
                 from_query += ',geographic_location as gl'
                 where_query += ' and pc.location_id=gl.id'
+                order_state_key = ',gl.state_key'
+                order_by+=order_state_key
+                
                 need_to_skip += 1
             if column in ('Wallet Key', 'Clave Cartera'):
                 #wallet_key = prog_code.portfolio_id and prog_code.portfolio_id.wallet_password or ''
@@ -449,6 +478,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',kw.wallet_password as wallet_key'
                 from_query += ',key_wallet as kw'
                 where_query += ' and pc.portfolio_id=kw.id'
+                order_wallet_password = ',kw.wallet_password'
+                order_by+=order_wallet_password
+                
                 need_to_skip += 1
             if column in ('Type of Project', 'Tipo de Proyecto'):
                 #project_type = prog_code.project_type_id and prog_code.project_type_id.project_type_identifier or ''
@@ -456,6 +488,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',ptype.project_type_identifier as type_of_project'
                 from_query += ',project_type as ptype'
                 where_query += ' and pc.project_type_id=ptype.id'
+                order_project_type = ',ptype.project_type_identifier'
+                order_by+=order_project_type
+                
                 need_to_skip += 1
             if column in ('Project Number', 'Número de Proyecto'):
                 #project_number = prog_code.project_number or ''
@@ -463,6 +498,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',projectp.number as project_number'
                 from_query += ',project_type as ptypen,project_project projectp'
                 where_query += ' and pc.project_type_id=ptypen.id and projectp.id=ptypen.project_id'
+                order_project_number = ',projectp.number'
+                order_by+=order_project_number
+                
                 need_to_skip += 1
             if column in ('Stage', 'Etapa'):
                 #stage = prog_code.stage_id and prog_code.stage_id.stage_identifier or ''
@@ -470,6 +508,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',si.stage_identifier as stage_identofier'
                 from_query += ',stage as si'
                 where_query += ' and pc.stage_id=si.id'
+                order_stage_identifier = ',si.stage_identifier'
+                order_by+=order_stage_identifier
+                
                 need_to_skip += 1
             if column in ('Type of Agreement', 'Tipo de Convenio'):
                 #agreement_type = prog_code.agreement_type_id and prog_code.agreement_type_id.agreement_type or ''
@@ -477,6 +518,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',atype.agreement_type as type_of_agreement'
                 from_query += ',agreement_type as atype'
                 where_query += ' and pc.agreement_type_id=atype.id'
+                order_agreement_type = ',atype.agreement_type'
+                order_by+=order_agreement_type
+                
                 need_to_skip += 1
             if column in ('Agreement Number', 'Número de Convenio'):
                 #agreement_number = prog_code.number_agreement or ''
@@ -484,6 +528,9 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query+=',atypen.number_agreement as number_of_agreement'
                 from_query += ',agreement_type as atypen'
                 where_query += ' and pc.agreement_type_id=atypen.id'
+                order_agreement_number = ',atypen.number_agreement'
+                order_by+=order_agreement_number
+                
                 need_to_skip += 1
 
 
@@ -573,15 +620,15 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         tuple_where_data.append('100')
         tuple_where_data.append('999')
         
-        if order_dep:
-            order_by+= order_dep
-        if order_sub_dep:
-            order_by+= order_sub_dep
-        if order_program:
-            order_by+= order_program
-        if order_sub_program:
-            order_by+= order_sub_program
-            
+#         if order_dep:
+#             order_by+= order_dep
+#         if order_sub_dep:
+#             order_by+= order_sub_dep
+#         if order_program:
+#             order_by+= order_program
+#         if order_sub_program:
+#             order_by+= order_sub_program
+        order_by += ',exioder.item'
         sql_query =  col_query +  from_query + where_query + order_by
         self.env.cr.execute(sql_query,tuple(tuple_where_data))
         my_datas = self.env.cr.dictfetchall()

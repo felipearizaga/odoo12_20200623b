@@ -1536,7 +1536,7 @@ msgstr "Seguidores (Terceros)"
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__from_date
 msgid "From"
-msgstr "Initial Date"
+msgstr "Fecha Inicial"
 
 #. module: jt_budget_mgmt
 #: model:ir.model,name:jt_budget_mgmt.model_geographic_location

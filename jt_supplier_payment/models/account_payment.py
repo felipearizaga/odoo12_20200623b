@@ -67,6 +67,10 @@ class AccountPayment(models.Model):
     def post(self):
         result = super(AccountPayment,self).post()
         self.write({'payment_state': 'posted'})
+        for payment in self:
+            for inv in payment.invoice_ids:
+                if inv.invoice_payment_state == 'paid':
+                    inv.payment_state = 'paid' 
         return result
  
     def action_draft(self):

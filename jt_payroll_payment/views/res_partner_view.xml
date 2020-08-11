@@ -9,6 +9,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='vat']" position="after">
                         <field name="supplier_of_payment_payroll"/>
+                        <field name="workstation_id"/>
+                        <field name="category_key"/>
                 </xpath>
             </field>
         </record>

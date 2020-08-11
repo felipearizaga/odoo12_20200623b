@@ -28,7 +28,9 @@ class Contacts(models.Model):
     _inherit = 'res.partner'
 
     supplier_of_payment_payroll = fields.Boolean("Supplier of payment of payroll")
-
+    workstation_id = fields.Many2one('hr.job', "Appointment")
+    category_key = fields.Char("Category Key", related='workstation_id.category_key', store=True)
+    
     @api.model
     def create(self, vals):
         res = super(Contacts, self).create(vals)

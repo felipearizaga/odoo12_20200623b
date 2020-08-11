@@ -81,12 +81,13 @@ class AccountMove(models.Model):
                                       ('done','Done'),
                                       ('rejected','Rejected'),
                                       ('cancel','Cancel')],default='draft',copy=False)
+    is_from_reschedule_payment = fields.Boolean(string="From Reschedule",default=False)
     baneficiary_key = fields.Char('Baneficiary Key', related='partner_id.password_beneficiary', store=True)
     rfc = fields.Char("RFC", related='partner_id.vat', store=True)
     student_account = fields.Char("Student Account")
     transfer_key = fields.Char("Transfer Key")
-    category_key = fields.Char("Category Key", related='baneficiary_id.job_id.category_key', store=True)
-    workstation_id = fields.Many2one('hr.job', "Appointment", related='baneficiary_id.job_id')
+    category_key = fields.Char("Category Key", related='partner_id.category_key', store=True)
+    workstation_id = fields.Many2one('hr.job', "Appointment", related='partner_id.workstation_id')
     folio = fields.Char("Folio against Receipt")
     folio_dependency = fields.Char("Folio Dependency")
     operation_type_id = fields.Many2one('operation.type', "Operation Type")
@@ -150,14 +151,8 @@ class AccountMove(models.Model):
     is_show_origin = fields.Boolean('is_show_origin',default=False)
     is_zone_res = fields.Boolean('Show Zone Res',default=False)
     is_show_resposible_group = fields.Boolean('Resposible Group',default=False)
-    
-    @api.onchange('baneficiary_id')
-    def onchange_baneficiary(self):
-        if self.baneficiary_id and not self.baneficiary_id.address_id:
-            raise ValidationError("Please configure contact into baneficiary")
-        elif self.baneficiary_id:
-            self.partner_id = self.baneficiary_id.address_id.id
-            
+
+                    
     @api.onchange('operation_type_id')
     def onchange_operation_type_id(self):
         if self.operation_type_id and self.operation_type_id.name:
@@ -317,6 +312,12 @@ class AccountMove(models.Model):
                 current_date = today + timedelta(days=30)
                 move.commitment_date = current_date
             move.payment_state = 'registered'
+
+    def action_reschedule(self):
+        for move in self:
+            move.is_from_reschedule_payment = True
+            move.payment_issuing_bank_id = False
+            move.payment_state = 'registered'        
 
     def check_operation_name(self):
         if self.operation_type_id and self.operation_type_id.name:

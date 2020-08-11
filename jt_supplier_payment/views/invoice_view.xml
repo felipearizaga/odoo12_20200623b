@@ -10,7 +10,7 @@
                 <form>
 					<header>
 					 	<button name="action_register" string="Register" class="oe_highlight" type="object"  attrs="{'invisible': [('payment_state', '!=', 'draft')]}"/>
-					 	
+					 	<button name="action_reschedule" string="Reschedule" class="oe_highlight" type="object"  attrs="{'invisible': [('payment_state', '!=', 'rejected')]}"/>
                         <field name="payment_state" widget="statusbar" />
                     </header>
                     <sheet>
@@ -59,8 +59,7 @@
                         <field name="restrict_mode_hash_table" invisible="1"/>
                         <group>
                             <group>
-                                <field name="baneficiary_id"  attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="partner_id" invisible="1" string="Beneficiary of the payment" attrs="{'readonly': [('payment_state', '!=', 'draft')]}" domain="[('supplier_rank','&gt;', 0)]"/>
+                                <field name="partner_id"  required="1" string="Beneficiary of the payment" attrs="{'readonly': [('payment_state', '!=', 'draft')]}" domain="[('beneficiary_type', 'in', ('national_provider','foreign_supplier'))]"/>
                                 <field name="folio" readonly="1" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="operation_type_id" domain="[('upa_catalog_id.name','ilike','Central')]" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="is_show_beneficiary_key" invisible="1"/>
@@ -70,9 +69,9 @@
                                 <field name="student_account" attrs="{'invisible':[('is_show_student_account','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="transfer_key" attrs="{'invisible':[('is_show_student_account','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="is_show_category_key" invisible="1"/>
-                                <field name="category_key"  attrs="{'invisible':[('is_show_category_key','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="category_key"  attrs="{'invisible':[('is_show_category_key','=',False)]}"/>
                                 <field name="is_show_appointment" invisible="1"/>
-                                <field name="workstation_id"  attrs="{'invisible':[('is_show_appointment','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="workstation_id"  attrs="{'invisible':[('is_show_appointment','=',False)]}"/>
                                 <field name="user_registering_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="currency_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="payment_bank_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
@@ -85,7 +84,8 @@
                                 <field name="administrative_secretary_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="is_show_holder_of_dependency" invisible="1"/>
                                 <field name="holder_of_dependency_id" attrs="{'invisible':[('is_show_holder_of_dependency','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="payment_method" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="is_from_reschedule_payment" invisible="1"/>
+                                <field name="payment_method" attrs="{'readonly': [('payment_state', '!=', 'draft'),('is_from_reschedule_payment','=',False)]}"/>
                             </group>
                             <group>
                             	<field name="is_show_commitment_date" invisible="1"/>
@@ -100,7 +100,7 @@
                                 <field name="document_type" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="upa_key" context="{'show_for_supplier_payment':True}" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="upa_document_type" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="payment_issuing_bank_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="payment_issuing_bank_id" attrs="{'readonly': [('payment_state', '!=', 'draft'),('is_from_reschedule_payment','=',False)]}"/>
                                 <field name="payment_issuing_bank_acc_id"/>
                                 <field name="is_show_responsible" invisible="1"/>
                                 <field name="responsible_id" attrs="{'invisible':[('is_show_responsible','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>

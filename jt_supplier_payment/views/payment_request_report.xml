@@ -114,7 +114,7 @@
                     <div id="informations3" class="row mt32 mb32">
                         <div class="col-3" name="payment_method">
                             <strong>Name:</strong>
-                            <p class="m-0" t-if="o.baneficiary_id" t-field="o.baneficiary_id.name"/>
+                            <p class="m-0" t-if="o.partner_id" t-field="o.partner_id.name"/>
                         </div>
                         <div class="col-3" name="folio_dependency">
                             <strong>Password:</strong>
