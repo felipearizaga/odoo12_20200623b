@@ -26,7 +26,7 @@
                 <field name="l10n_mx_edi_total_discount"/>
             </xpath>
             <xpath expr="//field[@name='amount_untaxed']" position="after">
-                <field name="l10n_mx_edi_total_discount" />
+                <field name="l10n_mx_edi_total_discount"/>
             </xpath>
         </field>
     </record>
