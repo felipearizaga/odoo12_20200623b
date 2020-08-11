@@ -12,7 +12,7 @@
                 <field name="l10n_mx_edi_total_discount"/>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after" >
-                 <field name="em_mm_desc" attrs="{'column_invisible':[('parent.l10n_mx_edi_origin','=', False)]}"/>
+                 <field name="em_mm_desc" readonly="1" attrs="{'column_invisible':[('parent.l10n_mx_edi_origin','=', False)]}"/>
             </xpath>
         </field>
     </record>
