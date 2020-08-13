@@ -40,7 +40,7 @@ class OperationType(models.Model):
 
     @api.constrains('op_number')
     def _check_number(self):
-        if not str(self.op_number).isnumeric():
+        if self.op_number and not str(self.op_number).isnumeric():
             raise UserError(_('The Operation Number must be numeric value'))
 
     @api.model

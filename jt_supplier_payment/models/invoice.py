@@ -23,6 +23,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import RedirectWarning, UserError, ValidationError, AccessError
 from datetime import datetime, timedelta
+
 class AccountMove(models.Model):
 
     _inherit = 'account.move'
@@ -319,21 +320,26 @@ class AccountMove(models.Model):
             move.payment_issuing_bank_id = False
             move.payment_state = 'registered'        
 
-    def check_operation_name(self):
-        if self.operation_type_id and self.operation_type_id.name:
-            my_str = "Payment to supplier"
-            if self.operation_type_id.name.upper() == my_str.upper():
-                return True
-        return False
+    # def check_operation_name(self):
+    #     if self.operation_type_id and self.operation_type_id.name:
+    #         my_str = "Payment to supplier"
+    #         if self.operation_type_id.name.upper() == my_str.upper():
+    #             return True
+    #
+    #     return False
 
+    @api.depends('name', 'state')
     def name_get(self):
         res = super(AccountMove,self).name_get()
-        if self.env.context and self.env.context.get('show_for_bank_transfer',False):
+        if self.env.context and self.env.context.get('show_for_bank_transfer', False):
             result = []
             for rec in self:
-                name = rec.batch_folioch or ''
-                result.append((rec.id, name))
-            return result
+                if rec.batch_folio:
+                    name = str(rec.batch_folio) or ''
+                    result.append((rec.id, name))
+                else:
+                    result.append((rec.id, rec._get_move_display_name(show_ref=True)))
+            return result and result or res
         else:
             return res
 
@@ -344,7 +350,7 @@ class AccountMove(models.Model):
 #     def _onchange_invoice_line_ids(self):
 #         res = super(AccountMove,self)._onchange_invoice_line_ids()
 #         if self.is_payment_request:
-#             #{'subtype_ids': [(3, sid) for sid in old_sids]}
+#          cc   #{'subtype_ids': [(3, sid) for sid in old_sids]}
 #             #self.line_ids = [(3, sid) for sid in self.line_ids.ids]
 #             self.line_ids = [(5,self.line_ids.ids)]
 #         return res
@@ -354,7 +360,7 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     payment_req_id = fields.Many2one('account.move')
-    egress_key_id = fields.Many2one("egress.keys", "Egress Key")
+    egress_key_id = fields.Many2one("egress.keys", string="Egress Key")
     type_of_bussiness_line = fields.Char("Type Of Bussiness Line")
     other_amounts = fields.Monetary("Other Amounts")
     amount = fields.Monetary("Amount")
@@ -362,4 +368,24 @@ class AccountMoveLine(models.Model):
     sub_total_payment = fields.Monetary("Sub Total")
     tax = fields.Float("Tax")
     turn_type = fields.Char("Turn type")
+
+
+
+    # @api.model
+    # def create(self, vals):
+    #
+    #     print ("Test Create...", vals)
+    #     result = super(AccountMoveLine, self).create(vals)
+    #     return result
+    #
+    # def write(self, vals):
+    #     print("Test Write...", vals)
+    #     result = super(AccountMoveLine, self).write(vals)
+    #     for line in self:
+    #         print("Write..", line)
+    #
+    #     return result
+
+
+
 

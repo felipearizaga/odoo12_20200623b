@@ -20,7 +20,8 @@
             </xpath>
             <xpath expr="//td[@name='account_invoice_line_account']" position="after">
                    <td name="account_invoice_line_code">
-                       <span class="text-left" t-if="line.program_code_id" t-field="line.program_code_id.name"/>
+
+                       <span class="text-left" t-if="line.program_code_id" t-field="line.program_code_id.program_code"/>
                    </td>
             </xpath>
             

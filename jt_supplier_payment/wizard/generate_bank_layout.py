@@ -39,6 +39,10 @@ class GenerateBankLayout(models.TransientModel):
 
     def action_generate_bank_layout(self):
         active_ids = self.env.context.get('active_ids')
+        for payment in self.env['account.payment'].browse(active_ids):
+            if payment.state != 'for_payment_procedure':
+                raise UserError(_("You can generate Bank Layout only for those payments which are in "
+                "'For Payment Procedure'!"))
         if not active_ids:
             return ''
         
@@ -50,7 +54,8 @@ class GenerateBankLayout(models.TransientModel):
             'context': {'default_payment_ids':[(6,0,active_ids)]},
             'target': 'new',
             'type': 'ir.actions.act_window',
-        }    
+        }
+
     def banamex_file_format(self):
         file_data = ''
         file_name = 'banamex.txt'

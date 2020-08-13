@@ -20,6 +20,11 @@
                         <field name="bank_authorization_date"/>
                     </group>
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="branch_number"/>
+                    <field name="bic_swift"/>
+                    <field name="aba"/>
+                </xpath>
             </field>
         </record>
 

@@ -37,6 +37,6 @@ class BudegtInsufficiencWiz(models.TransientModel):
         self.move_id.reason_rejection = self.msg
         
     def action_budget_allocation(self):
-        self.move_id.payment_state = 'approved_payment'
+        self.move_id.payment_state = 'for_payment_procedure'
         #self.move_id.create_journal_line()
         self.move_id.action_post()
