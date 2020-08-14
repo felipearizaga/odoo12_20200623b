@@ -41,11 +41,12 @@
         		</thead>
         		<tbody>
         			<td style="border:1px solid black;">
-        				<span t-if="o.administrative_secretary_id" t-field="o.administrative_secretary_id.name"/>
-        			</td>
-        			<td style="border:1px solid black;">
         				<span t-if="o.holder_of_dependency_id" t-field="o.holder_of_dependency_id.name"/>
         			</td>
+        			<td style="border:1px solid black;">
+        				<span t-if="o.administrative_secretary_id" t-field="o.administrative_secretary_id.name"/>
+        			</td>
+        			
         			<td style="border:1px solid black;"></td>
         		</tbody>
         	</table>
@@ -118,6 +119,7 @@
                         </div>
                         <div class="col-3" name="folio_dependency">
                             <strong>Password:</strong>
+                            <p class="m-0" t-if="o.partner_id" t-field="o.partner_id.password_beneficiary"/>
                         </div>
                         <div class="col-3" name="no_of_document">
                             <strong>RFC:</strong>

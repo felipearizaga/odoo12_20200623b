@@ -40,7 +40,7 @@ class GenerateBankLayout(models.TransientModel):
     def action_generate_bank_layout(self):
         active_ids = self.env.context.get('active_ids')
         for payment in self.env['account.payment'].browse(active_ids):
-            if payment.state != 'for_payment_procedure':
+            if payment.payment_state != 'for_payment_procedure':
                 raise UserError(_("You can generate Bank Layout only for those payments which are in "
                 "'For Payment Procedure'!"))
         if not active_ids:

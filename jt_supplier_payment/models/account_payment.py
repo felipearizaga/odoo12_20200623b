@@ -63,6 +63,23 @@ class AccountPayment(models.Model):
             return result
         self.write({'payment_state': 'cancelled'})
         return result
+
+    def create_journal_for_paid(self,invoice):
+        #==== he Bank Journal will be taken, corresponding to the “Paid” accounting moment ===#
+        invoice.line_ids = [(0, 0, {
+                                     'account_id': self.journal_id.paid_credit_account_id and self.journal_id.paid_credit_account_id.id or False,
+                                     'coa_conac_id': self.journal_id.conac_paid_credit_account_id and self.journal_id.conac_paid_credit_account_id.id or False,
+                                     'credit': invoice.amount_total, 
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 }), 
+                        (0, 0, {
+                                     'account_id': self.journal_id.paid_debit_account_id and self.journal_id.paid_debit_account_id.id or False,
+                                     'coa_conac_id': self.journal_id.conac_paid_debit_account_id and self.journal_id.conac_paid_debit_account_id.id or False,
+                                     'debit': invoice.amount_total,
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 })]
     
     def post(self):
         result = super(AccountPayment,self).post()
@@ -70,7 +87,13 @@ class AccountPayment(models.Model):
         for payment in self:
             for inv in payment.invoice_ids:
                 if inv.invoice_payment_state == 'paid':
-                    inv.payment_state = 'paid' 
+                    inv.payment_state = 'paid'
+                    payment.create_journal_for_paid(inv)
+            is_supplier_payment = payment.invoice_ids.filtered(lambda x:x.is_payment_request)
+            if is_supplier_payment:
+                for line in payment.move_line_ids:
+                    line.coa_conac_id = line.account_id and line.account_id.coa_conac_id and line.account_id.coa_conac_id.id or False
+                    line.conac_move = True  
         return result
  
     def action_draft(self):

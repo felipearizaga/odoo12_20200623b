@@ -38,6 +38,17 @@
                        position="after">
                     <field name="program_code_id" domain="[('budget_id.state','=','validate')]"/>
                 </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='type_of_bussiness_line']"
+                       position="before">
+                    <field name="program_code_id" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/form/group/field[@name='currency_id']"
+                       position="after">
+                    <field name="program_code_id" invisible="1"/>
+                </xpath>
+                
             </field>
         </record>
 

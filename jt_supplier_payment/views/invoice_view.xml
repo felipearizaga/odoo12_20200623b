@@ -125,8 +125,8 @@
                                 
                             </group>
                         </group>
-                        <label for="reason_rejection"/>
-                        <field name="reason_rejection" readonly="1" attrs="{'invisible': [('payment_state', '!=', 'rejected')]}"/>
+                        <label for="reason_rejection" attrs="{'invisible': [('payment_state', 'not in', ('rejected','payment_not_applied'))]}"/>
+                        <field name="reason_rejection" readonly="1" attrs="{'invisible': [('payment_state', 'not in', ('rejected','payment_not_applied'))]}"/>
                         <notebook>
                             <page id="invoice_tab"
                                   string="Invoice Lines"
@@ -260,6 +260,7 @@
                                         </templates>
 
                                         <!-- Others fields -->
+                                        
                                         <field name="partner_id" invisible="1"/>
                                         <field name="amount_currency" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
@@ -389,6 +390,10 @@
                                         <field name="tag_ids" widget="many2many_tags" string="Tax Grids" optional="show" domain="[('country_id', '=', country_id), ('applicability', '=', 'taxes')]"/>
 
                                         <!-- Others fields -->
+                                        <field name="type_of_bussiness_line" invisible="1"/>
+                                        <field name="egress_key_id" invisible="1"/>
+                                        <field name="turn_type" invisible="1"/>
+                                        
                                         <field name="payment_id" invisible="1"/>
 
                                         <field name="product_id" invisible="1"/>
@@ -418,6 +423,10 @@
                                     <!-- Form view to cover mobile use -->
                                     <form>
                                       <group>
+                                        <field name="type_of_bussiness_line" invisible="1"/>
+                                        <field name="egress_key_id" invisible="1"/>
+                                        <field name="turn_type" invisible="1"/>
+                                      
                                         <field name="tax_line_id" invisible="1"/>
                                         <field name="account_id" domain="[('company_id', '=', parent.company_id), ('deprecated', '=', False)]"/>
                                         <field name="partner_id" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"/>

@@ -38,6 +38,10 @@ class PaymentDeclined(models.TransientModel):
         active_ids = self.env.context.get('active_ids')
         if not active_ids:
             return ''
+        for payment in self.env['account.payment'].browse(active_ids):
+            if payment.payment_state != 'for_payment_procedure':
+                raise UserError(_("You can Reject only for those payments which are in "
+                "'For Payment Procedure'!"))
         
         return {
             'name': _('Payment Declined'),

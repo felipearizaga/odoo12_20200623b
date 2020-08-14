@@ -36,7 +36,7 @@
                     </div>                
 	               	<group>
                 		<group>
-                			<field name="move_id"  context="{'show_for_bank_transfer':True}" required="1" domain="[('type', '=', 'in_invoice'), ('is_payment_request', '=', True)]"/>
+                			<field name="move_id"  context="{'show_for_bank_transfer':True}" domain="[('type', '=', 'in_invoice'), ('is_payment_request', '=', True)]"/>
                 			<field name="application_date"/>
                 			<field name="bank_id"/>
                 			<field name="bank_account_id"/>

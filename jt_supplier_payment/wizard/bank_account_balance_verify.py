@@ -57,13 +57,49 @@ class BankBalanceCheck(models.TransientModel):
                      'payment_bank_account_id' : rec.payment_bank_account_id and rec.payment_bank_account_id.id or False,
                      'payment_issuing_bank_acc_id' : rec.payment_issuing_bank_acc_id and rec.payment_issuing_bank_acc_id.id or False,
                      'batch_folio' : rec.batch_folio,
-                     'folio' : rec.folio
+                     'folio' : rec.folio,
+                     'payment_state': 'for_payment_procedure',
                      }) 
         
         return data
-    
+
+    def create_journal_line_for_payment_procedure(self,invoice):
+        #===== for the accounting impact of the "Accrued" Budget====#
+        invoice.line_ids = [(0, 0, {
+                                     'account_id': invoice.journal_id.accured_credit_account_id and invoice.journal_id.accured_credit_account_id.id or False,
+                                     'coa_conac_id': invoice.journal_id.conac_accured_credit_account_id and invoice.journal_id.conac_accured_credit_account_id.id or False,
+                                     'credit': invoice.amount_total, 
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 }), 
+                        (0, 0, {
+                                     'account_id': invoice.journal_id.accured_debit_account_id and  invoice.journal_id.accured_debit_account_id.id or False,
+                                     'coa_conac_id': invoice.journal_id.conac_accured_debit_account_id and invoice.journal_id.conac_accured_debit_account_id.id or False,
+                                     'debit': invoice.amount_total,
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 })]
+        #====== the Bank Journal, for the accounting impact of the "Exercised" Budget ======#
+        invoice.line_ids = [(0, 0, {
+                                     'account_id': self.journal_id.execercise_credit_account_id and self.journal_id.execercise_credit_account_id.id or False,
+                                     'coa_conac_id': self.journal_id.conac_exe_credit_account_id and self.journal_id.conac_exe_credit_account_id.id or False,
+                                     'credit': invoice.amount_total, 
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 }), 
+                        (0, 0, {
+                                     'account_id': self.journal_id.execercise_debit_account_id and self.journal_id.execercise_debit_account_id.id or False,
+                                     'coa_conac_id': self.journal_id.conac_exe_debit_account_id and self.journal_id.conac_exe_debit_account_id.id or False,
+                                     'debit': invoice.amount_total,
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : True
+                                 })]
+        
+        
+        
     def schedule_payment(self):
         for rec in self.invoice_ids:
+            self.create_journal_line_for_payment_procedure(rec)
             payment_record = self.env['account.payment.register'].with_context(active_ids=rec.ids).create({'journal_id':self.journal_id.id,'invoice_ids':[(6, 0, rec.ids)]})
             Payment = self.env['account.payment']
             datas = payment_record.get_payments_vals()

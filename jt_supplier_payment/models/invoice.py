@@ -371,20 +371,23 @@ class AccountMoveLine(models.Model):
 
 
 
-    # @api.model
-    # def create(self, vals):
-    #
-    #     print ("Test Create...", vals)
-    #     result = super(AccountMoveLine, self).create(vals)
-    #     return result
-    #
-    # def write(self, vals):
-    #     print("Test Write...", vals)
-    #     result = super(AccountMoveLine, self).write(vals)
-    #     for line in self:
-    #         print("Write..", line)
-    #
-    #     return result
+#     @api.model
+#     def create(self, vals):
+#         result = super(AccountMoveLine, self).create(vals)
+#         if result.move_id and result.move_id.is_payment_request:
+#             result.coa_conac_id = result.account_id and result.account_id.coa_conac_id and result.account_id.coa_conac_id.id or False
+#             result.conac_move = True  
+#         return result
+#     
+#     
+#     def write(self, vals):
+#         result = super(AccountMoveLine, self).write(vals)
+#         if vals.get('account_id',False):
+#             for rec in self:
+#                 if rec.move_id and rec.move_id.is_payment_request:
+#                     rec.coa_conac_id = rec.account_id and rec.account_id.coa_conac_id and rec.account_id.coa_conac_id.id or False
+#                     rec.conac_move = True  
+#         return result
 
 
 

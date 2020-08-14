@@ -5,11 +5,17 @@
             <xpath expr="//div[@id='informations']/div[@name='folio_dependency']" position="before">
                  <div class="col-3" name="dependency">
                      <strong>Dependency:</strong>
-                     <p class="m-0" t-if="o.dependancy_id"  t-field="o.dependancy_id.dependency"/>
+                     <p class="m-0" t-if="o.dependancy_id">  
+                     	<span t-field="o.dependancy_id.dependency"/>
+                     	<span t-field="o.dependancy_id.description"/>
+                     </p>
                  </div>
                  <div class="col-3" name="subdependence">
                      <strong>Subdependence:</strong>
-                     <p class="m-0" t-if="o.sub_dependancy_id" t-field="o.sub_dependancy_id.sub_dependency"/>
+                     <p class="m-0" t-if="o.sub_dependancy_id"/>
+                     	<span t-field="o.sub_dependancy_id.sub_dependency"/>
+                     	<span t-field="o.sub_dependancy_id.description">
+                     </span>
                  </div>
             </xpath>
             <xpath expr="//table[@name='invoice_line_table']/thead[1]/tr[1]/th[@name='th_account']" position="after">

@@ -108,9 +108,7 @@ class AccountMove(models.Model):
         self.payment_state = 'cancel'
         self.button_cancel()
 
-    def create_journal_line(self):
-        #self.line_ids = False
-        #payble_line = 
+    def create_journal_line_for_approved_payment(self):
         self.line_ids = [(0, 0, {
                                      'account_id': self.journal_id.default_credit_account_id.id,
                                      'coa_conac_id': self.journal_id.conac_credit_account_id.id,
@@ -126,7 +124,7 @@ class AccountMove(models.Model):
                                      'conac_move' : True
                                  })]
           
-        self.conac_move = True
+        #self.conac_move = True
 class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'

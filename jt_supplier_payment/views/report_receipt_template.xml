@@ -55,16 +55,19 @@
                         <b><span>Dependency:</span></b>
                         <h6>
                             <![CDATA[&nbsp;]]><![CDATA[&nbsp;]]>
-                            <span t-field="o.dependancy_id.dependency"/>
+                            <span t-if="o.dependancy_id" t-field="o.dependancy_id.dependency"/>
+                            <span t-if="o.dependancy_id" t-field="o.dependancy_id.description"/>
                         </h6>
                         <b><span>Subdependence:</span></b>
                         <h6>
                             <![CDATA[&nbsp;]]><![CDATA[&nbsp;]]>
-                            <span t-field="o.sub_dependancy_id.sub_dependency"/>
+                            <span t-if="o.dependancy_id" t-field="o.sub_dependancy_id.sub_dependency"/>
+                            <span t-if="o.dependancy_id" t-field="o.sub_dependancy_id.description"/>
                         </h6>
                         <b><span>Provider password:</span></b>
                         <h6>
                             <![CDATA[&nbsp;]]><![CDATA[&nbsp;]]>
+                            <span t-field="o.partner_id.password_beneficiary"/>
                         </h6>
                         <b><span>Supplier RFC:</span></b>
                         <h6>
