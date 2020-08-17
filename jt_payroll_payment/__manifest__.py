@@ -46,7 +46,8 @@
         'wizard/bank_layout_employee_view.xml',
         'wizard/payroll_payment_bank_format_view.xml',
         'security/ir.model.access.csv',
-        'data/data.xml'
+        'data/data.xml',
+        'views/assets.xml',
     ],
     'application': False,
     'installable': True,

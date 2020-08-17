@@ -31,7 +31,7 @@ class YearConfiguration(models.Model):
 
     name = fields.Char(string='Year', size=4)
 
-    _sql_constraints = [('year_configuration', 'unique(name)', 'The year must be unique.')]
+    #_sql_constraints = [('year_configuration', 'unique(name)', 'The year must be unique.')]
     
     @api.constrains('name')
     def _check_name(self):

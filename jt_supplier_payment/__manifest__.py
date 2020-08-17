@@ -49,6 +49,7 @@
         'wizard/generate_bank_layout_view.xml',
         'views/res_partner_bank_view.xml',
         'wizard/payment_declined_view.xml',
+        'wizard/load_bank_layout_view.xml',
     ],
     'application': False,
     'installable': True,
