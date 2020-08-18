@@ -48,6 +48,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
     def _get_reports_buttons(self):
         return [
+            {'name': _(''), 'sequence': 0, 'action': 'print_pdf', 'file_export_type': _('PDF')},
             {'name': _('Export (XLSX)'), 'sequence': 2, 'action': 'print_xlsx', 'file_export_type': _('XLSX')},
         ]
     # Set columns based on dynamic options

@@ -272,6 +272,7 @@ class Standardization(models.Model):
             sheet = book.sheet_by_index(0)
 
             headers = []
+            
             for rowx, row in enumerate(map(sheet.row, range(1)), 1):
                 for colx, cell in enumerate(row, 1):
                     headers.append(cell.value)
@@ -620,7 +621,8 @@ class Standardization(models.Model):
                         'quarter': quarter.id,
                         'imported': True,
                     }
-                    self.write({'line_ids': [(0, 0, line_vals)]})
+                    if not self.line_ids.filtered(lambda x:x.code_id.id==program_code.id):
+                        self.write({'line_ids': [(0, 0, line_vals)]})
                 except:
                     failed_row += str(list_result) + \
                         "------>> Row Data Are Not Corrected or Validated Program Code Not Found or Program Code not associated with selected budget!"
@@ -656,7 +658,6 @@ class Standardization(models.Model):
 
             if pointer == sheet.nrows and len(failed_row_ids_eval) > 0:
                 self.write({'allow_upload': True})
-
             if self.failed_row_ids == 0 or len(failed_row_ids_eval) == 0:
                 self.write({'allow_upload': False})
 
@@ -682,7 +683,8 @@ class Standardization(models.Model):
                                                      'body': msg})
             if vals:
                 self.write(vals)
-
+            if self.failed_rows ==0:
+                self.total_rows = len(self.line_ids)
             # if len(failed_row_ids) == 0:
             #     return{
             #         'effect': {
