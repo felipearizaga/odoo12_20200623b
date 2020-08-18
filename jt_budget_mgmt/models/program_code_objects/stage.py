@@ -30,7 +30,7 @@ class Stage(models.Model):
     _description = 'Stage'
     _rec_name = 'stage_identifier'
 
-    project_id = fields.Many2one('project.project', string='Stage Identifier')
+    project_id = fields.Many2one('project.project', string='Stage')
     desc = fields.Text(string='Description', related="project_id.desc_stage")
     project_type_identifier = fields.Char(string='Project Type Identifier', related="project_id.project_type_identifier")
     desc_stage = fields.Text(string='Description', related="project_id.desc_stage")

@@ -439,15 +439,28 @@ class BudgetSummaryReportDownload(models.TransientModel):
                                                 tot_per_ex += value
                                             elif bug_con.name in ('Committed', 'Comprometido'):
                                                 value = 0
+                                                self.env.cr.execute("select coalesce(sum(line.price_total),0) as committed from account_move_line line,account_move amove where line.program_code_id=%s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (code.id,'approved_payment',self.start_date,self.end_date))
+                                                my_datas = self.env.cr.fetchone()
+                                                if my_datas:
+                                                    value = my_datas[0]                                                
                                                 tot_commited += value
                                             elif bug_con.name in ('Accrued', 'Devengado'):
                                                 value = 0
                                                 tot_accured += 0
                                             elif bug_con.name in ('Exercised', 'Ejercido'):
                                                 value = 0
+                                                self.env.cr.execute("select coalesce(sum(line.price_total),0) as committed from account_move_line line,account_move amove where line.program_code_id=%s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (code.id,'for_payment_procedure',self.start_date,self.end_date))
+                                                my_datas = self.env.cr.fetchone()
+                                                if my_datas:
+                                                    value = my_datas[0]                                                
                                                 tot_excercised += value
                                             elif bug_con.name in ('Paid', 'Pagado'):
                                                 value = 0
+                                                self.env.cr.execute("select coalesce(sum(line.price_total),0) as committed from account_move_line line,account_move amove where line.program_code_id=%s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (code.id,'paid',self.start_date,self.end_date))
+                                                my_datas = self.env.cr.fetchone()
+                                                if my_datas:
+                                                    value = my_datas[0]                                                
+                                                
                                                 tot_paid += value
                                             elif bug_con.name in ('Available', 'Disponible'):
                                                 value = sum(x.available for x in all_b_lines)

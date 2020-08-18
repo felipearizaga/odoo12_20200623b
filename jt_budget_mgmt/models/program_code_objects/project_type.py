@@ -30,7 +30,7 @@ class ProjectType(models.Model):
     _description = 'Project Type'
     _rec_name = 'project_type_identifier'
 
-    project_id = fields.Many2one('project.project', string='Project type identifier')
+    project_id = fields.Many2one('project.project', string='Type of Project')
     project_type_identifier = fields.Char(string='Project Type Identifier', store=True, related="project_id.project_type_identifier")
     desc_stage = fields.Char(string='Description', related="project_id.name")
     number = fields.Char(string='Number', related="project_id.number")

@@ -16,6 +16,10 @@ class BankTransferRequest(models.Model):
     req_transfer = fields.Char('Required Transfer')
     operation_type = fields.Char("Type Operation")
     observation = fields.Char('Observation')
+    required_handover_date = fields.Date('Required Handover Date')
+    origin_bank_id = fields.Many2one('res.bank','Origin Bank')
+    origin_bank_account_id = fields.Many2one('res.partner.bank','Origin Bank Account')
+    state = fields.Selection([('draft','Draft'),('request','Request'),('approved','Approved'),('rejected','Rejected')],string='Status',default='draft')
     
     @api.model
     def create(self,vals):

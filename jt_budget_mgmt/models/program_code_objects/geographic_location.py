@@ -30,8 +30,8 @@ class GeographicLocation(models.Model):
     _description = 'Geographic Location'
     _rec_name = 'state_key'
 
-    state_key = fields.Char(string='State key', size=2)
-    state_name = fields.Text(string='State name')
+    state_key = fields.Char(string='Geographic location', size=2)
+    state_name = fields.Text(string='Name of Geographic Location')
 
     _sql_constraints = [('state_key', 'unique(state_key)',
                          'The state key must be unique.')]

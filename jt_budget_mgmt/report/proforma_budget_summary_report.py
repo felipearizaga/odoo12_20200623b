@@ -48,7 +48,6 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
     def _get_reports_buttons(self):
         return [
-            {'name': _('Print Preview'), 'sequence': 1, 'action': 'print_pdf', 'file_export_type': _('PDF')},
             {'name': _('Export (XLSX)'), 'sequence': 2, 'action': 'print_xlsx', 'file_export_type': _('XLSX')},
         ]
     # Set columns based on dynamic options
@@ -600,16 +599,28 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 tuple_where_data.append(end)
             elif column in ('Committed', 'Comprometido'):
                 need_columns_with_format.append('committed')
-                col_query += ',0.00 as Committed'
+                col_query += ',(select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where pc.id=line.program_code_id and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s) as Committed'
+                tuple_where_data.append('approved_payment')
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+
             elif column in ('Accrued', 'Devengado'):
                 need_columns_with_format.append('accrued')
                 col_query += ',0.00 as accrued'
             elif column in ('Exercised', 'Ejercido'):
                 need_columns_with_format.append('exercised')
-                col_query += ',0.00 as exercised'
+                col_query += ',(select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where pc.id=line.program_code_id and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s) as exercised'
+                tuple_where_data.append('for_payment_procedure')
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+                
             elif column in ('Paid', 'Pagado'):
                 need_columns_with_format.append('paid')
-                col_query += ',0.00 as paid'                
+                col_query += ',(select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where pc.id=line.program_code_id and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s) as paid'
+                tuple_where_data.append('paid')
+                tuple_where_data.append(start)
+                tuple_where_data.append(end)
+                                
             elif column in ('Available', 'Disponible'):
                 need_columns_with_format.append('available')
                 col_query += ',(select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as available'

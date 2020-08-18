@@ -118,24 +118,24 @@ class ProgramCode(models.Model):
 
     # Geographic Location Relation
     location_id = fields.Many2one(
-        'geographic.location', string='State Code', states={'validated': [('readonly', True)]})
-    desc_location = fields.Text(string='State name', related="location_id.state_name")
+        'geographic.location', string='Geographic Location', states={'validated': [('readonly', True)]})
+    desc_location = fields.Text(string='Name of Geographic Location', related="location_id.state_name")
 
     # Wallet Password Relation
     portfolio_id = fields.Many2one('key.wallet', string='Key portfolio', states={'validated': [('readonly', True)]})
     name_portfolio = fields.Text(string='Name of Portfolio Key', related="portfolio_id.wallet_password_name")
 
     # Project Type Relation
-    project_type_id = fields.Many2one('project.type', string='Identifier Type of Project', states={'validated': [('readonly', True)]})
+    project_type_id = fields.Many2one('project.type', string='Type of Project', states={'validated': [('readonly', True)]})
     desc_project_type = fields.Char(string='Description Type of Project', related="project_type_id.desc_stage")
     project_number = fields.Char(string='Project Number', related='project_type_id.number')
 
     # Stage Relation
-    stage_id = fields.Many2one('stage', string='Stage Identifier', states={'validated': [('readonly', True)]})
+    stage_id = fields.Many2one('stage', string='Stage', states={'validated': [('readonly', True)]})
     desc_stage = fields.Text(string='Stage Description', related='stage_id.desc_stage')
 
     # Agreement Relation
-    agreement_type_id = fields.Many2one('agreement.type', string='Identifier type of Agreement', states={'validated': [('readonly', True)]})
+    agreement_type_id = fields.Many2one('agreement.type', string='Type of Agreement', states={'validated': [('readonly', True)]})
     name_agreement = fields.Text(string='Name type of Agreement', related='agreement_type_id.name_agreement')
     number_agreement = fields.Char(string='Agreement number', related='agreement_type_id.number_agreement')
 

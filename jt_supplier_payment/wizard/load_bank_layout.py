@@ -60,4 +60,4 @@ class loadBankLayoutSupplierPayment(models.TransientModel):
         for payment in self.payment_ids:
             if payment.journal_id.id != self.journal_id.id:
                 raise UserError(_("The selected layout does NOT match the bank of the selected payments"))
-        
+            payment.post()

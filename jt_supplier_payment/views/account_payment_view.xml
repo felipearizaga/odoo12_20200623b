@@ -94,11 +94,51 @@
 			</field>
 		</record>
 
+  		<record id="inherited_view_account_payment_search" model="ir.ui.view">
+            <field name="name">Inherited View Account Payment Search</field>
+            <field name="model">account.payment</field>
+            <field name="priority">100</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="account.view_account_payment_search"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//filter[@name='state_draft']" position="after">
+            		<filter string="Draft" name="payment_state_draft" domain="[('payment_state', '=', 'draft')]"/>
+            		<filter string="For Payment Procedure" name="payment_state_proce" domain="[('payment_state', '=', 'for_payment_procedure')]"/>
+            		<filter string="Validated" name="payment_state_posted" domain="[('payment_state', '=', 'posted')]"/>
+            		<filter string="Reconciled" name="payment_state_reconciled" domain="[('payment_state', '=', 'reconciled')]"/>
+            		<filter string="Rejected" name="payment_state_rejected" domain="[('payment_state', '=', 'rejected')]"/>
+            		<filter string="Cancelled" name="payment_state_cancelled" domain="[('payment_state', '=', 'cancelled')]"/>
+            	</xpath>
+            	<xpath expr="//filter[@name='state_draft']" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</xpath>
+            	<xpath expr="//filter[@name='state_posted']" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</xpath>
+            	<xpath expr="//filter[@name='state_sent']" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</xpath>
+            	<xpath expr="//filter[@name='reconciled']" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</xpath>
+
+            	<xpath expr="//filter[@name='state']" position="after">
+            		<filter string="Status" name="payment_state" domain="[]" context="{'group_by': 'payment_state'}"/>
+            		<filter string="Bank of receipt of payment" name="payment_bank_id" domain="[]" context="{'group_by': 'payment_bank_id'}"/>
+            		<filter string="Payment Receipt bank account" name="payment_bank_account_id" domain="[]" context="{'group_by': 'payment_bank_account_id'}"/>
+            		<filter string="Payment issuing bank Account" name="payment_issuing_bank_acc_id" domain="[]" context="{'group_by': 'payment_issuing_bank_acc_id'}"/>
+            	</xpath>
+            	<xpath expr="//filter[@name='state']" position="attributes">
+            		<attribute name='invisible'>1</attribute>
+            	</xpath>
+            	
+			</field>
+		</record>
 	  <record id="supplier_payment_account_action" model="ir.actions.act_window">
             <field name="name">Payments</field>
             <field name="res_model">account.payment</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="account.view_account_payment_search"/>
+            <field name="search_view_id" ref="inherited_view_account_payment_search"/>
             <field name="context">{'default_payment_type': 'outbound','default_partner_type': 
             	'supplier','search_default_outbound_filter': 1,
             	'res_partner_search_mode': 'supplier','search_default_journal': 1}

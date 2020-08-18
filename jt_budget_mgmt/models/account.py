@@ -53,6 +53,11 @@ class AccountMove(models.Model):
                 [('program_code_id', '=', line.program_code_id.id),
                  ('expenditure_budget_id', '=', line.program_code_id.budget_id.id),
                  ('expenditure_budget_id.state', '=', 'validate')])
+                
+                invoice_lines = self.env['account.move.line']
+                invoice_lines_exist = self.env['account.move.line'].search([('program_code_id', '=', line.program_code_id.id),
+                                                                            ('move_id.payment_state', '=', 'approved_payment')
+                                                                           ])
                 if self.invoice_date and budget_lines:
                     b_month = self.invoice_date.month
                     for b_line in budget_lines:
@@ -68,6 +73,23 @@ class AccountMove(models.Model):
                                 budget_line += b_line
                     
                     total_available_budget = sum(x.available for x in budget_line)
+                if self.invoice_date and invoice_lines_exist: 
+                    invoice_month = self.invoice_date.month
+                    for b_line in invoice_lines_exist:
+                        if b_line.move_id.invoice_date:
+                            b_s_month = b_line.move_id.invoice_date.month
+                            if invoice_month in (1, 2, 3) and b_s_month in (1, 2, 3):
+                                invoice_lines += b_line
+                            elif invoice_month in (4, 5, 6) and b_s_month in (4, 5, 6):
+                                invoice_lines += b_line
+                            elif invoice_month in (7, 8, 9) and b_s_month in (7, 8, 8):
+                                invoice_lines += b_line
+                            elif invoice_month in (10, 11, 12) and b_s_month in (10, 11, 12):
+                                invoice_lines += b_line
+                    total_assign_budget = sum(x.price_total for x in invoice_lines)
+                    total_available_budget = total_available_budget - total_assign_budget
+                    
+                                    
             if total_available_budget < line.price_total:
                 is_check = True
                 program_name = ''
