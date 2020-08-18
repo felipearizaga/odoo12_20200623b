@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+      <record id="view_load_bank_layout_supplier_payment_form" model="ir.ui.view">
+            <field name="name">load.bank.layout.supplier.payment.view</field>
+            <field name="model">load.bank.layout.supplier.payment</field>
+            <field name="arch" type="xml">
+                <form string="Load Bank Layout">
+                    <group>
+                    	<field name="journal_id" required="1" domain="[('type','=','bank')]"/>
+                    	<field name="payment_ids" invisible="1"/>
+                    	<field name="file_name" invisible="1"/>
+                    	<field name="file_data" filename="file_name" required="1"/>
+                    </group>
+                    <footer>
+                        <button string="Generate" name="load_bank_layout" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+            
+       <record id="action_load_bank_layout_payment" model="ir.actions.server">
+            <field name="name">Load Bank Layout</field>
+            <field name="model_id" ref="jt_supplier_payment.model_load_bank_layout_supplier_payment"/>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = model.action_load_bank_layout()
+            </field>
+        </record>
+	</data>
+</odoo>
