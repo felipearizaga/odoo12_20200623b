@@ -260,6 +260,7 @@ class ExpenditureBudget(models.Model):
             stage_obj = self.env['stage'].search_read([], fields=['id', 'stage_identifier'])
             agreement_type_obj = self.env['agreement.type'].search_read([], fields=['id', 'agreement_type',
                                                                                     'number_agreement'])
+            year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
 
 
             lines_to_execute = self.line_ids
@@ -354,7 +355,6 @@ class ExpenditureBudget(models.Model):
 
                     # Validate year format
                     year = False
-                    year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
                     if len(str(line.year)) > 3:
                         year_str = str(line.year)[:4]
                         if year_str.isnumeric():
