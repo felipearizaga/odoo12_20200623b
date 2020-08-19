@@ -312,14 +312,6 @@ class ExpenditureBudget(models.Model):
 
                 if line.state in ['fail', 'draft']:
 
-#     @api.constrains('start_date')
-#     def check_budget_quarter(self):
-#         if self.start_date and self.expenditure_budget_id:
-#             
-#             b_s_month = self.start_date.month
-#             if b_s_month not in (1, 2, 3) and self.expenditure_budget_id.state =='draft':
-#                 raise ValidationError("You can only import and add lines for first quarter only!")
-
                     # Check Date Quarter
                     if line.start_date:
                         b_s_month = line.start_date.month

@@ -143,22 +143,26 @@ class ControlAssignedAmounts(models.Model):
             success_line_ids = []
 
             # Objects
-            year_obj = self.env['year.configuration']
-            program_obj = self.env['program']
-            subprogram_obj = self.env['sub.program']
-            dependancy_obj = self.env['dependency']
-            subdependancy_obj = self.env['sub.dependency']
-            item_obj = self.env['expenditure.item']
-            origin_obj = self.env['resource.origin']
-            activity_obj = self.env['institutional.activity']
-            shcp_obj = self.env['budget.program.conversion']
-            dpc_obj = self.env['departure.conversion']
-            expense_type_obj = self.env['expense.type']
-            location_obj = self.env['geographic.location']
-            wallet_obj = self.env['key.wallet']
-            project_type_obj = self.env['project.type']
-            stage_obj = self.env['stage']
-            agreement_type_obj = self.env['agreement.type']
+            program_code_model = self.env['program.code'].sudo()
+            program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
+            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
+            subdependancy_obj = self.env['sub.dependency'].search_read([],
+                                                                       fields=['id', 'dependency_id', 'sub_dependency'])
+            item_obj = self.env['expenditure.item'].search_read([], fields=['id', 'item', 'exercise_type'])
+            origin_obj = self.env['resource.origin'].search_read([], fields=['id', 'key_origin'])
+            activity_obj = self.env['institutional.activity'].search_read([], fields=['id', 'number'])
+            shcp_obj = self.env['budget.program.conversion'].search_read([], fields=['id', 'unam_key_id', 'shcp'])
+            dpc_obj = self.env['departure.conversion'].search_read([], fields=['id', 'federal_part'])
+            expense_type_obj = self.env['expense.type'].search_read([], fields=['id', 'key_expenditure_type'])
+            location_obj = self.env['geographic.location'].search_read([], fields=['id', 'state_key'])
+            wallet_obj = self.env['key.wallet'].search_read([], fields=['id', 'wallet_password'])
+            project_type_obj = self.env['project.type'].search_read([],
+                                                                    fields=['id', 'project_type_identifier', 'number'])
+            stage_obj = self.env['stage'].search_read([], fields=['id', 'stage_identifier'])
+            agreement_type_obj = self.env['agreement.type'].search_read([], fields=['id', 'agreement_type',
+                                                                                    'number_agreement'])
+            year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
 
             lines_to_execute = self.line_ids
             cron = False
@@ -363,21 +367,6 @@ class ControlAssignedAmounts(models.Model):
                         failed_line_ids.append(line.id)
                         continue
 
-                    # Validation Authorized Amount
-                    authorized_amount = 0
-                    # try:
-                    #     authorized_amount = float(line.authorized)
-                    #     if authorized_amount == 0:
-                    #         failed_row += str(line_vals) + \
-                    #             "------>> Authorized Amount should be greater than 0!"
-                    #         failed_line_ids.append(line.id)
-                    #         continue
-                    # except:
-                    #     failed_row += str(line_vals) + \
-                    #         "------>> Invalid Authorized Amount Format"
-                    #     failed_line_ids.append(line.id)
-                    #     continue
-
                     if not line.dv:
                         failed_row += str(line_vals) + \
                             "------>> Digito Verificador is not added! \n"
@@ -386,34 +375,22 @@ class ControlAssignedAmounts(models.Model):
 
                     try:
                         program_code = False
-                        if year and program and subprogram and dependency and subdependency and item and origin_resource and institutional_activity and shcp and conversion_item and expense_type and geo_location and wallet_key and project_type and stage and agreement_type:
-                            program_code = self.env['program.code'].sudo().search([
-                                ('year', '=', year.id),
-                                ('program_id', '=', program.id),
-                                ('sub_program_id', '=', subprogram.id),
-                                ('dependency_id', '=', dependency.id),
-                                ('sub_dependency_id', '=', subdependency.id),
-                                ('item_id', '=', item.id),
-                                ('resource_origin_id', '=', origin_resource.id),
-                                ('institutional_activity_id',
-                                 '=', institutional_activity.id),
-                                ('budget_program_conversion_id', '=', shcp.id),
-                                ('conversion_item_id', '=', conversion_item.id),
-                                ('expense_type_id', '=', expense_type.id),
-                                ('location_id', '=', geo_location.id),
-                                ('portfolio_id', '=', wallet_key.id),
-                                ('project_type_id', '=', project_type.id),
-                                ('stage_id', '=', stage.id),
-                                ('agreement_type_id', '=', agreement_type.id),
-                            ], limit=1)
+                        if year and program and subprogram and dependency and subdependency and item and origin_resource \
+                                 and institutional_activity and shcp and conversion_item and expense_type and geo_location and \
+                                                            wallet_key and project_type and stage and agreement_type:
+                            #preppare search key to get the match.
+                            search_key_fields = (
+                                         year, program, subprogram, dependency, subdependency, item,
+                                         origin_resource, institutional_activity, shcp, conversion_item,
+                                         expense_type, geo_location, wallet_key, project_type, stage, agreement_type)
+                            search_key = ';'.join([str(skey) for skey in search_key_fields])
+                            program_code = program_code_model.search([('search_key', '=', search_key)], limit=1)
 
-                            # if program_code and program_code.state == 'validated':
-                            #     failed_row += str(line_vals) + \
-                            #         "------>> Duplicated Program Code Found!"
-                            #     failed_line_ids.append(line.id)
-                            #     continue
+
                             if program_code:
-                                budget_line = self.env['expenditure.budget.line'].search([('expenditure_budget_id', '=', self.budget_id.id), ('program_code_id', '=', program_code.id), (
+                                budget_line = self.env['expenditure.budget.line'].search(
+                                    [('expenditure_budget_id', '=', self.budget_id.id),
+                                     ('program_code_id', '=', program_code.id), (
                                     'start_date', '=', line.start_date), ('end_date', '=', line.end_date)], limit=1)
                                 if budget_line:
                                     failed_row += str(line_vals) + \
@@ -436,26 +413,7 @@ class ControlAssignedAmounts(models.Model):
                                           "-------> Program Code is not created in selected budget. \n"
                             failed_line_ids.append(line.id)
                             continue
-                        #     program_vals = {
-                        #         'year': year.id,
-                        #         'program_id': program.id,
-                        #         'sub_program_id': subprogram.id,
-                        #         'dependency_id': dependency.id,
-                        #         'sub_dependency_id': subdependency.id,
-                        #         'item_id': item.id,
-                        #         'resource_origin_id': origin_resource.id,
-                        #         'institutional_activity_id': institutional_activity.id,
-                        #         'budget_program_conversion_id': shcp.id,
-                        #         'conversion_item_id': conversion_item.id,
-                        #         'expense_type_id': expense_type.id,
-                        #         'location_id': geo_location.id,
-                        #         'portfolio_id': wallet_key.id,
-                        #         'project_type_id': project_type.id,
-                        #         'stage_id': stage.id,
-                        #         'agreement_type_id': agreement_type.id,
-                        #     }
-                        #     program_code = self.env['program.code'].sudo().create(
-                        #         program_vals)
+
                         if program_code:
                             pc = program_code
                             dv_obj = self.env['verifying.digit']
@@ -508,7 +466,9 @@ class ControlAssignedAmounts(models.Model):
 
             if cron:
                 lines_to_execute.write({'cron_id': False})
-                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id)], limit=1)
+                model_id = self.env.ref('jt_budget_mgmt.model_control_assigned_amounts').id
+                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False),
+                                                               ('model_id', '=', model_id)], limit=1)
                 if next_cron:
                     nextcall = datetime.now()
                     nextcall = nextcall + timedelta(seconds=10)
@@ -533,14 +493,6 @@ class ControlAssignedAmounts(models.Model):
             if vals:
                 self.write(vals)
 
-            # if len(failed_line_ids) == 0:
-            #     return{
-            #         'effect': {
-            #             'fadeout': 'slow',
-            #             'message': 'All rows are imported successfully!',
-            #             'type': 'rainbow_man',
-            #         }
-            #     }
 
     def send_notification_msg(self, user, failed, successed):
         ch_obj = self.env['mail.channel']
