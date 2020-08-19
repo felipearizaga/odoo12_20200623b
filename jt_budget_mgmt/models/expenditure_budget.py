@@ -242,7 +242,6 @@ class ExpenditureBudget(models.Model):
             # Objects
 
             program_code_model = self.env['program.code'].sudo()
-            year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
             program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
             subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
             dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
@@ -363,6 +362,7 @@ class ExpenditureBudget(models.Model):
 
                     # Validate year format
                     year = False
+                    year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
                     if len(str(line.year)) > 3:
                         year_str = str(line.year)[:4]
                         if year_str.isnumeric():
