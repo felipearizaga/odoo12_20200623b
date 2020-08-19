@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+import re
 
 
 class ControlAssignedAmounts(models.Model):
@@ -172,8 +173,8 @@ class ControlAssignedAmounts(models.Model):
                     lines_to_execute = self.env['control.assigned.amounts.lines'].search([('cron_id', '=', cron.id)])
 
             for line in lines_to_execute:
-                if counter == 5000:
-                    break
+                # if counter == 5000:
+                #     break
                 counter += 1
                 line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item,
                              line.dv, line.origin_resource, line.ai, line.conversion_program,
@@ -212,7 +213,16 @@ class ControlAssignedAmounts(models.Model):
                             continue
 
                     # Validate year format
-                    year = year_obj.validate_year(line.year)
+                    if len(str(line.year)) > 3:
+                        year_str = str(line.year)[:4]
+                        if year_str.isnumeric():
+                            year = list(filter(lambda yr: yr['name'] == year_str, year_obj))
+                            if year:
+                                year = year[0]['id']
+                            else:
+                                if not self._context.get('from_adequacies'):
+                                    year = self.env['year.configuration'].create({'name': year_str}).id
+                    # year = year_obj.validate_year(line.year)
                     if not year:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Year Format\n"
@@ -220,7 +230,13 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Program(PR)
-                    program = program_obj.validate_program(line.program)
+                    #program = program_obj.validate_program(line.program)
+                    program = False
+                    if len(str(line.program)) > 1:
+                        program_str = str(line.program).zfill(2)
+                        if program_str.isnumeric():
+                            program = list(filter(lambda prog: prog['key_unam'] == program_str, program_obj))
+                            program = program[0]['id'] if program else False
                     if not program:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Program(PR) Format\n"
@@ -228,8 +244,16 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Sub-Program
-                    subprogram = subprogram_obj.validate_subprogram(
-                        line.subprogram, program)
+                    # subprogram = subprogram_obj.validate_subprogram(
+                    #     line.subprogram, program)
+                    subprogram = False
+                    if len(str(line.subprogram)) > 1:
+                        subprogram_str = str(line.subprogram).zfill(2)
+                        if subprogram_str.isnumeric():
+                            subprogram = list(filter(
+                                lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
+                                    0] == program, subprogram_obj))
+                            subprogram = subprogram[0]['id'] if subprogram else False
                     if not subprogram:
                         failed_row += str(line_vals) + \
                             "------>> Invalid SubProgram(SP) Format\n"
@@ -237,8 +261,14 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Dependency
-                    dependency = dependancy_obj.validate_dependency(
-                        line.dependency)
+                    # dependency = dependancy_obj.validate_dependency(
+                    #     line.dependency)
+                    dependency = False
+                    if len(str(line.dependency)) > 2:
+                        dependency_str = str(line.dependency).zfill(3)
+                        if dependency_str.isnumeric():
+                            dependency = list(filter(lambda dep: dep['dependency'] == dependency_str, dependancy_obj))
+                            dependency = dependency[0]['id'] if dependency else False
                     if not dependency:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Dependency(DEP) Format\n"
@@ -246,8 +276,15 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Sub-Dependency
-                    subdependency = subdependancy_obj.validate_subdependency(
-                        line.subdependency, dependency)
+                    # subdependency = subdependancy_obj.validate_subdependency(
+                    #     line.subdependency, dependency)
+                    subdependency = False
+                    subdependency_str = str(line.subdependency).zfill(2)
+                    if subdependency_str.isnumeric():
+                        subdependency = list(filter(
+                            lambda sdo: sdo['sub_dependency'] == subdependency_str and sdo['dependency_id'][
+                                0] == dependency, subdependancy_obj))
+                        subdependency = subdependency[0]['id'] if subdependency else False
                     if not subdependency:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Sub Dependency(DEP) Format\n"
@@ -255,8 +292,21 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Item
-                    item = item_obj.validate_item(
-                        line.item, line.exercise_type)
+                    # item = item_obj.validate_item(
+                    #     line.item, line.exercise_type)
+                    item = False
+                    if len(str(line.item)) > 2:
+                        item_string = str(line.item).zfill(3)
+                        typee = str(line.exercise_type).lower()
+                        if typee not in ['r', 'c', 'd']:
+                            typee = 'r'
+                        if item_string.isnumeric():
+                            item = list(filter(lambda itm: itm['item'] == item_string and itm['exercise_type'] == typee,
+                                               item_obj))
+                            if not item:
+                                item = list(filter(lambda itm: itm['item'] == item_string, item_obj))
+                            if item:
+                                item = item[0]['id']
                     if not item:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Expense Item(PAR) Format\n"
@@ -264,8 +314,15 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validate Origin Of Resource
-                    origin_resource = origin_obj.validate_origin_resource(
-                        line.origin_resource)
+                    # origin_resource = origin_obj.validate_origin_resource(
+                    #     line.origin_resource)
+                    origin_resource = False
+                    if len(str(line.origin_resource)) > 0:
+                        origin_resource_str = str(line.origin_resource).replace('.', '').zfill(2)
+                        if origin_resource_str.isnumeric():
+                            origin_resource = list(
+                                filter(lambda ores: ores['key_origin'] == origin_resource_str, origin_obj))
+                            origin_resource = origin_resource[0]['id'] if origin_resource else False
                     if not origin_resource:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Origin Of Resource(OR) Format\n"
@@ -273,8 +330,16 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Institutional Activity Number
-                    institutional_activity = activity_obj.validate_institutional_activity(
-                        line.ai)
+                    # institutional_activity = activity_obj.validate_institutional_activity(
+                    #     line.ai)
+                    institutional_activity = False
+                    if len(str(line.ai)) > 2:
+                        institutional_activity_str = str(line.ai).zfill(5)
+                        if institutional_activity_str.isnumeric():
+                            institutional_activity = list(
+                                filter(lambda inact: inact['number'] == institutional_activity_str, activity_obj))
+                            institutional_activity = institutional_activity[0][
+                                'id'] if institutional_activity else False
                     if not institutional_activity:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Institutional Activity Number(AI) Format\n"
@@ -282,8 +347,16 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Conversion Program SHCP
-                    shcp = shcp_obj.validate_shcp(
-                        line.conversion_program, program)
+                    # shcp = shcp_obj.validate_shcp(
+                    #     line.conversion_program, program)
+                    shcp = False
+                    if len(str(line.conversion_program)) > 3:
+                        shcp_str = str(line.conversion_program)
+                        if len(shcp_str) == 4 and (re.match("[A-Z]{1}\d{3}", str(shcp_str).upper())):
+                            shcp = list(
+                                filter(lambda tmp: tmp['shcp'][1] == shcp_str and tmp['unam_key_id'][0] == program,
+                                       shcp_obj))
+                            shcp = shcp[0]['id'] if shcp else False
                     if not shcp:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
@@ -291,8 +364,13 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Federal Item
-                    conversion_item = dpc_obj.validate_conversion_item(
-                        line.departure_conversion)
+                    conversion_item = False
+                    if len(str(line.departure_conversion)) > 4:
+                        conversion_item_str = str(line.departure_conversion).zfill(4)
+                        if conversion_item_str.isnumeric():
+                            conversion_item = list(
+                                filter(lambda coit: coit['federal_part'] == conversion_item_str, dpc_obj))
+                            conversion_item = conversion_item[0]['id'] if conversion_item else False
                     if not conversion_item:
                         failed_row += str(line_vals) + \
                             "------>> Invalid SHCP Games(CONPA) Format\n"
@@ -300,8 +378,13 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Expense Type
-                    expense_type = expense_type_obj.validate_expense_type(
-                        line.expense_type)
+                    expense_type = False
+                    if len(str(line.expense_type)) > 1:
+                        expense_type_str = str(line.expense_type).zfill(2)
+                        if expense_type_str.isnumeric():
+                            expense_type = list(
+                                filter(lambda exty: exty['key_expenditure_type'] == expense_type_str, expense_type_obj))
+                            expense_type = expense_type[0]['id'] if expense_type else False
                     if not expense_type:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Expense Type(TG) Format\n"
@@ -309,8 +392,12 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Expense Type
-                    geo_location = location_obj.validate_geo_location(
-                        line.location)
+                    geo_location = False
+                    if len(str(line.location)) > 1:
+                        location_str = str(line.location).zfill(2)
+                        if location_str.isnumeric():
+                            geo_location = list(filter(lambda geol: geol['state_key'] == location_str, location_obj))
+                            geo_location = geo_location[0]['id'] if geo_location else False
                     if not geo_location:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Geographic Location (UG) Format\n"
@@ -318,7 +405,14 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Wallet Key
-                    wallet_key = wallet_obj.validate_wallet_key(line.portfolio)
+                    # wallet_key = wallet_obj.validate_wallet_key(line.portfolio)
+                    wallet_key = False
+                    if len(str(line.portfolio)) > 3:
+                        wallet_key_str = str(line.portfolio).zfill(4)
+                        if wallet_key_str.isnumeric():
+                            wallet_key = list(
+                                filter(lambda wlke: wlke['wallet_password'] == wallet_key_str, wallet_obj))
+                            wallet_key = wallet_key[0]['id'] if wallet_key else False
                     if not wallet_key:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Wallet Key(CC) Format\n"
@@ -326,8 +420,21 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Project Type
-                    project_type = project_type_obj.validate_project_type(
-                        line.project_type, line)
+                    # project_type = project_type_obj.validate_project_type(
+                    #     line.project_type, line)
+                    project_type = False
+                    if len(str(line.project_type)) > 1:
+                        number = ''
+                        if self._context.get('from_adjustment'):
+                            number = line.get('No. de Proyecto')
+                        else:
+                            number = line.project_number
+                        project_type_str = str(line.project_type).zfill(2)
+
+                        project_type = list(filter(
+                            lambda pt: pt['project_type_identifier'] == project_type_str and pt['number'] == number,
+                            project_type_obj))
+                        project_type = project_type[0]['id'] if project_type else False
                     if not project_type:
                         failed_row += str(project_type) + \
                             "------>> Invalid Project Type(TP) or Project Number Format\n"
@@ -335,8 +442,14 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Stage
-                    stage = stage_obj.validate_stage(
-                        line.stage, project_type.project_id)
+                    # stage = stage_obj.validate_stage(
+                    #     line.stage, project_type.project_id)
+                    stage = False
+                    if len(str(line.stage)) > 1:
+                        stage_str = str(line.stage).zfill(2)
+                        if stage_str.isnumeric():
+                            stage = list(filter(lambda stg: stg['stage_identifier'] == stage_str, stage_obj))
+                            stage = stage[0]['id'] if stage else False
                     if not stage:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Stage(E) Format\n"
@@ -344,8 +457,15 @@ class ControlAssignedAmounts(models.Model):
                         continue
 
                     # Validation Agreement Type
-                    agreement_type = agreement_type_obj.validate_agreement_type(
-                        line.agreement_type, project_type.project_id, line.agreement_number)
+                    # agreement_type = agreement_type_obj.validate_agreement_type(
+                    #     line.agreement_type, project_type.project_id, line.agreement_number)
+                    agreement_type = False
+                    if len(str(line.agreement_type)) > 1:
+                        agreement_type_str = str(line.agreement_type).zfill(2)
+                        agreement_type = list(filter(lambda aty: aty['agreement_type'] == agreement_type_str and aty[
+                            'number_agreement'] == line.agreement_number, agreement_type_obj))
+                        ('project_id.agreement_type', '=',)
+                        agreement_type = agreement_type[0]['id'] if agreement_type else False
                     if not agreement_type:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Agreement Type(TC) or Agreement Number Format\n"
@@ -403,16 +523,19 @@ class ControlAssignedAmounts(models.Model):
                                 "-------> Program Code is not created. \n"
                             failed_line_ids.append(line.id)
                             continue
+
                         if program_code and not program_code.budget_id:
+                            print ("I'm failed here.....1")
                             failed_row += str(line_vals) + \
-                                          "-------> Program Code is not created in selected budget. \n"
+                                          "-------> Either budget is not linked with program code or program code does not exist. \n"
                             failed_line_ids.append(line.id)
                             continue
                         if program_code and program_code.budget_id and program_code.budget_id.id != self.budget_id.id:
+                            print("I'm failed here.....2")
                             failed_row += str(line_vals) + \
-                                          "-------> Program Code is not created in selected budget. \n"
+                                          "-------> Either budget is not linked with program code or program code does not exist. \n"
                             failed_line_ids.append(line.id)
-                            continue
+                        #     continue
 
                         if program_code:
                             pc = program_code
