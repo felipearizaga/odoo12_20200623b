@@ -2923,8 +2923,8 @@ msgstr "Respuesta"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.request_summary_report
-msgid "Request Report"
-msgstr "Respuesta de Informe"
+msgid "Response Report"
+msgstr "Consulta de Informe"
 
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.act_req_summary_report

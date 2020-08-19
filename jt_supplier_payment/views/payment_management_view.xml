@@ -24,6 +24,9 @@
             	<xpath expr="//form" position="attributes">
             		<attribute name="create">0</attribute>
             	</xpath>
+            	<field name="batch_folio" position="attributes">
+            		<field name="readonly">0</field>
+            	</field>
             </field>
         </record>
 

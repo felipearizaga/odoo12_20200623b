@@ -76,7 +76,7 @@
                                 <field name="currency_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="payment_bank_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="payment_bank_account_id" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="batch_folio" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="batch_folio" readonly="1"/>
                                 <field name="journal_id" readonly="1" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="invoice_uuid" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="invoice_series" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>

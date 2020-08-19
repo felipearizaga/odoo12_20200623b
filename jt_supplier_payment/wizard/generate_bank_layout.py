@@ -576,13 +576,13 @@ class GenerateBankLayout(models.TransientModel):
             #==== Fiscal Proof  ========#
             file_data +="," + '0'
             #==== RFC Of the beneficiary  ========#
-            file_data +=",,,,,,,,,,,,,,,,,," 
+            file_data +=",                  " # 18 Space
             #====VAT  ========#
-            file_data +=",,,,,,,,,,,,," 
+            file_data +=",             "    # 13 Space 
             
             file_data +="\n"
         
-        file_data +=str(record_count+1) + ","+ str(record_count) + ","+'Transfer third parties' 
+        file_data +=str(record_count+1) + ","+ str(record_count) + ","+'Transfer terceros' 
         
         gentextfile = base64.b64encode(bytes(file_data,'utf-8'))
         self.file_data = gentextfile

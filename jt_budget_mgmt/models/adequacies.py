@@ -651,11 +651,11 @@ class Adequacies(models.Model):
                             budget_line_assign = b_line
                         elif b_month in (10, 11, 12) and b_s_month in (10, 11, 12):
                             budget_line_assign = b_line
-                if budget_line_assign:
-                    total_assing_amount = sum(x.assigned for x in budget_line_assign)
-                    if total_assing_amount <=0 :
-                        raise ValidationError(_("You are not allowed to adjustments for zero or negative assign amount of program code! %s " % \
-                                            (line.program.program_code)))
+#                 if budget_line_assign:
+#                     total_assing_amount = sum(x.assigned for x in budget_line_assign)
+#                     if total_assing_amount <=0 :
+#                         raise ValidationError(_("You are not allowed to adjustments for zero or negative assign amount of program code! %s " % \
+#                                             (line.program.program_code)))
                         
 
                 found = False

@@ -113,7 +113,7 @@ class SupplierRegistration(models.TransientModel):
             filename = 'BBVA Bancomer SIT.txt'
             name = 'BBVA Bancomer SIT'
             contents = 'H'
-            contents += "01480758"
+            contents += "001480758"
             contents += datetime.now().date().strftime('%d/%m/%Y')
             #====== Group ======#
             high_rec = partners.filtered(lambda x:x.instruction == 'high')

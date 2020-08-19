@@ -24,6 +24,7 @@ from datetime import datetime
 from odoo import models, fields, api, _
 from odoo.tools.profiler import profile
 from odoo.tools.misc import formatLang
+import json
 
 class ProformaBudgetSummaryReport(models.AbstractModel):
     _name = "proforma.budget.summary.report"
@@ -48,10 +49,20 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
 
     def _get_reports_buttons(self):
         return [
-            {'name': _(''), 'sequence': 0, 'action': 'print_pdf', 'file_export_type': _('PDF')},
+            #{'name': _(''), 'sequence': 2, 'action': 'print_pdf', 'file_export_type': _('PDF')},
             {'name': _('Export (XLSX)'), 'sequence': 2, 'action': 'print_xlsx', 'file_export_type': _('XLSX')},
         ]
     # Set columns based on dynamic options
+    def print_xlsx(self, options,test):
+        return {
+                'type': 'ir_actions_account_report_download',
+                'data': {'model': self.env.context.get('model'),
+                         'options': json.dumps(options),
+                         'output_format': 'xlsx',
+                         'financial_id': self.env.context.get('id'),
+                         }
+                }
+    
     def _get_columns_name(self, options):
         column_list = []
         column_list.append({'name': _("Program Code")})
@@ -337,6 +348,14 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         from_query = ' from program_code pc,expenditure_item exioder'
         where_query = ' where pc.id in %s and exioder.id=pc.item_id and exioder.item >= %s and exioder.item <= %s'
         order_by = ' order by exioder.item_group'
+        #===== Grand Total Query=====#
+        self.env.cr.execute('select pc.id from program_code pc,expenditure_item exioder where pc.id in %s and exioder.id=pc.item_id and exioder.item >= %s and exioder.item <= %s',(tuple(program_codes.ids),'100','999') )
+        my_datas_total = self.env.cr.fetchall()
+        program_code_list = []
+        if my_datas_total:
+            program_code_list = list(my_datas_total)                                                
+
+        grand_total_dict = {}
         tuple_where_data = []
         need_total = False
         order_dep = False
@@ -548,11 +567,22 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query += ',(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized'
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'authorized':my_datas[0]})
+                
             elif column in ('Assigned Total Annual', 'Total Asignado Anual'):
                 need_columns_with_format.append('assigned')
                 col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned'
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'assigned':my_datas[0]})
                 
             elif column in ('Annual Modified', 'Modificado Anual'):
                 need_columns_with_format.append('annual_modified')
@@ -561,6 +591,18 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 tuple_where_data.append('accepted')
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE -al.amount END),0) from adequacies_lines al,adequacies a where a.state=%s and al.program in %s and a.id=al.adequacies_id", ('increase','accepted',tuple(program_code_list)))
+                my_datas = self.env.cr.fetchone()
+                total_annual_modified = 0
+                if my_datas:
+                    total_annual_modified = my_datas[0]
+                self.env.cr.execute("select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                my_datas = self.env.cr.fetchone()
+                total_annual_modified = 0
+                if my_datas:
+                    total_annual_modified += my_datas[0]
+                grand_total_dict.update({'annual_modified':total_annual_modified})
                 
             elif column in ('Assigned 1st Trimester', 'Asignado 1er Trimestre'):
                 start_date = start.replace(month=1, day=1)
@@ -569,6 +611,12 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_1st'
                 tuple_where_data.append(start_date)
                 tuple_where_data.append(end_date)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'assigned_1st':my_datas[0]})
+                
             elif column in ('Assigned 2nd Trimester', 'Asignado 2do Trimestre'):
                 start_date = start.replace(month=4, day=1)
                 end_date = end.replace(month=6, day=30)
@@ -576,6 +624,11 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_2nd'
                 tuple_where_data.append(start_date)
                 tuple_where_data.append(end_date)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'assigned_2nd':my_datas[0]})
                 
             elif column in ('Assigned 3rd Trimester', 'Asignado 3er Trimestre'):
                 start_date = start.replace(month=7, day=1)
@@ -584,6 +637,12 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_3rd'
                 tuple_where_data.append(start_date)
                 tuple_where_data.append(end_date)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'assigned_3rd':my_datas[0]})
+
                 
             elif column in ('Assigned 4th Trimester', 'Asignado 4to Trimestre'):
                 start_date = start.replace(month=10, day=1)
@@ -592,18 +651,34 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 col_query += ',(select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_4th'
                 tuple_where_data.append(start_date)
                 tuple_where_data.append(end_date)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'assigned_4th':my_datas[0]})
                 
             elif column in ('Per Exercise', 'Por Ejercer'):
                 need_columns_with_format.append('per_exercise')
                 col_query += ',(select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as per_exercise'
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'per_exercise':my_datas[0]})
+                
             elif column in ('Committed', 'Comprometido'):
                 need_columns_with_format.append('committed')
                 col_query += ',(select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where pc.id=line.program_code_id and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s) as Committed'
                 tuple_where_data.append('approved_payment')
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where line.program_code_id in %s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (tuple(program_code_list),'approved_payment',start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'committed':my_datas[0]})
 
             elif column in ('Accrued', 'Devengado'):
                 need_columns_with_format.append('accrued')
@@ -614,6 +689,12 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 tuple_where_data.append('for_payment_procedure')
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where line.program_code_id in %s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (tuple(program_code_list),'for_payment_procedure',start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'exercised':my_datas[0]})
                 
             elif column in ('Paid', 'Pagado'):
                 need_columns_with_format.append('paid')
@@ -621,12 +702,24 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 tuple_where_data.append('paid')
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(line.price_total),0) from account_move_line line,account_move amove where line.program_code_id in %s and amove.id=line.move_id and amove.payment_state=%s and amove.invoice_date >= %s and amove.invoice_date <= %s", (tuple(program_code_list),'paid',start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'paid':my_datas[0]})
+
                                 
             elif column in ('Available', 'Disponible'):
                 need_columns_with_format.append('available')
                 col_query += ',(select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as available'
                 tuple_where_data.append(start)
                 tuple_where_data.append(end)
+#                #=== Grand Total ======#
+                self.env.cr.execute("select coalesce(sum(ebl.available),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                my_datas = self.env.cr.fetchone()
+                if my_datas:
+                    grand_total_dict.update({'available':my_datas[0]})
+                 
             
         tuple_where_data.append(tuple(program_codes.ids))
         tuple_where_data.append('100')
@@ -758,7 +851,22 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                     'level': 2,
                     'columns': main_cols,
                 })
-   
+        if grand_total_dict and need_total:
+            main_cols = []
+            for c in need_columns:
+                main_cols.append({'name': '','float_name': ''})
+            for c in need_columns_with_format:
+                amt=formatLang(self.env, grand_total_dict.get(c,0.0), currency_obj=False)
+                main_cols.append({'name':amt,'class':'number','float_name': grand_total_dict.get(c,0.0),})
+
+            lines.append({
+                    'id': 0,
+                    'name': _('Grand Total'),
+                    'class': 'total',
+                    'level': 2,
+                    'columns': main_cols,
+                })
+            
         return lines,need_total,need_to_skip
 
     def _get_sum_trimster(self, all_b_lines, s_month, s_day, e_month, e_day):
@@ -822,6 +930,7 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
         need_to_skip = 0
         lines = []
         if budget_lines:
+            
             lines,need_total,need_to_skip = self.all_lines_data(budget_lines,options,lines,start,end)
         return lines
         #================================= End Haresh Test Code ==========================

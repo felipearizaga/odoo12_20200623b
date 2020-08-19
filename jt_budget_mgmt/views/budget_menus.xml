@@ -300,7 +300,7 @@
 
     <menuitem
         id="request_summary_report"
-        name="Request Report"
+        name="Response Report"
         parent="menu_reports"
         sequence="2"
         action="act_req_summary_report"/>
