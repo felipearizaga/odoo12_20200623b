@@ -676,7 +676,7 @@ class ControlAssignedAmounts(models.Model):
                     lambda l: l.state == 'success'))
 
             if total_lines == self.total_rows:
-                self.state = 'previous'
+                self.state = 'process'
                 msg = (_("Control of Assigned Amounts Validation Process Ended at %s" % datetime.strftime(
                     datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
 
