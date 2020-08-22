@@ -190,6 +190,31 @@ class GenerateBankLayout(models.TransientModel):
             if payment.payment_date:
                 payment_year = str(payment.payment_date.year)[:2]
                 month_name = format_datetime(payment.payment_date, 'MMMM', locale=get_lang(self.env).code)
+                if payment.payment_date.month==1:
+                    month_name = 'Enero'
+                elif payment.payment_date.month==2:
+                    month_name = 'Febrero'
+                elif payment.payment_date.month==3:
+                    month_name = 'Marzo'
+                elif payment.payment_date.month==4:
+                    month_name = 'Abril'
+                elif payment.payment_date.month==5:
+                    month_name = 'Mayo'
+                elif payment.payment_date.month==6:
+                    month_name = 'Junio'
+                elif payment.payment_date.month==7:
+                    month_name = 'Julio'
+                elif payment.payment_date.month==8:
+                    month_name = 'Agosto'
+                elif payment.payment_date.month==9:
+                    month_name = 'Septiembre'
+                elif payment.payment_date.month==10:
+                    month_name = 'Octubre'
+                elif payment.payment_date.month==11:
+                    month_name = 'Noviembre'
+                elif payment.payment_date.month==12:
+                    month_name = 'Diciembre'
+                
                 reason_payment += " "+month_name+" "+payment_year
             file_data += reason_payment.ljust(30, " ")     
             file_data +="\n"      
@@ -214,8 +239,9 @@ class GenerateBankLayout(models.TransientModel):
                 temp =''
                 file_data +=temp.zfill(18)
             #====== Currency Data =========#
-            if payment.currency_id:
-                file_data += payment.currency_id.name
+            file_data += 'MXP'
+#             if payment.currency_id:
+#                 file_data += payment.currency_id.name
             #====== Amount Data =========#
             amount = round(payment.amount, 2)
             amount = "%.2f" % payment.amount            

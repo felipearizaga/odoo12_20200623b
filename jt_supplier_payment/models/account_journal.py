@@ -4,6 +4,7 @@ class AccountJournal(models.Model):
 
     _inherit = 'account.journal'
 
+    branch_number = fields.Char('Branch Number', size=4,related='bank_account_id.branch_number')
     accured_credit_account_id = fields.Many2one('account.account', "Accured Credit Account")
     conac_accured_credit_account_id = fields.Many2one('coa.conac', "Accured CONAC Credit Account")
     accured_debit_account_id = fields.Many2one('account.account', "Accured Debit Account")

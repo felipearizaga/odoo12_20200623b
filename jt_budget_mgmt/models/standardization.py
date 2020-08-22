@@ -28,6 +28,7 @@ from xlrd import open_workbook
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+import re
 
 class Standardization(models.Model):
 
@@ -64,6 +65,12 @@ class Standardization(models.Model):
     select_box = fields.Boolean(string='Select Box')
     line_ids = fields.One2many(
         'standardization.line', 'standardization_id', string='Standardization lines', states={'cancelled': [('readonly', True)]})
+    success_line_ids = fields.One2many(
+        'standardization.line', 'standardization_id', string='Standardization lines', domain=[('line_state','not in',('draft','fail'))],states={'cancelled': [('readonly', True)]})
+
+    import_line_ids = fields.One2many(
+        'standardization.line', 'standardization_id',domain=[('line_state','in',('draft','fail'))] ,string='Standardization lines', states={'cancelled': [('readonly', True)]})
+
     state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'),
                               ('cancelled', 'Cancelled')], default='draft', required=True, string='State')
 
@@ -167,6 +174,14 @@ class Standardization(models.Model):
             except:
                 pass
 
+    def _compute_total_rows(self):
+        for record in self:
+            record.failed_rows = self.env['standardization.line'].search_count(
+                [('standardization_id', '=', record.id), ('line_state', '=', 'fail')])
+            record.success_rows = self.env['standardization.line'].search_count(
+                [('standardization_id', '=', record.id), ('line_state', '=', 'success')])
+            record.total_rows = len(record.line_ids.filtered(lambda l: l.imported == True))
+
     # Import process related fields
     allow_upload = fields.Boolean(string='Allow Update XLS File?')
     budget_file = fields.Binary(string='Uploaded File', states={
@@ -180,16 +195,17 @@ class Standardization(models.Model):
     fialed_row_filename = fields.Char(
         string='File name', default="Failed_Rows.txt")
     failed_rows = fields.Integer(
-        string='Failed Rows', compute="_compute_failed_rows")
+        string='Failed Rows',compute='_compute_total_rows')
     success_rows = fields.Integer(
-        string='Success Rows', compute="_compute_success_rows")
+        string='Success Rows', compute='_compute_total_rows')
     success_row_ids = fields.Text(
         string='Success Row Ids', default="[]", copy=False)
     failed_row_ids = fields.Text(
         string='Failed Row Ids', default="[]", copy=False)
     pointer_row = fields.Integer(
         string='Current Pointer Row', default=1, copy=False)
-    total_rows = fields.Integer(string="Total Rows", copy=False)
+    total_rows = fields.Integer(string="Total Rows", copy=False,compute='_compute_total_rows')
+
 
     def check_program_item_games(self,program_code,item_name=False):
         item_name = item_name
@@ -228,364 +244,468 @@ class Standardization(models.Model):
                     raise ValidationError(_("Cannot create reschedule of party group 300: \n %s" %
                                             program_code_msg))
 
+    def check_year_exist(self, line):
+
+        if len(str(line.year)) > 3:
+            year_str = str(line.year)[:4]
+            if year_str.isnumeric():
+                year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
+                if not list(filter(lambda yr: yr['name']==year_str, year_obj)):
+                    self.env['year.configuration'].create({'name': year_str}).id
+        else:
+            raise ValidationError('Invalid Year Format Of line one!')
+
     def validate_and_add_budget_line(self, record_id=False, cron_id=False):
         if record_id:
             self = self.env['standardization'].browse(int(record_id))
-
-        if self.budget_file:
+        lines_to_validate = self.line_ids.filtered(lambda x:x.line_state in ('draft','fail'))
+        if len(lines_to_validate) > 0:
+            counter = 0
+            failed_line_ids = []
+            success_line_ids = []
+            failed_row = ""
+            self.check_year_exist(lines_to_validate[0])
             # Objects
-            year_obj = self.env['year.configuration']
-            program_obj = self.env['program']
-            subprogram_obj = self.env['sub.program']
-            dependancy_obj = self.env['dependency']
-            subdependancy_obj = self.env['sub.dependency']
-            item_obj = self.env['expenditure.item']
-            origin_obj = self.env['resource.origin']
-            activity_obj = self.env['institutional.activity']
-            shcp_obj = self.env['budget.program.conversion']
-            dpc_obj = self.env['departure.conversion']
-            expense_type_obj = self.env['expense.type']
-            location_obj = self.env['geographic.location']
-            wallet_obj = self.env['key.wallet']
-            project_type_obj = self.env['project.type']
-            stage_obj = self.env['stage']
-            agreement_type_obj = self.env['agreement.type']
-
-            cron = False
-            if cron_id:
-                cron = self.env['ir.cron'].sudo().browse(int(cron_id))
+            year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
+            program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
+            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
+            subdependancy_obj = self.env['sub.dependency'].search_read([],
+                                                                       fields=['id', 'dependency_id', 'sub_dependency'])
+            item_obj = self.env['expenditure.item'].search_read([], fields=['id', 'item', 'exercise_type'])
+            origin_obj = self.env['resource.origin'].search_read([], fields=['id', 'key_origin'])
+            activity_obj = self.env['institutional.activity'].search_read([], fields=['id', 'number'])
+            shcp_obj = self.env['budget.program.conversion'].search_read([], fields=['id', 'unam_key_id', 'shcp'])
+            dpc_obj = self.env['departure.conversion'].search_read([], fields=['id', 'federal_part'])
+            expense_type_obj = self.env['expense.type'].search_read([], fields=['id', 'key_expenditure_type'])
+            location_obj = self.env['geographic.location'].search_read([], fields=['id', 'state_key'])
+            wallet_obj = self.env['key.wallet'].search_read([], fields=['id', 'wallet_password'])
+            project_type_obj = self.env['project.type'].search_read([],
+                                                                    fields=['id', 'project_type_identifier', 'number'])
+            stage_obj = self.env['stage'].search_read([], fields=['id', 'stage_identifier'])
+            agreement_type_obj = self.env['agreement.type'].search_read([], fields=['id', 'agreement_type',
+                                                                                    'number_agreement'])
+            
+            quarter_budget_obj = self.env['quarter.budget'].search_read([], fields=['id', 'name'])
+            
+#             cron = False
+#             if cron_id:
+#                 cron = self.env['ir.cron'].sudo().browse(int(cron_id))
 
             budget_obj = self.env['expenditure.budget'].sudo(
             ).with_context(from_adequacies=True)
 
             # If user re-scan for failed rows
-            re_scan_failed_rows_ids = eval(self.failed_row_ids)
-
-            counter = 0
-            cnt = 0
-            pointer = self.pointer_row
-            success_row_ids = []
-            failed_row_ids = []
-
-            data = base64.decodestring(self.budget_file)
-            book = open_workbook(file_contents=data or b'')
-            sheet = book.sheet_by_index(0)
-
-            headers = []
-            
-            for rowx, row in enumerate(map(sheet.row, range(1)), 1):
-                for colx, cell in enumerate(row, 1):
-                    headers.append(cell.value)
-
-            # result_vals = []
-            lines_to_iterate = self.pointer_row + 5000
-            total_sheet_rows = sheet.nrows - 1
-            if total_sheet_rows < lines_to_iterate:
-                lines_to_iterate = total_sheet_rows + 1
-            failed_row = ""
-
-            conditional_list = range(self.pointer_row, lines_to_iterate)
-            if self._context.get('re_scan_failed'):
-                conditional_list = []
-                for row in re_scan_failed_rows_ids:
-                    conditional_list.append(row - 1)
-
-            for rowx, row in enumerate(map(sheet.row, conditional_list), 1):
-                p_code = ''
-                cnt += 1
-                pointer = self.pointer_row + cnt
-                if self._context.get('re_scan_failed'):
-                    pointer = conditional_list[rowx - 1] + 1
-
-                list_result = []
-                counter = 0
-                for colx, cell in enumerate(row, 1):
-                    list_result.append(cell.value)
-                    counter += 1
+            #re_scan_failed_rows_ids = eval(self.failed_row_ids)
+            lines_to_execute = lines_to_validate
+            for line in lines_to_execute:
+                counter += 1
+                line_vals = [line.year, line.program, line.subprogram, line.dependency, line.subdependency, line.item,
+                             line.dv, line.origin_resource, line.ai, line.conversion_program,
+                             line.departure_conversion, line.expense_type, line.location, line.portfolio,
+                             line.project_type, line.project_number, line.stage, line.agreement_type,
+                             line.agreement_number, line.exercise_type,line.folio,line.budget,line.origin,line.quarter_data]
+                
                 # Validate year format
-                year = year_obj.validate_year(list_result[0])
-                if not year:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Year Format\n"
-                    failed_row_ids.append(pointer)
-                    continue
+                if len(str(line.year)) > 3:
+                    year_str = str(line.year)[:4]
+                    if year_str.isnumeric():
+                        year = list(filter(lambda yr: yr['name'] == year_str, year_obj))
+                        if year:
+                            year = year[0]['id']
+                        else:
+                            if not self._context.get('from_adequacies'):
+                                year = self.env['year.configuration'].create({'name': year_str}).id
+                    if not year:
+                        failed_row += str(line_vals) + \
+                            "------>> Invalid Year Format\n"
+                        failed_line_ids.append(line.id)
+                        continue
 
                 # Validate Program(PR)
-                program = program_obj.validate_program(list_result[1])
+                program = False
+                if len(str(line.program)) > 1:
+                    program_str = str(line.program).zfill(2)
+                    if program_str.isnumeric():
+                        program = list(filter(lambda prog: prog['key_unam'] == program_str, program_obj))
+                        program = program[0]['id'] if program else False
                 if not program:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Program(PR) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Program(PR) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validate Sub-Program
-                subprogram = subprogram_obj.validate_subprogram(list_result[2], program)
+                subprogram = False
+                if len(str(line.subprogram)) > 1:
+                    subprogram_str = str(line.subprogram).zfill(2)
+                    if subprogram_str.isnumeric():
+                        subprogram = list(filter(
+                            lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
+                                0] == program, subprogram_obj))
+                        subprogram = subprogram[0]['id'] if subprogram else False
                 if not subprogram:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid SubProgram(SP) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid SubProgram(SP) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validate Dependency
-                dependency = dependancy_obj.validate_dependency(list_result[3])
+                dependency = False
+                if len(str(line.dependency)) > 2:
+                    dependency_str = str(line.dependency).zfill(3)
+                    if dependency_str.isnumeric():
+                        dependency = list(filter(lambda dep: dep['dependency'] == dependency_str, dependancy_obj))
+                        dependency = dependency[0]['id'] if dependency else False
                 if not dependency:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Dependency(DEP) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Dependency(DEP) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validate Sub-Dependency
-                subdependency = subdependancy_obj.validate_subdependency(list_result[4], dependency)
+                subdependency = False
+                subdependency_str = str(line.subdependency).zfill(2)
+                if subdependency_str.isnumeric():
+                    subdependency = list(filter(
+                        lambda sdo: sdo['sub_dependency'] == subdependency_str and sdo['dependency_id'][
+                            0] == dependency, subdependancy_obj))
+                    subdependency = subdependency[0]['id'] if subdependency else False
                 if not subdependency:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Sub Dependency(DEP) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Sub Dependency(DEP) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
                 
                 #Validate item games group
-                if list_result[5]:
+                if len(str(line.item)) > 2:
                     user_lang = self.env.user.lang
-                    item_name = list_result[5] 
+                    item_name =  str(line.item).zfill(3) 
                     if item_name >= '100' and item_name <= '199':
                         if item_name not in ('180','191','154','196','197'):
                             if user_lang == 'es_MX':
-                                failed_row += str(list_result) + \
+                                failed_row += str(line_vals) + \
                                               "------>> Del grupo de partida 100 solo se permiten registrar las partidas(180,191, 154, 196 y 197)\n"
-                                failed_row_ids.append(pointer)
+                                failed_line_ids.append(line.id)
                                 continue
                             else:
-                                failed_row += str(list_result) + \
+                                failed_row += str(line_vals) + \
                                               "------>> Form the group 100,only the following games are allowed (180,191,154,197 and 197):\n"
-                                failed_row_ids.append(pointer)
+                                failed_line_ids.append(line.id)
                                 continue
                                                             
                     elif item_name >= '700' and item_name <= '799':
                         if item_name == '711':                        
                             if user_lang == 'es_MX':
-                                failed_row += str(list_result) + \
+                                failed_row += str(line_vals) + \
                                               "------>> Forma el grupo 700, solo el Partida 711 no está permitido\n"
-                                failed_row_ids.append(pointer)
+                                failed_line_ids.append(line.id)
                                 continue
                             else:
-                                failed_row += str(list_result) + \
+                                failed_row += str(line_vals) + \
                                               "------>> Form the group 700, only 711 game is not allowed:\n"
-                                failed_row_ids.append(pointer)
+                                failed_line_ids.append(line.id)
                                 continue
         
                     elif item_name >= '300' and item_name <= '399':
                         if user_lang == 'es_MX':
-                            failed_row += str(list_result) + \
+                            failed_row += str(line_vals) + \
                                           "------>> No se pueden crear recalendarizaciones de la partida 300\n"
-                            failed_row_ids.append(pointer)
+                            failed_line_ids.append(line.id)
                             continue
                         else:
-                            failed_row += str(list_result) + \
+                            failed_row += str(line_vals) + \
                                           "------>> Cannot create reschedule of party group 300:\n"
-                            failed_row_ids.append(pointer)
+                            failed_line_ids.append(line.id)
                             continue
                     
                 # Validate Item
-                item = item_obj.validate_item(list_result[5], list_result[19])
+                item = False
+                if len(str(line.item)) > 2:
+                    item_string = str(line.item).zfill(3)
+                    typee = str(line.exercise_type).lower()
+                    if typee not in ['r', 'c', 'd']:
+                        typee = 'r'
+                    if item_string.isnumeric():
+                        item = list(filter(lambda itm: itm['item'] == item_string and itm['exercise_type'] == typee,
+                                           item_obj))
+                        if not item:
+                            item = list(filter(lambda itm: itm['item'] == item_string, item_obj))
+                        if item:
+                            item = item[0]['id']
                 if not item:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Expense Item(PAR) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Expense Item(PAR) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
-                if not list_result[6]:
-                    failed_row += str(list_result) + \
-                                  "------>> Digito Verificador is not added!\n"
-                    failed_row_ids.append(pointer)
+                if not line.dv:
+                    failed_row += str(line_vals) + \
+                        "------>> Digito Verificador is not added! \n"
+                    failed_line_ids.append(line.id)
                     continue
 
-                if list_result[6]:
-                    code = str(list_result[6])
-                    if '.' in code:
-                        code = code.split('.')[0]
-                    p_code += code.zfill(2)
-
-                # Validate Origin Of Resource
-                origin_resource = origin_obj.validate_origin_resource(list_result[7])
+                origin_resource = False
+                if len(str(line.origin_resource)) > 0:
+                    origin_resource_str = str(line.origin_resource).replace('.', '').zfill(2)
+                    if origin_resource_str.isnumeric():
+                        origin_resource = list(
+                            filter(lambda ores: ores['key_origin'] == origin_resource_str, origin_obj))
+                        origin_resource = origin_resource[0]['id'] if origin_resource else False
                 if not origin_resource:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Origin Of Resource(OR) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Origin Of Resource(OR) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Institutional Activity Number
-                institutional_activity = activity_obj.validate_institutional_activity(list_result[8])
+                institutional_activity = False
+                if len(str(line.ai)) > 2:
+                    institutional_activity_str = str(line.ai).zfill(5)
+                    if institutional_activity_str.isnumeric():
+                        institutional_activity = list(
+                            filter(lambda inact: inact['number'] == institutional_activity_str, activity_obj))
+                        institutional_activity = institutional_activity[0][
+                            'id'] if institutional_activity else False
                 if not institutional_activity:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Institutional Activity Number(AI) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Institutional Activity Number(AI) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Conversion Program SHCP
-                shcp = shcp_obj.validate_shcp(list_result[9], program)
+                shcp = False
+                if len(str(line.conversion_program)) > 3:
+                    shcp_str = str(line.conversion_program)
+                    if len(shcp_str) == 4 and (re.match("[A-Z]{1}\d{3}", str(shcp_str).upper())):
+                        shcp = list(
+                            filter(lambda tmp: tmp['shcp'][1] == shcp_str and tmp['unam_key_id'][0] == program,
+                                   shcp_obj))
+                        shcp = shcp[0]['id'] if shcp else False
                 if not shcp:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Conversion Program SHCP(CONPP) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Federal Item
-                conversion_item = dpc_obj.validate_conversion_item(list_result[10])
+                conversion_item = False
+                if len(str(line.departure_conversion)) > 4:
+                    conversion_item_str = str(line.departure_conversion).zfill(4)
+                    if conversion_item_str.isnumeric():
+                        conversion_item = list(
+                            filter(lambda coit: coit['federal_part'] == conversion_item_str, dpc_obj))
+                        conversion_item = conversion_item[0]['id'] if conversion_item else False
                 if not conversion_item:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid SHCP Games(CONPA) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid SHCP Games(CONPA) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Expense Type
-                expense_type = expense_type_obj.validate_expense_type(list_result[11])
+                expense_type = False
+                if len(str(line.expense_type)) > 1:
+                    expense_type_str = str(line.expense_type).zfill(2)
+                    if expense_type_str.isnumeric():
+                        expense_type = list(
+                            filter(lambda exty: exty['key_expenditure_type'] == expense_type_str, expense_type_obj))
+                        expense_type = expense_type[0]['id'] if expense_type else False
                 if not expense_type:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Expense Type(TG) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Expense Type(TG) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
-                # Validation Expense Type
-                geo_location = location_obj.validate_geo_location(list_result[12])
+                # Validation Geographic Location
+                geo_location = False
+                if len(str(line.location)) > 1:
+                    location_str = str(line.location).zfill(2)
+                    if location_str.isnumeric():
+                        geo_location = list(filter(lambda geol: geol['state_key'] == location_str, location_obj))
+                        geo_location = geo_location[0]['id'] if geo_location else False
                 if not geo_location:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Geographic Location (UG) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Geographic Location (UG) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Wallet Key
-                wallet_key = wallet_obj.validate_wallet_key(list_result[13])
+                wallet_key = False
+                if len(str(line.portfolio)) > 3:
+                    wallet_key_str = str(line.portfolio).zfill(4)
+                    if wallet_key_str.isnumeric():
+                        wallet_key = list(
+                            filter(lambda wlke: wlke['wallet_password'] == wallet_key_str, wallet_obj))
+                        wallet_key = wallet_key[0]['id'] if wallet_key else False
                 if not wallet_key:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Wallet Key(CC) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Wallet Key(CC) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Project Type
-                project_type = project_type_obj.with_context(from_adjustment=True).validate_project_type(list_result[14],
-                                                                                                         list_result[15])
+                project_type = False
+                if len(str(line.project_type)) > 1:
+                    number = ''
+                    if self._context.get('from_adjustment'):
+                        number = line.get('No. de Proyecto')
+                    else:
+                        number = line.project_number
+                    project_type_str = str(line.project_type).zfill(2)
+
+                    project_type = list(filter(
+                        lambda pt: pt['project_type_identifier'] == project_type_str and pt['number'] == number,
+                        project_type_obj))
+                    project_type = project_type[0]['id'] if project_type else False
                 if not project_type:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Project Type(TP) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(project_type) + \
+                        "------>> Invalid Project Type(TP) or Project Number Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Stage
-                stage = stage_obj.validate_stage(list_result[16], project_type.project_id)
+                stage = False
+                if len(str(line.stage)) > 1:
+                    stage_str = str(line.stage).zfill(2)
+                    if stage_str.isnumeric():
+                        stage = list(filter(lambda stg: stg['stage_identifier'] == stage_str, stage_obj))
+                        stage = stage[0]['id'] if stage else False
                 if not stage:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Stage(E) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Stage(E) Format\n"
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Agreement Type
-                agreement_type = agreement_type_obj.validate_agreement_type(list_result[17],
-                                                                            project_type.project_id,
-                                                                            list_result[18])
+                agreement_type = False
+                if len(str(line.agreement_type)) > 1:
+                    agreement_type_str = str(line.agreement_type).zfill(2)
+                    agreement_type = list(filter(lambda aty: aty['agreement_type'] == agreement_type_str and aty[
+                        'number_agreement'] == line.agreement_number, agreement_type_obj))
+                    ('project_id.agreement_type', '=',)
+                    agreement_type = agreement_type[0]['id'] if agreement_type else False
                 if not agreement_type:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid Agreement Type(TC) Format\n"
-                    failed_row_ids.append(pointer)
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid Agreement Type(TC) or Agreement Number Format\n"
+                    failed_line_ids.append(line.id)
                     continue
+
 
                 # Validation Amount
-                amount = 0
+                asigned_amount = 0
                 try:
-                    amount = float(list_result[22])
-                    if float(amount) <= 0:
-                        failed_row += str(list_result) + \
+                    asigned_amount = float(line.amount)
+                    if asigned_amount < 0:
+                        failed_row += str(line_vals) + \
                             "------>> Amount should be greater than 0"
-                        failed_row_ids.append(pointer)
+                        failed_line_ids.append(line.id)
                         continue
                 except:
-                    failed_row += str(list_result) + \
+                    failed_row += str(line_vals) + \
                         "------>> Invalid Amount Format or Amount should be 0"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
                     continue
-
+                
                 # Validation Folio
-                folio = list_result[20]
+                folio = line.folio
                 if folio:
                     try:
                         folio = int(float(folio))
                     except:
-                        failed_row += str(list_result) + \
+                        failed_row += str(line_vals) + \
                             "------>> Folio Must Be Numeric"
-                        failed_row_ids.append(pointer)
+                        failed_line_ids.append(line.id)    
                         continue
                     line_standardization = self.env['standardization.line'].search(
-                        [('folio', '=', str(folio))], limit=1)
+                        [('folio', '=', str(folio)),('id','!=',line.id)], limit=1)
                     if line_standardization:
-                        failed_row += str(list_result) + \
+                        failed_row += str(line_vals) + \
                             "------>> Folio Must Be Unique"
-                        failed_row_ids.append(pointer)
+                        failed_line_ids.append(line.id)
                         continue
                 else:
-                    failed_row += str(list_result) + \
+                    failed_row += str(line_vals) + \
                         "------>> Invalid Folio Format"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validation Budget
-                budget_str = list_result[21]
+                budget_str = line.budget
                 budget = budget_obj.search(
                     [('name', '=', budget_str)], limit=1)
                 if not budget:
-                    failed_row += str(list_result) + \
+                    failed_row += str(line_vals) + \
                         "------>> Budget Not Found"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
                     continue
 
                 # Validate Origin
-                origin = self.env['quarter.budget'].search(
-                    [('name', '=', list_result[23])], limit=1)
+                origin = False
+                if line.origin:
+                    origin = list(
+                                filter(lambda wlke: wlke['name'] == line.origin, quarter_budget_obj))
+                    origin = origin[0]['id'] if origin else False
+                    
                 if not origin:
-                    failed_row += str(list_result) + \
+                    failed_row += str(line_vals) + \
                         "------>> Origin Not Found\n"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
                     continue
-
-                quarter = self.env['quarter.budget'].search(
-                    [('name', '=', list_result[24])], limit=1)
-                if not quarter:
-                    failed_row += str(list_result) + \
+                
+                quarter_data = False
+                if line.quarter_data:
+                    quarter_data = list(
+                                filter(lambda wlke: wlke['name'] == line.quarter_data, quarter_budget_obj))
+                    quarter_data = quarter_data[0]['id'] if quarter_data else False
+                
+                if not quarter_data:
+                    failed_row += str(line_vals) + \
                         "------>> Quarter Not Found\n"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
                     continue
 
                 try:
                     program_code = False
                     if stage and origin and budget and year and program and subprogram and dependency and subdependency and item and origin_resource and institutional_activity and shcp and conversion_item and expense_type and geo_location and wallet_key and project_type and stage and agreement_type:
-                        program_code = self.env['program.code'].sudo().search([
-                            ('year', '=', year.id),
-                            ('program_id', '=', program.id),
-                            ('sub_program_id', '=', subprogram.id),
-                            ('dependency_id', '=', dependency.id),
-                            ('sub_dependency_id', '=', subdependency.id),
-                            ('item_id', '=', item.id),
-                            ('resource_origin_id', '=', origin_resource.id),
-                            ('institutional_activity_id',
-                             '=', institutional_activity.id),
-                            ('budget_program_conversion_id', '=', shcp.id),
-                            ('conversion_item_id', '=', conversion_item.id),
-                            ('expense_type_id', '=', expense_type.id),
-                            ('location_id', '=', geo_location.id),
-                            ('portfolio_id', '=', wallet_key.id),
-                            ('project_type_id', '=', project_type.id),
-                            ('stage_id', '=', stage.id),
-                            ('agreement_type_id', '=', agreement_type.id),
-                            ('state', '=', 'validated'),
-                        ], limit=1)
+                        search_key_fields = (
+                                     year, program, subprogram, dependency, subdependency, item,
+                                     origin_resource, institutional_activity, shcp, conversion_item,
+                                     expense_type, geo_location, wallet_key, project_type, stage, agreement_type)
+                        search_key = ';'.join([str(skey) for skey in search_key_fields])
+                        program_code = self.env['program.code'].search([('search_key', '=', search_key)], limit=1)
+                        
+#                         program_code = self.env['program.code'].sudo().search([
+#                             ('year', '=', year.id),
+#                             ('program_id', '=', program.id),
+#                             ('sub_program_id', '=', subprogram.id),
+#                             ('dependency_id', '=', dependency.id),
+#                             ('sub_dependency_id', '=', subdependency.id),
+#                             ('item_id', '=', item.id),
+#                             ('resource_origin_id', '=', origin_resource.id),
+#                             ('institutional_activity_id',
+#                              '=', institutional_activity.id),
+#                             ('budget_program_conversion_id', '=', shcp.id),
+#                             ('conversion_item_id', '=', conversion_item.id),
+#                             ('expense_type_id', '=', expense_type.id),
+#                             ('location_id', '=', geo_location.id),
+#                             ('portfolio_id', '=', wallet_key.id),
+#                             ('project_type_id', '=', project_type.id),
+#                             ('stage_id', '=', stage.id),
+#                             ('agreement_type_id', '=', agreement_type.id),
+#                             ('state', '=', 'validated'),
+#                         ], limit=1)
 
                         if program_code:
                             self.check_program_item_games(program_code,False)
                             budget_line = self.env['expenditure.budget.line'].sudo().search(
                                 [('program_code_id', '=', program_code.id), ('expenditure_budget_id', '=', budget.id)], limit=1)
                             if not budget_line:
-                                failed_row += str(list_result) + \
+                                failed_row += str(line_vals) + \
                                     "------>> Budget line not found for selected program code!"
-                                failed_row_ids.append(pointer)
+                                failed_line_ids.append(line.id)
                                 continue
 
+                        if program_code:
                             pc = program_code
                             dv_obj = self.env['verifying.digit']
                             if pc.program_id and pc.sub_program_id and pc.dependency_id and \
@@ -593,54 +713,55 @@ class Standardization(models.Model):
                                 vd = dv_obj.check_digit_from_codes(
                                     pc.program_id, pc.sub_program_id, pc.dependency_id, pc.sub_dependency_id,
                                     pc.item_id)
-                                if vd and p_code and vd != p_code:
-                                    failed_row += str(list_result) + \
-                                                  "------>> Digito Verificador is not matched! \n"
-                                    failed_row_ids.append(pointer)
-                                    continue
+                                if vd and line.dv:
+                                    line_dv = line.dv
+                                    if len(line.dv) == 1:
+                                        line_dv = '0' + line.dv
+                                    if vd != line_dv:
+                                        failed_row += str(line_vals) + \
+                                                      "------>> Digito Verificador is not matched! \n"
+                                        failed_line_ids.append(line.id)
+                                        continue
 
                     if not program_code:
-                        failed_row += str(list_result) + \
-                            "------>> Program code not found!"
-                        failed_row_ids.append(pointer)
+                        failed_row += str(line_vals) + \
+                            "-------> Program Code is not created. \n"
+                        failed_line_ids.append(line.id)
                         continue
-                    success_row_ids.append(pointer)
+                    
+                    success_line_ids.append(line.id)
 
-                    if self._context.get('re_scan_failed'):
-                        failed_row_ids_eval_refill = eval(self.failed_row_ids)
-                        failed_row_ids_eval_refill.remove(pointer)
-                        self.write({'failed_row_ids': str(
-                            list(set(failed_row_ids_eval_refill)))})
-
-                    line_vals = {
-                        'folio': folio,
+#                     if self._context.get('re_scan_failed'):
+#                         failed_row_ids_eval_refill = eval(self.failed_row_ids)
+#                         failed_row_ids_eval_refill.remove(pointer)
+#                         self.write({'failed_row_ids': str(
+#                             list(set(failed_row_ids_eval_refill)))})
+                    line.write({
+                        #'folio': folio,
                         'code_id': program_code.id,
                         'budget_id': budget.id,
-                        'amount': amount,
-                        'origin_id': origin.id,
-                        'quarter': quarter.id,
+                        #'amount': amount,
+                        'origin_id': origin,
+                        'quarter': quarter_data,
                         'imported': True,
-                    }
-                    if not self.line_ids.filtered(lambda x:x.code_id.id==program_code.id):
-                        self.write({'line_ids': [(0, 0, line_vals)]})
+                    })
+#                     if not self.line_ids.filtered(lambda x:x.code_id.id==program_code.id):
+#                         self.write({'line_ids': [(0, 0, line_vals)]})
                 except:
-                    failed_row += str(list_result) + \
+                    failed_row += str(line_vals) + \
                         "------>> Row Data Are Not Corrected or Validated Program Code Not Found or Program Code not associated with selected budget!"
-                    failed_row_ids.append(pointer)
+                    failed_line_ids.append(line.id)
 
-            failed_row_ids_eval = eval(self.failed_row_ids)
-            success_row_ids_eval = eval(self.success_row_ids)
-            if len(success_row_ids) > 0:
-                success_row_ids_eval.extend(success_row_ids)
-            if len(failed_row_ids) > 0:
-                failed_row_ids_eval.extend(failed_row_ids)
 
-            vals = {
-                'failed_row_ids': str(list(set(failed_row_ids_eval))),
-                'success_row_ids': str(list(set(success_row_ids_eval))),
-                'pointer_row': pointer,
-            }
-
+            failed_lines = self.env['standardization.line'].browse(failed_line_ids)
+            success_lines = self.env['standardization.line'].browse(success_line_ids)
+            success_lines.write({'line_state': 'success'})
+            for l in failed_lines.filtered(lambda x:x.line_state=='draft'):
+                l.line_state = 'fail'
+            if self.failed_rows == 0:
+                self.import_status = 'done'
+                
+            vals = {}
             failed_data = False
             if failed_row != "":
                 content = ""
@@ -653,46 +774,9 @@ class Standardization(models.Model):
                 content += str(failed_row)
                 failed_data = base64.b64encode(content.encode('utf-8'))
                 vals['failed_row_file'] = failed_data
-            if pointer == sheet.nrows:
-                vals['import_status'] = 'done'
 
-            if pointer == sheet.nrows and len(failed_row_ids_eval) > 0:
-                self.write({'allow_upload': True})
-            if self.failed_row_ids == 0 or len(failed_row_ids_eval) == 0:
-                self.write({'allow_upload': False})
-
-            if cron:
-                next_cron = self.env['ir.cron'].sudo().search([('prev_cron_id', '=', cron.id), ('active', '=', False), ('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)], limit=1)
-                if next_cron:
-                    nextcall = datetime.now()
-                    nextcall = nextcall + timedelta(seconds=10)
-                    next_cron.write({'nextcall': nextcall, 'active': True})
-                else:
-                    self.write({'cron_running': False})
-                    failed_count = success_count = 0
-                    if self.line_ids:
-                        success_count = len(self.line_ids)
-                    failed_count = self.total_rows - success_count
-                    self.send_notification_msg(self.create_uid, failed_count, success_count)
-                    self.create_uid.notify_info(message='Standardization - ' + str(self.folio) +
-                        ' Lines validation process completed. Please verify and correct lines, if any failed!',
-                        title="Re-standardization", sticky=True)
-                    msg = (_("Re-standardization Validation Process Ended at %s" % datetime.strftime(
-                        datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
-                    self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
-                                                     'body': msg})
             if vals:
                 self.write(vals)
-            if self.failed_rows ==0:
-                self.total_rows = len(self.line_ids)
-            # if len(failed_row_ids) == 0:
-            #     return{
-            #         'effect': {
-            #             'fadeout': 'slow',
-            #             'message': 'All rows are imported successfully!',
-            #             'type': 'rainbow_man',
-            #         }
-            #     }
 
     def remove_cron_records(self):
         crons = self.env['ir.cron'].sudo().search([('model_id', '=', self.env.ref('jt_budget_mgmt.model_standardization').id)])
@@ -732,50 +816,54 @@ class Standardization(models.Model):
         return True
 
     def validate_draft_lines(self):
-        if self.budget_file:
+        
+        if self.line_ids.filtered(lambda x:x.line_state in ('draft','fail')):
+            self.validate_and_add_budget_line()
+        if self.failed_rows ==0:
+            self.import_status = 'done'
             # Total CRON to create
-            data = base64.decodestring(self.budget_file)
-            book = open_workbook(file_contents=data or b'')
-            sheet = book.sheet_by_index(0)
-            total_sheet_rows = sheet.nrows - 1
-            total_cron = math.ceil(total_sheet_rows / 5000)
-            msg = (_("Re-standardization Validation Process Started at %s" % datetime.strftime(
-                datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
-            self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
-                                             'body': msg})
-            if total_cron == 1:
-                self.validate_and_add_budget_line()
-                msg = (_("Re-standardization Validation Process Ended at %s" % datetime.strftime(
-                    datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
-                self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
-                                                 'body': msg})
-            else:
-                self.write({'cron_running': True})
-                prev_cron_id = False
-                for seq in range(1, total_cron + 1):
-                    # Create CRON JOB
-                    cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
-                    nextcall = datetime.now()
-                    nextcall = nextcall + timedelta(seconds=10)
-
-                    cron_vals = {
-                        'name': cron_name,
-                        'state': 'code',
-                        'nextcall': nextcall,
-                        'nextcall_copy': nextcall,
-                        'numbercall': -1,
-                        'code': "model.validate_and_add_budget_line()",
-                        'model_id': self.env.ref('jt_budget_mgmt.model_standardization').id,
-                        'user_id': self.env.user.id,
-                        'standardization_id': self.id
-                    }
-
-                    # Final process
-                    cron = self.env['ir.cron'].sudo().create(cron_vals)
-                    cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
-                    if prev_cron_id:
-                        cron.write({'prev_cron_id': prev_cron_id, 'active': False})
-                    prev_cron_id = cron.id
+#             data = base64.decodestring(self.budget_file)
+#             book = open_workbook(file_contents=data or b'')
+#             sheet = book.sheet_by_index(0)
+#             total_sheet_rows = sheet.nrows - 1
+#             total_cron = math.ceil(total_sheet_rows / 5000)
+#             msg = (_("Re-standardization Validation Process Started at %s" % datetime.strftime(
+#                 datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+#             self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
+#                                              'body': msg})
+#             if total_cron == 1:
+#                 self.validate_and_add_budget_line()
+#                 msg = (_("Re-standardization Validation Process Ended at %s" % datetime.strftime(
+#                     datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)))
+#                 self.env['mail.message'].create({'model': 'standardization', 'res_id': self.id,
+#                                                  'body': msg})
+#             else:
+#                 self.write({'cron_running': True})
+#                 prev_cron_id = False
+#                 for seq in range(1, total_cron + 1):
+#                     # Create CRON JOB
+#                     cron_name = str(self.folio).replace(' ', '') + "_" + str(datetime.now()).replace(' ', '')
+#                     nextcall = datetime.now()
+#                     nextcall = nextcall + timedelta(seconds=10)
+# 
+#                     cron_vals = {
+#                         'name': cron_name,
+#                         'state': 'code',
+#                         'nextcall': nextcall,
+#                         'nextcall_copy': nextcall,
+#                         'numbercall': -1,
+#                         'code': "model.validate_and_add_budget_line()",
+#                         'model_id': self.env.ref('jt_budget_mgmt.model_standardization').id,
+#                         'user_id': self.env.user.id,
+#                         'standardization_id': self.id
+#                     }
+# 
+#                     # Final process
+#                     cron = self.env['ir.cron'].sudo().create(cron_vals)
+#                     cron.write({'code': "model.validate_and_add_budget_line(" + str(self.id) + "," + str(cron.id) + ")"})
+#                     if prev_cron_id:
+#                         cron.write({'prev_cron_id': prev_cron_id, 'active': False})
+#                     prev_cron_id = cron.id
 
         
     def validate_data(self):
@@ -789,7 +877,7 @@ class Standardization(models.Model):
         if lines:
             raise ValidationError("Row Amount must be greater than 0!")
 
-        if self.total_rows > 0 and len(self.line_ids.ids) != self.total_rows:
+        if self.total_rows > 0 and self.success_rows != self.total_rows:
             raise ValidationError(
                 "Total imported rows not matched with total standardization lines!")
 
@@ -1014,6 +1102,35 @@ class StandardizationLine(models.Model):
                               ('cancelled', 'Cancelled')],
                              string='State')
 
+    # Fields for imported data
+
+    line_state = fields.Selection([('manual', 'Manual'), ('draft', 'Draft'), (
+        'fail', 'Fail'), ('success', 'Success')], string='Line Status', default='manual')
+        
+    year = fields.Char(string='Year')
+    program = fields.Char(string='Program')
+    subprogram = fields.Char(string='Sub-Program')
+    dependency = fields.Char(string='Dependency')
+    subdependency = fields.Char(string='Sub-Dependency')
+    item = fields.Char(string='Expense Item')
+    dv = fields.Char(string='Digit Varification')
+    origin_resource = fields.Char(string='Origin Resource')
+    ai = fields.Char(string='Institutional Activity')
+    conversion_program = fields.Char(string='Conversion Program')
+    departure_conversion = fields.Char(string='Federal Item')
+    expense_type = fields.Char(string='Expense Type')
+    location = fields.Char(string='State Code')
+    portfolio = fields.Char(string='Key portfolio')
+    project_type = fields.Char(string='Type of Project')
+    project_number = fields.Char(string='Project Number')
+    stage = fields.Char(string='Stage Identifier')
+    agreement_type = fields.Char(string='Type of Agreement')
+    agreement_number = fields.Char(string='Agreement number')
+    exercise_type = fields.Char(string='Exercise type')
+    budget = fields.Char(string='Budget')
+    origin = fields.Char(string='Origin')
+    quarter_data = fields.Char(string='Quarter')
+    
     _sql_constraints = [('uniq_program_per_standardization_id', 'unique(code_id,standardization_id)',
                          'The program code must be unique per Standardization'),
                         ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]

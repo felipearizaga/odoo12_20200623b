@@ -38,9 +38,9 @@ class ImportStandardizationLine(models.TransientModel):
     filename = fields.Char(string='File name')
     dwnld_file = fields.Binary(string='Download File')
     dwnld_filename = fields.Char(string='Download File name')
-
+    
     _sql_constraints = [
-        ('folio_uniq', 'unique(folio)', 'The folio must be unique.')]
+         ('folio_uniq', 'unique(id)', 'The ID must be unique.')]
 
     @api.constrains('folio')
     def _check_folio(self):
@@ -93,12 +93,50 @@ class ImportStandardizationLine(models.TransientModel):
                 total_rows = self.record_number + 1
                 if sheet.nrows != total_rows:
                     raise UserError(_('Number of records do not match with file'))
+
+                headers = []
+                for rowx, row in enumerate(map(sheet.row, range(1)), 1):
+                    for colx, cell in enumerate(row, 1):
+                        headers.append(cell.value)
+
+                field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item',
+                                 'dv', 'origin_resource', 'ai', 'conversion_program',
+                                 'departure_conversion', 'expense_type', 'location', 'portfolio',
+                                 'project_type', 'project_number', 'stage', 'agreement_type',
+                                 'agreement_number', 'exercise_type','folio','budget' ,'amount', 'origin', 'quarter_data']
+
+                result_vals = []
+                for rowx, row in enumerate(map(sheet.row, range(1, sheet.nrows)), 1):
+                    result_dict = {
+                        'imported': True,
+                        'state': False,
+                        'line_state' : 'draft',
+                    }
+                    counter = 0
+                    for colx, cell in enumerate(row, 1):
+                        value = cell.value
+                        if field_headers[counter] != 'Amount':
+                            if field_headers[counter] in ['year', 'dv'] and type(value) is int or type(value) is float:
+                                value = int(cell.value)
+                        else:
+                            value = float(cell.value)
+
+                        result_dict.update(
+                            {field_headers[counter]: value})
+                        counter += 1
+                    result_vals.append((0, 0, result_dict))
+
+                data = result_vals
                 if standardization:
+                    if self._context.get('reimport'):
+                        standardization.line_ids.filtered(
+                            lambda l:l.imported == True).unlink()
+                        #standardization.write({'state': 'draft'})
                     standardization.write({
-                        'budget_file': self.file,
-                        'filename': self.filename,
                         'import_status': 'in_progress',
+                        'line_ids': data,
                         'total_rows': self.record_number,
                     })
+                
             except UserError as e:
                 raise UserError(e)

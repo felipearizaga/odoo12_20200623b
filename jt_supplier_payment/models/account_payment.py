@@ -20,9 +20,9 @@ class AccountPayment(models.Model):
                               ('cancelled', 'Cancelled')], 
                               readonly=True, default='draft', copy=False, string="Status")
  
-    banamex_description = fields.Text('Description',size=24)
-    banamex_concept = fields.Text('Concept',size=34)
-    banamex_reference = fields.Text('Reference',size=10)
+    banamex_description = fields.Char('Description',size=24)
+    banamex_concept = fields.Char('Concept',size=34)
+    banamex_reference = fields.Char('Reference',size=10)
     
     net_cash_reference = fields.Char('Reference',size=7)
     net_cash_availability = fields.Selection([('SPEI','SPEI'),('CECOBAN','CECOBAN')],string='Availability')
@@ -36,7 +36,7 @@ class AccountPayment(models.Model):
     
     santander_payment_concept = fields.Text('Payment Concept')
     
-    hsbc_reference = fields.Text('HSBC Reference',size=40)
+    hsbc_reference = fields.Char('HSBC Reference',size=40)
     
     jp_method = fields.Selection([('WIRES','WIRES'),('BOOKTX','BOOKTX')],string='Method')
     jp_bank_transfer = fields.Selection([('non_financial_institution','Non Financial Institution'),
@@ -57,6 +57,13 @@ class AccountPayment(models.Model):
     jp_drawdown_type = fields.Selection([('WIRE','WIRE'),
                                     ('BOOK','BOOK'),('Drawdown','Drawdown')],string="Drawdown Type")
     
+    payment_request_id = fields.Many2one('account.move','circular')
+    
+    @api.constrains('banamex_reference')
+    def _check_banamex_reference(self):
+        if not str(self.banamex_reference).isnumeric():
+            raise ValidationError(_('The Banamex Reference must be numeric value'))
+
     def cancel(self):
         result = super(AccountPayment,self).cancel()
         if self.env.context and self.env.context.get('call_from_reject',False):
@@ -94,6 +101,7 @@ class AccountPayment(models.Model):
                 for line in payment.move_line_ids:
                     line.coa_conac_id = line.account_id and line.account_id.coa_conac_id and line.account_id.coa_conac_id.id or False
                     line.conac_move = True  
+            payment.banamex_concept = payment.name
         return result
  
     def action_draft(self):

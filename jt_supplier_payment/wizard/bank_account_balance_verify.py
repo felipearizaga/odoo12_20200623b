@@ -59,6 +59,7 @@ class BankBalanceCheck(models.TransientModel):
                      'batch_folio' : rec.batch_folio,
                      'folio' : rec.folio,
                      'payment_state': 'for_payment_procedure',
+                     'payment_request_id':rec.id,
                      }) 
         
         return data

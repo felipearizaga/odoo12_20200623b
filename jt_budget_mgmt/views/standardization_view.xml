@@ -46,8 +46,8 @@
                         Data validation is running in background, Page will be auto refreshed and <b>Data Validation Status</b> will be auto turned off when the process will get finished!
                     </div></center>
                     <header>
-                        <button name="validate_draft_lines" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'in_progress'), ('cron_running', '=', True)]}"/>
-                        <button name="validate_and_add_budget_line" type="object" string="Re-scan Failed Rows" class="oe_highlight" attrs="{'invisible': [('failed_rows', '=', 0), ('allow_upload', '=', False)]}" context="{'re_scan_failed':True}"/>
+                        <button name="validate_draft_lines" type="object" string="Validate Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'in_progress'),  ('failed_rows', '&gt;', 0)]}"/>
+                        <button name="validate_and_add_budget_line" type="object" string="Re-scan Failed Rows" class="oe_highlight" attrs="{'invisible': [('failed_rows', '=', 0)]}" context="{'re_scan_failed':True}"/>
 
                         <button name="confirm" type="object" string="Validate" class="oe_highlight" attrs="{'invisible': ['|', '|', ('failed_rows', '>', 0), ('state', '!=', 'draft'), ('cron_running', '=', True)]}"/>
                         <button name="cancel" type="object" string="Cancel" class="oe_highlight" states="draft"/>
@@ -79,6 +79,7 @@
                                 <field name="check_line_state" invisible="1"/>
     	            			<field name="folio" required="1"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': [('import_status', '!=', 'draft')]}"/>
+                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', '!=', 'draft')]}" context="{'reimport': True}"/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>
                             </group>
@@ -91,8 +92,9 @@
 	            		</group>
                         <notebook>
                             <page string="Standardization Lines">
+                            	<field name="line_ids" invisible="1"/>
                                 <button name="select_deselect_checkbox" type="object" string="Select/Deselect" class="oe_highlight"/>
-                                <field name="line_ids">
+                                <field name="success_line_ids">
                                     <tree editable="bottom">
                                         <field name="amount_effected" invisible="1"/>
                                         <field name="selected"/>
@@ -124,15 +126,91 @@
                                     </form>
                                 </field>
                             </page>
-                            <page string='Import Status' attrs="{'invisible': [('allow_upload', '=', False), ('budget_file', '=', False)]}">
+                            <page string="Imported Lines" attrs="{'invisible': [('state', '!=', 'draft')]}">
+                            	<field name="import_line_ids"  context="{'default_line_state':'draft'}">
+                            		<tree>
+                            		 <field name="imported" invisible="1"/>
+                            		 <field name="code_id" invisible="1"/>
+                                     <field name="budget_id" invisible="1"/>
+                                      <field name="origin_id" invisible="1"/>
+                                      <field name="quarter" invisible="1"/>
+                                      <field name="reason" invisible="1"/>
+              						 <field name="year"/>
+                                      <field name="program"/>
+                                      <field name="subprogram"/>
+                                      <field name="dependency"/>
+                                      <field name="subdependency"/>
+                                      <field name="item"/>
+                                      <field name="dv"/>
+                                      <field name="origin_resource"/>
+                                      <field name="ai"/>
+                                      <field name="conversion_program"/>
+                                      <field name="departure_conversion"/>
+                                      <field name="expense_type"/>
+                                      <field name="location"/>
+                                      <field name="portfolio"/>
+                                      <field name="project_type"/>
+                                      <field name="project_number"/>
+                                      <field name="stage"/>
+                                      <field name="agreement_type"/>
+                                      <field name="agreement_number"/>
+                                      <field name="exercise_type"/>
+                                      <field name="folio"/>
+                                      <field name="amount"/>
+                                      <field name="origin"/>
+                                      <field name="quarter_data"/>
+                                      <field name="line_state" invisible="1"/>
+                            		  <field name="currency_id" invisible="1"/>
+                            		  <field name="standardization_id" invisible="1"/>
+                            		</tree>
+                            		<form>
+                            			<group>
+									  <field name="code_id" invisible="1"/>
+                                      <field name="budget_id" invisible="1"/>
+                                       <field name="origin_id" invisible="1"/>
+                                       <field name="quarter" invisible="1"/>
+                                      <field name="reason" invisible="1"/>	
+     								  <field name="imported" invisible="1"/>
+              						  <field name="year"/>
+                                      <field name="program"/>
+                                      <field name="subprogram"/>
+                                      <field name="dependency"/>
+                                      <field name="subdependency"/>
+                                      <field name="item"/>
+                                      <field name="dv"/>
+                                      <field name="origin_resource"/>
+                                      <field name="ai"/>
+                                      <field name="conversion_program"/>
+                                      <field name="departure_conversion"/>
+                                      <field name="expense_type"/>
+                                      <field name="location"/>
+                                      <field name="portfolio"/>
+                                      <field name="project_type"/>
+                                      <field name="project_number"/>
+                                      <field name="stage"/>
+                                      <field name="agreement_type"/>
+                                      <field name="agreement_number"/>
+                                      <field name="exercise_type"/>
+                                      <field name="folio"/>
+                                      <field name="amount"/>
+                                      <field name="origin"/>
+                                      <field name="quarter_data"/>
+                                      <field name="line_state" invisible="1"/>
+                            		  <field name="currency_id" invisible="1"/>
+                            		  <field name="standardization_id" invisible="1"/>
+                            		  </group>                            			
+                            		</form>
+                            	</field>
+                            </page>
+                            <page string='Import Status' >
                                 <group>
                                     <!-- Hidden Fields -->
                                     <field name="cron_running" readonly="1" widget="boolean_toggle"
-                                           string="Data validation Status"/>
+                                           string="Data validation Status" invisible="1"/>
                                     <field name="allow_upload" invisible="1"/>
                                     <field name="import_status" readonly="1" invisible="1"/>
 
-                                    <field name="budget_file" filename="filename"/>
+                                    <field name="budget_file" filename="filename" invisible="1"/>
                                     <field name="filename" invisible="1"/>
                                     <field name="fialed_row_filename" invisible="1"/>
                                     <field name="failed_row_file" attrs="{'invisible': [('failed_rows', '=', 0)]}" readonly="1" string="Failed Rows Tracker" filename="fialed_row_filename"/>
