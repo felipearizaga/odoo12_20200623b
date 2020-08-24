@@ -71,6 +71,14 @@ class AccountPayment(models.Model):
         self.write({'payment_state': 'cancelled'})
         return result
 
+    def action_validate_payment_procedure(self):
+        self.write({'payment_state': 'for_payment_procedure'})
+
+    def action_reschedule_payment_procedure(self):
+        for payment in self:
+            payment.action_draft()
+            payment.payment_state = 'for_payment_procedure'
+        
     def create_journal_for_paid(self,invoice):
         #==== he Bank Journal will be taken, corresponding to the “Paid” accounting moment ===#
         invoice.line_ids = [(0, 0, {
