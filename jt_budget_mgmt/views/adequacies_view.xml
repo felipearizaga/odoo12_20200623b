@@ -36,7 +36,7 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="folio" required="1"/>
+                                <field name="folio" readonly="1"/>
                                 <field name="budget_id" required="1"/>
                                 <field name="adaptation_type" required="1"/>
                                 <field name="journal_id" readonly="1" force_save="1"/>

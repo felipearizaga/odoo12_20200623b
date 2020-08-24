@@ -142,6 +142,13 @@ class Adequacies(models.Model):
         string='Current Pointer Row', default=1, copy=False)
     total_rows = fields.Integer(string="Total Rows", copy=False)
 
+    @api.model
+    def create(self,vals):
+        name = self.env['ir.sequence'].next_by_code('adequacies.folio')
+        vals.update({'folio':name})
+        res = super(Adequacies,self).create(vals)
+        return res
+
     def import_lines(self):
         return {
             'name': _('Import Adequacies'),
@@ -239,14 +246,6 @@ class Adequacies(models.Model):
                     failed_row_ids.append(pointer)
                     continue
 
-                # Validate Sub-Program
-                subprogram = subprogram_obj.validate_subprogram(list_result[2], program)
-                if not subprogram:
-                    failed_row += str(list_result) + \
-                                  "------>> Invalid SubProgram(SP) Format\n"
-                    failed_row_ids.append(pointer)
-                    continue
-
                 # Validate Dependency
                 dependency = dependancy_obj.validate_dependency(list_result[3])
                 if not dependency:
@@ -260,6 +259,14 @@ class Adequacies(models.Model):
                 if not subdependency:
                     failed_row += str(list_result) + \
                                   "------>> Invalid Sub Dependency(DEP) Format\n"
+                    failed_row_ids.append(pointer)
+                    continue
+
+                # Validate Sub-Program
+                subprogram = subprogram_obj.validate_subprogram(list_result[2], program, dependency, subdependency)
+                if not subprogram:
+                    failed_row += str(list_result) + \
+                                  "------>> Invalid SubProgram(SP) Format\n"
                     failed_row_ids.append(pointer)
                     continue
 

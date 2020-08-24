@@ -36,6 +36,7 @@ msgstr ""
 msgid "02"
 msgstr ""
 
+
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_origin__03
 msgid "03"
@@ -906,6 +907,7 @@ msgstr ""
 msgid "Date Of Budget Affected"
 msgstr "Fecha del presupuesto afectado"
 
+
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__date_of_liquid_adu
 msgid "Date of Liquid Adjustments"
@@ -947,8 +949,10 @@ msgstr "Conversión de salida"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_verifying_digit__dependency_id
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization_line__dependency
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__code_structure__section__dep
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__dependency_id
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.dependency_search_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.program_code_search_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_program_search_view
 #: model:report.program.fields,name:jt_budget_mgmt.program_field_4
 #, python-format
 msgid "Dependency"
@@ -1941,6 +1945,12 @@ msgid "Item of Expenditure"
 msgstr "Partida de Gastos"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_departure_conversion__item_id
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.departure_conversion_search_view
+msgid "Item of Expenditure"
+msgstr "Partida de Gastos"
+
+#. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__journal_id
 msgid "Journal"
 msgstr "Diario"
@@ -2627,6 +2637,7 @@ msgstr "Resumen Presupuesto Proforma"
 msgid "Program"
 msgstr "Programa"
 
+
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_program
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_program
@@ -3166,7 +3177,6 @@ msgstr "Identificador de Etapa"
 msgid "Stage"
 msgstr "Etapa"
 
-
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_standardization_line__standardization_id
 msgid "Standardization"
@@ -3193,6 +3203,19 @@ msgstr "Fecha Inicial"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__start_date
 msgid "Start date"
 msgstr "Fecha de inicio"
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__state
@@ -3259,7 +3282,9 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_hr_employee__sub_dependancy_id
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_payment_place__sub_dependancy_id
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_payment_request__sub_dependancy_id
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_sub_program__sub_dependency_id
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__code_structure__section__sd
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.sub_program_search_view
 #: model:report.program.fields,name:jt_budget_mgmt.program_field_5
 msgid "Sub Dependency"
 msgstr "Subdependencia"
@@ -3738,8 +3763,8 @@ msgstr "El tamaño de la Subdependencia debe ser de 2 dígitos."
 
 #. module: jt_budget_mgmt
 #: model:ir.model.constraint,message:jt_budget_mgmt.constraint_sub_program_sub_program_unam_key_id
-msgid "The sub program must be unique per UNAM key"
-msgstr "El Subprograma debe ser único por Clave de Programa UNAM"
+msgid "The sub program must be unique per UNAM key,Dependency and Sub Dependency"
+msgstr "El Subprograma debe ser único por Clave de Programa UNAM,Dependencia y Subdependencia"
 
 #. module: jt_budget_mgmt
 #: code:addons/jt_budget_mgmt/models/sub_program.py:0

@@ -5,8 +5,8 @@
         name="UNAM Finance"
         id="menu_finance"
         web_icon="jt_finance,static/description/icon.png"
-        sequence="5"
-        parent="account_accountant.menu_accounting"
+        sequence="1"
+        parent="jt_payroll_payment.menu_payment_finance"
 
     />
 

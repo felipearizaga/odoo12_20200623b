@@ -82,7 +82,7 @@
                             </group>
                             <group>
                                 <!-- Federal Item Relation -->
-                                <field name="conversion_item_id" required="1"/>
+                                <field name="conversion_item_id" required="1" domain="[('item_id','=',item_id)]"/>
                                 <field name="desc_conversion_item"/>
                                 <!-- Expense Type Relation -->
                                 <field name="expense_type_id" required="1"/>

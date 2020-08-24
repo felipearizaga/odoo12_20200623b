@@ -32,7 +32,8 @@ class DepartureConversion(models.Model):
 
     federal_part = fields.Char(string='Federal part', size=5)
     federal_part_desc = fields.Text(string='Federal part description')
-
+    item_id = fields.Many2one('expenditure.item','Item of Expenditure')
+    
     _sql_constraints = [('federal_part', 'unique(federal_part)', 'The federal part must be unique.')]
 
     @api.constrains('federal_part')

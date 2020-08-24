@@ -44,7 +44,7 @@
         'data/quarter.budget.csv',
         'data/budget.control.csv',
         'data/remove_cron_scheduler.xml',
-
+        'data/sequence.xml',
         # Reports
         'report/search_template.xml',
 

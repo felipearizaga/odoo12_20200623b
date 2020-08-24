@@ -132,27 +132,27 @@ class CalendarAssignedAmounts(models.Model):
         res = super(CalendarAssignedAmounts, self).create(vals)
         return res
 
-    @api.constrains('date', 'line_ids')
-    def _check_lines(self):
-        if self.date:
-            date_month = self.date.month
-            months = list(self.line_ids.mapped('month'))
-            month_dict = {
-                1: 'january',
-                2: 'february',
-                3: 'march',
-                4: 'april',
-                5: 'may',
-                6: 'june',
-                7: 'july',
-                8: 'august',
-                9: 'september',
-                10: 'october',
-                11: 'november',
-                12: 'december',
-            }
-            if any(month != month_dict.get(date_month) for month in months):
-                raise ValidationError("You can only add selected date's month in lines")
+#     @api.constrains('date', 'line_ids')
+#     def _check_lines(self):
+#         if self.date:
+#             date_month = self.date.month
+#             months = list(self.line_ids.mapped('month'))
+#             month_dict = {
+#                 1: 'january',
+#                 2: 'february',
+#                 3: 'march',
+#                 4: 'april',
+#                 5: 'may',
+#                 6: 'june',
+#                 7: 'july',
+#                 8: 'august',
+#                 9: 'september',
+#                 10: 'october',
+#                 11: 'november',
+#                 12: 'december',
+#             }
+#             if any(month != month_dict.get(date_month) for month in months):
+#                 raise ValidationError("You can only add selected date's month in lines")
 
 
 class CalendarAssignedAmountsLines(models.Model):
@@ -193,6 +193,41 @@ class CalendarAssignedAmountsLines(models.Model):
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
 
+    currency_id = fields.Many2one(
+        'res.currency', default=lambda self: self.env.company.currency_id)
+    
+    #==== New fields ======#
+    year = fields.Char('Year',size=4)
+    branch = fields.Integer('Branch')
+    unit = fields.Integer('Unit')
+    purpose = fields.Integer('Purpose')
+    function = fields.Integer('Function')
+    sub_function = fields.Integer('Subfunction')
+    program = fields.Char('Program')
+    institution_activity = fields.Integer('Institution Activity')
+    project_identification = fields.Char('Project Identification',size=2)
+    project = fields.Char('Project')
+    budgetary_program = fields.Char('Budgetary Program')
+    item_id = fields.Many2one('departure.conversion','Expense Item')
+    expense_type = fields.Integer('Expense Type')
+    funding_source = fields.Char('Funding Source')
+    federal = fields.Integer('Federal')
+    key_wallet = fields.Integer('Key Wallet')
+    january = fields.Float(string='January')
+    february = fields.Float(string='February')
+    march = fields.Float(string='March')
+    april = fields.Float(string='April')
+    may = fields.Float(string='May')
+    june = fields.Float(string='June')
+    july = fields.Float(string='July')
+    august = fields.Float(string='August')
+    september = fields.Float(string='September')
+    october = fields.Float(string='October')
+    november = fields.Float(string='November')
+    december = fields.Float(string='December')
+    annual_amount = fields.Float(string='Annual Amount')
+    annual_amount_received = fields.Float(string='Annual Amount Received')
+    
 class AccountMove(models.Model):
 
     _inherit = 'account.move'

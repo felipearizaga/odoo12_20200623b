@@ -97,7 +97,7 @@ class ImportLine(models.TransientModel):
                 field_headers = ['year', 'program', 'subprogram', 'dependency', 'subdependency', 'item', 'dv',
                                  'origin_resource', 'ai', 'conversion_program', 'departure_conversion',
                                  'expense_type', 'location', 'portfolio', 'project_type', 'project_number',
-                                 'stage', 'agreement_type', 'agreement_number', 'exercise_type', 'assigned',
+                                 'stage', 'agreement_type', 'agreement_number', 'exercise_type',
                                  'authorized', 'start_date', 'end_date']
 
                 total_budget_amount = 0
@@ -107,6 +107,11 @@ class ImportLine(models.TransientModel):
                         'imported': True,
                         'state': 'draft',
                     }
+                    if budget:
+                        if budget.from_date:
+                            result_dict.update({'start_date':budget.from_date})
+                        if budget.to_date:
+                            result_dict.update({'end_date':budget.to_date})
                     counter = 0
                     for colx, cell in enumerate(row, 1):
                         value = cell.value

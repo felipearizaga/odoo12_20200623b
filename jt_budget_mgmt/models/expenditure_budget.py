@@ -254,7 +254,7 @@ class ExpenditureBudget(models.Model):
             
             program_code_model = self.env['program.code'].sudo()
             program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
-            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            subprogram_obj = self.env['sub.program'].search_read([], fields=['id','dependency_id','sub_dependency_id' ,'unam_key_id', 'sub_program'])
             dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
             subdependancy_obj = self.env['sub.dependency'].search_read([],
                                                                        fields=['id', 'dependency_id', 'sub_dependency'])
@@ -324,24 +324,32 @@ class ExpenditureBudget(models.Model):
 
                 if line.state in ['fail', 'draft']:
 
+#     @api.constrains('start_date')
+#     def check_budget_quarter(self):
+#         if self.start_date and self.expenditure_budget_id:
+#             
+#             b_s_month = self.start_date.month
+#             if b_s_month not in (1, 2, 3) and self.expenditure_budget_id.state =='draft':
+#                 raise ValidationError("You can only import and add lines for first quarter only!")
+
                     # Check Date Quarter
-                    if line.start_date:
-                        b_s_month = line.start_date.month
-                        b_s_day = line.start_date.day
-                        if b_s_month != 1 or b_s_day!=1:
-                            failed_row += str(line_vals) + \
-                                          "------>> You can only import and add lines for first quarter only\n"
-                            failed_line_ids.append(line.id)
-                            continue
-                        
-                    if line.end_date:
-                        b_s_month = line.end_date.month
-                        b_s_day = line.end_date.day
-                        if b_s_month != 3 or b_s_day!=31:
-                            failed_row += str(line_vals) + \
-                                          "------>> You can only import and add lines for first quarter only\n"
-                            failed_line_ids.append(line.id)
-                            continue
+#                     if line.start_date:
+#                         b_s_month = line.start_date.month
+#                         b_s_day = line.start_date.day
+#                         if b_s_month != 1 or b_s_day!=1:
+#                             failed_row += str(line_vals) + \
+#                                           "------>> You can only import and add lines for first quarter only\n"
+#                             failed_line_ids.append(line.id)
+#                             continue
+#                         
+#                     if line.end_date:
+#                         b_s_month = line.end_date.month
+#                         b_s_day = line.end_date.day
+#                         if b_s_month != 3 or b_s_day!=31:
+#                             failed_row += str(line_vals) + \
+#                                           "------>> You can only import and add lines for first quarter only\n"
+#                             failed_line_ids.append(line.id)
+#                             continue
 
                     # Check Start and End Date
                     if not line.start_date:
@@ -394,19 +402,6 @@ class ExpenditureBudget(models.Model):
                         failed_line_ids.append(line.id)
                         continue
 
-                    # Validate Sub-Program
-
-                    subprogram = False
-                    if len(str(line.subprogram)) > 1:
-                        subprogram_str = str(line.subprogram).zfill(2)
-                        if subprogram_str.isnumeric():
-                            subprogram = list(filter(lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][0] == program, subprogram_obj))
-                            subprogram = subprogram[0]['id'] if subprogram else False
-                    if not subprogram:
-                        failed_row += str(line_vals) + \
-                                      "------>> Invalid SubProgram(SP) Format\n"
-                        failed_line_ids.append(line.id)
-                        continue
 
                     # Validate Dependency
                     dependency = False
@@ -431,6 +426,21 @@ class ExpenditureBudget(models.Model):
                     if not subdependency:
                         failed_row += str(line_vals) + \
                                       "------>> Invalid Sub Dependency(DEP) Format\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+                    # Validate Sub-Program
+                    subprogram = False
+                    if len(str(line.subprogram)) > 1:
+                        
+                        subprogram_str = str(line.subprogram).zfill(2)
+                        if subprogram_str.isnumeric():
+                            subprogram = self.env['sub.program'].search([('sub_program','=',subprogram_str),('unam_key_id','=',program),('dependency_id','=',dependency),('sub_dependency_id','=',subdependency)],limit=1)
+                            #subprogram = list(filter(lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][0] == program and subp['dependency_id'][0] and subp['dependency_id'][0] == dependency and subp['sub_dependency_id'][0] and subp['sub_dependency_id'][0] == subdependency, subprogram_obj))
+                            subprogram = subprogram and subprogram.id or False
+                    if not subprogram:
+                        failed_row += str(line_vals) + \
+                                      "------>> Invalid SubProgram(SP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -778,7 +788,7 @@ class ExpenditureBudget(models.Model):
                     pass
 
     def verify_data(self):
-        total = sum(self.success_line_ids.mapped('assigned'))
+        total = sum(self.success_line_ids.mapped('authorized'))
         if total <= 0:
             raise ValidationError("Budget amount should be greater than 0")
         if len(self.success_line_ids.ids) == 0:

@@ -31,6 +31,7 @@
                                 <field name="amount_received"/>
                                 <field name="amount_pending"/>
                                 <field name="obs_calender_amount"/>
+                                <field name="journal_id"/>
 
                                 <!-- Fields for Control of Assigned Amount -->
                                 <field name="folio" invisible="1"/>
@@ -46,29 +47,94 @@
                             <page string="Calendar of assigned amounts lines">
                                 <field name="line_ids">
                                     <tree>
-                                       <field name="date"/>
-                                       <field name="shcp_id"/>
-                                       <field name="month"/>
-                                       <field name="amount_assigned"/>
-                                       <field name="amount_deposited"/>
+                                       <field name="date" invisible="1"/>
+                                       <field name="shcp_id" invisible="1"/>
+                                       <field name="month" invisible="1"/>
+                                       <field name="amount_assigned" invisible="1"/>
+                                       <field name="amount_deposited" invisible="1"/>
                                        <field name="amount_pending" invisible="1"/>
+                                       <field name="year"/>
+                                       <field name="branch"/>
+                                       <field name="unit"/>
+                                       <field name="purpose"/>
+                                       <field name="function"/>
+                                       <field name="sub_function"/>
+                                       <field name="program"/>
+                                       <field name="institution_activity"/>
+                                       <field name="project_identification"/>
+                                       <field name="project"/>
+                                       <field name="budgetary_program"/>
+                                       <field name="item_id"/>
+                                       <field name="expense_type"/>
+                                       <field name="funding_source"/>
+                                       <field name="federal"/>
+                                       <field name="key_wallet"/>
+                                       <field name="january" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="march" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="april" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="may" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="june" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="july" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="august" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="september" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="october" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="november" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="december" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                        <field name="bank_id"/>
                                        <field name="bank_account_id"/>
                                        <field name="observations"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                     </tree>
                                     <form>
-                                        <group>
-                                            <field name="date" readonly="1"/>
-                                            <field name="shcp_id" required="1"/>
-                                            <field name="month" required="1"/>
-                                            <field name="amount_assigned" required="1"/>
-                                            <field name="amount_deposited" readonly="1"/>
-                                            <field name="amount_pending" invisible="1"/>
-                                            <field name="bank_id" readonly="1"/>
-                                            <field name="bank_account_id" readonly="1"/>
-                                            <field name="observations"/>
-                                            <field name="calendar_assigned_amount_id" invisible="1"/>
+                                    	<group>
+	                                    	<group>
+			                                       <field name="year"/>
+			                                       <field name="branch"/>
+			                                       <field name="unit"/>
+			                                       <field name="purpose"/>
+			                                       <field name="function"/>
+			                                       <field name="sub_function"/>
+			                                       <field name="program"/>
+			                                       <field name="institution_activity"/>
+			                                       <field name="project_identification"/>
+			                                       <field name="project"/>
+			                                       <field name="budgetary_program"/>
+			                                       <field name="item_id"/>
+			                                       <field name="expense_type"/>
+			                                       <field name="funding_source"/>
+			                                       <field name="federal"/>
+			                                       <field name="key_wallet"/>
+	                                    	</group>
+	                                        <group>
+	                                        	<field name="currency_id" invisible="1"/>
+	                                            <field name="date" invisible="1"/>
+	                                            <field name="shcp_id" invisible="1"/>
+	                                            <field name="month" invisible="1"/>
+	                                            <field name="amount_assigned" invisible="1"/>
+	                                            <field name="amount_deposited" invisible="1"/>
+	                                            <field name="amount_pending" invisible="1"/>
+		                                      	<field name="january" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="march" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="april" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="may" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="june" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="july" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="august" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="september" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="october" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="november" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="december" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+		                                       <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+	                                            <field name="bank_id" />
+	                                            <field name="bank_account_id"/>
+	                                            <field name="observations"/>
+	                                            <field name="calendar_assigned_amount_id" invisible="1"/>
+	                                        </group>
                                         </group>
                                     </form>
                                 </field>

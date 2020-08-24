@@ -146,7 +146,7 @@ class ControlAssignedAmounts(models.Model):
             # Objects
             program_code_model = self.env['program.code'].sudo()
             program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
-            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program','dependency_id','sub_dependency_id'])
             dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
             subdependancy_obj = self.env['sub.dependency'].search_read([],
                                                                        fields=['id', 'dependency_id', 'sub_dependency'])
@@ -243,22 +243,6 @@ class ControlAssignedAmounts(models.Model):
                         failed_line_ids.append(line.id)
                         continue
 
-                    # Validate Sub-Program
-                    # subprogram = subprogram_obj.validate_subprogram(
-                    #     line.subprogram, program)
-                    subprogram = False
-                    if len(str(line.subprogram)) > 1:
-                        subprogram_str = str(line.subprogram).zfill(2)
-                        if subprogram_str.isnumeric():
-                            subprogram = list(filter(
-                                lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
-                                    0] == program, subprogram_obj))
-                            subprogram = subprogram[0]['id'] if subprogram else False
-                    if not subprogram:
-                        failed_row += str(line_vals) + \
-                            "------>> Invalid SubProgram(SP) Format\n"
-                        failed_line_ids.append(line.id)
-                        continue
 
                     # Validate Dependency
                     # dependency = dependancy_obj.validate_dependency(
@@ -288,6 +272,24 @@ class ControlAssignedAmounts(models.Model):
                     if not subdependency:
                         failed_row += str(line_vals) + \
                             "------>> Invalid Sub Dependency(DEP) Format\n"
+                        failed_line_ids.append(line.id)
+                        continue
+
+                    # Validate Sub-Program
+                    # subprogram = subprogram_obj.validate_subprogram(
+                    #     line.subprogram, program)
+                    subprogram = False
+                    if len(str(line.subprogram)) > 1:
+                        subprogram_str = str(line.subprogram).zfill(2)
+                        if subprogram_str.isnumeric():
+							subprogram = self.env['sub.program'].search([('sub_program','=',subprogram_str),('unam_key_id','=',program),('dependency_id','=',dependency),('sub_dependency_id','=',subdependency)],limit=1)
+                            #subprogram = list(filter(
+                            #    lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
+                            #        0] == program, subprogram_obj))
+                            subprogram = subprogram and subprogram.id or False
+                    if not subprogram:
+                        failed_row += str(line_vals) + \
+                            "------>> Invalid SubProgram(SP) Format\n"
                         failed_line_ids.append(line.id)
                         continue
 
@@ -486,6 +488,21 @@ class ControlAssignedAmounts(models.Model):
                             "------>> Invalid Asigned Amount Format"
                         failed_line_ids.append(line.id)
                         continue
+
+                    # Validation Authorized Amount
+                    authorized_amount = 0
+                    # try:
+                    #     authorized_amount = float(line.authorized)
+                    #     if authorized_amount == 0:
+                    #         failed_row += str(line_vals) + \
+                    #             "------>> Authorized Amount should be greater than 0!"
+                    #         failed_line_ids.append(line.id)
+                    #         continue
+                    # except:
+                    #     failed_row += str(line_vals) + \
+                    #         "------>> Invalid Authorized Amount Format"
+                    #     failed_line_ids.append(line.id)
+                    #     continue
 
                     if not line.dv:
                         failed_row += str(line_vals) + \

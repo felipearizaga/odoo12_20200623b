@@ -949,11 +949,12 @@ class Standardization(models.Model):
                 if origin_budget_line and line.amount > origin_budget_line.assigned:
                     if user_lang == 'es_MX':
                         raise ValidationError(_("El monto es mayor que el asignado en el presupuesto. \n Presupuesto:"
-                                                " %s \nCódigo del programa de: %s" % (
-                                                line.budget_id.name, line.code_id.program_code)))
+                                                " %s \nCódigo del programa de: %s \nEl monto requerido es de $ %s y el monto disponible es de $ %s " % (
+                                                line.budget_id.name, line.code_id.program_code,line.amount,origin_budget_line.assigned)))
                     else:
                         raise ValidationError(_("The amount is greater than the one assigned in the budget. \n Budget:"
-                                                " %s \nProgram Code: %s" % (line.budget_id.name, line.code_id.program_code)))
+                                                " %s \nProgram Code: %s \nThe required amount is $ %s and the available amount is $ %s" 
+                                                % (line.budget_id.name, line.code_id.program_code,line.amount,origin_budget_line.assigned)))
 
     def confirm(self):
         self.validate_data()

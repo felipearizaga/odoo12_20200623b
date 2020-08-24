@@ -33,9 +33,11 @@ class SubProgram(models.Model):
     unam_key_id = fields.Many2one('program', string='UNAM key')
     sub_program = fields.Char(string='Sub program', size=2)
     desc = fields.Text(string='Sub program description')
-
-    _sql_constraints = [('sub_program_unam_key_id', 'unique(sub_program,unam_key_id)',
-                         'The sub program must be unique per UNAM key')]
+    dependency_id = fields.Many2one('dependency', string='Dependency')
+    sub_dependency_id = fields.Many2one('sub.dependency', string='Sub Dependency')
+    
+    _sql_constraints = [('sub_program_unam_key_id', 'unique(sub_program,unam_key_id,dependency_id,sub_dependency_id)',
+                         'The sub program must be unique per UNAM key,Dependency and Sub Dependency')]
 
     @api.constrains('sub_program')
     def _check_sub_program(self):
@@ -63,12 +65,12 @@ class SubProgram(models.Model):
                 raise ValidationError('You can not delete sub-program which are mapped with program code!')
         return super(SubProgram, self).unlink()
 
-    def validate_subprogram(self, subprogram_string, program):
+    def validate_subprogram(self, subprogram_string, program,dependency,subdependency):
         if len(str(subprogram_string)) > 1:
             subprogram_str = str(subprogram_string).zfill(2)
             if subprogram_str.isnumeric():
                 subprogram = self.search(
-                    [('unam_key_id', '=', program.id), ('sub_program', '=', subprogram_str)], limit=1)
+                    [('unam_key_id', '=', program.id),('dependency_id','=',dependency.id),('sub_dependency_id','=',subdependency.id),('sub_program', '=', subprogram_str)], limit=1)
                 if subprogram:
                     return subprogram
         return False

@@ -8,8 +8,12 @@
             <field name="arch" type="xml">
                 <search string="Sub program">
                     <field name="unam_key_id"/>
+                    <field name="dependency_id"/>
+                    <field name="sub_dependency_id"/>
                     <group expand="1" string="Group By">
                         <filter string="UNAM key" name='unam_key_id' context="{'group_by':'unam_key_id'}"/>
+                        <filter string="Dependency" name='dependency_id' context="{'group_by':'dependency_id'}"/>
+                        <filter string="Sub Dependency" name='sub_dependency_id' context="{'group_by':'sub_dependency_id'}"/>
                     </group>
                 </search>
             </field>
@@ -23,6 +27,8 @@
             	<form>
             		<sheet>
 	            		<group>
+	            			<field name="dependency_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+	            			<field name="sub_dependency_id" required="1" options="{'no_open': True, 'no_create': True}"/>
 	            			<field name="unam_key_id" required="1" options="{'no_open': True, 'no_create': True}"/>
                             <field name="sub_program" required="1"/>
                             <field name="desc"/>
@@ -38,6 +44,8 @@
             <field name="model">sub.program</field>
             <field name="arch" type="xml">
             	<tree>
+                    <field name="dependency_id"/>
+                    <field name="sub_dependency_id"/>            	
             		<field name="unam_key_id"/>
                     <field name="sub_program"/>
                     <field name="desc"/>
