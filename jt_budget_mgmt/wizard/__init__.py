@@ -30,3 +30,4 @@ from . import affect_payment_budget_wiz
 from . import request_summary_report
 from . import budgetary_insufficiency_wizard
 from . import bank_balance_check
+from . import details_budget_report

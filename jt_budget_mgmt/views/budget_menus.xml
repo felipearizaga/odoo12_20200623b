@@ -311,4 +311,12 @@
         parent="menu_reports"
         sequence="3"
         action="action_requested_reports"/>
+
+    <menuitem
+        id="details_budget_report_menu"
+        name="Detailed Budget Reports"
+        parent="menu_reports"
+        sequence="4"
+        action="act_details_budget_summary_report"/>
+        
 </odoo>

@@ -69,7 +69,7 @@
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
                                 <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', '|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous')), ('cron_running', '=', True)]}" context="{'reimport': True}"/>
                                 <field name="total_budget"/>
-                                <field name="total_quarter_budget"/>
+                                <field name="total_quarter_budget" invisible="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>
                             </group>        
@@ -80,9 +80,9 @@
                                     <field name="to_date" class="oe_inline" required="1"/>
                                 </div>
                                 <field name="journal_id" readonly="1" force_save="1"/>
-                                <field name="assigned_total"/>
-                                <field name="authorised_total"/>
-                                <field name="available_total"/>
+                                <field name="assigned_total" invisible="1"/>
+                                <field name="authorised_total" invisible="1"/>
+                                <field name="available_total" invisible="1"/>
                             </group>
                         </group>
                         <notebook>

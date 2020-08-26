@@ -21,3 +21,5 @@
 #
 ##############################################################################
 from . import calendar_assigned_amounts
+from . import account_journal
+from . import control_amounts_received

@@ -75,7 +75,7 @@ class CalendarAssignedAmounts(models.Model):
     journal_id = fields.Many2one("account.journal", string="Journal")
     state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft')
     move_line_ids = fields.One2many('account.move.line', 'calender_id', string="Journal Items")
-
+    
     @api.model
     def default_get(self, fields):
         res = super(CalendarAssignedAmounts, self).default_get(fields)
@@ -84,7 +84,7 @@ class CalendarAssignedAmounts(models.Model):
             res.update({'journal_id': daily_income_jour.id})
         return res
 
-    def validate(self):
+    def action_validate_calendar_assing(self):
         self.ensure_one()
         move_obj = self.env['account.move']
         control_amount = self
@@ -92,45 +92,29 @@ class CalendarAssignedAmounts(models.Model):
         today = datetime.today().date()
         user = self.env.user
         partner_id = user.partner_id.id
-        amount = sum(control_amount.line_ids.mapped('amount_deposited'))
+        amount = sum(control_amount.line_ids.mapped('annual_amount'))
         company_id = user.company_id.id
-        if not journal.default_debit_account_id or not journal.default_credit_account_id \
-                or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
+        if not journal.estimated_credit_account_id or not journal.estimated_debit_account_id \
+                or not journal.conac_estimated_credit_account_id or not journal.conac_estimated_debit_account_id:
             raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
         unam_move_val = {'ref': self.folio, 'calender_id': control_amount.id, 'conac_move': True,
                          'date': today, 'journal_id': journal.id, 'company_id': company_id,
                          'line_ids': [(0, 0, {
-                             'account_id': journal.default_credit_account_id.id,
-                             'coa_conac_id': journal.conac_credit_account_id.id,
+                             'account_id': journal.estimated_credit_account_id.id,
+                             'coa_conac_id': journal.conac_estimated_credit_account_id.id,
                              'credit': amount, 'calender_id': control_amount.id,
                              'partner_id': partner_id
                          }), (0, 0, {
-                             'account_id': journal.default_debit_account_id.id,
-                             'coa_conac_id': journal.conac_debit_account_id.id,
+                             'account_id': journal.estimated_debit_account_id.id,
+                             'coa_conac_id': journal.conac_estimated_debit_account_id.id,
                              'debit': amount, 'calender_id': control_amount.id,
                              'partner_id': partner_id
                          })]}
         unam_move = move_obj.create(unam_move_val)
         unam_move.action_post()
         self.state = 'validate'
+        
 
-    def import_lines(self):
-        return {
-            'name': "Import and Validate File",
-            'type': 'ir.actions.act_window',
-            'res_model': 'import.control.amount.lines',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'views': [(False, 'form')],
-            'target': 'new',
-        }
-
-    @api.model
-    def create(self, vals):
-        vals['folio'] = self.env['ir.sequence'].next_by_code(
-            'control.amount.received') or _('New')
-        res = super(CalendarAssignedAmounts, self).create(vals)
-        return res
 
 #     @api.constrains('date', 'line_ids')
 #     def _check_lines(self):
@@ -195,11 +179,21 @@ class CalendarAssignedAmountsLines(models.Model):
 
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.company.currency_id)
-    
+
+    @api.depends('project_identification','project')
+    def get_budgetary_program(self):
+        for line in self:
+            budgetary_program = ''
+            if line.project_identification:
+                budgetary_program += line.project_identification
+            if line.project:
+                budgetary_program += line.project
+            line.budgetary_program = budgetary_program
+            
     #==== New fields ======#
     year = fields.Char('Year',size=4)
     branch = fields.Integer('Branch')
-    unit = fields.Integer('Unit')
+    unit = fields.Char('Unit')
     purpose = fields.Integer('Purpose')
     function = fields.Integer('Function')
     sub_function = fields.Integer('Subfunction')
@@ -207,12 +201,12 @@ class CalendarAssignedAmountsLines(models.Model):
     institution_activity = fields.Integer('Institution Activity')
     project_identification = fields.Char('Project Identification',size=2)
     project = fields.Char('Project')
-    budgetary_program = fields.Char('Budgetary Program')
+    budgetary_program = fields.Char(string='Budgetary Program',compute='get_budgetary_program',store=True)
     item_id = fields.Many2one('departure.conversion','Expense Item')
     expense_type = fields.Integer('Expense Type')
     funding_source = fields.Char('Funding Source')
     federal = fields.Integer('Federal')
-    key_wallet = fields.Integer('Key Wallet')
+    key_wallet = fields.Char('Key Wallet')
     january = fields.Float(string='January')
     february = fields.Float(string='February')
     march = fields.Float(string='March')

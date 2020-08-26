@@ -59,8 +59,22 @@ odoo.define('jt_budget_mgmt.widget_financial_report', function (require) {
          * @override
          * @returns {Promise}
          */
+
+		/**
         _confirmChange: function () {
             var self = this;
+            var result = StandaloneFieldManagerMixin._confirmChange.apply(this, arguments);
+            var data = {};
+            _.each(this.fields, function (filter, fieldName) {
+                data[fieldName] = self.widgets[fieldName].value.res_ids;
+            });
+			console.log("====",this)
+            this.trigger_up('value_changed', data);
+            return result;
+        },
+		*/
+        _confirmChange_custom: function () {
+       		var self = this;
             var result = StandaloneFieldManagerMixin._confirmChange.apply(this, arguments);
             var data = {};
             _.each(this.fields, function (filter, fieldName) {
@@ -69,6 +83,7 @@ odoo.define('jt_budget_mgmt.widget_financial_report', function (require) {
             this.trigger_up('value_changed', data);
             return result;
         },
+
         /**
          * This method will create a record and initialize M2M widget.
          *
@@ -77,6 +92,7 @@ odoo.define('jt_budget_mgmt.widget_financial_report', function (require) {
          * @param {string} fieldName
          * @returns {Promise}
          */
+
         _makeM2MWidget: function (fieldInfo, fieldName) {
             var self = this;
             var options = {};
@@ -144,9 +160,42 @@ odoo.define('jt_budget_mgmt.widget_financial_report', function (require) {
              },
         },
 
+        _confirmChange_coustom: function () {
+            var data = {};
+            _.each(this.fields, function (filter, fieldName) {
+                data[fieldName] = self.widgets[fieldName].value.res_ids;
+            });
+            this.trigger_up('value_changed', data);
+        },
+
         render_searchview_buttons: function() {
             this._super.apply(this, arguments);
+			var self = this;
 
+
+		    _.each(this.$searchview_buttons.find('.js_budget_control_choice_filter'), function(k) {
+		        $(k).toggleClass('selected', (_.filter(self.report_options[$(k).data('filter')], function(el){return ''+el.id == ''+$(k).data('id') 			&& el.selected === true;})).length > 0);
+		    });
+
+		    this.$searchview_buttons.find('.js_budget_control_choice_filter').click(function (event) {
+		        var option_value = $(this).data('filter');
+		        var option_id = $(this).data('id');
+		        _.filter(self.report_options[option_value], function(el) {
+		            if (''+el.id == ''+option_id){
+		                if (el.selected === undefined || el.selected === null){el.selected = false;}
+		                el.selected = !el.selected;
+		            } else if (option_value === 'ir_filters') {
+		                el.selected = false;
+		            }
+		            return el;
+		        });
+		    _.each(self.$searchview_buttons.find('.js_budget_control_choice_filter'), function(k) {
+		        $(k).toggleClass('selected', (_.filter(self.report_options[$(k).data('filter')], function(el){return ''+el.id == ''+$(k).data('id') 			&& el.selected === true;})).length > 0);
+		    });
+				 
+		    });
+
+		
             // program_code_section filter
             if (this.report_options.code_sections) {
                 if (!this.M2MFilters) {
@@ -282,9 +331,13 @@ odoo.define('jt_budget_mgmt.widget_financial_report', function (require) {
                     if (!_.isEmpty(fields)) {
                         this.M2MFilters = new M2MFilters(this, fields);
                         this.M2MFilters.appendTo(this.$searchview_buttons.find('.js_program_code_section_m2m'));
+				    	this.$searchview_buttons.find('.o_budget_filter_search').on('click', this.M2MFilters._confirmChange_custom.bind(this.M2MFilters));
+
                     }
                 } else {
                     this.$searchview_buttons.find('.js_program_code_section_m2m').append(this.M2MFilters.$el);
+				    this.$searchview_buttons.find('.o_budget_filter_search').on('click', this.M2MFilters._confirmChange_custom.bind(this.M2MFilters));
+
                 }
             }
         },

@@ -37,6 +37,7 @@
         'views/calendar_assigned_amounts_view.xml',
         'views/budget_view.xml',
         'wizard/import_control_amount_lines_view.xml',
+        'views/account_journal.xml',
     ],
     'application': False,
     'installable': True,

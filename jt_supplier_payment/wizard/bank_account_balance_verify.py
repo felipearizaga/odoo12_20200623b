@@ -8,6 +8,7 @@ class BankBalanceCheck(models.TransientModel):
     
     journal_id = fields.Many2one('account.journal','Bank Of Payment Issue')
     account_id = fields.Many2one('account.account','Bank Account')
+    bank_account_id = fields.Many2one(related="journal_id.bank_account_id",string="Bank Account")
     total_amount = fields.Float('Total Amount')
     total_request = fields.Float('Total Request')
     is_balance = fields.Boolean('Balance')

@@ -638,6 +638,7 @@ class Adequacies(models.Model):
                     raise ValidationError(_(
                         "In liquid adjustment, you can only increase or decrease amount of budget!"))
             code_list_decrese = []
+            code_list_decrese_msg = ''
             for line in adequacies.adequacies_lines_ids:
                 budget_lines_check = self.env['expenditure.budget.line'].sudo().search(
                     [('program_code_id', '=', line.program.id),
@@ -727,6 +728,10 @@ class Adequacies(models.Model):
                         
                     if budget_line and budget_line.assigned < line.amount:
                         code_list_decrese.append(budget_line.program_code_id.program_code)
+                        if self.env.user.lang == 'es_MX':
+                            code_list_decrese_msg += 'Código del programa de:' + str(budget_line.program_code_id.program_code) + '\n' + ' El monto requerido es de $ '+str(line.amount) + ' y el monto disponible es de $ '+str(budget_line.assigned) + '\n'
+                        else:
+                            code_list_decrese_msg += 'Program Code: ' + str(budget_line.program_code_id.program_code) + '\n' + ' The required amount is $ '+str(line.amount) + ' the available amount is $ '+str(budget_line.assigned)  + '\n'      
                         continue
 
                     total_decreased += line.amount
@@ -736,12 +741,11 @@ class Adequacies(models.Model):
                     counter_increased += 1
             if code_list_decrese:
                 if self.env.user.lang == 'es_MX':
-                    raise ValidationError(_("No puede disminuir más de la cantidad asignada del código programático! \n %s" % \
-                                        ' '.join([str(elem) for elem in code_list_decrese])))
+                    raise ValidationError(_("El monto es mayor que el asignado en el presupuesto! \n presupuesto: %s \n %s" % (adequacies.budget_id.name,code_list_decrese_msg)))
                     
                 else:
-                    raise ValidationError(_("You can not decrease amount more than assigned amount! \n %s" % \
-                                        ' '.join([str(elem) for elem in code_list_decrese])))
+                    raise ValidationError(_("The amount is greater than the one assigned in the budget. \n Budget: %s \n %s" % (adequacies.budget_id.name,code_list_decrese_msg)))
+                    
             if adequacies.adaptation_type == 'compensated' and total_decreased != total_increased:
                 raise ValidationError(_(
                     "The total amount of the increases and the total amount of the decreases must be equal for compensated adjustments!"))

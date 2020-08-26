@@ -22,6 +22,10 @@
             <field name="model">calendar.assigned.amounts</field>
             <field name="arch" type="xml">
                 <form>
+                	<header>
+                		<button name="action_validate_calendar_assing" string="Validate" type="object" class="oe_highlight" states='draft'/>
+                		<field name="state" widget="statusbar"/>
+                	</header>
                     <sheet>
                         <group>
                             <group>
@@ -69,20 +73,20 @@
                                        <field name="funding_source"/>
                                        <field name="federal"/>
                                        <field name="key_wallet"/>
-                                       <field name="january" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="march" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="april" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="may" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="june" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="july" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="august" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="september" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="october" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="november" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="december" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                       <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                       <field name="january" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="march" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="april" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="may" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="june" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="july" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="august" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="september" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="october" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="november" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="december" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
+                                       <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="bank_id"/>
                                        <field name="bank_account_id"/>
                                        <field name="observations"/>
@@ -139,6 +143,10 @@
                                     </form>
                                 </field>
                             </page>
+                            <page string="Journal Items">
+                                <field name="move_line_ids" nolabel="1"/>
+                            </page>
+                            
                         </notebook>
                     </sheet>
                 </form>

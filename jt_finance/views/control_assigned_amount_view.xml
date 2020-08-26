@@ -2,11 +2,11 @@
 <odoo>
     <data>
         <!-- search view for calendar assigned amounts model -->
-        <record id="calendar_assigned_amounts_search_view" model="ir.ui.view">
-            <field name="name">calendar.assigned.amounts.search.view</field>
-            <field name="model">calendar.assigned.amounts</field>
+        <record id="control_amounts_received_search_view" model="ir.ui.view">
+            <field name="name">control.amounts.received.search.view</field>
+            <field name="model">control.amounts.received</field>
             <field name="arch" type="xml">
-                <search string="Calendar of assigned amounts">
+                <search string="Control Amounts Received">
                     <field name="date"/>
                     <group expand="1" string="Group By">
                         <filter string="Budget" name='budget' context="{'group_by':'budget_id'}"/>
@@ -18,8 +18,8 @@
 
         <!-- form view for calendar assigned amounts model -->
         <record id="control_amounts_received_form_view" model="ir.ui.view">
-            <field name="name">control.amount.received.view.tree</field>
-            <field name="model">calendar.assigned.amounts</field>
+            <field name="name">control.amounts.received.view.tree</field>
+            <field name="model">control.amounts.received</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
@@ -102,8 +102,8 @@
 
         <!-- tree view for calendar assigned amounts model -->
         <record id="control_amounts_received_tree_view" model="ir.ui.view">
-            <field name="name">control.amount.received.view.tree</field>
-            <field name="model">calendar.assigned.amounts</field>
+            <field name="name">control.amounts.received.view.tree</field>
+            <field name="model">control.amounts.received</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="folio"/>
@@ -128,11 +128,8 @@
         <!-- action for calendar assigned amounts views -->
         <record id="action_control_amounts_received" model="ir.actions.act_window">
             <field name="name">Control Of Amount Received</field>
-            <field name="res_model">calendar.assigned.amounts</field>
+            <field name="res_model">control.amounts.received</field>
             <field name="view_mode">tree,form,search</field>
-            <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('control_amounts_received_tree_view')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('control_amounts_received_form_view')})]"/>
             <field name="context">{}</field>
         </record>
     </data>

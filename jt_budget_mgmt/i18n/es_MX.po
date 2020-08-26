@@ -36,7 +36,6 @@ msgstr ""
 msgid "02"
 msgstr ""
 
-
 #. module: jt_budget_mgmt
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__resource_origin__key_origin__03
 msgid "03"
@@ -274,6 +273,12 @@ msgstr "Modificado Anual"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
 msgid "Approve"
 msgstr "Aprobar"
+
+#. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_budget_control
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.search_template_program_code_section
+msgid "Apply"
+msgstr "Consultar"
 
 #. module: jt_budget_mgmt
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.reject_form_view
@@ -906,7 +911,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__date_of_budget_affected
 msgid "Date Of Budget Affected"
 msgstr "Fecha del presupuesto afectado"
-
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__date_of_liquid_adu
@@ -1966,10 +1970,12 @@ msgid "Journal Item"
 msgstr "Asientos Contables"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_account_move__conac_line_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__move_line_ids
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget__move_line_ids
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.adequacies_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.expenditure_budget_form_view
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.supplier_payment_req_form_inherit
 msgid "Journal Items"
 msgstr "Asientos Contables"
 
@@ -2637,7 +2643,6 @@ msgstr "Resumen Presupuesto Proforma"
 msgid "Program"
 msgstr "Programa"
 
-
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.action_program
 #: model:ir.ui.menu,name:jt_budget_mgmt.menu_program
@@ -3203,19 +3208,6 @@ msgstr "Fecha Inicial"
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_expenditure_budget_line__start_date
 msgid "Start date"
 msgstr "Fecha de inicio"
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #. module: jt_budget_mgmt
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_adequacies__state

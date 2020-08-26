@@ -282,10 +282,7 @@ class ControlAssignedAmounts(models.Model):
                     if len(str(line.subprogram)) > 1:
                         subprogram_str = str(line.subprogram).zfill(2)
                         if subprogram_str.isnumeric():
-                            subprogram = self.env['sub.program'].search([('sub_program','=',subprogram_str),
-                                                                         ('unam_key_id','=',program),('dependency_id','=',dependency),
-                                                                         ('sub_dependency_id','=',subdependency)],limit=1)
-
+                            subprogram = self.env['sub.program'].search([('sub_program','=',subprogram_str),('unam_key_id','=',program),('dependency_id','=',dependency),('sub_dependency_id','=',subdependency)],limit=1)
                             #subprogram = list(filter(
                             #    lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
                             #        0] == program, subprogram_obj))
