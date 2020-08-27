@@ -267,7 +267,7 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                         projectp.number as project_number,si.stage_identifier as stage_identofier,
                         atype.agreement_type as type_of_agreement,atypen.number_agreement as number_of_agreement,
                         
-                        (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned,
+                        (select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_1st,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_2nd,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_3rd,
@@ -486,23 +486,23 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                 col+=1
                 
                 #==== 5th section ====#
-                authorized = data.get('authorized',0) + data.get('annual_expansion',0) - data.get('annual_reduction',0)
+                authorized_q1 = data.get('assigned_1st') + data.get('annual_expansion_q1',0) - data.get('annual_reduction_q1',0)
+                authorized_q2 = data.get('assigned_2nd') + data.get('annual_expansion_q2',0) - data.get('annual_reduction_q2',0)
+                authorized_q3 = data.get('assigned_3rd') + data.get('annual_expansion_q3',0) - data.get('annual_reduction_q3',0)
+                authorized_q4 = data.get('assigned_4th') + data.get('annual_expansion_q4',0) - data.get('annual_reduction_q4',0)
+                authorized = authorized_q1 + authorized_q2 + authorized_q3 + authorized_q4
                 total_authorized += authorized   
                 ws1.write(row, col, authorized,float_sytle)
                 col+=1
-                authorized_q1 = data.get('authorized_q1',0) + data.get('annual_expansion_q1',0) - data.get('annual_reduction_q1',0)
                 total_authorized_q1 += authorized_q1   
                 ws1.write(row, col, authorized_q1,float_sytle)
                 col+=1
-                authorized_q2 = data.get('authorized_q2',0) + data.get('annual_expansion_q2',0) - data.get('annual_reduction_q2',0)
                 total_authorized_q2 += authorized_q2   
                 ws1.write(row, col, authorized_q2,float_sytle)
                 col+=1
-                authorized_q3 = data.get('authorized_q3',0) + data.get('annual_expansion_q3',0) - data.get('annual_reduction_q3',0)
                 total_authorized_q3 += authorized_q3   
                 ws1.write(row, col, authorized_q3,float_sytle)
                 col+=1
-                authorized_q4 = data.get('authorized_q4',0) + data.get('annual_expansion_q4',0) - data.get('annual_reduction_q4',0)
                 total_authorized_q4 += authorized_q4   
                 ws1.write(row, col, authorized_q4,float_sytle)
                 col+=1

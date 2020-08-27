@@ -57,11 +57,13 @@ class AccountPayment(models.Model):
     jp_drawdown_type = fields.Selection([('WIRE','WIRE'),
                                     ('BOOK','BOOK'),('Drawdown','Drawdown')],string="Drawdown Type")
     
+    jp_payment_concept = fields.Char('Payment Concept')
+    
     payment_request_id = fields.Many2one('account.move','circular')
     
     @api.constrains('banamex_reference')
     def _check_banamex_reference(self):
-        if not str(self.banamex_reference).isnumeric():
+        if self.banamex_reference and not str(self.banamex_reference).isnumeric():
             raise ValidationError(_('The Banamex Reference must be numeric value'))
 
     def cancel(self):
@@ -72,7 +74,26 @@ class AccountPayment(models.Model):
         return result
 
     def action_validate_payment_procedure(self):
-        self.write({'payment_state': 'for_payment_procedure'})
+        for rec in self:
+            if not rec.name:
+                if rec.payment_type == 'transfer':
+                    sequence_code = 'account.payment.transfer'
+                else:
+                    if rec.partner_type == 'customer':
+                        if rec.payment_type == 'inbound':
+                            sequence_code = 'account.payment.customer.invoice'
+                        if rec.payment_type == 'outbound':
+                            sequence_code = 'account.payment.customer.refund'
+                    if rec.partner_type == 'supplier':
+                        if rec.payment_type == 'inbound':
+                            sequence_code = 'account.payment.supplier.refund'
+                        if rec.payment_type == 'outbound':
+                            sequence_code = 'account.payment.supplier.invoice'
+                
+                    rec.name = self.env['ir.sequence'].next_by_code(sequence_code, sequence_date=rec.payment_date)
+                    if not rec.name and rec.payment_type != 'transfer':
+                        raise UserError(_("You have to define a sequence for %s in your company.") % (sequence_code,))
+            rec.payment_state = 'for_payment_procedure'            
 
     def action_reschedule_payment_procedure(self):
         for payment in self:
