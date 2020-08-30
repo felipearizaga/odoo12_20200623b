@@ -268,7 +268,7 @@ class Standardization(models.Model):
             # Objects
             year_obj = self.env['year.configuration'].search_read([], fields=['id', 'name'])
             program_obj = self.env['program'].search_read([], fields=['id', 'key_unam'])
-            subprogram_obj = self.env['sub.program'].search_read([], fields=['id', 'unam_key_id', 'sub_program'])
+            subprogram_obj = self.env['sub.program'].search_read([('dependency_id','!=',False),('sub_dependency_id','!=',False),('unam_key_id','!=',False)], fields=['id','dependency_id','sub_dependency_id' ,'unam_key_id', 'sub_program'])
             dependancy_obj = self.env['dependency'].search_read([], fields=['id', 'dependency'])
             subdependancy_obj = self.env['sub.dependency'].search_read([],
                                                                        fields=['id', 'dependency_id', 'sub_dependency'])
@@ -276,7 +276,7 @@ class Standardization(models.Model):
             origin_obj = self.env['resource.origin'].search_read([], fields=['id', 'key_origin'])
             activity_obj = self.env['institutional.activity'].search_read([], fields=['id', 'number'])
             shcp_obj = self.env['budget.program.conversion'].search_read([], fields=['id', 'unam_key_id', 'shcp'])
-            dpc_obj = self.env['departure.conversion'].search_read([], fields=['id', 'federal_part'])
+            dpc_obj = self.env['departure.conversion'].search_read([('item_id','!=',False)], fields=['id', 'federal_part','item_id'])
             expense_type_obj = self.env['expense.type'].search_read([], fields=['id', 'key_expenditure_type'])
             location_obj = self.env['geographic.location'].search_read([], fields=['id', 'state_key'])
             wallet_obj = self.env['key.wallet'].search_read([], fields=['id', 'wallet_password'])
@@ -335,20 +335,6 @@ class Standardization(models.Model):
                     failed_line_ids.append(line.id)
                     continue
 
-                # Validate Sub-Program
-                subprogram = False
-                if len(str(line.subprogram)) > 1:
-                    subprogram_str = str(line.subprogram).zfill(2)
-                    if subprogram_str.isnumeric():
-                        subprogram = list(filter(
-                            lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][
-                                0] == program, subprogram_obj))
-                        subprogram = subprogram[0]['id'] if subprogram else False
-                if not subprogram:
-                    failed_row += str(line_vals) + \
-                        "------>> Invalid SubProgram(SP) Format\n"
-                    failed_line_ids.append(line.id)
-                    continue
 
                 # Validate Dependency
                 dependency = False
@@ -374,6 +360,19 @@ class Standardization(models.Model):
                 if not subdependency:
                     failed_row += str(line_vals) + \
                         "------>> Invalid Sub Dependency(DEP) Format\n"
+                    failed_line_ids.append(line.id)
+                    continue
+
+                # Validate Sub-Program
+                subprogram = False
+                if len(str(line.subprogram)) > 1:
+                    subprogram_str = str(line.subprogram).zfill(2)
+                    if subprogram_str.isnumeric():
+                        subprogram = list(filter(lambda subp: subp['sub_program'] == subprogram_str and subp['unam_key_id'][0] == program and subp['dependency_id'][0] == dependency and subp['sub_dependency_id'][0] == subdependency, subprogram_obj))
+                        subprogram = subprogram[0]['id'] if subprogram else False
+                if not subprogram:
+                    failed_row += str(line_vals) + \
+                        "------>> Invalid SubProgram(SP) Format\n"
                     failed_line_ids.append(line.id)
                     continue
                 
@@ -493,8 +492,7 @@ class Standardization(models.Model):
                 if len(str(line.departure_conversion)) > 4:
                     conversion_item_str = str(line.departure_conversion).zfill(4)
                     if conversion_item_str.isnumeric():
-                        conversion_item = list(
-                            filter(lambda coit: coit['federal_part'] == conversion_item_str, dpc_obj))
+                        conversion_item = list(filter(lambda coit: coit['federal_part'] == conversion_item_str and coit['item_id'][0]==item, dpc_obj))
                         conversion_item = conversion_item[0]['id'] if conversion_item else False
                 if not conversion_item:
                     failed_row += str(line_vals) + \

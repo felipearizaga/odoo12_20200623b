@@ -47,6 +47,10 @@ class SubProgram(models.Model):
     def fill_zero(self, code):
         return str(code).zfill(2)
 
+    @api.onchange('dependency_id')
+    def onchange_dependency_id(self):
+        self.sub_dependency_id = False
+        
     @api.model
     def create(self, vals):
         if vals.get('sub_program') and len(vals.get('sub_program')) != 2:

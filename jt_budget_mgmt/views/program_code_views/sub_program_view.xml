@@ -28,7 +28,7 @@
             		<sheet>
 	            		<group>
 	            			<field name="dependency_id" required="1" options="{'no_open': True, 'no_create': True}"/>
-	            			<field name="sub_dependency_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+	            			<field name="sub_dependency_id" domain="[('dependency_id','=',dependency_id)]" required="1" options="{'no_open': True, 'no_create': True}"/>
 	            			<field name="unam_key_id" required="1" options="{'no_open': True, 'no_create': True}"/>
                             <field name="sub_program" required="1"/>
                             <field name="desc"/>

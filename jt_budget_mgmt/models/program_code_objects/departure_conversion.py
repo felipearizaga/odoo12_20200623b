@@ -34,7 +34,7 @@ class DepartureConversion(models.Model):
     federal_part_desc = fields.Text(string='Federal part description')
     item_id = fields.Many2one('expenditure.item','Item of Expenditure')
     
-    _sql_constraints = [('federal_part', 'unique(federal_part)', 'The federal part must be unique.')]
+    _sql_constraints = [('federal_part', 'unique(federal_part,item_id)', 'The federal part must be unique per Item of Expenditure.')]
 
     @api.constrains('federal_part')
     def _check_federal_part(self):
@@ -62,12 +62,12 @@ class DepartureConversion(models.Model):
                 raise ValidationError('You can not delete conversion item which are mapped with program code!')
         return super(DepartureConversion, self).unlink()
 
-    def validate_conversion_item(self, conversion_item_string):
+    def validate_conversion_item(self, conversion_item_string,item):
         if len(str(conversion_item_string)) > 4:
             conversion_item_str = str(conversion_item_string).zfill(4)
             if conversion_item_str.isnumeric():
                 conversion_item = self.search(
-                    [('federal_part', '=', conversion_item_str)], limit=1)
+                    [('federal_part', '=', conversion_item_str),('item_id','=',item)], limit=1)
                 if conversion_item:
                     return conversion_item
         return False
