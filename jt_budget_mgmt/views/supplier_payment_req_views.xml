@@ -21,6 +21,7 @@
                 <field name="workstation_id" position="after">
                     <field name="dependancy_id" context="{'show_for_supplier_payment':True}" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
                     <field name="sub_dependancy_id" context="{'show_for_supplier_payment':True}" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
+                    <field name="payment_place_id" domain="[('dependancy_id','=',dependancy_id),('sub_dependancy_id','=',sub_dependancy_id)]" attrs="{'readonly':[('payment_state', '!=', 'draft')]}"/>
                 </field>
                 <field name="administrative_secretary_id" position="attributes">
                 	<attribute name="domain">[('dependancy_id','=',dependancy_id)]</attribute>
@@ -185,6 +186,14 @@
                 <xpath expr="//button[@name='action_cancel_budget']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+
+            	<field name="batch_folio" position="attributes">
+            		<field name="readonly">0</field>
+            	</field>
+            	<field name="payment_issuing_bank_id" position="attributes">
+            		<attribute name="readonly">0</attribute>
+            	</field>
+                
             </field>
         </record>
 

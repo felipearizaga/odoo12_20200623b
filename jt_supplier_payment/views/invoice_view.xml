@@ -63,7 +63,7 @@
                                 <field name="folio" readonly="1" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="operation_type_id"  domain="[('upa_catalog_policy_id','=',upa_key)]" context="{'show_for_supplier_payment':True}" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="is_show_beneficiary_key" invisible="1"/>
-                                <field name="baneficiary_key" attrs="{'invisible':[('is_show_beneficiary_key','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
+                                <field name="baneficiary_key" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="rfc" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="is_show_student_account" invisible="1"/>
                                 <field name="student_account" attrs="{'invisible':[('is_show_student_account','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>
@@ -100,7 +100,7 @@
                                 <field name="document_type" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="upa_key" context="{'show_for_supplier_payment':True}" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
                                 <field name="upa_document_type" attrs="{'readonly': [('payment_state', '!=', 'draft')]}"/>
-                                <field name="payment_issuing_bank_id" attrs="{'readonly': [('payment_state', '!=', 'draft'),('is_from_reschedule_payment','=',False)]}"/>
+                                <field name="payment_issuing_bank_id" readonly="1" /> <!-- attrs="{'readonly': [('payment_state', '!=', 'draft'),('is_from_reschedule_payment','=',False)]}" -->
                                 <field name="payment_issuing_bank_acc_id"/>
                                 <field name="is_show_responsible" invisible="1"/>
                                 <field name="responsible_id" attrs="{'invisible':[('is_show_responsible','=',False)],'readonly': [('payment_state', '!=', 'draft')]}"/>

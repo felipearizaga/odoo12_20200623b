@@ -23,6 +23,8 @@
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _
 from datetime import datetime
+import base64
+import io
 
 class CalendarAssignedAmounts(models.Model):
 
@@ -33,9 +35,9 @@ class CalendarAssignedAmounts(models.Model):
     def _get_amount(self):
         for record in self:
             record.amount_to_receive = sum(
-                record.line_ids.mapped('amount_assigned'))
+                record.line_ids.mapped('annual_amount'))
             record.amount_received = sum(
-                record.line_ids.mapped('amount_deposited'))
+                record.line_ids.mapped('annual_amount_received'))
             record.amount_pending = record.amount_to_receive - record.amount_received
 
     # Fields for control of amount received
@@ -71,10 +73,38 @@ class CalendarAssignedAmounts(models.Model):
     month_int = fields.Integer(string='Month Integer', store=True, compute='_compute_month_int')
 
     line_ids = fields.One2many('calendar.assigned.amounts.lines',
-                               'calendar_assigned_amount_id', string='Calendar of assigned amount lines')
+                               'calendar_assigned_amount_id', string='Calendar of assigned amount lines',domain=[('state', 'in', ('success','manual'))])
+    import_line_ids = fields.One2many('calendar.assigned.amounts.lines',
+                               'calendar_assigned_amount_id', string='Imported Lines',domain=[('state', 'in', ('draft','fail'))])
+
     journal_id = fields.Many2one("account.journal", string="Journal")
     state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft')
     move_line_ids = fields.One2many('account.move.line', 'calender_id', string="Journal Items")
+
+    import_status = fields.Selection([
+        ('draft', 'Draft'),
+        ('in_progress', 'In Progress'),
+        ('done', 'Completed')], default='draft', copy=False)
+
+    def _compute_total_rows(self):
+        for budget in self:
+            budget.failed_rows = self.env['calendar.assigned.amounts.lines'].search_count(
+                [('calendar_assigned_amount_id', '=', budget.id), ('state', '=', 'fail')])
+            budget.success_rows = self.env['calendar.assigned.amounts.lines'].search_count(
+                [('calendar_assigned_amount_id', '=', budget.id), ('state', '=', 'success')])
+            budget.total_rows = self.env['calendar.assigned.amounts.lines'].search_count(
+                [('calendar_assigned_amount_id', '=', budget.id),('state', '!=', 'manual')])
+
+    failed_rows = fields.Integer(
+        string='Failed Rows', compute="_compute_total_rows")
+    success_rows = fields.Integer(
+        string='Success Rows', compute="_compute_total_rows")
+    total_rows = fields.Integer(
+        string="Total Rows", compute="_compute_total_rows")
+
+    failed_row_file = fields.Binary(string='Failed Rows File')
+    fialed_row_filename = fields.Char(
+        string='File name', default="Failed_Rows.txt")
     
     @api.model
     def default_get(self, fields):
@@ -84,8 +114,68 @@ class CalendarAssignedAmounts(models.Model):
             res.update({'journal_id': daily_income_jour.id})
         return res
 
+    def validate_import_line(self):
+        if len(self.import_line_ids.ids) > 0:
+
+            counter = 0
+            failed_row = ""
+            failed_line_ids = []
+            success_line_ids = []
+            departure_conversion_obj = self.env['departure.conversion'].search_read([], fields=['id', 'federal_part'])
+            for line in self.import_line_ids:
+                counter += 1
+                line_vals = [line.year, line.branch, line.unit, line.purpose, line.function, 
+                                 line.sub_function, line.program,line.institution_activity, line.project_identification, line.project, line.item_char,
+                                 line.expense_type, line.funding_source, line.federal,line.key_wallet ,line.january, line.february,
+                                 line.march, line.april, line.may, line.june,line.july,line.august,line.september,line.october,line.november,line.december,line.annual_amount]
+                
+                # Validate  Item
+                item_id = False
+                if line.item_char:
+                    item_id = list(filter(lambda prog: prog['federal_part'] == line.item_char, departure_conversion_obj))
+                    item_id = item_id[0]['id'] if item_id else False
+                if not item_id:
+                    failed_row += str(line_vals) + \
+                                  "------>> Invalid SHCP Games(CONPA) Format\n"
+                    failed_line_ids.append(line.id)
+                    continue
+                line.item_id = item_id
+                success_line_ids.append(line.id)
+
+            failed_lines = self.env['calendar.assigned.amounts.lines'].search(
+                [('calendar_assigned_amount_id', '=', self.id), ('id', 'in', failed_line_ids)])
+            success_lines = self.env['calendar.assigned.amounts.lines'].search(
+                [('calendar_assigned_amount_id', '=', self.id), ('id', 'in', success_line_ids)])
+            success_lines.write({'state': 'success'})
+            for l in failed_lines:
+                if l.state == 'draft':
+                    l.state = 'fail'
+
+            failed_data = False
+            vals = {}
+            if failed_row != "":
+                content = ""
+                if self.failed_row_file:
+                    file_data = base64.b64decode(self.failed_row_file)
+                    content += io.StringIO(file_data.decode("utf-8")).read()
+                content += "\n"
+                content += "...................Failed Rows " + \
+                           str(datetime.today()) + "...............\n"
+                content += str(failed_row)
+                failed_data = base64.b64encode(content.encode('utf-8'))
+                vals['failed_row_file'] = failed_data
+                
+            if vals.get('failed_row_file'):
+                self.write(vals)
+            if self.failed_rows == 0:
+                self.import_status = 'done'
+            
     def action_validate_calendar_assing(self):
         self.ensure_one()
+        self.ensure_one()
+        if self.total_rows != self.success_rows:
+            raise ValidationError(_("Please validate all import lines!"))
+        
         move_obj = self.env['account.move']
         control_amount = self
         journal = control_amount.journal_id
@@ -114,6 +204,16 @@ class CalendarAssignedAmounts(models.Model):
         unam_move.action_post()
         self.state = 'validate'
         
+    def import_lines(self):
+        return {
+            'name': "Import and Validate File",
+            'type': 'ir.actions.act_window',
+            'res_model': 'import.calendar.assign.amount.lines',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
 
 
 #     @api.constrains('date', 'line_ids')
@@ -161,15 +261,7 @@ class CalendarAssignedAmountsLines(models.Model):
         ('october', 'October'),
         ('november', 'November'),
         ('december', 'December')], string='Month of the amount', default='january')
-    amount_assigned = fields.Float(string='Amount assigned')
-    amount_deposited = fields.Float(string='Amount deposited')
 
-    def _compute_amount_pending(self):
-        for line in self:
-            line.amount_pending = line.amount_assigned - line.amount_deposited
-
-    amount_pending = fields.Float(
-        string='Amount Pending', compute="_compute_amount_pending")
     bank_id = fields.Many2one('res.bank', string='Bank')
     bank_account_id = fields.Many2one(
         'res.partner.bank', string='Bank account', domain="['|', ('bank_id', '=', False), ('bank_id', '=', bank_id)]")
@@ -187,10 +279,15 @@ class CalendarAssignedAmountsLines(models.Model):
             if line.project_identification:
                 budgetary_program += line.project_identification
             if line.project:
-                budgetary_program += line.project
+                budgetary_program += line.project.zfill(3)
             line.budgetary_program = budgetary_program
             
     #==== New fields ======#
+
+    is_imported = fields.Boolean('Imported',default=False)
+    state = fields.Selection([('manual', 'Manual'), ('draft', 'Draft'), (
+        'fail', 'Fail'), ('success', 'Success')], string='Status', default='manual')
+    
     year = fields.Char('Year',size=4)
     branch = fields.Integer('Branch')
     unit = fields.Char('Unit')
@@ -199,28 +296,70 @@ class CalendarAssignedAmountsLines(models.Model):
     sub_function = fields.Integer('Subfunction')
     program = fields.Char('Program')
     institution_activity = fields.Integer('Institution Activity')
-    project_identification = fields.Char('Project Identification',size=2)
-    project = fields.Char('Project')
+    project_identification = fields.Char('Project Identification',size=1)
+    project = fields.Char('Project',size=3)
     budgetary_program = fields.Char(string='Budgetary Program',compute='get_budgetary_program',store=True)
     item_id = fields.Many2one('departure.conversion','Expense Item')
+    item_char = fields.Char('Expense Item',size=5)
     expense_type = fields.Integer('Expense Type')
     funding_source = fields.Char('Funding Source')
     federal = fields.Integer('Federal')
     key_wallet = fields.Char('Key Wallet')
     january = fields.Float(string='January')
+    amount_deposite_january = fields.Float(string='Amount deposited January')
     february = fields.Float(string='February')
+    amount_deposite_february = fields.Float(string='Amount deposited February')
     march = fields.Float(string='March')
+    amount_deposite_march = fields.Float(string='Amount deposited March')
     april = fields.Float(string='April')
+    amount_deposite_april = fields.Float(string='Amount deposited April')
     may = fields.Float(string='May')
+    amount_deposite_may = fields.Float(string='Amount deposited May')
     june = fields.Float(string='June')
+    amount_deposite_june = fields.Float(string='Amount deposited June')
     july = fields.Float(string='July')
+    amount_deposite_july = fields.Float(string='Amount deposited July')
     august = fields.Float(string='August')
+    amount_deposite_august = fields.Float(string='Amount deposited August')
     september = fields.Float(string='September')
+    amount_deposite_september = fields.Float(string='Amount deposited September')
     october = fields.Float(string='October')
+    amount_deposite_october = fields.Float(string='Amount deposited October')
     november = fields.Float(string='November')
+    amount_deposite_november = fields.Float(string='Amount deposited November')
     december = fields.Float(string='December')
+    amount_deposite_december = fields.Float(string='Amount deposited December')
+    
     annual_amount = fields.Float(string='Annual Amount')
-    annual_amount_received = fields.Float(string='Annual Amount Received')
+    
+    @api.depends('amount_deposite_january','amount_deposite_february','amount_deposite_march',
+                 'amount_deposite_april','amount_deposite_may','amount_deposite_june',
+                 'amount_deposite_july','amount_deposite_august','amount_deposite_september',
+                 'amount_deposite_october','amount_deposite_november','amount_deposite_december'
+                 )
+    def cal_annual_amount_received(self):
+        for line in self:
+            line.annual_amount_received = line.amount_deposite_january+line.amount_deposite_february+line.amount_deposite_march  \
+                                          + line.amount_deposite_april + line.amount_deposite_may + line.amount_deposite_june \
+                                          + line.amount_deposite_july + line.amount_deposite_august + line.amount_deposite_september \
+                                          + line.amount_deposite_october + line.amount_deposite_november + line.amount_deposite_december
+                                            
+    annual_amount_received = fields.Float(string='Annual Amount Received',compute='cal_annual_amount_received',store=True,copy=False)
+
+    @api.model
+    def create(self,vals):
+        if vals.get('project',False):
+            line_p = vals.get('project',False)
+            line_p = str(line_p).zfill(3)
+            vals.update({'project':line_p})
+        return super(CalendarAssignedAmountsLines,self).create(vals)
+     
+    def write(self,vals):
+        if vals.get('project',False):
+            line_p = vals.get('project',False)
+            line_p = str(line_p).zfill(3)
+            vals.update({'project':line_p})
+        return super(CalendarAssignedAmountsLines,self).write(vals)
     
 class AccountMove(models.Model):
 
