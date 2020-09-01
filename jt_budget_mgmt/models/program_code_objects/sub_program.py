@@ -55,6 +55,14 @@ class SubProgram(models.Model):
     def create(self, vals):
         if vals.get('sub_program') and len(vals.get('sub_program')) != 2:
             vals['sub_program'] = self.fill_zero(vals.get('sub_program'))
+        if vals.get('sub_dependency_id',False) and vals.get('dependency_id',False):
+            sub_dep_master = self.env['sub.dependency'].browse(vals.get('sub_dependency_id',[]))
+            if sub_dep_master:
+                link_sub_dep = self.env['sub.dependency'].search([('dependency_id','=',vals.get('dependency_id',False)),('sub_dependency','=',sub_dep_master.sub_dependency)],limit=1)
+                if link_sub_dep:
+                    vals.update({'sub_dependency_id':link_sub_dep.id})
+                else:
+                    vals.update({'sub_dependency_id':False})
         return super(SubProgram, self).create(vals)
 
     def write(self, vals):
