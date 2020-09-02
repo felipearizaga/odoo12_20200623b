@@ -315,7 +315,7 @@ class Adequacies(models.Model):
                     continue
 
                 # Validation Federal Item
-                conversion_item = dpc_obj.validate_conversion_item(list_result[10],item)
+                conversion_item = dpc_obj.validate_conversion_item(list_result[10],item.id)
                 if not conversion_item:
                     failed_row += str(list_result) + \
                                   "------>> Invalid SHCP Games(CONPA) Format\n"

@@ -534,6 +534,7 @@ msgid "CRON ID"
 msgstr ""
 
 #. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.details_budget_summary_report_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_adequacies_line_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_assigned_amount_line_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.import_line_form_view
@@ -877,6 +878,7 @@ msgid "Current Pointer Row"
 msgstr "Fila Actual"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__custom
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__custom
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__custom
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__custom
@@ -1238,6 +1240,7 @@ msgid "Employee"
 msgstr "Empleado"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_details_budget_summary_report__end_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__end_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_quarter_budget__end_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_reassign_budget_wiz__end_date
@@ -1365,6 +1368,7 @@ msgid "Export (XLSX)"
 msgstr "Exportar (XLSX)"
 
 #. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.details_budget_summary_report_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Export Request"
 msgstr "Consultar Reporte"
@@ -1493,6 +1497,7 @@ msgid "Files"
 msgstr ""
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_details_budget_summary_report__filter_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__filter_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__filter_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__filter_date
@@ -2052,6 +2057,7 @@ msgid ""
 msgstr ""
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__last_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__last_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__last_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_year
@@ -2106,6 +2112,7 @@ msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__last_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__last_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__last_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_month
@@ -2113,6 +2120,7 @@ msgid "Last Month"
 msgstr "Último Mes"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__last_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__last_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__last_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__last_quarter
@@ -2518,6 +2526,7 @@ msgid "Per Exercise"
 msgstr "Por Ejercer"
 
 #. module: jt_budget_mgmt
+#: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.details_budget_summary_report_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.requested_report_form_view
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.summary_report_download_form_view
 msgid "Period"
@@ -3193,6 +3202,7 @@ msgid "Standardization lines"
 msgstr "Líneas de Recalendarización"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_details_budget_summary_report__start_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__start_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_quarter_budget__start_date
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_reassign_budget_wiz__start_date
@@ -3816,6 +3826,7 @@ msgid "The wallet password size must be four."
 msgstr "El tamaño de la Clave Cartera debe ser de 4 dígitos."
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__this_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__this_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__this_year
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_year
@@ -3823,6 +3834,7 @@ msgid "This Financial Year"
 msgstr "Este Año Financiero"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__this_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__this_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__this_month
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_month
@@ -3830,6 +3842,7 @@ msgid "This Month"
 msgstr "Este Mes"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__details_budget_summary_report__filter_date__this_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__favourite_summary_report__filter_date__this_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__requested_reports__filter_date__this_quarter
 #: model:ir.model.fields.selection,name:jt_budget_mgmt.selection__summary_report_download__filter_date__this_quarter
@@ -4283,4 +4296,14 @@ msgstr "<strong>Dependencia:</strong>"
 #: model_terms:ir.ui.view,arch_db:jt_budget_mgmt.payment_request_report_document_inherit_2
 msgid "<strong>Subdependence:</strong>"
 msgstr "<strong>Subdependencia:</strong>"
+
+#. module: jt_budget_mgmt
+#: model:ir.actions.act_window,name:jt_budget_mgmt.act_details_budget_summary_report
+msgid "Details Budget Report"
+msgstr "Excel del Reporte Detallado de Presupuesto"
+
+#. module: jt_budget_mgmt
+#: model:ir.ui.menu,name:jt_budget_mgmt.details_budget_report_menu
+msgid "Detailed Budget Reports"
+msgstr "Excel del Reporte Detallado de Presupuesto"
 
