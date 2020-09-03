@@ -46,7 +46,6 @@ class ControlAmountsReceived(models.Model):
     journal_id = fields.Many2one("account.journal", string="Journal")
     file = fields.Binary(string='Seasonal file')
     made_by_id = fields.Many2one('res.users', string='Made by')
-    import_date = fields.Date(string='Import date')
     observations = fields.Text(string='Observations')
     line_ids = fields.One2many('control.amounts.received.line',
                                'control_id', string='Control of amounts received lines',domain=[('state', 'in', ('success','manual'))])
@@ -60,7 +59,7 @@ class ControlAmountsReceived(models.Model):
 
     file = fields.Binary(string='Seasonal File', copy=False)
     filename = fields.Char(string="File Name", copy=False)
-    import_date = fields.Date(string='Import Date', copy=False)
+    import_date = fields.Date(string='Import Date', copy=False,default=datetime.today())
     user_id = fields.Many2one('res.users', string='Made By',
                               default=lambda self: self.env.user, tracking=True, copy=False)
     obs_calender_amount = fields.Text(string='Observations')
@@ -386,7 +385,7 @@ class ControlAmountsReceivedLine(models.Model):
     ai = fields.Integer('AI')
     ip = fields.Char('IP',Size=1)
     line_p = fields.Char('P',size=3)
-    ogto = fields.Char(string='OGTO',size=5)
+    ogto = fields.Char(string='Conpa Name',size=5)
     conpa_id = fields.Many2one('departure.conversion','OGTO')
     tg = fields.Integer('TG')
     ff = fields.Integer('FF')

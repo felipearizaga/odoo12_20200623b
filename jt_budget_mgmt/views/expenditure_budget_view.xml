@@ -107,9 +107,9 @@
                                         <field name="authorized" widget="monetary" sum="Total Authorized Amount"
                                                options="{'currency_field': 'currency_id'}"/>
                                         <field name="assigned" widget="monetary" sum="Total Assigned Amount"
-                                               options="{'currency_field': 'currency_id'}"/>
+                                               options="{'currency_field': 'currency_id'}" invisible="1"/>
                                         <field name="available" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                               sum="Total Available Amount" readonly="1"/>
+                                               sum="Total Available Amount" readonly="1" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                     </tree>
                                     <form create="false" edit="true" delete="false">

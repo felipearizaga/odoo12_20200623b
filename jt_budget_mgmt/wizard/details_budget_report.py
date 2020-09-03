@@ -119,122 +119,231 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                 self.end_date = date.replace(month=12, day=31, year=year)
 
     def add_report_header(self,row,col,header_style,ws1):
-#         if self.env.user.lang == 'es_MX':
-#             ws1.write(row, col, 'AÑO', header_style)
-#             col+=1
-#         else:
+        if self.env.user.lang == 'es_MX':
+            ws1.write(row, col, 'AÑO', header_style)
+            col+=1
+            ws1.write(row, col, 'Programa', header_style)
+            col+=1
+            ws1.write(row, col, 'Subprograma', header_style)
+            col+=1
+            ws1.write(row, col, 'Dependencia', header_style)
+            col+=1
+            ws1.write(row, col, 'Subdependencia', header_style)
+            col+=1
+            ws1.write(row, col, 'Partida de Gasto', header_style)
+            col+=1
+            ws1.write(row, col, 'Dígito Verificador', header_style)
+            col+=1
+            ws1.write(row, col, 'Origen del Recurso', header_style)
+            col+=1
+            ws1.write(row, col, 'Actividad Institucional', header_style)
+            col+=1
+            ws1.write(row, col, 'Conversion de Programa Presupuestario', header_style)
+            col+=1
+            ws1.write(row, col, 'Partida SHCP', header_style)
+            col+=1
+            ws1.write(row, col, 'Tipo de Gasto', header_style)
+            col+=1
+            ws1.write(row, col, 'Ubicación Geográfica', header_style)
+            col+=1
+            ws1.write(row, col, 'Clave Cartera', header_style)
+            col+=1
+            ws1.write(row, col, 'Tipo de Proyecto', header_style)
+            col+=1
+            ws1.write(row, col, 'Número de Proyecto', header_style)
+            col+=1
+            ws1.write(row, col, 'Etapa', header_style)
+            col+=1
+            ws1.write(row, col, 'Tipo de Convenio', header_style)
+            col+=1
+            ws1.write(row, col, 'Número de Convenio', header_style)
+            col+=1
+            #==== 2nd section ===#
+            ws1.write(row, col, 'Autorizado Anual', header_style)
+            col+=1
+            ws1.write(row, col, 'Aut_1_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Aut_2_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Aut_3_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Aut_4_Trim', header_style)
+            col+=1
+            #=====3rd section====#
+            ws1.write(row, col, 'Ampliación Anual', header_style)
+            col+=1
+            ws1.write(row, col, 'Amp_1_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Amp_2_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Amp_3_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Amp_4_Trim', header_style)
+            col+=1                
+            #=======4th section======#
+            ws1.write(row, col, 'Reducción Anual', header_style)
+            col+=1
+            ws1.write(row, col, 'Red_1_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Red_2_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Red_3_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Red_4_Trim', header_style)
+            col+=1                  
+            #=== 5th Section ====#
+            ws1.write(row, col, 'Modificado Anual', header_style)
+            col+=1
+            ws1.write(row, col, 'Mod_1_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Mod_2_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Mod_3_Trim', header_style)
+            col+=1
+            ws1.write(row, col, 'Mod_4_Trim', header_style)
+            col+=1                  
+            
+            #=== 6th section ====#
+            ws1.write(row, col, 'Ejercido Anual', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_ene', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_feb', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_mar', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_abr', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_may', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_jun', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_jul', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_ago', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_sep', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_oct', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_nov', header_style)
+            col+=1
+            ws1.write(row, col, 'Ejer_dic', header_style)
+            col+=1            
+            row+=1
+        else:
             #=== 1st section ====#
-        ws1.write(row, col, 'Year', header_style)
-        col+=1
-        ws1.write(row, col, 'Program', header_style)
-        col+=1
-        ws1.write(row, col, 'Sub Program', header_style)
-        col+=1
-        ws1.write(row, col, 'Dependency', header_style)
-        col+=1
-        ws1.write(row, col, 'Sub Dependency', header_style)
-        col+=1
-        ws1.write(row, col, 'Expenditure Item', header_style)
-        col+=1
-        ws1.write(row, col, 'Check Digit', header_style)
-        col+=1
-        ws1.write(row, col, 'Source of Resource', header_style)
-        col+=1
-        ws1.write(row, col, 'Institutional Activity', header_style)
-        col+=1
-        ws1.write(row, col, 'Conversion of Budgetary Program', header_style)
-        col+=1
-        ws1.write(row, col, 'SHCP items', header_style)
-        col+=1
-        ws1.write(row, col, 'Type of Expenditure', header_style)
-        col+=1
-        ws1.write(row, col, 'Geographic Location', header_style)
-        col+=1
-        ws1.write(row, col, 'Wallet Key', header_style)
-        col+=1
-        ws1.write(row, col, 'Type of Project', header_style)
-        col+=1
-        ws1.write(row, col, 'Project Number', header_style)
-        col+=1
-        ws1.write(row, col, 'Stage', header_style)
-        col+=1
-        ws1.write(row, col, 'Type of Agreement', header_style)
-        col+=1
-        ws1.write(row, col, 'Agreement Number', header_style)
-        col+=1
-        #==== 2nd section ===#
-        ws1.write(row, col, 'Annual authorized', header_style)
-        col+=1
-        ws1.write(row, col, 'Authorized 1st quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Authorized 2nd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Authorized 3rd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Authorized 4th quarter', header_style)
-        col+=1
-        #=====3rd section====#
-        ws1.write(row, col, 'Annual expansion', header_style)
-        col+=1
-        ws1.write(row, col, '1st quarter expansion', header_style)
-        col+=1
-        ws1.write(row, col, '2nd quarter expansion', header_style)
-        col+=1
-        ws1.write(row, col, '3rd quarter expansion', header_style)
-        col+=1
-        ws1.write(row, col, '4th quarter expansion', header_style)
-        col+=1                
-        #=======4th section======#
-        ws1.write(row, col, 'Annual reduction', header_style)
-        col+=1
-        ws1.write(row, col, 'Reduction 1st quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Reduction 2nd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Reduction 3rd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Reduction 4th quarter', header_style)
-        col+=1                  
-        #=== 5th Section ====#
-        ws1.write(row, col, 'Annual modified', header_style)
-        col+=1
-        ws1.write(row, col, 'Modified 1st quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Modified 2nd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Modified 3rd quarter', header_style)
-        col+=1
-        ws1.write(row, col, 'Modified 4th quarter', header_style)
-        col+=1                  
-        
-        #=== 6th section ====#
-        ws1.write(row, col, 'Exercised annually', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised January', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised February', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised March', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised April', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised May', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised June', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised July', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised August', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised September', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised October', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised November', header_style)
-        col+=1
-        ws1.write(row, col, 'Exercised December', header_style)
-        col+=1            
-        row+=1
+            ws1.write(row, col, 'Year', header_style)
+            col+=1
+            ws1.write(row, col, 'Program', header_style)
+            col+=1
+            ws1.write(row, col, 'Sub Program', header_style)
+            col+=1
+            ws1.write(row, col, 'Dependency', header_style)
+            col+=1
+            ws1.write(row, col, 'Sub Dependency', header_style)
+            col+=1
+            ws1.write(row, col, 'Expenditure Item', header_style)
+            col+=1
+            ws1.write(row, col, 'Check Digit', header_style)
+            col+=1
+            ws1.write(row, col, 'Source of Resource', header_style)
+            col+=1
+            ws1.write(row, col, 'Institutional Activity', header_style)
+            col+=1
+            ws1.write(row, col, 'Conversion of Budgetary Program', header_style)
+            col+=1
+            ws1.write(row, col, 'SHCP items', header_style)
+            col+=1
+            ws1.write(row, col, 'Type of Expenditure', header_style)
+            col+=1
+            ws1.write(row, col, 'Geographic Location', header_style)
+            col+=1
+            ws1.write(row, col, 'Wallet Key', header_style)
+            col+=1
+            ws1.write(row, col, 'Type of Project', header_style)
+            col+=1
+            ws1.write(row, col, 'Project Number', header_style)
+            col+=1
+            ws1.write(row, col, 'Stage', header_style)
+            col+=1
+            ws1.write(row, col, 'Type of Agreement', header_style)
+            col+=1
+            ws1.write(row, col, 'Agreement Number', header_style)
+            col+=1
+            #==== 2nd section ===#
+            ws1.write(row, col, 'Annual authorized', header_style)
+            col+=1
+            ws1.write(row, col, 'Authorized 1st quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Authorized 2nd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Authorized 3rd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Authorized 4th quarter', header_style)
+            col+=1
+            #=====3rd section====#
+            ws1.write(row, col, 'Annual expansion', header_style)
+            col+=1
+            ws1.write(row, col, '1st quarter expansion', header_style)
+            col+=1
+            ws1.write(row, col, '2nd quarter expansion', header_style)
+            col+=1
+            ws1.write(row, col, '3rd quarter expansion', header_style)
+            col+=1
+            ws1.write(row, col, '4th quarter expansion', header_style)
+            col+=1                
+            #=======4th section======#
+            ws1.write(row, col, 'Annual reduction', header_style)
+            col+=1
+            ws1.write(row, col, 'Reduction 1st quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Reduction 2nd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Reduction 3rd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Reduction 4th quarter', header_style)
+            col+=1                  
+            #=== 5th Section ====#
+            ws1.write(row, col, 'Annual modified', header_style)
+            col+=1
+            ws1.write(row, col, 'Modified 1st quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Modified 2nd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Modified 3rd quarter', header_style)
+            col+=1
+            ws1.write(row, col, 'Modified 4th quarter', header_style)
+            col+=1                  
+            
+            #=== 6th section ====#
+            ws1.write(row, col, 'Exercised annually', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised January', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised February', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised March', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised April', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised May', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised June', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised July', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised August', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised September', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised October', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised November', header_style)
+            col+=1
+            ws1.write(row, col, 'Exercised December', header_style)
+            col+=1            
+            row+=1
         return row,col
         
     def request_data(self):
@@ -615,12 +724,15 @@ class DetailsBudgetSummaryReport(models.TransientModel):
             wb1.save(fp)
             out = base64.encodestring(fp.getvalue())
             self.report_file = out
-            self.name = 'details_budget_report.xls'
+            if self.env.user.lang == 'es_MX':
+                self.name = 'del_reporte_detallado_de_presupuesto.xls'
+            else:
+                self.name = 'details_budget_report.xls'
             self.state = 'download'
             
 
         return {
-            'name': 'Report Download Progress',
+            'name': _('Report'),
             'view_type': 'form',
             'view_mode': 'form',
             'view_id': False,

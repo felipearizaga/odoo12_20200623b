@@ -127,6 +127,8 @@ class ImportLine(models.TransientModel):
                                 elif type(value) is int or type(value) is float:
                                     start_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
                                 if start_date:
+                                    if start_date.day !=1 or start_date.month != 1:
+                                        raise ValidationError(_("Start Date Format must be 01/01/YYYY"))
                                     value = start_date
                                 else:
                                     value = False
@@ -145,6 +147,8 @@ class ImportLine(models.TransientModel):
                                 elif type(value) is int or type(value) is float:
                                     end_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
                                 if end_date:
+                                    if end_date.day != 31 or end_date.month != 12:
+                                        raise ValidationError(_("End Date Format must be 31/12/YYYY"))
                                     value = end_date
                                 else:
                                     value = False

@@ -1179,6 +1179,7 @@ msgid "Download File name"
 msgstr "Nombre de Archivo de Descarga"
 
 #. module: jt_budget_mgmt
+#: model:ir.model.fields,field_description:jt_budget_mgmt.field_details_budget_summary_report__report_file
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_favourite_summary_report__report_file
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_requested_reports__report_file
 #: model:ir.model.fields,field_description:jt_budget_mgmt.field_summary_report_download__report_file
@@ -4300,10 +4301,10 @@ msgstr "<strong>Subdependencia:</strong>"
 #. module: jt_budget_mgmt
 #: model:ir.actions.act_window,name:jt_budget_mgmt.act_details_budget_summary_report
 msgid "Details Budget Report"
-msgstr "Excel del Reporte Detallado de Presupuesto"
+msgstr "del Reporte Detallado de Presupuesto"
 
 #. module: jt_budget_mgmt
 #: model:ir.ui.menu,name:jt_budget_mgmt.details_budget_report_menu
 msgid "Detailed Budget Reports"
-msgstr "Excel del Reporte Detallado de Presupuesto"
+msgstr "del Reporte Detallado de Presupuesto"
 

@@ -48,7 +48,7 @@ class CalendarAssignedAmounts(models.Model):
                               default=lambda self: self.env.user, tracking=True, copy=False)
     file = fields.Binary(string='Seasonal File', copy=False)
     filename = fields.Char(string="File Name", copy=False)
-    import_date = fields.Date(string='Import Date', copy=False)
+    import_date = fields.Date(string='Import Date', copy=False,default=datetime.today())
     obs_cont_amount = fields.Text(string='Observations')
     total_rows = fields.Integer(string='Total Rows', copy=False)
     diff = fields.Text(string='Difference', copy=False)
