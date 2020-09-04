@@ -27,7 +27,7 @@ class AccountPayment(models.Model):
     net_cash_reference = fields.Char('Reference',size=7)
     net_cash_availability = fields.Selection([('SPEI','SPEI'),('CECOBAN','CECOBAN')],string='Availability')
     
-    sit_file_key = fields.Char('File Key')
+    sit_file_key = fields.Char('File Key',size=30)
     sit_operation_code = fields.Selection([('payment_on_account_bancomer','Payment on account bancomer'),
                                            ('payment_interbank','Payment interbank account next day')],string="Operation Code")
     sit_reference =fields.Char(size=25,string="SIT Reference")
@@ -98,7 +98,13 @@ class AccountPayment(models.Model):
     is_hide_hsbc = fields.Boolean(compute='check_bank_format_type',default=True)
     is_hide_santander = fields.Boolean(compute='check_bank_format_type',default=True)
     is_hide_jp_morgan = fields.Boolean(compute='check_bank_format_type',default=True)
-    
+
+    @api.constrains('payment_date')
+    def check_payment_date(self):
+        non_business_day = self.env['calendar.payment.regis'].search([('type_pay','=','Non Business Day'),('date','=',self.payment_date)])
+        if non_business_day:
+            raise UserError(_('Not allow to schedule payment for non-working days.'))
+                
     @api.model
     def create(self,vals):
         res = super(AccountPayment,self).create(vals)   

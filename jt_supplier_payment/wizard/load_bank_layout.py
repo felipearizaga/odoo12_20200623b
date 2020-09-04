@@ -168,7 +168,7 @@ class loadBankLayoutSupplierPayment(models.TransientModel):
             for line in data:
                 count+=1
                 sing = line[76]
-                amount = line[77:91]
+                amount = line[77:90]
                 concept = line[113:152]
                 if sing and amount and concept and sing=='-':
                     first_amount = amount[:-2]
@@ -256,7 +256,6 @@ class loadBankLayoutSupplierPayment(models.TransientModel):
             #account_no = ''
             count = 0
             for line in file_reader:
-                print ("File===",line)
                 count += 1
                 #if line[0]=='11':
                     #account_no = line[3]
