@@ -306,7 +306,7 @@ class BudgetSummaryReportDownload(models.TransientModel):
                         elif code_sec.section == 'conpp':
                             value = 'Conversion de Programa Presupuestario'
                         elif code_sec.section == 'conpa':
-                            value = 'Partida SHCP'
+                            value = 'Conversión Con Partida (CONPA)'
                         elif code_sec.section == 'tg':
                             value = 'Tipo de Gasto'
                         elif code_sec.section == 'ug':

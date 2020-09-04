@@ -368,7 +368,7 @@ msgstr "Ultima actualización en"
 #: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_search_view
 #: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_search_view
 msgid "Made By"
-msgstr "Hecho por"
+msgstr "Responsible"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__march
@@ -484,11 +484,6 @@ msgid "Settings"
 msgstr "Configuración"
 
 #. module: jt_finance
-#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__state
-msgid "State"
-msgstr "Estatus"
-
-#. module: jt_finance
 #: code:addons/jt_finance/wizard/import_standardization_line.py:0
 #, python-format
 msgid "State name not found."
@@ -508,6 +503,7 @@ msgstr "El Presupuesto total no coincide con el monto asignado en el archivo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__total_rows
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__total_rows
 msgid "Total Rows"
 msgstr "Total de Registros"
 
@@ -768,8 +764,35 @@ msgstr "Fecha Propuesta"
 msgid "OGTO"
 msgstr "Partida de Gasto"
 
+
 #. module: jt_finance
-#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received_line__ogto
-msgid "OGTO Name"
-msgstr "Partida de Gasto Name"
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__success_rows
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__success_rows
+msgid "Success Rows"
+msgstr "Líneas Exitosas"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__failed_rows
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__failed_rows
+msgid "Failed Rows"
+msgstr "Filas Erróneas"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__failed_row_file
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__failed_row_file
+msgid "Failed Rows File"
+msgstr "Archivo de Filas Erróneas"
+
+#. module: jt_finance
+#: model:ir.model,name:jt_finance.model_control_amounts_received_line
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__line_ids
+msgid "Control of amounts received lines"
+msgstr "Control Lines of Amounts Received"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__state
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__state
+msgid "Status"
+msgstr "Estado"
+
 

@@ -80,7 +80,8 @@
                                        <field name="ip"/>
                                        <field name="line_p"/>
                                        <field name="shcp_id"/>
-                                       <field name="ogto" invisible="1"/>
+                                       
+                                       <field name="conpa_id" />
                                        <field name="tg"/>
                                        <field name="ff"/>
                                        <field name="ef"/>
@@ -113,7 +114,6 @@
                                        <field name="ip" invisible="1"/>
                                        <field name="line_p" invisible="1"/>
                                        <field name="shcp_id"/>
-                                       <field name="ogto" invisible="1"/>
                                        <field name="conpa_id" />
                                        <field name="tg"/>
                                        <field name="ff"/>
@@ -152,8 +152,7 @@
                                        <field name="ip"/>
                                        <field name="line_p"/>
                                        <field name="shcp_id" invisible=""/>
-                                       <field name="ogto"/>
-                                       <field name="conpa_id" invisible="1"/>
+                                       <field name="conpa_id"/>
                                        <field name="tg"/>
                                        <field name="ff"/>
                                        <field name="ef"/>
@@ -186,8 +185,7 @@
                                        <field name="ai"/>
                                        <field name="ip"/>
                                        <field name="line_p"/>
-                                       <field name="ogto"/>
-                                       <field name="conpa_id" invisible="1"/>
+                                       <field name="conpa_id"/>
                                        <field name="tg"/>
                                        <field name="ff"/>
                                        <field name="ef"/>

@@ -755,7 +755,7 @@ class ControlAssignedAmounts(models.Model):
                 'program_code_id': line.program_code_id.id,
                 'start_date': line.start_date,
                 'end_date': line.end_date,
-                # 'authorized': line.authorized,
+                'authorized': line.assigned,
                 'assigned': line.assigned,
                 # 'available': line.available,
                 'imported': line.imported,

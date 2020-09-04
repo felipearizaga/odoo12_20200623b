@@ -78,7 +78,7 @@ class CalendarAssignedAmounts(models.Model):
                                'calendar_assigned_amount_id', string='Imported Lines',domain=[('state', 'in', ('draft','fail'))])
 
     journal_id = fields.Many2one("account.journal", string="Journal")
-    state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft')
+    state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft',string='Status')
     move_line_ids = fields.One2many('account.move.line', 'calender_id', string="Journal Items")
 
     import_status = fields.Selection([

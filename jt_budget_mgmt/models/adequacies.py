@@ -726,12 +726,12 @@ class Adequacies(models.Model):
                              ('expenditure_budget_id', '=', self.budget_id.id)], limit=1)
 
                         
-                    if budget_line and budget_line.assigned < line.amount:
+                    if budget_line and budget_line.authorized < line.amount:
                         code_list_decrese.append(budget_line.program_code_id.program_code)
                         if self.env.user.lang == 'es_MX':
-                            code_list_decrese_msg += 'Código del programa de:' + str(budget_line.program_code_id.program_code) + '\n' + ' El monto requerido es de $ '+str(line.amount) + ' y el monto disponible es de $ '+str(budget_line.assigned) + '\n'
+                            code_list_decrese_msg += 'Código del programa de:' + str(budget_line.program_code_id.program_code) + '\n' + ' El monto requerido es de $ '+str(line.amount) + ' y el monto disponible es de $ '+str(budget_line.authorized) + '\n'
                         else:
-                            code_list_decrese_msg += 'Program Code: ' + str(budget_line.program_code_id.program_code) + '\n' + ' The required amount is $ '+str(line.amount) + ' the available amount is $ '+str(budget_line.assigned)  + '\n'      
+                            code_list_decrese_msg += 'Program Code: ' + str(budget_line.program_code_id.program_code) + '\n' + ' The required amount is $ '+str(line.amount) + ' the available amount is $ '+str(budget_line.authorized)  + '\n'      
                         continue
 
                     total_decreased += line.amount
@@ -788,12 +788,14 @@ class Adequacies(models.Model):
                                 budget_line = b_line
                     if budget_line:
                         amount = budget_line.assigned
+                        authorized_amount = budget_line.authorized
+                        
                         if line.line_type == 'decrease':
                             final_amount = amount - line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount - line.amount})
                         if line.line_type == 'increase':
                             final_amount = amount + line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount + line.amount})
                 elif self.date_of_liquid_adu and self.adaptation_type == 'liquid':
                     b_month = self.date_of_liquid_adu.month
                     budget_line = False
@@ -813,24 +815,26 @@ class Adequacies(models.Model):
                                 budget_line = b_line
                     if budget_line:
                         amount = budget_line.assigned
+                        authorized_amount = budget_line.authorized
                         if line.line_type == 'decrease':
                             final_amount = amount - line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount - line.amount})
                         if line.line_type == 'increase':
                             final_amount = amount + line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount + line.amount})
                 else:
                     budget_line = self.env['expenditure.budget.line'].sudo().search(
                         [('program_code_id', '=', line.program.id), ('expenditure_budget_id', '=', self.budget_id.id)],
                         limit=1)
                     if budget_line:
                         amount = budget_line.assigned
+                        authorized_amount = budget_line.authorized
                         if line.line_type == 'decrease':
                             final_amount = amount - line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount - line.amount})
                         if line.line_type == 'increase':
                             final_amount = amount + line.amount
-                            budget_line.write({'assigned': final_amount})
+                            budget_line.write({'assigned': final_amount,'authorized':authorized_amount + line.amount})
         if self.adaptation_type != 'compensated' and self.journal_id:
             move_obj = self.env['account.move']
             journal = self.journal_id

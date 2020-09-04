@@ -137,12 +137,19 @@ class Standardization(models.Model):
                             quarter_budget_line = budget_line
                             break
 
-                    if origin_budget_line and quarter_budget_line and origin_budget_line.assigned >= line.amount:
-                        amount = origin_budget_line.assigned - line.amount
-                        origin_budget_line.write({'assigned': amount})
-                        increase_amount = quarter_budget_line.assigned + line.amount
-                        quarter_budget_line.write({'assigned': increase_amount})
-                        line.amount_effected = True
+                    if origin_budget_line and quarter_budget_line: 
+                        if origin_budget_line.assigned >= line.amount:
+                            amount = origin_budget_line.assigned - line.amount
+                            origin_budget_line.write({'assigned': amount})
+                            increase_amount = quarter_budget_line.assigned + line.amount
+                            quarter_budget_line.write({'assigned': increase_amount})
+                            line.amount_effected = True
+                        if origin_budget_line.authorized >= line.amount:
+                            amount = origin_budget_line.authorized - line.amount
+                            origin_budget_line.write({'authorized': amount})
+                            increase_amount = quarter_budget_line.authorized + line.amount
+                            quarter_budget_line.write({'authorized': increase_amount})
+                            line.amount_effected = True
 
     _sql_constraints = [
         ('folio_uniq_const', 'unique(folio)', 'The folio must be unique.')]

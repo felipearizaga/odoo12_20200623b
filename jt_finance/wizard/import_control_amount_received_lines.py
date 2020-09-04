@@ -85,7 +85,7 @@ class ImportAdequaciesLine(models.TransientModel):
                 field_headers = ['branch_cr', 'unit_cr', 'folio_clc', 'clc_status', 'deposit_date', 
                                  'application_date', 'currency_name','bank_account', 'year', 'branch', 'unit',
                                  'month_no', 'line_f', 'sfa','sfe' ,'prg', 'ai',
-                                 'ip', 'line_p', 'ogto', 'tg','ff','ef','amount_deposited','proposed_date',]
+                                 'ip', 'line_p', 'conversion_name', 'tg','ff','ef','amount_deposited','proposed_date',]
 
                 result_vals = []
                 for rowx, row in enumerate(map(sheet.row, range(2, sheet.nrows)), 1):

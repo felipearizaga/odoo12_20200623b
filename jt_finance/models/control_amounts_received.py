@@ -55,7 +55,7 @@ class ControlAmountsReceived(models.Model):
     
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
-    state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft')
+    state = fields.Selection([('draft', 'Draft'), ('validate', 'Validated')], default='draft',string='Status')
 
     file = fields.Binary(string='Seasonal File', copy=False)
     filename = fields.Char(string="File Name", copy=False)
@@ -139,7 +139,7 @@ class ControlAmountsReceived(models.Model):
                 line_vals = [line.branch_cr, line.unit_cr, line.folio_clc, line.clc_status, line.deposit_date, line.application_date,
                              line.currency_name, line.bank_account, line.year, line.branch,
                              line.unit, line.month_no, line.line_f, line.sfa,
-                             line.sfe , line.prg, line.ai, line.ip,line.line_p, line.ogto,line.tg,line.ff,line.ef,line.amount_deposited,line.proposed_date]
+                             line.sfe , line.prg, line.ai, line.ip,line.line_p, line.tg,line.ff,line.ef,line.amount_deposited,line.proposed_date]
 
                 # Validation Authorized Amount
                 amount_deposited = 0
@@ -180,15 +180,15 @@ class ControlAmountsReceived(models.Model):
                     continue
 
                 # Validate Federal Item
-                federal_item = False
-                if line.ogto:
-                    federal_item = list(filter(lambda prog: prog['federal_part'] == line.ogto, departure_conversion_obj))
-                    federal_item = federal_item[0]['id'] if federal_item else False
-                if not federal_item:
-                    failed_row += str(line_vals) + \
-                                  "------>> Invalid SHCP Games(CONPA) Format\n"
-                    failed_line_ids.append(line.id)
-                    continue
+#                 federal_item = False
+#                 if line.ogto:
+#                     federal_item = list(filter(lambda prog: prog['federal_part'] == line.ogto, departure_conversion_obj))
+#                     federal_item = federal_item[0]['id'] if federal_item else False
+#                 if not federal_item:
+#                     failed_row += str(line_vals) + \
+#                                   "------>> Invalid SHCP Games(CONPA) Format\n"
+#                     failed_line_ids.append(line.id)
+#                     continue
 
                 # Validate Month
                 if line.month_no and line.month_no < 1 and line.month_no > 12:
@@ -202,7 +202,7 @@ class ControlAmountsReceived(models.Model):
                     bank_account_rec = self.env['res.partner.bank'].browse(bank_account_no)
                     line.bank_id = bank_account_rec and bank_account_rec.bank_id and bank_account_rec.bank_id.id or False
                 line.shcp_id = shcp_id
-                line.conpa_id = federal_item
+                #line.conpa_id = federal_item
                 success_line_ids.append(line.id)
                 
             failed_lines = self.env['control.amounts.received.line'].search(
@@ -385,7 +385,7 @@ class ControlAmountsReceivedLine(models.Model):
     ai = fields.Integer('AI')
     ip = fields.Char('IP',Size=1)
     line_p = fields.Char('P',size=3)
-    ogto = fields.Char(string='Conpa Name',size=5)
+    conversion_name = fields.Char(string='Conversion Name',size=5)
     conpa_id = fields.Many2one('departure.conversion','OGTO')
     tg = fields.Integer('TG')
     ff = fields.Integer('FF')

@@ -140,7 +140,7 @@ class DetailsBudgetSummaryReport(models.TransientModel):
             col+=1
             ws1.write(row, col, 'Conversion de Programa Presupuestario', header_style)
             col+=1
-            ws1.write(row, col, 'Partida SHCP', header_style)
+            ws1.write(row, col, 'Conversión Con Partida (CONPA)', header_style)
             col+=1
             ws1.write(row, col, 'Tipo de Gasto', header_style)
             col+=1
@@ -461,8 +461,11 @@ class DetailsBudgetSummaryReport(models.TransientModel):
         self.env.cr.execute(sql_query,tuple(tuple_where_data))
         my_datas = self.env.cr.dictfetchall()
         if my_datas:
-            wb1 = xlwt.Workbook(encoding='utf-8')         
-            ws1 = wb1.add_sheet('Details Budget Report')
+            wb1 = xlwt.Workbook(encoding='utf-8')
+            if self.env.user.lang == 'es_MX':
+                ws1 = wb1.add_sheet('Reporte Detallado de Presupuesto')
+            else:         
+                ws1 = wb1.add_sheet('Details Budget Report')
             fp = BytesIO()
             header_style = xlwt.easyxf('font: bold 1')
             float_sytle = xlwt.easyxf(num_format_str = '0.00')
@@ -474,7 +477,14 @@ class DetailsBudgetSummaryReport(models.TransientModel):
 #             ws1.set_panes_frozen(True)
 #             ws1.set_horz_split_pos(1) 
 #             ws1.set_vert_split_pos(18) 
-            row = 1
+            row = 0
+            col = 0
+            if self.env.user.lang == 'es_MX':
+                ws1.write_merge(row, row,col,col+19, 'Reporte Detallado de Presupuesto',header_style)
+            else:
+                ws1.write_merge(row, row,col,col+19, 'Details Budget Report',header_style)
+            
+            row+=1
             col = 0
             row,col = self.add_report_header(row,col,header_style,ws1)
             total_assigned = 0
@@ -725,7 +735,7 @@ class DetailsBudgetSummaryReport(models.TransientModel):
             out = base64.encodestring(fp.getvalue())
             self.report_file = out
             if self.env.user.lang == 'es_MX':
-                self.name = 'del_reporte_detallado_de_presupuesto.xls'
+                self.name = 'reporte_detallado_de_presupuesto.xls'
             else:
                 self.name = 'details_budget_report.xls'
             self.state = 'download'

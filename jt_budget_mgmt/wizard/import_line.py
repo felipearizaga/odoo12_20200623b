@@ -120,6 +120,7 @@ class ImportLine(models.TransientModel):
                                 value = int(cell.value)
 
                         if field_headers[counter] == 'start_date':
+                            msg = ''
                             try:
                                 start_date = False
                                 if type(value) is str:
@@ -128,18 +129,26 @@ class ImportLine(models.TransientModel):
                                     start_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
                                 if start_date:
                                     if start_date.day !=1 or start_date.month != 1:
-                                        raise ValidationError(_("Start Date Format must be 01/01/YYYY"))
+                                        if self.env.user.lang == 'es_MX':
+                                            msg = "de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 01/01/YYYY"
+                                            raise ValidationError(_("de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 01/01/YYYY"))
+                                        else:
+                                            raise ValidationError(_("Start Date Format must be 01/01/YYYY"))
                                     value = start_date
                                 else:
                                     value = False
                             except ValueError as e:
                                 raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))
                             except ValidationError as e:
-                                raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))
+                                if msg and self.env.user.lang == 'es_MX':
+                                    raise ValidationError(_("de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 01/01/YYYY"))
+                                else:
+                                    raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))
                             except UserError as e:
                                 raise ValidationError(_("Start Date Format Does Not match : %s")% (ustr(e)))            
 
                         if field_headers[counter] == 'end_date':
+                            msg = ''
                             try:
                                 end_date = False
                                 if type(value) is str:
@@ -148,14 +157,21 @@ class ImportLine(models.TransientModel):
                                     end_date = datetime(*xlrd.xldate_as_tuple(value, 0)).date()
                                 if end_date:
                                     if end_date.day != 31 or end_date.month != 12:
-                                        raise ValidationError(_("End Date Format must be 31/12/YYYY"))
+                                        if self.env.user.lang == 'es_MX':
+                                            msg = 'de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 31/12/YYYY'
+                                            raise ValidationError(_("de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 31/12/YYYY"))
+                                        else:
+                                            raise ValidationError(_("End Date Format must be 01/01/YYYY"))
                                     value = end_date
                                 else:
                                     value = False
                             except ValueError as e:
                                 raise ValidationError(_("End Date Format Does Not match : %s")% (ustr(e)))
                             except ValidationError as e:
-                                raise ValidationError(_("End Date Format Does Not match :%s")% (ustr(e)))
+                                if msg and self.env.user.lang == 'es_MX':
+                                    raise ValidationError(_("de fechas:Las fechas colocadas en el archivo no coinciden con las fechas colocadas en el Presupuesto 31/12/YYYY"))
+                                else:
+                                    raise ValidationError(_("End Date Format Does Not match :%s")% (ustr(e)))
                             except UserError as e:
                                 raise ValidationError(_("End Date Format Does Not match : %s")% (ustr(e)))            
                         result_dict.update(
@@ -199,8 +215,8 @@ class ImportLine(models.TransientModel):
                         raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
 
             except ValueError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
             except ValidationError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
             except UserError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
+                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))            
