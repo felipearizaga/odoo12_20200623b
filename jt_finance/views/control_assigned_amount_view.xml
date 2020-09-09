@@ -54,143 +54,147 @@
                         </group>
                         <notebook>
                             <page string="Control of amounts received lines">
-                                <field name="line_ids">
+                                <field name="line_ids" context="{'default_is_manual_line':True}">
                                     <tree>
+                                    	<field name="is_manual_line" invisible="1"/>
                                         <field name="calendar_assigned_amount_id" invisible="1"/>
                                        <field name="state" invisible="1"/> 
-                                       <field name="branch_cr"/>
-                                       <field name="unit_cr"/>
-                                       <field name="folio_clc"/>
-                                       <field name="clc_status"/>
-                                       <field name="deposit_date"/>
-                                       <field name="application_date"/>
-                                       <field name="currency_name"/>
+                                       <field name="branch_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="folio_clc" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="clc_status" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="deposit_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="application_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="currency_name" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_id"/>
-                                       <field name="bank_account_id"/>
+                                       <field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_account" invisible="1"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
-                                       <field name="month_no"/>
-                                       <field name="line_f"/>
-                                       <field name="sfa"/>
-                                       <field name="sfe"/>
-                                       <field name="prg"/>
-                                       <field name="ai"/>
-                                       <field name="ip"/>
-                                       <field name="line_p"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="month_no" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_f" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfa" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfe" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="prg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ai" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ip" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_p" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="shcp_id"/>
                                        
-                                       <field name="conpa_id" />
-                                       <field name="tg"/>
-                                       <field name="ff"/>
-                                       <field name="ef"/>
-                                       <field name="amount_deposited"/>
-                                       <field name="proposed_date"/>
+                                       <field name="conpa_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="tg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ff" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ef" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="amount_deposited" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="proposed_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                     </tree>
                                     <form>
                                         <group>
+                                        <field name="is_manual_line" invisible="1"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                        <field name="state" invisible="1"/>     
-                                       <field name="branch_cr"/>
-                                       <field name="unit_cr"/>
-                                       <field name="folio_clc"/>
-                                       <field name="clc_status"/>
-                                       <field name="deposit_date"/>
-                                       <field name="application_date"/>
-                                       <field name="currency_name"/>
+                                       <field name="branch_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="folio_clc" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="clc_status" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="deposit_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="application_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="currency_name" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_id"/>
-                                       <field name="bank_account_id"/>
+                                       <field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_account" invisible="1"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
-                                       <field name="month_no"/>
-                                       <field name="line_f"/>
-                                       <field name="sfa"/>
-                                       <field name="sfe"/>
-                                       <field name="prg"/>
-                                       <field name="ai"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="month_no" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_f" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfa" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfe" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="prg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ai" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="ip" invisible="1"/>
                                        <field name="line_p" invisible="1"/>
                                        <field name="shcp_id"/>
-                                       <field name="conpa_id" />
-                                       <field name="tg"/>
-                                       <field name="ff"/>
-                                       <field name="ef"/>
-                                       <field name="amount_deposited"/>
-                                       <field name="proposed_date"/>
+                                       <field name="conpa_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="tg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ff" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ef" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="amount_deposited" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="proposed_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                         </group>
                                     </form>
                                 </field>
                             </page>
                             <page string="Imported Lines">
-                                <field name="import_line_ids" context="{'default_state':'draft'}">
+                                <field name="import_line_ids" context="{'default_state':'draft','default_is_manual_line':True}">
                                     <tree>
+                                    	<field name="is_manual_line" invisible="1"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                        <field name="state" invisible="1"/>
-                                       <field name="branch_cr"/>
-                                       <field name="unit_cr"/>
-                                       <field name="folio_clc"/>
-                                       <field name="clc_status"/>
-                                       <field name="deposit_date"/>
-                                       <field name="application_date"/>
-                                       <field name="currency_name"/>
+                                       <field name="branch_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="folio_clc" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="clc_status" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="deposit_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="application_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="currency_name" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_id" invisible="1"/>
                                        <field name="bank_account_id" invisible="1"/>
-                                       <field name="bank_account"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
+                                       <field name="bank_account" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="month" invisible="1"/>
-                                       <field name="month_no"/>
-                                       <field name="line_f"/>
-                                       <field name="sfa"/>
-                                       <field name="sfe"/>
-                                       <field name="prg"/>
-                                       <field name="ai"/>
-                                       <field name="ip"/>
-                                       <field name="line_p"/>
-                                       <field name="shcp_id" invisible=""/>
-                                       <field name="conpa_id"/>
-                                       <field name="tg"/>
-                                       <field name="ff"/>
-                                       <field name="ef"/>
-                                       <field name="amount_deposited"/>
-                                       <field name="proposed_date"/>
+                                       <field name="month_no" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_f" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfa" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfe" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="prg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ai" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ip" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_p" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="shcp_id" invisible="1"/>
+                                       <field name="conpa_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="tg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ff" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ef" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="amount_deposited" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="proposed_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                     </tree>
                                     <form>
                                         <group>
+                                        <field name="is_manual_line" invisible="1"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                        <field name="state" invisible="1"/>
-                                       <field name="branch_cr"/>
-                                       <field name="unit_cr"/>
-                                       <field name="folio_clc"/>
-                                       <field name="clc_status"/>
-                                       <field name="deposit_date"/>
-                                       <field name="application_date"/>
-                                       <field name="currency_name"/>
+                                       <field name="branch_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit_cr" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="folio_clc" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="clc_status" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="deposit_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="application_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="currency_name" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="bank_id" invisible="1"/>
                                        <field name="bank_account_id" invisible="1"/>
-                                       <field name="bank_account"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
+                                       <field name="bank_account" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="month" invisible="1"/>
-                                       <field name="month_no"/>
-                                       <field name="line_f"/>
-                                       <field name="sfa"/>
-                                       <field name="sfe"/>
-                                       <field name="prg"/>
-                                       <field name="ai"/>
-                                       <field name="ip"/>
-                                       <field name="line_p"/>
-                                       <field name="conpa_id"/>
-                                       <field name="tg"/>
-                                       <field name="ff"/>
-                                       <field name="ef"/>
-                                       <field name="amount_deposited"/>
-                                       <field name="proposed_date"/>
+                                       <field name="month_no" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_f" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfa" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sfe" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="prg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ai" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ip" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="line_p" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="conpa_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="tg" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ff" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="ef" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="amount_deposited" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="proposed_date" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                         </group>
                                     </form>
                                 </field>

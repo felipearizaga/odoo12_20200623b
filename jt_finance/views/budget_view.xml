@@ -44,4 +44,12 @@
         action="action_calendar_assigned_amounts"
     />
 
+    <!-- menu for finance settings -->
+    <menuitem
+        id="menu_jt_finance_report"
+        name="Reports"
+        parent="menu_finance"
+        sequence="5"
+    />
+
 </odoo>

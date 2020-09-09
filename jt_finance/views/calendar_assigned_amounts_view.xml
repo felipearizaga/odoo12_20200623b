@@ -55,29 +55,30 @@
                         </group>
                         <notebook>
                             <page string="Calendar of assigned amounts lines">
-                                <field name="line_ids">
+                                <field name="line_ids" context="{'default_is_manual_line':True}">
                                     <tree>
+										<field name="is_manual_line" invisible="1"/>
                                     	<field name="state" invisible="1"/>
                                        <field name="date" invisible="1"/>
                                        <field name="shcp_id" invisible="1"/>
                                        <field name="month" invisible="1"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
-                                       <field name="purpose"/>
-                                       <field name="function"/>
-                                       <field name="sub_function"/>
-                                       <field name="program"/>
-                                       <field name="institution_activity"/>
-                                       <field name="project_identification"/>
-                                       <field name="project"/>
-                                       <field name="budgetary_program"/>
-                                       <field name="item_id"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="purpose" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sub_function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="institution_activity" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="project_identification" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="project" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="budgetary_program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="item_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="item_char" invisible="1"/>
-                                       <field name="expense_type"/>
-                                       <field name="funding_source"/>
-                                       <field name="federal"/>
-                                       <field name="key_wallet"/>
+                                       <field name="expense_type" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="funding_source" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="federal" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="key_wallet" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="january" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="amount_deposite_january" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
@@ -104,36 +105,37 @@
                                        <field name="amount_deposite_december" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
-                                       <field name="bank_id"/>
-                                       <field name="bank_account_id"/>
+                                       <field name="bank_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="observations"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                     </tree>
                                     <form>
                                     	<group>
 	                                    	<group>
+													<field name="is_manual_line" invisible="1"/>
 	                                    			<field name="state" invisible="1"/>
-			                                       <field name="year"/>
-			                                       <field name="branch"/>
-			                                       <field name="unit"/>
-			                                       <field name="purpose"/>
-			                                       <field name="function"/>
-			                                       <field name="sub_function"/>
-			                                       <field name="program"/>
-			                                       <field name="institution_activity"/>
-			                                       <field name="project_identification"/>
-			                                       <field name="project"/>
-			                                       <field name="budgetary_program"/>
-			                                       <field name="item_id"/>
+			                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="purpose" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="sub_function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="institution_activity" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="project_identification" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="project" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="budgetary_program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="item_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
 			                                       <field name="item_char" invisible="1"/>
-			                                       <field name="expense_type"/>
-			                                       <field name="funding_source"/>
-			                                       <field name="federal"/>
-			                                       <field name="key_wallet"/>
-	                                            <field name="bank_id" />
-	                                            <field name="bank_account_id"/>
-	                                            <field name="observations"/>
-	                                            <field name="calendar_assigned_amount_id" invisible="1"/>
+			                                       <field name="expense_type" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="funding_source" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="federal" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="key_wallet" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+	                                            	<field name="bank_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+	                                            	<field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+	                                            	<field name="observations"/>
+	                                            	<field name="calendar_assigned_amount_id" invisible="1"/>
 			                                       
 	                                    	</group>
 	                                        <group>
@@ -173,29 +175,30 @@
                                 </field>
                             </page>
                             <page string="Imported Lines">
-                                <field name="import_line_ids" context="{'default_state':'draft'}">
+                                <field name="import_line_ids" context="{'default_state':'draft','default_is_manual_line':True}">
                                     <tree>
+									 <field name="is_manual_line" invisible="1"/>
                                     	<field name="state" invisible="1"/>
                                        <field name="date" invisible="1"/>
                                        <field name="shcp_id" invisible="1"/>
                                        <field name="month" invisible="1"/>
-                                       <field name="year"/>
-                                       <field name="branch"/>
-                                       <field name="unit"/>
-                                       <field name="purpose"/>
-                                       <field name="function"/>
-                                       <field name="sub_function"/>
-                                       <field name="program"/>
-                                       <field name="institution_activity"/>
-                                       <field name="project_identification"/>
-                                       <field name="project"/>
-                                       <field name="budgetary_program"/>
-                                       <field name="item_id" invisible="1"/>
-                                       <field name="item_char" />
-                                       <field name="expense_type"/>
-                                       <field name="funding_source"/>
-                                       <field name="federal"/>
-                                       <field name="key_wallet"/>
+                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="purpose" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="sub_function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="institution_activity" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="project_identification" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="project" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="budgetary_program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="item_id" invisible="1" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="item_char" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="expense_type" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="funding_source" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="federal" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="key_wallet" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="january" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="amount_deposite_january" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="february" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
@@ -222,34 +225,35 @@
                                        <field name="amount_deposite_december" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="annual_amount" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
                                        <field name="annual_amount_received" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="total"/>
-                                       <field name="bank_id"/>
-                                       <field name="bank_account_id"/>
+                                       <field name="bank_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+                                       <field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
                                        <field name="observations"/>
                                        <field name="calendar_assigned_amount_id" invisible="1"/>
                                     </tree>
                                     <form>
                                     	<group>
 	                                    	<group>
-	                                    		<field name="state" invisible="1"/>
-			                                       <field name="year"/>
-			                                       <field name="branch"/>
-			                                       <field name="unit"/>
-			                                       <field name="purpose"/>
-			                                       <field name="function"/>
-			                                       <field name="sub_function"/>
-			                                       <field name="program"/>
-			                                       <field name="institution_activity"/>
-			                                       <field name="project_identification"/>
-			                                       <field name="project"/>
-			                                       <field name="budgetary_program"/>
+												   <field name="is_manual_line" invisible="1"/>				
+	                                    		   <field name="state" invisible="1"/>
+			                                       <field name="year" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="branch" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="unit" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="purpose" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="sub_function" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="institution_activity" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="project_identification" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="project" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="budgetary_program" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
 			                                       <field name="item_id" invisible="1"/>
-			                                       <field name="item_char"/>
-			                                       <field name="expense_type"/>
-			                                       <field name="funding_source"/>
-			                                       <field name="federal"/>
-			                                       <field name="key_wallet"/>
-	                                            <field name="bank_id" />
-	                                            <field name="bank_account_id"/>
+			                                       <field name="item_char" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="expense_type" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="funding_source" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="federal" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+			                                       <field name="key_wallet" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+	                                            <field name="bank_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
+	                                            <field name="bank_account_id" attrs="{'readonly':[('is_manual_line','=',False)]}"/>
 	                                            <field name="observations"/>
 	                                            <field name="calendar_assigned_amount_id" invisible="1"/>
 			                                       

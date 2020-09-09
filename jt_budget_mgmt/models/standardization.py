@@ -1087,6 +1087,37 @@ class StandardizationLine(models.Model):
     _description = 'Re-standardization Lines'
     _rec_name = 'folio'
 
+    @api.depends('origin_id','origin_id.end_date','origin_id.start_date')
+    def get_origin_data(self):
+        for line in self:
+            if line.origin_id and line.origin_id.end_date:
+                date_end = str(line.origin_id.end_date).split('/')
+                if len(date_end) > 1:
+                    line.origin_id_end_day = int(date_end[0])
+                    line.origin_id_end_month = int(date_end[1])
+                    
+            if line.origin_id and line.origin_id.start_date:
+                start_end = str(line.origin_id.start_date).split('/')
+                if len(start_end) > 1:
+                    line.origin_id_start_day = int(start_end[0])
+                    line.origin_id_start_month = int(start_end[1])
+
+
+    @api.depends('quarter','quarter.end_date','quarter.start_date')
+    def get_quarter_data(self):
+        for line in self:
+            if line.quarter and line.quarter.end_date:
+                date_end = str(line.quarter.end_date).split('/')
+                if len(date_end) > 1:
+                    line.quarter_end_day = int(date_end[0])
+                    line.quarter_end_month = int(date_end[1])
+                    
+            if line.quarter and line.quarter.start_date:
+                start_end = str(line.quarter.start_date).split('/')
+                if len(start_end) > 1:
+                    line.quarter_start_day = int(start_end[0])
+                    line.quarter_start_month = int(start_end[1])
+                
     folio = fields.Char(string='Folio')
     budget_id = fields.Many2one('expenditure.budget', string='Budget', domain="[('state', '=', 'validate')]")
     code_id = fields.Many2one(
@@ -1094,6 +1125,16 @@ class StandardizationLine(models.Model):
     amount = fields.Monetary(string='Amount', currency_field='currency_id')
     origin_id = fields.Many2one('quarter.budget', string='Origin')
     quarter = fields.Many2one('quarter.budget', string='Quarter')
+    origin_id_start_month = fields.Integer('Origin Month',compute='get_origin_data',store=True)
+    origin_id_start_day = fields.Integer('Origin Day',compute='get_origin_data',store=True)
+    origin_id_end_month = fields.Integer('Origin Month',compute='get_origin_data',store=True)
+    origin_id_end_day = fields.Integer('Origin Day',compute='get_origin_data',store=True)
+    
+    quarter_start_month = fields.Integer('quarter Month',compute='get_quarter_data',store=True)
+    quarter_start_day = fields.Integer('quarter Day',compute='get_quarter_data',store=True)
+    quarter_end_month = fields.Integer('quarter Month',compute='get_quarter_data',store=True)
+    quarter_end_day = fields.Integer('quarter Day',compute='get_quarter_data',store=True)
+    
     reason = fields.Text(string='Reason for rejection')
     standardization_id = fields.Many2one(
         'standardization', string='Standardization', ondelete="cascade")

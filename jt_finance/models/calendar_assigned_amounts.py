@@ -287,6 +287,7 @@ class CalendarAssignedAmountsLines(models.Model):
     is_imported = fields.Boolean('Imported',default=False)
     state = fields.Selection([('manual', 'Manual'), ('draft', 'Draft'), (
         'fail', 'Fail'), ('success', 'Success')], string='Status', default='manual')
+    is_manual_line = fields.Boolean('Manual Add Line',default=False)
     
     year = fields.Char('Year',size=4)
     branch = fields.Integer('Branch')
@@ -346,6 +347,17 @@ class CalendarAssignedAmountsLines(models.Model):
                                             
     annual_amount_received = fields.Float(string='Annual Amount Received',compute='cal_annual_amount_received',store=True,copy=False)
 
+    @api.depends('item_id')
+    def get_item_data(self):
+        for line in self:
+            if line.item_id and line.item_id.federal_part:
+                line.item_id_first = line.item_id.federal_part[0]
+                if len(line.item_id.federal_part) > 1:
+                    line.item_id_second = line.item_id.federal_part[1]
+                
+    item_id_first = fields.Char('Item First',compute='get_item_data',store=True)
+    item_id_second = fields.Char('Item Second',compute='get_item_data',store=True)
+    
     @api.model
     def create(self,vals):
         if vals.get('project',False):

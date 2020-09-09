@@ -60,7 +60,7 @@ class ControlAmountsReceived(models.Model):
     file = fields.Binary(string='Seasonal File', copy=False)
     filename = fields.Char(string="File Name", copy=False)
     import_date = fields.Date(string='Import Date', copy=False,default=datetime.today())
-    user_id = fields.Many2one('res.users', string='Made By',
+    user_id = fields.Many2one('res.users', string='Responsible',
                               default=lambda self: self.env.user, tracking=True, copy=False)
     obs_calender_amount = fields.Text(string='Observations')
     obs_cont_amount = fields.Text(string='Observations')
@@ -239,7 +239,12 @@ class ControlAmountsReceived(models.Model):
                 [('control_id', '!=', self.id), ('folio_clc', '=', line.folio_clc)])
             if same_folio_line:
                 raise ValidationError(_("Folio %s already been registered!")%(line.folio_clc))
-            calendar_line = self.env['calendar.assigned.amounts.lines'].search([('project_identification','=',line.ip),('project','=',line.line_p),('budgetary_program','=',line.shcp_id.name),('item_id','=',line.conpa_id.id),('calendar_assigned_amount_id.state','=','validate')],limit=1)
+            calendar_line = self.env['calendar.assigned.amounts.lines'].search([('budgetary_program','=',line.shcp_id.name),('item_id','=',line.conpa_id.id),('calendar_assigned_amount_id.state','=','validate')],limit=1)
+            
+            if not calendar_line:
+                budgetary_program_name =  line.shcp_id and line.shcp_id.name or ''
+                item_name = line.conpa_id and line.conpa_id.federal_part or ''
+                raise ValidationError(_("Calendar of Assigned Amount not found for Budgetary Program %s and Item of Expenditure %s")%(budgetary_program_name,item_name))
             
             if calendar_line:
                 if line.month_no==1:
@@ -266,10 +271,14 @@ class ControlAmountsReceived(models.Model):
                     calendar_line.amount_deposite_november += line.amount_deposited
                 elif line.month_no==12:
                     calendar_line.amount_deposite_december += line.amount_deposited
-                    
-                calendar_line.bank_id = line.bank_id and line.bank_id.id or False
-                calendar_line.bank_account_id = line.bank_account_id and line.bank_account_id.id or False 
                 
+                if line.bank_id:
+                    calendar_line.bank_id = line.bank_id.id
+                if line.bank_account_id:
+                    calendar_line.bank_accout_id = line.bank_account_id.id
+                     
+                line.calendar_assigned_amount_line_id = calendar_line.id
+                line.calendar_assigned_amount_id = calendar_line.calendar_assigned_amount_id and calendar_line.calendar_assigned_amount_id.id or False  
     def validate(self):
         self.ensure_one()
         if self.total_rows != self.success_rows:
@@ -390,6 +399,15 @@ class ControlAmountsReceivedLine(models.Model):
     tg = fields.Integer('TG')
     ff = fields.Integer('FF')
     ef = fields.Integer('EF')
+    is_manual_line = fields.Boolean('Manual Add Line',default=False)
+    
+    @api.constrains('folio_clc')
+    def check_folio_unique(self):
+        if self.folio_clc: 
+            same_folio_line = self.env['control.amounts.received.line'].search_count(
+                    [('control_id', '!=', self.control_id.id), ('folio_clc', '=', self.folio_clc)])
+            if same_folio_line:
+                raise ValidationError(_("Folio %s already been registered!")%(self.folio_clc))
 
     @api.model
     def create(self,vals):

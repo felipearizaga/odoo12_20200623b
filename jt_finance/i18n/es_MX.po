@@ -63,6 +63,7 @@ msgstr "Agosto"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__bank_id
+#: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received_line__bank_id
 msgid "Bank"
 msgstr "Banco"
 
@@ -367,8 +368,8 @@ msgstr "Ultima actualización en"
 #: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__user_id
 #: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_search_view
 #: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_search_view
-msgid "Made By"
-msgstr "Responsible"
+msgid "Responsible"
+msgstr "Responsable"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__march
@@ -787,7 +788,7 @@ msgstr "Archivo de Filas Erróneas"
 #: model:ir.model,name:jt_finance.model_control_amounts_received_line
 #: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__line_ids
 msgid "Control of amounts received lines"
-msgstr "Control Lines of Amounts Received"
+msgstr "Líneas de Control de Montos Recibidos"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts__state

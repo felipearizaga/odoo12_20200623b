@@ -376,7 +376,7 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                         projectp.number as project_number,si.stage_identifier as stage_identofier,
                         atype.agreement_type as type_of_agreement,atypen.number_agreement as number_of_agreement,
                         
-                        (select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned,
+                        (select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s and EXTRACT(MONTH FROM start_date) = 1 and EXTRACT(MONTH FROM end_date) = 12) as assigned,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_1st,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_2nd,
                         (select coalesce(sum(ebl.assigned),0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as assigned_3rd,
@@ -393,6 +393,11 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                         (select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_budget_affected >= %s and a.date_of_budget_affected <= %s and al.program = pc.id and a.id=al.adequacies_id)
                         + (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_liquid_adu >= %s and a.date_of_liquid_adu <= %s and al.program = pc.id and a.id=al.adequacies_id)) as annual_expansion_q4,  
 
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.quarter_start_day = 1 and res.quarter_start_month=1 and res.quarter_end_month=3 and res.quarter_end_day=31) as standardization_expansion_q1,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.quarter_start_day = 1 and res.quarter_start_month=4 and res.quarter_end_month=6 and res.quarter_end_day=30) as standardization_expansion_q2,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.quarter_start_day = 1 and res.quarter_start_month=7 and res.quarter_end_month=9 and res.quarter_end_day=30) as standardization_expansion_q3,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.quarter_start_day = 1 and res.quarter_start_month=10 and res.quarter_end_month=12 and res.quarter_end_day=31) as standardization_expansion_q4,
+                        
                         (select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_budget_affected >= %s and a.date_of_budget_affected <= %s and al.program = pc.id and a.id=al.adequacies_id)
                         + (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_liquid_adu >= %s and a.date_of_liquid_adu <= %s and al.program = pc.id and a.id=al.adequacies_id)) as annual_reduction,    
                         (select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_budget_affected >= %s and a.date_of_budget_affected <= %s and al.program = pc.id and a.id=al.adequacies_id)
@@ -403,8 +408,13 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                         + (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_liquid_adu >= %s and a.date_of_liquid_adu <= %s and al.program = pc.id and a.id=al.adequacies_id)) as annual_reduction_q3,  
                         (select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_budget_affected >= %s and a.date_of_budget_affected <= %s and al.program = pc.id and a.id=al.adequacies_id)
                         + (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE 0 END),0) from adequacies_lines al,adequacies a where a.state=%s and a.adaptation_type = %s and a.date_of_liquid_adu >= %s and a.date_of_liquid_adu <= %s and al.program = pc.id and a.id=al.adequacies_id)) as annual_reduction_q4,
+
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.origin_id_start_day = 1 and res.origin_id_start_month=1 and res.origin_id_end_month=3 and res.origin_id_end_day=31) as standardization_reduction_q1,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.origin_id_start_day = 1 and res.origin_id_start_month=4 and res.origin_id_end_month=6 and res.origin_id_end_day=30) as standardization_reduction_q2,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.origin_id_start_day = 1 and res.origin_id_start_month=7 and res.origin_id_end_month=9 and res.origin_id_end_day=30) as standardization_reduction_q3,
+                        (select coalesce(sum(res.amount), 0) from standardization_line res where pc.id=res.code_id and res.origin_id_start_day = 1 and res.origin_id_start_month=10 and res.origin_id_end_month=12 and res.origin_id_end_day=31) as standardization_reduction_q4,
                         
-                        (select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized,
+                        (select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s and EXTRACT(MONTH FROM start_date) = 1 and EXTRACT(MONTH FROM end_date) = 12) as authorized,
                         (select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized_q1,
                         (select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized_q2,
                         (select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized_q3,
@@ -571,44 +581,46 @@ class DetailsBudgetSummaryReport(models.TransientModel):
                 ws1.write(row, col, data.get('assigned_4th'),float_sytle)
                 col+=1
                 #==== 3rd section ====#
-                total_annual_expansion += data.get('annual_expansion')
-                ws1.write(row, col, data.get('annual_expansion'),float_sytle)
+                total_standardization_expansion = data.get('standardization_expansion_q1') + data.get('standardization_expansion_q2')+data.get('standardization_expansion_q3')+data.get('standardization_expansion_q4') 
+                total_annual_expansion += data.get('annual_expansion') + total_standardization_expansion
+                ws1.write(row, col, data.get('annual_expansion')+total_standardization_expansion,float_sytle)
                 col+=1
-                total_annual_expansion_q1 += data.get('annual_expansion_q1')
-                ws1.write(row, col, data.get('annual_expansion_q1'),float_sytle)
+                total_annual_expansion_q1 += data.get('annual_expansion_q1') + data.get('standardization_expansion_q1')
+                ws1.write(row, col, data.get('annual_expansion_q1')+data.get('standardization_expansion_q1') ,float_sytle)
                 col+=1
-                total_annual_expansion_q2 += data.get('annual_expansion_q2')
-                ws1.write(row, col, data.get('annual_expansion_q2'),float_sytle)
+                total_annual_expansion_q2 += data.get('annual_expansion_q2')+data.get('standardization_expansion_q2')
+                ws1.write(row, col, data.get('annual_expansion_q2')+data.get('standardization_expansion_q2'),float_sytle)
                 col+=1
-                total_annual_expansion_q3 += data.get('annual_expansion_q3')
-                ws1.write(row, col, data.get('annual_expansion_q3'),float_sytle)
+                total_annual_expansion_q3 += data.get('annual_expansion_q3')+data.get('standardization_expansion_q3')
+                ws1.write(row, col, data.get('annual_expansion_q3')+data.get('standardization_expansion_q3'),float_sytle)
                 col+=1
-                total_annual_expansion_q4 += data.get('annual_expansion_q4')
-                ws1.write(row, col, data.get('annual_expansion_q4'),float_sytle)
+                total_annual_expansion_q4 += data.get('annual_expansion_q4')+data.get('standardization_expansion_q4')
+                ws1.write(row, col, data.get('annual_expansion_q4')+data.get('standardization_expansion_q4'),float_sytle)
                 col+=1
 
                 #==== 4th section ====#
-                total_annual_reduction += data.get('annual_reduction')
-                ws1.write(row, col, data.get('annual_reduction'),float_sytle)
+                total_standardization_reduction = data.get('standardization_reduction_q1') + data.get('standardization_reduction_q2') + data.get('standardization_reduction_q3') + data.get('standardization_reduction_q4')
+                total_annual_reduction += data.get('annual_reduction') + total_standardization_reduction
+                ws1.write(row, col, data.get('annual_reduction')+total_standardization_reduction,float_sytle)
                 col+=1
-                total_annual_reduction_q1 += data.get('annual_reduction_q1')
-                ws1.write(row, col, data.get('annual_reduction_q1'),float_sytle)
+                total_annual_reduction_q1 += data.get('annual_reduction_q1') + data.get('standardization_reduction_q1')
+                ws1.write(row, col, data.get('annual_reduction_q1')+data.get('standardization_reduction_q1'),float_sytle)
                 col+=1
-                total_annual_reduction_q2 += data.get('annual_reduction_q2')
-                ws1.write(row, col, data.get('annual_reduction_q2'),float_sytle)
+                total_annual_reduction_q2 += data.get('annual_reduction_q2') + data.get('standardization_reduction_q2')
+                ws1.write(row, col, data.get('annual_reduction_q2')+data.get('standardization_reduction_q2'),float_sytle)
                 col+=1
-                total_annual_reduction_q3 += data.get('annual_reduction_q3')
-                ws1.write(row, col, data.get('annual_reduction_q3'),float_sytle)
+                total_annual_reduction_q3 += data.get('annual_reduction_q3') + data.get('standardization_reduction_q3')
+                ws1.write(row, col, data.get('annual_reduction_q3') + data.get('standardization_reduction_q3'),float_sytle)
                 col+=1
-                total_annual_reduction_q4 += data.get('annual_reduction_q4')
-                ws1.write(row, col, data.get('annual_reduction_q4'),float_sytle)
+                total_annual_reduction_q4 += data.get('annual_reduction_q4') + data.get('standardization_reduction_q4')
+                ws1.write(row, col, data.get('annual_reduction_q4')+data.get('standardization_reduction_q4'),float_sytle)
                 col+=1
                 
                 #==== 5th section ====#
-                authorized_q1 = data.get('assigned_1st') + data.get('annual_expansion_q1',0) - data.get('annual_reduction_q1',0)
-                authorized_q2 = data.get('assigned_2nd') + data.get('annual_expansion_q2',0) - data.get('annual_reduction_q2',0)
-                authorized_q3 = data.get('assigned_3rd') + data.get('annual_expansion_q3',0) - data.get('annual_reduction_q3',0)
-                authorized_q4 = data.get('assigned_4th') + data.get('annual_expansion_q4',0) - data.get('annual_reduction_q4',0)
+                authorized_q1 = data.get('assigned_1st') + data.get('annual_expansion_q1',0) + data.get('standardization_expansion_q1') - data.get('annual_reduction_q1',0) - data.get('standardization_reduction_q1',0)
+                authorized_q2 = data.get('assigned_2nd') + data.get('annual_expansion_q2',0) + data.get('standardization_expansion_q2') - data.get('annual_reduction_q2',0) - data.get('standardization_reduction_q2',0)
+                authorized_q3 = data.get('assigned_3rd') + data.get('annual_expansion_q3',0) + data.get('standardization_expansion_q3') - data.get('annual_reduction_q3',0) - data.get('standardization_reduction_q3',0)
+                authorized_q4 = data.get('assigned_4th') + data.get('annual_expansion_q4',0) + data.get('standardization_expansion_q4') - data.get('annual_reduction_q4',0) - data.get('standardization_reduction_q4',0)
                 authorized = authorized_q1 + authorized_q2 + authorized_q3 + authorized_q4
                 total_authorized += authorized   
                 ws1.write(row, col, authorized,float_sytle)
