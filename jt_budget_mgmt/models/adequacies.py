@@ -845,7 +845,10 @@ class Adequacies(models.Model):
             company_id = user.company_id.id
             if not journal.default_debit_account_id or not journal.default_credit_account_id \
                     or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
-                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+                else:
+                    raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
             if self.adequacies_lines_ids[0].line_type == 'increase':
                 unam_move_val = {'ref': self.folio, 'adequacy_id': self.id, 'conac_move': True,
                                  'date': today, 'journal_id': journal.id, 'company_id': company_id,
@@ -885,7 +888,10 @@ class Adequacies(models.Model):
             company_id = user.company_id.id
             if not journal.default_debit_account_id or not journal.default_credit_account_id \
                     or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
-                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+                else:
+                    raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
             for line in self.adequacies_lines_ids:
                 amount = line.amount
                 if line.line_type == 'increase':

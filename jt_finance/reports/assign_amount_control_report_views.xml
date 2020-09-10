@@ -23,52 +23,65 @@
                 	<field name="line_id" invisible="1"/>
                     <field name="item_first" invisible="1"/>
                     <field name="item_second"/>
+                    
                     <field name="january"/>
                     <field name="amount_deposite_january"/>
+                    <field name="clc_january"></field>
                     <field name="pending_january"/>
-                    
+						                    
                     <field name="february"/>
                     <field name="amount_deposite_february"/>
+                    <field name="clc_february"></field>
                     <field name="pending_february"/>
 
                     <field name="march"/>
                     <field name="amount_deposite_march"/>
+                    <field name="clc_march"></field>
                     <field name="pending_march"/>
 
                     <field name="april"/>
                     <field name="amount_deposite_april"/>
+                    <field name="clc_april"></field>
                     <field name="pending_april"/>
 
                     <field name="may"/>
                     <field name="amount_deposite_may"/>
+                    <field name="clc_may"></field>
                     <field name="pending_may"/>
 
                     <field name="june"/>
                     <field name="amount_deposite_june"/>
+                    <field name="clc_june"></field>
                     <field name="pending_june"/>
 
                     <field name="july"/>
                     <field name="amount_deposite_july"/>
+                    <field name="clc_july"></field>
                     <field name="pending_july"/>
 
                     <field name="august"/>
                     <field name="amount_deposite_august"/>
+                    <field name="clc_august"></field>
                     <field name="pending_august"/>
 
                     <field name="september"/>
                     <field name="amount_deposite_september"/>
+                    <field name="clc_september"></field>
                     <field name="pending_september"/>
 
                     <field name="october"/>
                     <field name="amount_deposite_october"/>
+                    <field name="clc_october"></field>
                     <field name="pending_october"/>
 
                     <field name="november"/>
                     <field name="amount_deposite_november"/>
+                    <field name="clc_november"></field>
                     <field name="pending_november"/>
 
                     <field name="december"/>
                     <field name="amount_deposite_december"/>
+                    <field name="clc_december"></field>
                     <field name="pending_december"/>
                     
   				</tree>

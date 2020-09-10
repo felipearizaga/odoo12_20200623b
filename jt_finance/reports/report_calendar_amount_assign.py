@@ -27,6 +27,7 @@ class ReportCalendarAmountAssign(models.Model):
     _name = 'report.calendar.amount.assign.line'
     _description = 'Report Calendar Amount Assign Line'
     _auto = False
+    _order = 'item_first,item_second'
     
     item_first = fields.Char('Grouping by Object of Expenditure First')
     item_second = fields.Char('Grouping by Object of Expenditure')
@@ -71,16 +72,72 @@ class ReportCalendarAmountAssign(models.Model):
     
     annual_amount = fields.Float(string='Annual Amount')
 
-#     clc_january = fields.Char('CLC JANUARY',compute="get_clc_folio",compute_sudo=True)
-# 
-#     def get_clc_folio(self):
-#         for line in self:
-#             assing_lines = self.env['calendar.assigned.amounts.lines'].search([('item_id_first','=',line.item_first),('item_id_second','=',line.item_second)])
-#             if assing_lines:
-#                 recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',1)])
-#                 if recived_lines:
-#                     print("=====",recived_lines.mapped('folio_clc'))
-#                     line.clc_january = 'A'
+    clc_january = fields.Char('CLC January',compute="get_clc_folio",compute_sudo=True)
+    clc_february = fields.Char('CLC February',compute="get_clc_folio",compute_sudo=True)
+    clc_march = fields.Char('CLC March',compute="get_clc_folio",compute_sudo=True)
+    clc_april = fields.Char('CLC April',compute="get_clc_folio",compute_sudo=True)
+    clc_may = fields.Char('CLC May',compute="get_clc_folio",compute_sudo=True)
+    clc_june = fields.Char('CLC June',compute="get_clc_folio",compute_sudo=True)
+    clc_july = fields.Char('CLC July',compute="get_clc_folio",compute_sudo=True)
+    clc_august = fields.Char('CLC August',compute="get_clc_folio",compute_sudo=True)
+    clc_september = fields.Char('CLC September',compute="get_clc_folio",compute_sudo=True)
+    clc_october = fields.Char('CLC October',compute="get_clc_folio",compute_sudo=True)
+    clc_november = fields.Char('CLC November',compute="get_clc_folio",compute_sudo=True)
+    clc_december = fields.Char('CLC December',compute="get_clc_folio",compute_sudo=True)
+ 
+    def get_clc_folio(self):
+        for line in self:
+            line.clc_january = ''
+            line.clc_february = ''
+            line.clc_march = ''
+            line.clc_april = ''
+            line.clc_may = ''
+            line.clc_june = ''
+            line.clc_july = ''
+            line.clc_august = ''
+            line.clc_september = ''
+            line.clc_october = ''
+            line.clc_november = ''
+            line.clc_december = ''
+            
+            assing_lines = self.env['calendar.assigned.amounts.lines'].search([('item_id_first','=',line.item_first),('item_id_second','=',line.item_second)])
+            if assing_lines:
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',1)])
+                if recived_lines:
+                    line.clc_january = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',2)])
+                if recived_lines:
+                    line.clc_february = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',3)])
+                if recived_lines:
+                    line.clc_march = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',4)])
+                if recived_lines:
+                    line.clc_april = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',5)])
+                if recived_lines:
+                    line.clc_may = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',6)])
+                if recived_lines:
+                    line.clc_june = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',7)])
+                if recived_lines:
+                    line.clc_july = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',8)])
+                if recived_lines:
+                    line.clc_august = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',9)])
+                if recived_lines:
+                    line.clc_september = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',10)])
+                if recived_lines:
+                    line.clc_october = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',11)])
+                if recived_lines:
+                    line.clc_november = str(recived_lines.mapped('folio_clc')).strip('[]')
+                recived_lines = self.env['control.amounts.received.line'].search([('calendar_assigned_amount_line_id','in',assing_lines.ids),('month_no','=',12)])
+                if recived_lines:
+                    line.clc_december = str(recived_lines.mapped('folio_clc')).strip('[]')
     
     
     def init(self):

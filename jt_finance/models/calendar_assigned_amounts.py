@@ -186,7 +186,10 @@ class CalendarAssignedAmounts(models.Model):
         company_id = user.company_id.id
         if not journal.estimated_credit_account_id or not journal.estimated_debit_account_id \
                 or not journal.conac_estimated_credit_account_id or not journal.conac_estimated_debit_account_id:
-            raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+            else:
+                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
         unam_move_val = {'ref': self.folio, 'calender_id': control_amount.id, 'conac_move': True,
                          'date': today, 'journal_id': journal.id, 'company_id': company_id,
                          'line_ids': [(0, 0, {
@@ -267,7 +270,7 @@ class CalendarAssignedAmountsLines(models.Model):
         'res.partner.bank', string='Bank account', domain="['|', ('bank_id', '=', False), ('bank_id', '=', bank_id)]")
     observations = fields.Text(string='Observations')
     calendar_assigned_amount_id = fields.Many2one(
-        'calendar.assigned.amounts', string='Calendar of assigned amount')
+        'calendar.assigned.amounts', string='Calendar of assigned amount',ondelete='cascade')
 
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.company.currency_id)

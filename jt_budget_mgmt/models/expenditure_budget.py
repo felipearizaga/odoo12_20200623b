@@ -838,7 +838,10 @@ class ExpenditureBudget(models.Model):
             company_id = user.company_id.id
             if not journal.default_debit_account_id or not journal.default_credit_account_id \
                     or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
-                raise ValidationError(_("Please configure UNAM and CONAC account in budget journal!"))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+                else:
+                    raise ValidationError(_("Please configure UNAM and CONAC account in budget journal!"))
             unam_move_val = {'ref': self.name, 'budget_id': budget_id, 'conac_move': True,
                              'date': today, 'journal_id': journal.id, 'company_id': company_id,
                              'line_ids': [(0, 0, {

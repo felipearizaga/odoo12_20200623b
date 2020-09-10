@@ -299,6 +299,7 @@ msgid "Import control amount line"
 msgstr "Importar líneas de monto de control"
 
 #. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_form_view
 #: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_form_view
 msgid "Import lines"
 msgstr "Registros Importados"
@@ -514,6 +515,7 @@ msgid "UNAM Finance"
 msgstr "Registro del Subsidio Federal"
 
 #. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.calendar_assigned_amounts_form_view
 #: model_terms:ir.ui.view,arch_db:jt_finance.control_amounts_received_form_view
 msgid "Validate"
 msgstr "Validar"

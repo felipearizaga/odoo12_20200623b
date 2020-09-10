@@ -236,7 +236,7 @@ class ControlAmountsReceived(models.Model):
     def update_calendar_deposite_amount(self):
         for line in self.line_ids:
             same_folio_line = self.env['control.amounts.received.line'].search_count(
-                [('control_id', '!=', self.id), ('folio_clc', '=', line.folio_clc)])
+                [('control_id', '!=',False),('control_id', '!=', self.id), ('folio_clc', '=', line.folio_clc)])
             if same_folio_line:
                 raise ValidationError(_("Folio %s already been registered!")%(line.folio_clc))
             calendar_line = self.env['calendar.assigned.amounts.lines'].search([('budgetary_program','=',line.shcp_id.name),('item_id','=',line.conpa_id.id),('calendar_assigned_amount_id.state','=','validate')],limit=1)
@@ -244,7 +244,10 @@ class ControlAmountsReceived(models.Model):
             if not calendar_line:
                 budgetary_program_name =  line.shcp_id and line.shcp_id.name or ''
                 item_name = line.conpa_id and line.conpa_id.federal_part or ''
-                raise ValidationError(_("Calendar of Assigned Amount not found for Budgetary Program %s and Item of Expenditure %s")%(budgetary_program_name,item_name))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("No se encuentra el calendario de la cantidad asignada para el programa presupuestario %s y la partida de gastos %s")%(budgetary_program_name,item_name))
+                else:
+                    raise ValidationError(_("Calendar of Assigned Amount not found for Budgetary Program %s and Item of Expenditure %s")%(budgetary_program_name,item_name))
             
             if calendar_line:
                 if line.month_no==1:
@@ -275,8 +278,7 @@ class ControlAmountsReceived(models.Model):
                 if line.bank_id:
                     calendar_line.bank_id = line.bank_id.id
                 if line.bank_account_id:
-                    calendar_line.bank_accout_id = line.bank_account_id.id
-                     
+                    calendar_line.bank_account_id = line.bank_account_id.id
                 line.calendar_assigned_amount_line_id = calendar_line.id
                 line.calendar_assigned_amount_id = calendar_line.calendar_assigned_amount_id and calendar_line.calendar_assigned_amount_id.id or False  
     def validate(self):
@@ -294,7 +296,10 @@ class ControlAmountsReceived(models.Model):
         company_id = user.company_id.id
         if not journal.default_debit_account_id or not journal.default_credit_account_id \
                 or not journal.conac_debit_account_id or not journal.conac_credit_account_id:
-            raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+            else:
+                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
         unam_move_val = {'ref': self.folio, 'control_id': control_amount.id, 'conac_move': True,
                          'date': today, 'journal_id': journal.id, 'company_id': company_id,
                          'line_ids': [(0, 0, {
@@ -357,7 +362,7 @@ class ControlAmountsReceivedLine(models.Model):
         string='Amount pending', compute='_get_amount_pending')
     observations = fields.Text(string='Comments')
     control_id = fields.Many2one(
-        'control.amounts.received', string='Control of amounts received')
+        'control.amounts.received', string='Control of amounts received',ondelete='cascade')
     calendar_assigned_amount_id = fields.Many2one(
         'calendar.assigned.amounts', string='Calendar of assigned amount')
     calendar_assigned_amount_line_id = fields.Many2one(
@@ -405,7 +410,7 @@ class ControlAmountsReceivedLine(models.Model):
     def check_folio_unique(self):
         if self.folio_clc: 
             same_folio_line = self.env['control.amounts.received.line'].search_count(
-                    [('control_id', '!=', self.control_id.id), ('folio_clc', '=', self.folio_clc)])
+                    [('control_id', '!=',False),('control_id', '!=', self.control_id.id), ('folio_clc', '=', self.folio_clc)])
             if same_folio_line:
                 raise ValidationError(_("Folio %s already been registered!")%(self.folio_clc))
 
