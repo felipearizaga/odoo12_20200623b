@@ -49,6 +49,7 @@ msgstr "Monto a Recibir"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__april
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__april
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__april
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__april
 msgid "April"
@@ -56,6 +57,7 @@ msgstr "Abril"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__august
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__august
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__august
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__august
 msgid "August"
@@ -169,6 +171,7 @@ msgstr "Fecha"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__december
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__december
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__december
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__december
 msgid "December"
@@ -230,6 +233,7 @@ msgstr "Cadena de error"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__february
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__february
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__february
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__february
 msgid "February"
@@ -331,6 +335,7 @@ msgstr "Asientos contables"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__july
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__july
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__july
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__july
 msgid "July"
@@ -338,6 +343,7 @@ msgstr "Julio"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__june
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__june
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__june
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__june
 msgid "June"
@@ -374,6 +380,7 @@ msgstr "Responsable"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__march
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__march
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__march
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__march
 msgid "March"
@@ -381,6 +388,7 @@ msgstr "Marzo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__may
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__may
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__may
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__may
 msgid "May"
@@ -404,6 +412,7 @@ msgstr "Nuevo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__november
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__november
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__november
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__november
 msgid "November"
@@ -434,6 +443,7 @@ msgstr "Observaciones"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__october
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__october
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__october
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__october
 msgid "October"
@@ -475,6 +485,7 @@ msgstr "Archivo CLC"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__september
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__september
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__september
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__september
 msgid "September"
@@ -637,72 +648,86 @@ msgstr "Clave Cartera"
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__january
 #: model:ir.model.fields.selection,name:jt_finance.selection__calendar_assigned_amounts_lines__month__january
 #: model:ir.model.fields.selection,name:jt_finance.selection__control_amounts_received_line__month__january
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__january
 msgid "January"
 msgstr "Enero"
 
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_april
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_april
 msgid "Amount deposited April"
 msgstr "Monto depositado del mes de Abril"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_august
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_august
 msgid "Amount deposited August"
 msgstr "Monto depositado del mes de Agosto"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_december
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_december
 msgid "Amount deposited December"
 msgstr "Monto depositado del mes de Diciembre"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_february
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_february
 msgid "Amount deposited February"
 msgstr "Monto depositado del mes de Febrero"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_january
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_january
 msgid "Amount deposited January"
 msgstr "Monto depositado del mes de enero"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_july
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_july
 msgid "Amount deposited July"
 msgstr "Monto depositado del mes de Julio"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_june
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_june
 msgid "Amount deposited June"
 msgstr "Monto depositado del mes de junio"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_march
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_march
 msgid "Amount deposited March"
 msgstr "Monto depositado del mes de Marzo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_may
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_may
 msgid "Amount deposited May"
 msgstr "Monto depositado del mes de Mayo"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_november
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_november
 msgid "Amount deposited November"
 msgstr "Monto depositado del mes de Noviembre"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_october
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_october
 msgid "Amount deposited October"
 msgstr "Monto depositado del mes de Octubre"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__amount_deposite_september
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__amount_deposite_september
 msgid "Amount deposited September"
 msgstr "Monto depositado del mes de Septiembre"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_calendar_assigned_amounts_lines__annual_amount
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__annual_amount
 msgid "Annual Amount"
 msgstr "Monto Anual"
 
@@ -797,5 +822,131 @@ msgstr "Líneas de Control de Montos Recibidos"
 #: model:ir.model.fields,field_description:jt_finance.field_control_amounts_received__state
 msgid "Status"
 msgstr "Estado"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__item_second
+#: model_terms:ir.ui.view,arch_db:jt_finance.report_calendar_amount_assign_line_search_view
+msgid "Grouping by Object of Expenditure"
+msgstr "Agrupación por Objeto del Gasto"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_april
+msgid "CLC April"
+msgstr "CLC Abril"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_august
+msgid "CLC August"
+msgstr "CLC Agosto"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_december
+msgid "CLC December"
+msgstr "CLC Diciembre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_february
+msgid "CLC February"
+msgstr "CLC Febrero"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_january
+msgid "CLC January"
+msgstr "CLC enero"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_july
+msgid "CLC July"
+msgstr "CLC Julio"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_june
+msgid "CLC June"
+msgstr "CLC junio"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_march
+msgid "CLC March"
+msgstr "CLC Marzo"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_may
+msgid "CLC May"
+msgstr "CLC Mayo"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_november
+msgid "CLC November"
+msgstr "CLC Noviembre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_october
+msgid "CLC October"
+msgstr "CLC Octubre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__clc_september
+msgid "CLC September"
+msgstr "CLC Septiembre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_april
+msgid "Receivable April"
+msgstr "POR COBRAR Abril"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_august
+msgid "Receivable August"
+msgstr "POR COBRAR Agosto"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_december
+msgid "Receivable December"
+msgstr "POR COBRAR Diciembre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_february
+msgid "Receivable February"
+msgstr "POR COBRAR Febrero"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_january
+msgid "Receivable January"
+msgstr "POR COBRAR enero"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_july
+msgid "Receivable July"
+msgstr "POR COBRAR Julio"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_june
+msgid "Receivable June"
+msgstr "POR COBRAR junio"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_march
+msgid "Receivable March"
+msgstr "POR COBRAR Marzo"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_may
+msgid "Receivable May"
+msgstr "POR COBRAR Mayo"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_november
+msgid "Receivable November"
+msgstr "POR COBRAR Noviembre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_october
+msgid "Receivable October"
+msgstr "POR COBRAR Octubre"
+
+#. module: jt_finance
+#: model:ir.model.fields,field_description:jt_finance.field_report_calendar_amount_assign_line__pending_september
+msgid "Receivable September"
+msgstr "POR COBRAR Septiembre"
 
 

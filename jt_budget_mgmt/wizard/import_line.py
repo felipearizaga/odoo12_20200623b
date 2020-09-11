@@ -190,8 +190,12 @@ class ImportLine(models.TransientModel):
                         
                     result_vals.append((0, 0, result_dict))
                 if round(total_budget_amount, 2) != self.total_budget:
-                    raise UserError(
-                        _('The sum of the Authorized amounts is not equal to the total of the budget'))
+                    if self.env.user.lang=='es_MX':
+                        raise UserError(
+                            _('La suma de los montos Autorizados %s no es igual al total del presupuesto %s')%(round(total_budget_amount, 2),self.total_budget))
+                    else:
+                        raise UserError(
+                            _('The sum of the Authorized amounts %s is not equal to the total of the budget %s')%(round(total_budget_amount, 2),self.total_budget))
 
                 data = result_vals
                 if budget:
@@ -208,15 +212,33 @@ class ImportLine(models.TransientModel):
                         })
 
                     except ValueError as e:
-                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                        if self.env.user.lang == 'es_MX':
+                            raise ValidationError(_("La columna contiene valores incorrectos. Error: %s")% (ustr(e)))
+                        else:
+                            raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
                     except ValidationError as e:
-                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
+                        if self.env.user.lang == 'es_MX':
+                            raise ValidationError(_("La columna contiene valores incorrectos. Error: %s")% (ustr(e)))
+                        else:                        
+                            raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))
                     except UserError as e:
-                        raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
+                        if self.env.user.lang == 'es_MX':
+                            raise ValidationError(_("La columna contiene valores incorrectos. Error: %s")% (ustr(e)))
+                        else:                        
+                            raise ValidationError(_("Column  contains incorrect values. Error: %s")% (ustr(e)))            
 
             except ValueError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("La columna contiene valores incorrectos. Error %s")% (ustr(e)))
+                else:
+                    raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
             except ValidationError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("La columna contiene valores incorrectos. Error: %s")% (ustr(e)))
+                else:
+                    raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))
             except UserError as e:
-                raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))            
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("La columna contiene valores incorrectos. Error: %s")% (ustr(e)))
+                else:                
+                    raise ValidationError(_("Column  contains incorrect values. Error %s")% (ustr(e)))            

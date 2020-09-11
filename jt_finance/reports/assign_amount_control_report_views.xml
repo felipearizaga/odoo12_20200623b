@@ -23,6 +23,7 @@
                 	<field name="line_id" invisible="1"/>
                     <field name="item_first" invisible="1"/>
                     <field name="item_second"/>
+                    <field name="annual_amount"/>
                     
                     <field name="january"/>
                     <field name="amount_deposite_january"/>

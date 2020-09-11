@@ -826,6 +826,10 @@ class ExpenditureBudget(models.Model):
         self.write({'state': 'confirm'})
 
     def approve(self):
+        if self.state == 'validate':
+            raise ValidationError("Budget already validated.Please reload the page!")
+        self.write({'state': 'validate'})
+        
         self.verify_data()
         if self.journal_id:
             move_obj = self.env['account.move']
@@ -859,7 +863,7 @@ class ExpenditureBudget(models.Model):
             unam_move.action_post()
         self.success_line_ids.mapped('program_code_id').write(
             {'state': 'validated', 'budget_id': self.id})
-        self.write({'state': 'validate'})
+        
 
     def reject(self):
         return {
