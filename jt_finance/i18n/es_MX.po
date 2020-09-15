@@ -949,4 +949,22 @@ msgstr "POR COBRAR Octubre"
 msgid "Receivable September"
 msgstr "POR COBRAR Septiembre"
 
+#. module: jt_finance
+#: model:ir.ui.menu,name:jt_finance.menu_jt_finance_report
+#: model_terms:ir.ui.view,arch_db:jt_finance.report_calendar_amount_assign_line_search_view
+msgid "Reports"
+msgstr "Reportes"
+
+#. module: jt_finance
+#: model:ir.actions.act_window,name:jt_finance.action_report_calendar_amount_assign
+msgid "Report Calendar of assigned amounts"
+msgstr "Reporte de Control de Montos Asignados"
+
+#. module: jt_finance
+#: model:ir.ui.menu,name:jt_finance.menu_assigned_amount_control_report
+msgid "Assigned Amount Control Report"
+msgstr "Reporte de Control de Montos Asignados"
+
+
+
 

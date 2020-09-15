@@ -56,8 +56,6 @@ class AccountMove(models.Model):
             invoice_lines = move.invoice_line_ids.filtered(lambda x:not x.program_code_id)
             if invoice_lines:
                 raise ValidationError("Please add program code into invoice lines")
-            for line in move.line_ids:
-                line.coa_conac_id = line.account_id and line.account_id.coa_conac_id and line.account_id.coa_conac_id.id or False 
         return super(AccountMove,self).action_register()
 
         
@@ -155,13 +153,39 @@ class AccountMove(models.Model):
         self.button_draft()
         conac_move = self.line_ids.filtered(lambda x:x.conac_move)
         conac_move.sudo().unlink()
+        for line in self.line_ids:
+            line.coa_conac_id = False 
+        
         self.add_budget_available_amount()
+    
+    def cancel_payment_revers_entry(self):
+        revers_list = []
+        for line in self.line_ids:
+            revers_list.append((0, 0, {
+                                     'account_id': line.account_id.id,
+                                     'coa_conac_id': line.coa_conac_id and line.coa_conac_id.id or False,
+                                     'credit': line.debit,
+                                     'debit':line.credit, 
+                                     'exclude_from_invoice_tab': True,
+                                     'conac_move' : line.conac_move,
+                                     'name' : 'Reversa',
+                                     'currency_id' : line.currency_id and line.currency_id.id or False,
+                                     'amount_currency' : line.amount_currency,
+                                 }))
+        self.line_ids = revers_list 
+
+    def button_cancel(self):
+        for record in self:
+            if record.is_payment_request or record.is_payroll_payment_request:
+                if record.payment_state == 'cancel':
+                    record.cancel_payment_revers_entry()
+                    record.add_budget_available_amount()
+        return super(AccountMove,self).button_cancel()
     
     def action_cancel_budget(self):
         self.ensure_one()
         self.payment_state = 'cancel'
         self.button_cancel()
-        self.add_budget_available_amount()
         
     def action_reschedule(self):
         res = super(AccountMove,self).action_reschedule()

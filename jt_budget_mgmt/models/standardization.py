@@ -1041,7 +1041,15 @@ class Standardization(models.Model):
             line.state = 'authorized'
 
     def action_cancelled(self):
-        lines = self.line_ids.filtered(lambda l: l.selected == True)
+        lines = self.line_ids.filtered(lambda l: l.selected == True and l.state == 'authorized')
+        if lines:
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError("No puede cancelar la línea de reprogramación autorizada")
+            else:
+                raise ValidationError("You cannot Canceled the Authorized  Re-scheduling line")
+        
+        lines = self.line_ids.filtered(lambda l: l.selected == True and l.state != 'authorized')
+        
         for line in lines:
             line.state = 'cancelled'
         return {
@@ -1247,7 +1255,7 @@ class StandardizationLine(models.Model):
             else:
                 raise ValidationError(
                     "You cannot skip or return the status of a Re-scheduling line")
-        if state and state == 'authorized' and self.state not in ['authorized', 'cancelled']:
+        if state and state == 'authorized' and self.state not in ['authorized']:
             if self.env.user.lang == 'es_MX':
                 raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
             else:
