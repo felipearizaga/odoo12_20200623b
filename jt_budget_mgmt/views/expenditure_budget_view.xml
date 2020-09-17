@@ -69,6 +69,7 @@
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '!=', 'draft'), ('state', '!=', 'draft')]}"/>
                                 <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', '|', ('import_status', '=', 'draft'), ('state', 'not in', ('draft', 'previous')), ('cron_running', '=', True)]}" context="{'reimport': True}"/>
                                 <field name="total_budget"/>
+                                <field name="total_budget_validate" invisible="1"/>
                                 <field name="total_quarter_budget" invisible="1"/>
                                 <field name="record_number"/>
                                 <field name="import_record_number"/>

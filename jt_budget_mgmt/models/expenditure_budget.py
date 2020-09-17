@@ -62,11 +62,16 @@ class ExpenditureBudget(models.Model):
 
     def _compute_total_budget(self):
         for budget in self:
-            budget.total_budget = sum(
-                budget.success_line_ids.mapped('authorized'))
+            if budget.state in ('validate','done'):
+                budget.total_budget = budget.total_budget_validate
+            else:  
+                budget.total_budget = sum(
+                    budget.success_line_ids.mapped('authorized'))
 
     total_budget = fields.Float(
         string='Total budget', tracking=True, compute="_compute_total_budget")
+    total_budget_validate = fields.Float(string='Total budget',copy=False)
+    
     record_number = fields.Integer(
         string='Number of records', compute='_get_count')
     import_record_number = fields.Integer(
@@ -875,7 +880,8 @@ class ExpenditureBudget(models.Model):
         if self.state == 'validate':
             raise ValidationError("Budget already validated.Please reload the page!")
         self.write({'state': 'validate'})
-        
+        self.total_budget_validate =  sum(self.success_line_ids.mapped('authorized'))
+
         self.verify_data()
         if self.journal_id:
             move_obj = self.env['account.move']
