@@ -5,3 +5,6 @@ from . import res_partner
 from . import sub_origin_of_resource
 from . import res_company
 from . import invoice
+from . import income_cash_cut
+from . import account_payment
+from . import adequacies
