@@ -93,6 +93,13 @@ class ImportAdequaciesLine(models.TransientModel):
                     raise UserError(_('Number of records do not match with file'))
 
                 if adequacies:
+                    adequacies_lines_ids = adequacies.adequacies_lines_ids.filtered(lambda x:x.imported)
+                    if adequacies_lines_ids:
+                        adequacies_lines_ids.sudo().unlink() 
+                    adequacies.pointer_row = 1
+                    adequacies.success_row_ids = "[]"
+                    adequacies.failed_row_ids = "[]"
+                    adequacies.allow_upload = False
                     adequacies.write({
                         'budget_file': self.file,
                         'filename': self.filename,

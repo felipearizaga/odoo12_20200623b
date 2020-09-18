@@ -41,7 +41,7 @@
                                 <field name="amount_received"/>
                                 <field name="amount_pending"/>
                                 <field name="obs_calender_amount"/>
-                                <field name="journal_id"/>
+                                <field name="journal_id" readonly="1" force_save="1"/>
 
                                 <!-- Fields for Control of Assigned Amount -->
                                 <field name="folio" invisible="1"/>

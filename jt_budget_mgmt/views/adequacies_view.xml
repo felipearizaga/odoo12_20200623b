@@ -45,6 +45,7 @@
                                 <field name="date_of_liquid_adu" readonly="1" attrs="{'invisible': [('adaptation_type', '!=', 'liquid')],
                                 'required': [('adaptation_type', '=', 'liquid')],}"/>
                                 <button name="import_lines" type="object" string="Import lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', 'in', ('accepted', 'rejected')), ('import_status', '!=', 'draft')]}"/>
+                                <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('import_status', '=', 'draft')]}"/>
                                 <field name="reason" states='rejected'/>
                                 <field name="record_number"/>
                                 <field name="imported_record_number"/>

@@ -133,9 +133,9 @@
                                             <field name="authorized" widget="monetary"
                                                    options="{'currency_field': 'currency_id'}" required="1" readonly="1"/>
                                             <field name="assigned" widget="monetary"
-                                                   options="{'currency_field': 'currency_id'}" required="1" />
+                                                   options="{'currency_field': 'currency_id'}" required="1" invisible="1"/>
                                             <field name="available" widget="monetary"
-                                                   options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                                   options="{'currency_field': 'currency_id'}" readonly="1" invisible="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
                                         </group>
@@ -208,7 +208,7 @@
                                                sum="Total Authorized Amount"/>
                                         <field name="assigned" widget="monetary"
                                                options="{'currency_field': 'currency_id'}"
-                                               sum="Total Assigned Amount"/>
+                                               sum="Total Assigned Amount" invisible="1"/>
                                         <field name="available" widget="monetary"
                                                options="{'currency_field': 'currency_id'}"
                                                sum="Total Available Amount" invisible="1"/>
@@ -232,9 +232,9 @@
                                             <field name="authorized" widget="monetary"
                                                    options="{'currency_field': 'currency_id'}" required="1"/>
                                             <field name="assigned" widget="monetary"
-                                                   options="{'currency_field': 'currency_id'}" required="1"/>
+                                                   options="{'currency_field': 'currency_id'}" required="1" invisible="1"/>
                                             <field name="available" widget="monetary"
-                                                   options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                                   options="{'currency_field': 'currency_id'}" readonly="1" invisible="1"/>
                                             <field name="expenditure_budget_id" invisible="1"/>
                                             <field name="currency_id" invisible="1"/>
                                         </group>

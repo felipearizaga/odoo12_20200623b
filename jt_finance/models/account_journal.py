@@ -33,7 +33,7 @@ class AccountJournal(models.Model):
     conac_estimated_debit_account_id = fields.Many2one('coa.conac', "CONAC Debit Account")
 
     @api.onchange('estimated_credit_account_id', 'estimated_debit_account_id')
-    def onchange_paid_account(self):
+    def onchange_estimated_account(self):
         if self.estimated_credit_account_id and self.estimated_credit_account_id.coa_conac_id:
             self.conac_estimated_credit_account_id = self.estimated_credit_account_id.coa_conac_id
         else:

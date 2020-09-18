@@ -985,7 +985,7 @@ class Standardization(models.Model):
             lambda l: l.selected == True and l.state != False and l.state != 'draft')
         if lines:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
 
@@ -1000,7 +1000,7 @@ class Standardization(models.Model):
             lambda l: l.selected == True and l.state not in ('draft','received'))
         if lines:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
                 
@@ -1016,7 +1016,7 @@ class Standardization(models.Model):
             lambda l: l.selected == True and l.state not in ('in_process','received'))
         if lines:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
         
@@ -1031,7 +1031,7 @@ class Standardization(models.Model):
             lambda l: l.selected == True and l.state not in ('in_process','authorized'))
         if lines:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
         
@@ -1044,7 +1044,7 @@ class Standardization(models.Model):
         lines = self.line_ids.filtered(lambda l: l.selected == True and l.state == 'authorized')
         if lines:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puede cancelar la línea de reprogramación autorizada")
+                raise ValidationError("No puede cancelar la línea de Recalendarización autorizada")
             else:
                 raise ValidationError("You cannot Canceled the Authorized  Re-scheduling line")
         
@@ -1238,30 +1238,30 @@ class StandardizationLine(models.Model):
         state = self._origin.state
         if state and state == 'draft' and self.state not in ['draft', 'received', 'cancelled']:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError(
                 "You cannot skip or return the status of a Re-scheduling line")
         if state and state == 'received' and self.state not in ['received', 'in_process', 'cancelled']:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:            
                 raise ValidationError(
                     "You cannot skip or return the status of a Re-scheduling line")
         if state and state == 'in_process' and self.state not in ['in_process', 'authorized', 'cancelled']:
 
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError(
                     "You cannot skip or return the status of a Re-scheduling line")
         if state and state == 'authorized' and self.state not in ['authorized']:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
         if state and state == 'cancelled' and self.state not in ['cancelled']:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError("No puedes saltar o devolver el estado de una línea de reprogramación")
+                raise ValidationError("No puedes saltar o devolver el estado de una línea de Recalendarización")
             else:
                 raise ValidationError("You cannot skip or return the status of a Re-scheduling line")
