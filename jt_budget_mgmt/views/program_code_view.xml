@@ -52,11 +52,6 @@
                                 <!-- Program Relation -->
                                 <field name="program_id" required="1" attrs="{'readonly': [('state', '=', 'validated')]}"/>
                                 <field name="desc_program"/>
-                                <!-- Sub Program Relation -->
-                                <field name="sub_program_id"
-                                       required="1" domain="[('unam_key_id', '=', program_id)]"
-                                       context="{'default_unam_key_id': program_id}"/>
-                                <field name="desc_sub_program"/>
                                 <!-- Dependency Relation -->
                                 <field name="dependency_id" attrs="{'readonly': [('state', '=', 'validated')]}"
                                        required="1"/>
@@ -65,6 +60,12 @@
                                 <field name="sub_dependency_id" attrs="{'readonly': [('state', '=', 'validated')]}"
                                        required="1" domain="[('dependency_id', '=', dependency_id)]" context="{'default_dependency_id': dependency_id}"/>
                                 <field name="desc_sub_dependency"/>
+                                
+                                <!-- Sub Program Relation -->
+                                <field name="sub_program_id"
+                                       required="1" domain="[('unam_key_id', '=', program_id),('dependency_id','=',dependency_id),('sub_dependency_id','=',sub_dependency_id)]"
+                                       context="{'default_unam_key_id': program_id}"/>
+                                <field name="desc_sub_program"/>
                                 <!-- Item Relation -->
                                 <field name="item_id" required="1" attrs="{'readonly': [('state', '=', 'validated')]}"/>
                                 <field name="desc_item"/>

@@ -50,11 +50,41 @@ class BudgetProgramConversion(models.Model):
                     raise UserError(
                         _('Please enter first digit as letter and last 3 digits as numbers for SHCP.'))
 
-    @api.onchange('desc')
+    @api.onchange('unam_key_id')
     def _onchange_key_unam(self):
-        if self.unam_key_id and not self.desc:
+        if self.unam_key_id:
             self.desc = self.unam_key_id.desc_key_unam
+        else:
+            self.desc = False
 
+    @api.onchange('shcp')
+    def _onchange_shcp(self):
+        if self.shcp:
+            self.description = self.shcp.desc
+        else:
+            self.description = False
+
+    @api.model
+    def create(self,vals):
+        res = super(BudgetProgramConversion,self).create(vals)
+        if not res.desc and res.unam_key_id and res.unam_key_id.desc_key_unam:
+            res.desc = res.unam_key_id.desc_key_unam
+        if not res.description and res.shcp and res.shcp.desc:
+            res.description = res.shcp.desc
+        return res
+
+    def write(self,vals):
+        result = super(BudgetProgramConversion,self).write(vals)
+        if vals.get('unam_key_id') or vals.get('shcp'):
+            for res in self:
+                if vals.get('unam_key_id'):
+                    if not res.desc and res.unam_key_id and res.unam_key_id.desc_key_unam:
+                        res.desc = res.unam_key_id.desc_key_unam
+                if vals.get('shcp'):
+                    if not res.description and res.shcp and res.shcp.desc:
+                        res.description = res.shcp.desc
+        return result
+        
     def unlink(self):
         for bpc in self:
             program_code = self.env['program.code'].search([('budget_program_conversion_id', '=', bpc.id)], limit=1)

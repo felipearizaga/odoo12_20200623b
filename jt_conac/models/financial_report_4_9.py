@@ -124,11 +124,11 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
             date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
             if period.get('period_type') == 'month':
                 budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
-                                                    ('state', '=', 'success')])
+                                                    ('state', '=', 'success'),('imported_sessional','=',False)])
             else:
                 budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
                                       ('start_date', '>=', date_start), ('state', '=', 'success'),
-                                      ('end_date', '<=', date_end)])
+                                      ('end_date', '<=', date_end),('imported_sessional','=',False)])
             for line in budget_lines:
                 if period.get('period_type') == 'month':
                     if date_start >= line.start_date and date_end <= line.end_date:

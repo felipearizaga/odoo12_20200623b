@@ -568,12 +568,16 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 where_query += ' and pc.item_id=expic.id'
                 need_total = True
             elif column in ('Authorized', 'Autorizado'):
+                start_date = start.replace(month=1, day=1)
+                end_date = end.replace(month=12, day=31)
+                
                 need_columns_with_format.append('authorized')
-                col_query += ',(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as authorized'
-                tuple_where_data.append(start)
-                tuple_where_data.append(end)
+                col_query += ',(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and ebl.imported_sessional IS NULL and start_date >= %s and end_date <= %s) as authorized'
+                #tuple_where_data.append(False)
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
                 #=== Grand Total ======#
-                self.env.cr.execute("select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                self.env.cr.execute("select coalesce(sum(ebl.authorized),0) from expenditure_budget_line ebl where ebl.program_code_id in %s and ebl.imported_sessional IS NULL and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
                 my_datas = self.env.cr.fetchone()
                 if my_datas:
                     grand_total_dict.update({'authorized':my_datas[0]})
@@ -591,20 +595,22 @@ class ProformaBudgetSummaryReport(models.AbstractModel):
                 
             elif column in ('Annual Modified', 'Modificado Anual'):
                 need_columns_with_format.append('annual_modified')
-                col_query += ',(select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE -al.amount END),0) from adequacies_lines al,adequacies a where a.state=%s and al.program = pc.id and a.id=al.adequacies_id))+(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and start_date >= %s and end_date <= %s) as annual_modified'
+                start_date = start.replace(month=1, day=1)
+                end_date = end.replace(month=12, day=31)
+                
+                col_query += ',(select (select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE -al.amount END),0) from adequacies_lines al,adequacies a where a.state=%s and al.program = pc.id and a.id=al.adequacies_id))+(select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where pc.id=ebl.program_code_id and ebl.imported_sessional IS NULL and start_date >= %s and end_date <= %s) as annual_modified'
                 tuple_where_data.append('increase')
                 tuple_where_data.append('accepted')
-                tuple_where_data.append(start)
-                tuple_where_data.append(end)
+                tuple_where_data.append(start_date)
+                tuple_where_data.append(end_date)
                 #=== Grand Total ======#
                 self.env.cr.execute("select coalesce(SUM(CASE WHEN al.line_type = %s THEN al.amount ELSE -al.amount END),0) from adequacies_lines al,adequacies a where a.state=%s and al.program in %s and a.id=al.adequacies_id", ('increase','accepted',tuple(program_code_list)))
                 my_datas = self.env.cr.fetchone()
                 total_annual_modified = 0
                 if my_datas:
                     total_annual_modified = my_datas[0]
-                self.env.cr.execute("select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where ebl.program_code_id in %s and start_date >= %s and end_date <= %s", (tuple(program_code_list),start,end))
+                self.env.cr.execute("select coalesce(sum(ebl.authorized), 0) from expenditure_budget_line ebl where ebl.program_code_id in %s and ebl.imported_sessional IS NULL and start_date >= %s and end_date <= %s", (tuple(program_code_list),start_date,end_date))
                 my_datas = self.env.cr.fetchone()
-                total_annual_modified = 0
                 if my_datas:
                     total_annual_modified += my_datas[0]
                 grand_total_dict.update({'annual_modified':total_annual_modified})
