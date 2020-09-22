@@ -238,7 +238,10 @@ class ControlAmountsReceived(models.Model):
             same_folio_line = self.env['control.amounts.received.line'].search_count(
                 [('control_id', '!=',False),('control_id', '!=', self.id), ('folio_clc', '=', line.folio_clc)])
             if same_folio_line:
-                raise ValidationError(_("Folio %s already been registered!")%(line.folio_clc))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("Actualmente, el Folio  %s ya está registrado!")%(line.folio_clc))
+                else:
+                    raise ValidationError(_("Currently Folio %s is already registered!")%(line.folio_clc))
             calendar_line = self.env['calendar.assigned.amounts.lines'].search([('budgetary_program','=',line.shcp_id.name),('item_id','=',line.conpa_id.id),('calendar_assigned_amount_id.state','=','validate')],limit=1)
             
             if not calendar_line:
@@ -412,7 +415,10 @@ class ControlAmountsReceivedLine(models.Model):
             same_folio_line = self.env['control.amounts.received.line'].search_count(
                     [('control_id', '!=',False),('control_id', '!=', self.control_id.id), ('folio_clc', '=', self.folio_clc)])
             if same_folio_line:
-                raise ValidationError(_("Folio %s already been registered!")%(self.folio_clc))
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("Actualmente, el Folio  %s ya está registrado!")%(self.folio_clc))
+                else:
+                    raise ValidationError(_("Currently Folio %s is already registered!")%(self.folio_clc))
 
     @api.model
     def create(self,vals):

@@ -36,6 +36,17 @@ class DepartureConversion(models.Model):
     
     _sql_constraints = [('federal_part', 'unique(federal_part,item_id)', 'The federal part must be unique per Item of Expenditure.')]
 
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = ''
+            if rec.item_id and self.env.context and self.env.context.get('show_item_name',False): 
+                name += '[' + rec.item_id.item + '] '
+            if rec.federal_part:
+                name += rec.federal_part
+            result.append((rec.id, name))
+        return result
+
     @api.constrains('federal_part')
     def _check_federal_part(self):
         if not str(self.federal_part).isnumeric():

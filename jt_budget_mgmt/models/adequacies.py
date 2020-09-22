@@ -630,7 +630,10 @@ class Adequacies(models.Model):
             counter_decreased = 0
             counter_increased = 0
             if len(self.adequacies_lines_ids.ids) == 0:
-                raise ValidationError("Please select or import any lines!")
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError("Seleccione o importe líneas!")
+                else:
+                    raise ValidationError("Please select or import lines!")
             if self.adaptation_type != 'compensated':
                 line_types = adequacies.adequacies_lines_ids.mapped('line_type')
                 line_types = list(set(line_types))
