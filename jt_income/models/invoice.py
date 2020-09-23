@@ -5,6 +5,18 @@ class Invoice(models.Model):
 
     _inherit = 'account.move'
 
+    @api.depends('registry')
+    def get_charge_data(self):
+        for rec in self:
+            if rec.registry:
+                emp = self.env['hr.employee'].search([('user_id','=',rec.registry.id)],limit=1)
+                if emp.job_id:
+                    rec.charge_id = emp.job_id.id
+                else:
+                    rec.charge_id = False
+            else:
+                rec.charge_id = False
+                
     income_type = fields.Selection([('extra', 'Extraordinary'),
                                     ('own', 'Own')], string="Income Type")
     sub_origin_resource_id = fields.Many2one('sub.origin.resource', "Extraordinary / Own income")
@@ -50,10 +62,10 @@ class Invoice(models.Model):
     exercise_reference = fields.Char("Exercise of the reference")
     email = fields.Char("Mail")
     certificate_seal = fields.Char("Certificate Seal")
-    charge_id = fields.Many2one('hr.job', "Charge")
     base_salary = fields.Monetary("Base Salary")
     emitter = fields.Char("Emitter")
-    registry = fields.Char("Registry")
+    registry = fields.Many2one("res.users",string="Registry",default=lambda self: self.env.user)
+    charge_id = fields.Many2one('hr.job',string="Charge",compute="get_charge_data",store=True)
     issuer_dependency_id = fields.Many2one('dependency', "Issuer Dependency")
     cfdi_conacyt_enter = fields.Char("CFDI CONACYT Enter")
     cfdi_conacyt_exercise = fields.Char("CFDI Exercise CONACYT entry")
@@ -81,12 +93,62 @@ class Invoice(models.Model):
     reference_plugin = fields.Char('Reference Plugin')
     income_status = fields.Selection([('approved','Approved'),('rejected','Rejected')],string="Income Status")
     adequacies_ids = fields.One2many("adequacies",'invoice_move_id')
+    hide_base_on_account = fields.Boolean('Hide Base Accounts',compute='get_hide_base_on_account')
+    payment_method_name = fields.Char(related='l10n_mx_edi_payment_method_id.name')
+    sub_origin_ids = fields.Many2many('sub.origin.resource',compute="get_sub_origin_ids",store=True)
+    customer_ref = fields.Char("Customer Reference")
+    returned_check = fields.Boolean("Returned check",default=False)
+    manual_rfc = fields.Char("RFC")
+    full_name = fields.Char("Full Name")
+    type_of_changes = fields.Float("Type Of Changes")
+    trade_no = fields.Char("Trade No")
     
-    @api.depends('adequacies_ids','record_type','type_of_revenue_collection')
+    @api.depends('type_of_revenue_collection','returned_check')
+    def show_trade_no(self):
+        for rec in self:
+            is_show_trade_no = False
+            if rec.returned_check:
+                is_show_trade_no = True
+            elif rec.type_of_revenue_collection and rec.type_of_revenue_collection == 'dgoae_trades':
+                is_show_trade_no = True
+            rec.is_show_trade_no = is_show_trade_no 
+            
+    is_show_trade_no = fields.Boolean(string="Show Trade NO",compute="show_trade_no",store=True)
+    #===== Notice of compensation Tab fields=========#
+
+    recipient_emp_id = fields.Many2one('hr.employee','Employee')
+    recipient_title = fields.Char(related="recipient_emp_id.emp_title",string='Title')
+    recipient_professional_title = fields.Char(related="recipient_emp_id.emp_job_title",string='Professional Title')
+
+    sender_emp_id = fields.Many2one('hr.employee','Employee')
+    sender_title = fields.Char(related="sender_emp_id.emp_title",string='Title')
+    sender_professional_title = fields.Char(related="sender_emp_id.emp_job_title",string='Professional Title')
+    
+    employee_ids = fields.Many2many('hr.employee','rel_employee_income_invoice','sender_id','emp_id','EMPLOYEES COPIED')
+    
+    @api.depends('income_type','state')
+    def get_sub_origin_ids(self):
+        for rec in self:
+            if rec.income_type and rec.income_type == 'own':
+                rec.sub_origin_ids = [(6,0,self.env['sub.origin.resource'].search([('resource_id.desc','=','income')]).ids)]
+            else:
+                rec.sub_origin_ids = [(6,0,self.env['sub.origin.resource'].search([('resource_id.desc','!=','income')]).ids)]
+    
+    @api.depends('income_bank_journal_id','income_bank_account')
+    def get_hide_base_on_account(self):
+        for rec in self:
+            hide_base_on_account = True
+            if rec.income_bank_account and rec.income_bank_account.acc_number == '444101001':
+                hide_base_on_account = False
+            rec.hide_base_on_account = hide_base_on_account
+                
+    @api.depends('adequacies_ids','record_type','type_of_revenue_collection','state')
     def get_hide_budget_refund(self):
         for record in self:
             is_hide_budget_refund = False
             if record.adequacies_ids:
+                is_hide_budget_refund = True
+            elif record.state != 'posted':
                 is_hide_budget_refund = True
             elif record.record_type != 'manual' or record.type_of_revenue_collection != 'deposit_cer':
                 is_hide_budget_refund = True
@@ -162,7 +224,20 @@ class AccountMoveLine(models.Model):
     amount_of_check = fields.Float("Amount of the check")
     deposit_for_check_recovery = fields.Char("Deposit for check recovery")
     cfdi_20 = fields.Char("CFDI 20%")
-    
-    
+    account_ie_id = fields.Many2one('association.distribution.ie.accounts','Account I.E.')
 
+
+#     @api.depends('product_id')
+#     def get_ie_accounts_ids(self):
+#         for rec in self:
+#             if rec.product_id:
+#                 rec.account_ie_ids = [(6,0,rec.product_id.ie_account_id.ids)]
+    
+    account_ie_ids = fields.Many2many('association.distribution.ie.accounts','ie_account_move_line','line_id','ie_id')
+    
+    @api.onchange('product_id')
+    def get_ie_accounts_ids(self):
+        if self.product_id:
+            self.account_ie_ids = [(6,0,self.product_id.ie_account_id.ids)]
+    
 
