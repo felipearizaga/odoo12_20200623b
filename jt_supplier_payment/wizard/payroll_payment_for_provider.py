@@ -33,7 +33,7 @@ class PayrollPaymentProviderwizard(models.TransientModel):
     emp_payroll_ids = fields.Many2many('employee.payroll.file','employee_payroll_file_provider_rel','provider_id','emp_file_id','Employee Payroll')
 
     def action_payroll_payment_provider(self):
-        journal = self.env.ref('jt_supplier_payment.payment_request_jour')
+        journal = self.env.ref('jt_payroll_payment.payroll_payment_request_jour')
         if self.partner_id and self.partner_id.bank_ids:
             payment_bank_account_id = self.partner_id.bank_ids[0].id
             payment_bank_id = self.partner_id.bank_ids[0].bank_id and self.partner_id.bank_ids[0].bank_id.id or False
@@ -47,7 +47,7 @@ class PayrollPaymentProviderwizard(models.TransientModel):
             
         vals = {
                 'partner_id' : self.partner_id.id,
-                #'journal_id' : journal and journal.id or False,
+                'journal_id' : journal and journal.id or False,
                 'payment_bank_id' : payment_bank_id,
                 'payment_bank_account_id' : payment_bank_account_id,
                 'is_payroll_payment_request':True,
@@ -58,3 +58,5 @@ class PayrollPaymentProviderwizard(models.TransientModel):
             }
         move_id = self.env['account.move'].create(vals)
         self.emp_payroll_ids.write({'move_id':move_id.id})
+        
+        

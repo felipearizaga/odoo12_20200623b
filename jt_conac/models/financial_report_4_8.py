@@ -20,8 +20,10 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from odoo import models, _,api
-
+from odoo import models, api, _
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.tools.misc import formatLang
 
 class AnalyticalIncomeStatement(models.AbstractModel):
     _name = "jt_conac.analytical.income.statement.report"
@@ -47,8 +49,42 @@ class AnalyticalIncomeStatement(models.AbstractModel):
             {'name': _('Diferencia')},
         ]
 
+    def _format(self, value,figure_type):
+        if self.env.context.get('no_format'):
+            return value
+        value['no_format_name'] = value['name']
+        
+        if figure_type == 'float':
+            currency_id = self.env.company.currency_id
+            if currency_id.is_zero(value['name']):
+                # don't print -0.0 in reports
+                value['name'] = abs(value['name'])
+                value['class'] = 'number text-muted'
+            value['name'] = formatLang(self.env, value['name'], currency_obj=currency_id)
+            value['class'] = 'number'
+            return value
+        if figure_type == 'percents':
+            value['name'] = str(round(value['name'] * 100, 1)) + '%'
+            value['class'] = 'number'
+            return value
+        value['name'] = round(value['name'], 1)
+        return value
+
+
     def _get_lines(self, options, line_id=None):
         income_obj = self.env['income.statement']
+        move_line_obj = self.env['account.move.line']
+        comparison = options.get('comparison')
+        periods = []
+        if comparison and comparison.get('filter') != 'no_comparison':
+            period_list = comparison.get('periods')
+            period_list.reverse()
+            periods = [period for period in period_list]
+        periods.append(options.get('date'))
+        posted = 'draft'
+        if options.get('unposted_in_period'):
+            posted = 'posted'
+        
         lines = []
         hierarchy_lines = income_obj.sudo().search(
             [('parent_id', '=', False)], order='id')
@@ -65,10 +101,49 @@ class AnalyticalIncomeStatement(models.AbstractModel):
 
             level_1_lines = income_obj.search([('parent_id', '=', line.id)])
             for level_1_line in level_1_lines:
+                amt_columns = []
+                period_dict = {}
+                
+
+                for period in periods:
+                    
+                    date_start = datetime.strptime(str(period.get('date_from')),
+                                                   DEFAULT_SERVER_DATE_FORMAT).date()
+                    date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
+
+                    move_lines = move_line_obj.sudo().search(
+                        [('account_id', 'in', level_1_line.accounts_ids.ids),
+                         ('move_id.state', '=', posted),
+                         ('date', '>=', date_start), ('date', '<=', date_end)])
+                    if move_lines:
+                        balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                        
+                        if period.get('string') in period_dict:
+                            period_dict.update(
+                                {period.get('string'): period_dict.get(period.get('string')) + balance})
+                        else:
+                            period_dict.update({period.get('string'): balance})
+
+                for pe in periods:
+                    if pe.get('string') in period_dict.keys():
+                        amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                    else:
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        
                 lines.append({
                     'id': 'level_one_%s' % level_1_line.id,
                     'name': level_1_line.name,
-                    'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
+                    'columns':amt_columns,
                     'level': 2,
                     'unfoldable': True,
                     'unfolded': True,
@@ -78,10 +153,48 @@ class AnalyticalIncomeStatement(models.AbstractModel):
                 level_2_lines = income_obj.search(
                     [('parent_id', '=', level_1_line.id)])
                 for level_2_line in level_2_lines:
+                    amt_columns = []
+                    period_dict = {}
+
+                    for period in periods:
+                        
+                        date_start = datetime.strptime(str(period.get('date_from')),
+                                                       DEFAULT_SERVER_DATE_FORMAT).date()
+                        date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
+    
+                        move_lines = move_line_obj.sudo().search(
+                            [('account_id', 'in', level_2_line.accounts_ids.ids),
+                             ('move_id.state', '=', posted),
+                             ('date', '>=', date_start), ('date', '<=', date_end)])
+                        if move_lines:
+                            balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                            
+                            if period.get('string') in period_dict:
+                                period_dict.update(
+                                    {period.get('string'): period_dict.get(period.get('string')) + balance})
+                            else:
+                                period_dict.update({period.get('string'): balance})
+
+                    for pe in periods:
+                        if pe.get('string') in period_dict.keys():
+                            amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        else:
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+
                     lines.append({
                         'id': 'level_two_%s' % level_2_line.id,
                         'name': level_2_line.name,
-                        'columns': [{'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}, {'name': ''}],
+                        'columns': amt_columns,
                         'level': 3,
                         'unfoldable': True,
                         'unfolded': True,
@@ -91,13 +204,51 @@ class AnalyticalIncomeStatement(models.AbstractModel):
                     level_3_lines = income_obj.search(
                         [('parent_id', '=', level_2_line.id)])
                     for level_3_line in level_3_lines:
+                        amt_columns = []
+                        period_dict = {}
+
+                        date_start = datetime.strptime(str(period.get('date_from')),
+                                                       DEFAULT_SERVER_DATE_FORMAT).date()
+                        date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
+    
+                        move_lines = move_line_obj.sudo().search(
+                            [('account_id', 'in', level_3_lines.accounts_ids.ids),
+                             ('move_id.state', '=', posted),
+                             ('date', '>=', date_start), ('date', '<=', date_end)])
+                        if move_lines:
+                            balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                            
+                            if period.get('string') in period_dict:
+                                period_dict.update(
+                                    {period.get('string'): period_dict.get(period.get('string')) + balance})
+                            else:
+                                period_dict.update({period.get('string'): balance})
+
+
+                        for pe in periods:
+                            if pe.get('string') in period_dict.keys():
+                                amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            else:
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                
                         lines.append({
                             'id': 'level_three_%s' % level_3_line.id,
                             'name': level_3_line.name,
-                            'columns': [{'name': level_3_line.estimated}, {'name': level_3_line.exp_and_red}, {'name': level_3_line.modified}, {'name': level_3_line.accrued}, {'name': level_3_line.raised}, {'name': level_3_line.difference}],
+                            'columns': amt_columns,
                             'level': 4,
                             'parent_id': 'level_two_%s' % level_2_line.id,
                         })
+                        
         return lines
 
     def _get_report_name(self):

@@ -50,9 +50,9 @@ class EmployeePayroll(models.Model):
         return invoice_line_vals
     
     def get_payroll_payment_vals(self):
+        journal = self.env.ref('jt_payroll_payment.payroll_payment_request_jour')
         invoice_line_vals = self.get_invoice_line_vals()
         partner_id = self.employee_id and self.employee_id.user_id and self.employee_id.user_id.partner_id and self.employee_id.user_id.partner_id.id or False 
-        journal = self.env.ref('jt_supplier_payment.payment_request_jour')
         vals = {'payment_bank_id':self.bank_receiving_payment_id and self.bank_receiving_payment_id.id or False,
                 'payment_bank_account_id': self.receiving_bank_acc_pay_id and self.receiving_bank_acc_pay_id.id or False,
                 'payment_issuing_bank_id': self.payment_issuing_bank_id and self.payment_issuing_bank_id.id or False,
