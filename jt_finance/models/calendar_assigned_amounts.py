@@ -172,10 +172,16 @@ class CalendarAssignedAmounts(models.Model):
             
     def action_validate_calendar_assing(self):
         self.ensure_one()
-        self.ensure_one()
         if self.total_rows != self.success_rows:
             raise ValidationError(_("Please validate all import lines!"))
-        
+        for line in self.line_ids:
+            months_amounts = line.january + line.february+line.march+line.april+line.may+line.june+line.july+line.august+line.september+line.october+line.november+line.december
+            if months_amounts != line.annual_amount:
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("La cantidad anual ingresada no es correcta."))
+                else:
+                    raise ValidationError(_("The annual amount entered is not correct."))
+                
         move_obj = self.env['account.move']
         control_amount = self
         journal = control_amount.journal_id
@@ -187,9 +193,9 @@ class CalendarAssignedAmounts(models.Model):
         if not journal.estimated_credit_account_id or not journal.estimated_debit_account_id \
                 or not journal.conac_estimated_credit_account_id or not journal.conac_estimated_debit_account_id:
             if self.env.user.lang == 'es_MX':
-                raise ValidationError(_("Por favor configure la cuenta UNAM y CONAC en diario!"))
+                raise ValidationError(_("Por favor configure estimada la cuenta UNAM y CONAC en diario!"))
             else:
-                raise ValidationError(_("Please configure UNAM and CONAC account in journal!"))
+                raise ValidationError(_("Please configure Estimated UNAM and CONAC account in journal!"))
         unam_move_val = {'ref': self.folio, 'calender_id': control_amount.id, 'conac_move': True,
                          'date': today, 'journal_id': journal.id, 'company_id': company_id,
                          'line_ids': [(0, 0, {

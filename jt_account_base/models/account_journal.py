@@ -55,6 +55,8 @@ class AccountJournal(models.Model):
     clabe_account = fields.Char(related='bank_account_id.l10n_mx_edi_clabe',string='CLABE Account')
     update_history_ids = fields.One2many('minimum.balance.history', 'journal_id')
     
+    is_federal_subsidy = fields.Boolean(string='Federal Subsidy',default=False,copy=False)
+    
     @api.constrains('min_balance')
     def check_min_balance(self):
         if self.min_balance and self.min_balance < 0:

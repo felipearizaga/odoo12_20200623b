@@ -40,7 +40,7 @@
         'wizard/calendar_assign_amount_import_view.xml',
         'views/account_journal.xml',
 		'reports/assign_amount_control_report_views.xml',
-    ],
+    ],  
     'application': False,
     'installable': True,
     'auto_install': False,

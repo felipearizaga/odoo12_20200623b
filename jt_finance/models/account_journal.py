@@ -31,7 +31,13 @@ class AccountJournal(models.Model):
     conac_estimated_credit_account_id = fields.Many2one('coa.conac', "CONAC Credit Account")
     estimated_debit_account_id = fields.Many2one('account.account', "Default Debit Account")
     conac_estimated_debit_account_id = fields.Many2one('coa.conac', "CONAC Debit Account")
-
+    
+    collected_credit_account_id = fields.Many2one('account.account', "Default Credit Account")
+    conac_collected_credit_account_id = fields.Many2one(related='collected_credit_account_id.coa_conac_id', string="CONAC Credit Account")
+    collected_debit_account_id = fields.Many2one('account.account', "Default Debit Account")
+    conac_collected_debit_account_id = fields.Many2one(related='collected_debit_account_id.coa_conac_id', string="CONAC Debit Account")
+     
+    
     @api.onchange('estimated_credit_account_id', 'estimated_debit_account_id')
     def onchange_estimated_account(self):
         if self.estimated_credit_account_id and self.estimated_credit_account_id.coa_conac_id:

@@ -124,7 +124,18 @@ class AnalyticalStatusOfTheExpenditureBudgetExercise(models.AbstractModel):
             date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
             if period.get('period_type') == 'month':
                 budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
-                                                    ('state', '=', 'success'),('imported_sessional','=',False)])
+                                                     ('state', '=', 'success'),('imported_sessional','=',False)])
+#             if period.get('period_type') == 'month':
+#                 budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
+#                                                     ('state', '=', 'success'),('start_date', '>=', date_start),
+#                                                     ('end_date', '<=', date_end),
+#                                                     ])
+                
+            elif period.get('period_type') == 'quarter':
+                budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
+                                                    ('state', '=', 'success'),('start_date', '>=', date_start),
+                                                    ('end_date', '<=', date_end),
+                                                    ])                
             else:
                 budget_lines = bud_line_obj.search([('expenditure_budget_id.state', '=', 'validate'),
                                       ('start_date', '>=', date_start), ('state', '=', 'success'),

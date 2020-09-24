@@ -34,8 +34,8 @@
                             <group>
                             	<field name="import_status" invisible="1"/>
                                 <field name="date" required="1"/>
-                                <button name="import_lines" type="object" string="Import lines" attrs="{'invisible': [('import_status', '!=', 'draft')]}" class="oe_highlight"/>
-	                            <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', '!=', 'draft')]}" context="{'reimport': True}"/>         
+                                <button name="import_lines" type="object" string="Import lines" invisible="1" class="oe_highlight"/> <!-- attrs="{'invisible': [('import_status', '!=', 'draft')]}" -->
+	                            <button name="import_lines" type="object" string="Re-Import Lines" class="oe_highlight" invisible="1" context="{'reimport': True}"/> <!-- attrs="{'invisible': ['|', ('import_status', '=', 'draft'), ('state', '!=', 'draft')]}" -->         
                                 <field name="month_int" invisible="1"/>
                                 <field name="amount_to_receive"/>
                                 <field name="amount_received"/>
