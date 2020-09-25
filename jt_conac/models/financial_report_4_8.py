@@ -103,9 +103,10 @@ class AnalyticalIncomeStatement(models.AbstractModel):
             for level_1_line in level_1_lines:
                 amt_columns = []
                 period_dict = {}
-                
 
                 for period in periods:
+                    collected_amount = 0
+                    estimated_amount = 0
                     
                     date_start = datetime.strptime(str(period.get('date_from')),
                                                    DEFAULT_SERVER_DATE_FORMAT).date()
@@ -116,22 +117,36 @@ class AnalyticalIncomeStatement(models.AbstractModel):
                          ('move_id.state', '=', posted),
                          ('date', '>=', date_start), ('date', '<=', date_end)])
                     if move_lines:
-                        balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
-                        
-                        if period.get('string') in period_dict:
-                            period_dict.update(
-                                {period.get('string'): period_dict.get(period.get('string')) + balance})
-                        else:
-                            period_dict.update({period.get('string'): balance})
+                        estimated_amount = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
 
+                    move_lines = move_line_obj.sudo().search(
+                        [('account_id', 'in', level_1_line.collected_accounts_ids.ids),
+                         ('move_id.state', '=', posted),
+                         ('date', '>=', date_start), ('date', '<=', date_end)])
+                    if move_lines:
+                        collected_amount = (sum(move_lines.mapped('credit')) - sum(move_lines.mapped('debit')))
+                    
+                    if period.get('string') in period_dict:
+                        pe_dict = period_dict.get(period.get('string'))
+                        period_dict.update({period.get('string'): {'estimated_amount': pe_dict.get('estimated_amount',0.0) + estimated_amount,
+                                                                   'collected_amount': pe_dict.get('collected_amount',0.0) + collected_amount,
+                                                            }})
+                    else:
+                        period_dict.update({period.get('string'): {'estimated_amount': estimated_amount,
+                                                                   'collected_amount': collected_amount, 
+                                                                    }})
+                        
+                        
                 for pe in periods:
                     if pe.get('string') in period_dict.keys():
-                        amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                        pe_dict = period_dict.get(pe.get('string'))
+                        amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                         amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                         amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                        amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                        amt_columns.append(self._format({'name': pe_dict.get('collected_amount',0.0)},figure_type='float'))
+                        pending_collect = pe_dict.get('estimated_amount',0.0) - pe_dict.get('collected_amount',0.0)
+                        amt_columns.append(self._format({'name': pending_collect},figure_type='float'))
                     else:
                         amt_columns.append(self._format({'name': 0.0},figure_type='float'))
                         amt_columns.append(self._format({'name': 0.0},figure_type='float'))
@@ -158,6 +173,9 @@ class AnalyticalIncomeStatement(models.AbstractModel):
 
                     for period in periods:
                         
+                        collected_amount = 0
+                        estimated_amount = 0
+                        
                         date_start = datetime.strptime(str(period.get('date_from')),
                                                        DEFAULT_SERVER_DATE_FORMAT).date()
                         date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
@@ -167,22 +185,36 @@ class AnalyticalIncomeStatement(models.AbstractModel):
                              ('move_id.state', '=', posted),
                              ('date', '>=', date_start), ('date', '<=', date_end)])
                         if move_lines:
-                            balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                            estimated_amount = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+    
+                        move_lines = move_line_obj.sudo().search(
+                            [('account_id', 'in', level_2_line.collected_accounts_ids.ids),
+                             ('move_id.state', '=', posted),
+                             ('date', '>=', date_start), ('date', '<=', date_end)])
+                        if move_lines:
+                            collected_amount = (sum(move_lines.mapped('credit')) - sum(move_lines.mapped('debit')))
+                        
+                        if period.get('string') in period_dict:
+                            pe_dict = period_dict.get(period.get('string'))
+                            period_dict.update({period.get('string'): {'estimated_amount': pe_dict.get('estimated_amount',0.0) + estimated_amount,
+                                                                       'collected_amount': pe_dict.get('collected_amount',0.0) + collected_amount,
+                                                                }})
+                        else:
+                            period_dict.update({period.get('string'): {'estimated_amount': estimated_amount,
+                                                                       'collected_amount': collected_amount, 
+                                                                        }})
                             
-                            if period.get('string') in period_dict:
-                                period_dict.update(
-                                    {period.get('string'): period_dict.get(period.get('string')) + balance})
-                            else:
-                                period_dict.update({period.get('string'): balance})
-
+                            
                     for pe in periods:
                         if pe.get('string') in period_dict.keys():
-                            amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                            pe_dict = period_dict.get(pe.get('string'))
+                            amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                             amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                             amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                            amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                            amt_columns.append(self._format({'name': pe_dict.get('collected_amount',0.0)},figure_type='float'))
+                            pending_collect = pe_dict.get('estimated_amount',0.0) - pe_dict.get('collected_amount',0.0)
+                            amt_columns.append(self._format({'name': pending_collect},figure_type='float'))
                         else:
                             amt_columns.append(self._format({'name': 0.0},figure_type='float'))
                             amt_columns.append(self._format({'name': 0.0},figure_type='float'))
@@ -206,33 +238,51 @@ class AnalyticalIncomeStatement(models.AbstractModel):
                     for level_3_line in level_3_lines:
                         amt_columns = []
                         period_dict = {}
-
-                        date_start = datetime.strptime(str(period.get('date_from')),
-                                                       DEFAULT_SERVER_DATE_FORMAT).date()
-                        date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
     
-                        move_lines = move_line_obj.sudo().search(
-                            [('account_id', 'in', level_3_lines.accounts_ids.ids),
-                             ('move_id.state', '=', posted),
-                             ('date', '>=', date_start), ('date', '<=', date_end)])
-                        if move_lines:
-                            balance = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+                        for period in periods:
+                            
+                            collected_amount = 0
+                            estimated_amount = 0
+                            
+                            date_start = datetime.strptime(str(period.get('date_from')),
+                                                           DEFAULT_SERVER_DATE_FORMAT).date()
+                            date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
+        
+                            move_lines = move_line_obj.sudo().search(
+                                [('account_id', 'in', level_3_line.accounts_ids.ids),
+                                 ('move_id.state', '=', posted),
+                                 ('date', '>=', date_start), ('date', '<=', date_end)])
+                            if move_lines:
+                                estimated_amount = (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
+        
+                            move_lines = move_line_obj.sudo().search(
+                                [('account_id', 'in', level_3_line.collected_accounts_ids.ids),
+                                 ('move_id.state', '=', posted),
+                                 ('date', '>=', date_start), ('date', '<=', date_end)])
+                            if move_lines:
+                                collected_amount = (sum(move_lines.mapped('credit')) - sum(move_lines.mapped('debit')))
                             
                             if period.get('string') in period_dict:
-                                period_dict.update(
-                                    {period.get('string'): period_dict.get(period.get('string')) + balance})
+                                pe_dict = period_dict.get(period.get('string'))
+                                period_dict.update({period.get('string'): {'estimated_amount': pe_dict.get('estimated_amount',0.0) + estimated_amount,
+                                                                           'collected_amount': pe_dict.get('collected_amount',0.0) + collected_amount,
+                                                                    }})
                             else:
-                                period_dict.update({period.get('string'): balance})
-
-
+                                period_dict.update({period.get('string'): {'estimated_amount': estimated_amount,
+                                                                           'collected_amount': collected_amount, 
+                                                                            }})
+                                
+                                
                         for pe in periods:
                             if pe.get('string') in period_dict.keys():
-                                amt_columns.append(self._format({'name': period_dict.get(pe.get('string'))},figure_type='float'))
+                                pe_dict = period_dict.get(pe.get('string'))
+                                amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                                 amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': pe_dict.get('estimated_amount',0.0)},figure_type='float'))
                                 amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
-                                amt_columns.append(self._format({'name': 0.0},figure_type='float'))
+                                amt_columns.append(self._format({'name': pe_dict.get('collected_amount',0.0)},figure_type='float'))
+                                pending_collect = pe_dict.get('estimated_amount',0.0) - pe_dict.get('collected_amount',0.0)
+                                amt_columns.append(self._format({'name': pending_collect},figure_type='float'))
                             else:
                                 amt_columns.append(self._format({'name': 0.0},figure_type='float'))
                                 amt_columns.append(self._format({'name': 0.0},figure_type='float'))

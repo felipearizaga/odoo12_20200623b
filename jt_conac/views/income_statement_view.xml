@@ -24,6 +24,13 @@
                         		<field name="coa_conac_id"/>
                         	</field>
                         </group>
+                        <group>
+                        	<field name="collected_accounts_ids" attrs="{'invisible':[('parent_id','=',False)]}">
+                        		<field name="code"/>
+                        		<field name="name"/>
+                        		<field name="coa_conac_id"/>
+                        	</field>
+                        </group>
                     </sheet>
                 </form>
             </field>

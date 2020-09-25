@@ -36,5 +36,7 @@ class StatementOfIncome(models.Model):
     raised_amt = fields.Float(string='Recaudado')
     difference_amt = fields.Float(string='Diferencia')
     parent_id = fields.Many2one('income.statement', string='Parent')
-    accounts_ids = fields.Many2many("account.account",'rel_conac_income_account','income_id','account_id','Accounts')
+    accounts_ids = fields.Many2many("account.account",'rel_conac_income_account','income_id','account_id','Estimated Accounts')
+    collected_accounts_ids = fields.Many2many("account.account",'rel_conac_income_collected_account','income_id','account_id','Collected Accounts')
+    
     
