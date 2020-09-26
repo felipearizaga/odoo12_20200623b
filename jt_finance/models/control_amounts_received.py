@@ -106,6 +106,16 @@ class ControlAmountsReceived(models.Model):
 
     month_int = fields.Integer(string='Month Integer', store=True, compute='_compute_month_int')
 
+    def unlink(self):
+        for control in self:
+            if control.state in ('validate'):
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("No puedes eliminar un Registro del Subsidio Federal en estatus Validado."))
+                else:
+                    raise ValidationError('You cannot delete a Registration of Federal Subsidy in Validated status!')
+            
+        return super(ControlAmountsReceived, self).unlink()
+
     @api.model
     def default_get(self, fields):
         res = super(ControlAmountsReceived, self).default_get(fields)

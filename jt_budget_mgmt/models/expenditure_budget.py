@@ -931,8 +931,12 @@ class ExpenditureBudget(models.Model):
         if not self._context.get('from_wizard'):
             for budget in self:
                 if budget.state not in ('draft', 'previous'):
-                    raise ValidationError(
-                        'You can not delete processed budget!')
+                    if self.env.user.lang == 'es_MX':
+                        raise ValidationError(
+                            'No se puede borrar el presupuesto procesado!')
+                    else:
+                        raise ValidationError(
+                            'You can not delete processed budget!')
         return super(ExpenditureBudget, self).unlink()
 
     def show_imported_lines(self):

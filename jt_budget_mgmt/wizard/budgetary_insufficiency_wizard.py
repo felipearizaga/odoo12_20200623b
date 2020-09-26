@@ -40,9 +40,18 @@ class BudegtInsufficiencWiz(models.TransientModel):
         for line in self.move_id.invoice_line_ids:
             budget_line_links = []
             if line.program_code_id and line.price_total != 0:
+                amount =  0
+                if line.debit:
+                    amount = line.debit
+                else: 
+                    amount = line.credit
                 
-                amount = line.price_total
-                control_amount = line.price_total
+                control_amount = 0
+                if line.debit:
+                    control_amount = line.debit
+                else: 
+                    control_amount = line.credit
+                
                 budget_lines = self.env['expenditure.budget.line'].sudo().search(
                 [('program_code_id', '=', line.program_code_id.id),
                  ('expenditure_budget_id', '=', line.program_code_id.budget_id.id),

@@ -792,8 +792,12 @@ class ControlAssignedAmounts(models.Model):
     def unlink(self):
         for Camount in self:
             if Camount.state not in ('draft', 'process'):
-                raise ValidationError(
-                    'You can not delete processed Control of Assigned Amounts!')
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(
+                        'No puede eliminar el Control de importes asignados procesado!')                    
+                else:
+                    raise ValidationError(
+                        'You can not delete processed Control of Assigned Amounts!')
         return super(ControlAssignedAmounts, self).unlink()
 
 

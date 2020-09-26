@@ -157,11 +157,17 @@ class Standardization(models.Model):
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():
-            raise ValidationError('Folio Must be numeric value!')
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError('Folio Debe ser un valor numérico!')
+            else:
+                raise ValidationError('Folio Must be numeric value!')
         folio = self.search(
             [('id', '!=', self.id), ('folio', '=', self.folio)], limit=1)
         if folio:
-            raise ValidationError('Folio Must be unique!')
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError('El folio debe ser único!')
+            else:
+                raise ValidationError('Folio Must be unique!')  
 
     def _compute_failed_rows(self):
         for record in self:
@@ -1121,8 +1127,12 @@ class Standardization(models.Model):
     def unlink(self):
         for budget in self:
             if budget.state != 'draft':
-                raise ValidationError(
-                    'You can not delete confirmed Re-standardization!')
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(
+                        'No se puede eliminar la re-estandarización confirmada!')                    
+                else:
+                    raise ValidationError(
+                        'You can not delete confirmed Re-standardization!')
         return super(Standardization, self).unlink()
 
 
@@ -1231,7 +1241,10 @@ class StandardizationLine(models.Model):
     def _check_folio(self):
         for line in self:
             if not str(line.folio).isnumeric():
-                raise ValidationError('Folio Must be numeric value!')
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError('Folio Debe ser un valor numérico!')
+                else:
+                    raise ValidationError('Folio Must be numeric value!')
 
     @api.onchange('state')
     def _onchange_state(self):

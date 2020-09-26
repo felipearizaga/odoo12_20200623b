@@ -105,7 +105,17 @@ class CalendarAssignedAmounts(models.Model):
     failed_row_file = fields.Binary(string='Failed Rows File')
     fialed_row_filename = fields.Char(
         string='File name', default="Failed_Rows.txt")
-    
+
+    def unlink(self):
+        for calendar in self:
+            if calendar.state in ('validate'):
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(_("No puedes eliminar un Registro del Subsidio Federal en estatus Validado."))
+                else:
+                    raise ValidationError('You cannot delete a Registration of Federal Subsidy in Validated status!')
+            
+        return super(CalendarAssignedAmounts, self).unlink()
+        
     @api.model
     def default_get(self, fields):
         res = super(CalendarAssignedAmounts, self).default_get(fields)

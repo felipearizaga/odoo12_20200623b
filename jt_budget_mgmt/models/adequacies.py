@@ -935,8 +935,12 @@ class Adequacies(models.Model):
     def unlink(self):
         for adequacies in self:
             if adequacies.state not in ('draft'):
-                raise ValidationError(
-                    'You can not delete confirmed/rejected adjustments!')
+                if self.env.user.lang == 'es_MX':
+                    raise ValidationError(
+                        'No puede eliminar ajustes confirmados / rechazados!')                    
+                else:
+                    raise ValidationError(
+                        'You can not delete confirmed/rejected adjustments!')
         return super(Adequacies, self).unlink()
 
 

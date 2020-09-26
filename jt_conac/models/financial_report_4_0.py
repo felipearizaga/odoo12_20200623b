@@ -104,9 +104,10 @@ class StatementOfFinancialPosition(models.AbstractModel):
         hierarchy_lines = conac_obj.sudo().search(
             [('parent_id', '=', False)], order='code')
 
-        posted = 'draft'
-        if options.get('unposted_in_period'):
-            posted = 'posted'
+        if options.get('all_entries') is False:
+            move_state_domain = ('move_id.state', '=', 'posted')
+        else:
+            move_state_domain = ('move_id.state', '!=', 'cancel')
 
         last_total_dict = {}
         for line in hierarchy_lines:
@@ -147,7 +148,7 @@ class StatementOfFinancialPosition(models.AbstractModel):
 
                             move_lines = move_line_obj.sudo().search(
                                 [('coa_conac_id', '=', level_2_line.id),
-                                 ('move_id.state', '=', posted),
+                                 move_state_domain,
                                  ('date', '>=', date_start), ('date', '<=', date_end)])
                             if move_lines:
                                 balance += (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
@@ -164,7 +165,7 @@ class StatementOfFinancialPosition(models.AbstractModel):
                                 date_end = datetime.strptime(str(period.get('date_to')), DEFAULT_SERVER_DATE_FORMAT).date()
                                 
                                 move_lines = move_line_obj.sudo().search([('coa_conac_id', '=', level_3_line.id),
-                                                        ('move_id.state', '=', posted),
+                                                        move_state_domain,
                                                         ('date', '>=', date_start), ('date', '<=', date_end)])
                                 if move_lines:
                                     balance += (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))
@@ -270,7 +271,7 @@ class StatementOfFinancialPosition(models.AbstractModel):
 
                 move_lines = move_line_obj.sudo().search(
                     [('account_id', '=', b_account.id),
-                     ('move_id.state', '=', posted),
+                     move_state_domain,
                      ('date', '>=', date_start), ('date', '<=', date_end)])
                 if move_lines:
                     balance += (sum(move_lines.mapped('debit')) - sum(move_lines.mapped('credit')))

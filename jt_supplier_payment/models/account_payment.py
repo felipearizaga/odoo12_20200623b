@@ -156,19 +156,35 @@ class AccountPayment(models.Model):
         
     def create_journal_for_paid(self,invoice):
         #==== he Bank Journal will be taken, corresponding to the “Paid” accounting moment ===#
+
+        if invoice.currency_id != invoice.company_id.currency_id:
+            amount_currency = abs(invoice.amount_total)
+            balance = invoice.currency_id._convert(amount_currency, invoice.company_currency_id, invoice.company_id, invoice.date)
+            currency_id = invoice.currency_id and invoice.currency_id.id or False
+        else:
+            balance = abs(invoice.amount_total)
+            amount_currency = 0.0
+            currency_id = False
+            
         invoice.line_ids = [(0, 0, {
                                      'account_id': self.journal_id.paid_credit_account_id and self.journal_id.paid_credit_account_id.id or False,
                                      'coa_conac_id': self.journal_id.conac_paid_credit_account_id and self.journal_id.conac_paid_credit_account_id.id or False,
-                                     'credit': invoice.amount_total, 
+                                     'credit': balance, 
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : -amount_currency,
+                                     'currency_id' : currency_id,                                     
+                                     
                                  }), 
                         (0, 0, {
                                      'account_id': self.journal_id.paid_debit_account_id and self.journal_id.paid_debit_account_id.id or False,
                                      'coa_conac_id': self.journal_id.conac_paid_debit_account_id and self.journal_id.conac_paid_debit_account_id.id or False,
-                                     'debit': invoice.amount_total,
+                                     'debit': balance,
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : amount_currency,
+                                     'currency_id' : currency_id,                                     
+                                     
                                  })]
     
     def post(self):

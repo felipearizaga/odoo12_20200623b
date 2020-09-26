@@ -87,20 +87,34 @@ class BankBalanceCheck(models.TransientModel):
             or not invoice.journal_id.accured_debit_account_id \
             or not invoice.journal_id.conac_accured_debit_account_id :
             raise ValidationError("Please configure UNAM and CONAC Accrued account in payment request journal!")
+
+        if invoice.currency_id != invoice.company_id.currency_id:
+            amount_currency = abs(invoice.amount_total)
+            balance = invoice.currency_id._convert(amount_currency, invoice.company_currency_id, invoice.company_id, invoice.date)
+            currency_id = invoice.currency_id and invoice.currency_id.id or False 
+        else:
+            balance = abs(invoice.amount_total)
+            amount_currency = 0.0
+            currency_id = False
         
         invoice.line_ids = [(0, 0, {
                                      'account_id': invoice.journal_id.accured_credit_account_id and invoice.journal_id.accured_credit_account_id.id or False,
                                      'coa_conac_id': invoice.journal_id.conac_accured_credit_account_id and invoice.journal_id.conac_accured_credit_account_id.id or False,
-                                     'credit': invoice.amount_total, 
+                                     'credit': balance, 
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : -amount_currency,
+                                     'currency_id' : currency_id,
                                  }), 
                         (0, 0, {
                                      'account_id': invoice.journal_id.accured_debit_account_id and  invoice.journal_id.accured_debit_account_id.id or False,
                                      'coa_conac_id': invoice.journal_id.conac_accured_debit_account_id and invoice.journal_id.conac_accured_debit_account_id.id or False,
-                                     'debit': invoice.amount_total,
+                                     'debit': balance,
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : amount_currency,
+                                     'currency_id' : currency_id,
+                                     
                                  })]
         #====== the Bank Journal, for the accounting impact of the "Exercised" Budget ======#
         if not self.journal_id.execercise_credit_account_id or not self.journal_id.conac_exe_credit_account_id \
@@ -110,16 +124,21 @@ class BankBalanceCheck(models.TransientModel):
         invoice.line_ids = [(0, 0, {
                                      'account_id': self.journal_id.execercise_credit_account_id and self.journal_id.execercise_credit_account_id.id or False,
                                      'coa_conac_id': self.journal_id.conac_exe_credit_account_id and self.journal_id.conac_exe_credit_account_id.id or False,
-                                     'credit': invoice.amount_total, 
+                                     'credit': balance, 
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : -amount_currency,
+                                     'currency_id' : currency_id,
+
                                  }), 
                         (0, 0, {
                                      'account_id': self.journal_id.execercise_debit_account_id and self.journal_id.execercise_debit_account_id.id or False,
                                      'coa_conac_id': self.journal_id.conac_exe_debit_account_id and self.journal_id.conac_exe_debit_account_id.id or False,
-                                     'debit': invoice.amount_total,
+                                     'debit': balance,
                                      'exclude_from_invoice_tab': True,
-                                     'conac_move' : True
+                                     'conac_move' : True,
+                                     'amount_currency' : amount_currency,
+                                     'currency_id' : currency_id,                                     
                                  })]
         
         
