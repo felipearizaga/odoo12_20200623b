@@ -45,10 +45,23 @@
                                 </td>
                                 <td style="width:50px;">
                                     <div style="text-align:left;font-size:20px;">
-                                        <b>Dirección de Ingresos y Op. Financiera<br/> Departamento de Ingresos<br/><br/>Of. No. <span t-field="o.legal_number"/><br/><br/>Asunto: No Aplicación del 20% por Indemnización</b>
+                                        <b>Dirección de Ingresos y Op. Financiera<br/> Departamento de Ingresos<br/></b>
+                                        
                                     </div>
                                 </td>
                             </tr>
+							<tr>
+								<td style="width:50%;">
+									<span t-set="sender_template" t-value="o.get_all_employee('2nd application_form_20')"/>
+									<br/><b><span t-field="sender_template.recipient_title"/>&#160;<span t-if="sender_template.recipient_emp_id" t-field="sender_template.recipient_emp_id.name"/>
+										<br/><span t-field="sender_template.recipient_professional_title"/>
+									</b>
+								</td>
+								<td style="width:50%;">
+									<b><br/>Of. No. <span t-field="o.trade_no"/><br/><br/>Asunto: Aplicación del 20%</b>
+								</td>
+							</tr>
+                            
                         </table>
                         <table style="width:100%">
                             <tr>
@@ -64,9 +77,11 @@
                     </table>
 
                     <table style="width:100%">
+                    	<t t-set="total_5_times" t-value="o.amount_total*5" />
+                    	<span t-set="account_name" t-value="o.get_line_accounts_for_report()"/>
                         <p style="font-size:20px;">
-                            Con relación al oficio <b><span t-field="o.legal_compensation"/>.,</b> referente al cheque devuelto No. <span t-field="o.number_of_returned_check"/> por un importe de <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/> del banco <span t-field="o.income_bank_journal_id.name"/>; le  informo  que  la dependencia <b><span t-field="o.dependancy_id.description"/> </b>con clave <b><span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/>;</b> absorberá el importe del 20% de indemnización por un importe de  -------  <b><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                            (UN MIL SEISCIENTOS CINCUENTA Y TRES PESOS 40/100 M.N.);</b> los cuales se hará el cargo a la cuenta de Ingresos Extraordinarios número <b> <span t-filed="o.bank_status_account"/></b>
+                            Con relación al oficio <b><span t-field="o.legal_compensation"/>.,</b> referente al cheque devuelto No. <span t-field="o.number_of_returned_check"/> por un importe de <t t-if="o.currency_id"><span t-field="o.currency_id.symbol"/> </t><span t-esc="'%.2f'%total_5_times"/> del banco <span t-field="o.income_bank_journal_id.name"/>; le  informo  que  la dependencia <b><span t-field="o.dependancy_id.description"/> </b>con clave <b><span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/>;</b> absorberá el importe del 20% de indemnización por un importe de  -------  <b><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            (CINCO MIL PESOS 00/100 M.N.);</b> los cuales se hará el cargo a la cuenta de Ingresos Extraordinarios número <b> <span t-esc="account_name"/></b>
                         </p><br/>
 
                         <p style="font-size:20px;">
@@ -76,7 +91,9 @@
                         <p style="font-size:20px;">
                             <b>A t e n t a m e n t e <br/>
                             "POR MI RAZA HABLARÁ EL ESPÍRITU"</b><br/>
-                            Ciudad Universitaria,  Cd. Mx., <span t-field="o.invoice_date" t-options='{"format": "MMMM ,d y"}'/>.
+                            Ciudad Universitaria,  Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
+                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
+                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t>
                         </p>
 
                         <div class="row" style="float:right;">
@@ -115,13 +132,12 @@
             </record>
 
             <report 
-                id="invoice_pdf_format4"
+                id="invoice_pdf_format4_name"
                 model="account.move"
                 string="2° FORMATO DE APLICACIÓN 20%"
                 report_type="qweb-pdf"
                 name="jt_income.invoice_format_4"
                 file="jt_income.invoice_format_4"
-                print_report_name="object.name"
                 paperformat="jt_income.paperformat_invoice_format_4"
             />
 

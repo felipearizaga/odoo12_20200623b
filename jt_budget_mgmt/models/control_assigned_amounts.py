@@ -116,7 +116,10 @@ class ControlAssignedAmounts(models.Model):
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():
-            raise ValidationError('Folio Must be numeric value!')
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError('Folio Debe ser un valor numérico!')
+            else:
+                raise ValidationError('Folio Must be numeric value!')
 
     def import_lines(self):
         ctx = self.env.context.copy()
@@ -794,7 +797,7 @@ class ControlAssignedAmounts(models.Model):
             if Camount.state not in ('draft', 'process'):
                 if self.env.user.lang == 'es_MX':
                     raise ValidationError(
-                        'No puede eliminar el Control de importes asignados procesado!')                    
+                        'No se puede eliminar una Estacionalidad Trimestral validado!')                    
                 else:
                     raise ValidationError(
                         'You can not delete processed Control of Assigned Amounts!')

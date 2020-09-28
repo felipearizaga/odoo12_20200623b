@@ -98,7 +98,10 @@ class Adequacies(models.Model):
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():
-            raise ValidationError('Folio Must be numeric value!')
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError('Folio Debe ser un valor numérico!')
+            else:
+                raise ValidationError('Folio Must be numeric value!')
 
     def _compute_failed_rows(self):
         for record in self:
@@ -937,7 +940,7 @@ class Adequacies(models.Model):
             if adequacies.state not in ('draft'):
                 if self.env.user.lang == 'es_MX':
                     raise ValidationError(
-                        'No puede eliminar ajustes confirmados / rechazados!')                    
+                        'No se puede eliminar una Adecuación validada!')                    
                 else:
                     raise ValidationError(
                         'You can not delete confirmed/rejected adjustments!')

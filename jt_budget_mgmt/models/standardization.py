@@ -1129,7 +1129,7 @@ class Standardization(models.Model):
             if budget.state != 'draft':
                 if self.env.user.lang == 'es_MX':
                     raise ValidationError(
-                        'No se puede eliminar la re-estandarización confirmada!')                    
+                        'No se puede eliminar una Recalendarización validada!')                    
                 else:
                     raise ValidationError(
                         'You can not delete confirmed Re-standardization!')

@@ -25,7 +25,7 @@
                                 <h2><b>
                                 Dirección de Ingresos y Op. Financiera<br/>
                                 Departamento de Ingresos<br/><br/>
-                                Of. No. <span t-field="o.legal_number"/><br/><br/>
+                                Of. No. <span t-field="o.trade_no"/><br/><br/>
                                 Asunto: Notificación de Cheque Devuelto
                                 </b></h2>
                             </td>
@@ -60,7 +60,10 @@
                             <p style="font-size:20px;">Sin otro particular por el momento, le envió un cordial saludo.</p>
                             <br/><br/>
 
-                            <p style="font-size:20px;">Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <span t-field="o.invoice_date" t-options='{"format": "MMMM ,d y"}'/>.</p>
+                            <p style="font-size:20px;">Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
+                           	 <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
+                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t> 
+                            </p>
 
                             <div class="row" style="float:right;">
                                 <div class="col-6">
@@ -99,7 +102,7 @@
         </record>
 
         <report 
-            id="invoice_pdf_format7"
+            id="invoice_pdf_format7_name"
             model="account.move"
             string="Solicitud de Certificado de Depósito"
             report_type="qweb-pdf"

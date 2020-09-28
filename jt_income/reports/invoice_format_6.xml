@@ -48,16 +48,28 @@
                             </td>
 
                             <td style="width:50%;">
-                                <div style="text-align:left;font-size:20px;"><b>Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos<br/>Of. No. <span t-field="o.legal_number"/><br/><br/>Asunto: Notificación de Cheque Devuelto</b></div>
+                                <div style="text-align:left;font-size:20px;"><b>Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos<br/></b></div>
                             </td>
                         </tr>
+							<tr>
+								<td style="width:50%;">
+									<span t-set="sender_template" t-value="o.get_all_employee('reporting_format_returned_check')"/>
+									<br/><b><span t-field="sender_template.recipient_title"/>&#160;<span t-if="sender_template.recipient_emp_id" t-field="sender_template.recipient_emp_id.name"/>
+										<br/><span t-field="sender_template.recipient_professional_title"/>
+									</b>
+								</td>
+								<td style="width:50%;">
+									<b>Of. No. <span t-field="o.trade_no"/><br/><br/>Asunto: Notificación de Cheque Devuelto</b>
+								</td>
+							</tr>
+                        
                     </table>
 
                     <table  style="width:100%">
                         <tr>
                             <br/><br/>
                             <td style="text-align:left;font-size:15px;">
-                                <h2>DEPENDENCIA:&#160;&#160;&#160;&#160;&#160;&#160;FACULTAD  DE  ECONOMÍA <span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/><br/><br/><br/>
+                                <h2>DEPENDENCIA:&#160;&#160;&#160;&#160;&#160;&#160;<span t-field="o.dependancy_id.description"/> <span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/><br/><br/><br/>
                                 ATENCIÓN A:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; SECRETARIO ADMINISTRATIVO y/o<br/>
                                 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;JEFE DE UNIDAD ADMINISTRATIVA
                                 </h2>
@@ -69,7 +81,7 @@
 
                         <tr>
                             <p class="tab1">
-                                Se anexa al presente el cheque devuelto <b><u>No. <span t-field="o.number_of_returned_check"/></u></b> del banco <b><span t-field="o.bank_account_statement"/>,(CHEQUERA CONACYT)</b> como se indica en el estado de cuenta <b><span t-field="o.income_bank_journal_id.name"/>;</b> por un importe de <b> <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
+                                Se anexa al presente el cheque devuelto <b><u>No. <span t-field="o.number_of_returned_check"/></u></b> del <b><span t-field="o.income_bank_journal_id.name"/>,(CHEQUERA CONACYT)</b> como se indica en el estado de cuenta <b><span t-field="o.bank_status_account"/>;</b> por un importe de <b> <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
                             </p>
 
                             <br/>
@@ -85,7 +97,9 @@
                             <br/>
 
                             <p style="font-size:20px;">
-                                Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <span t-field="o.invoice_date" t-options='{"format": "MMMM ,d y"}'/>. 
+                                Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
+                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
+                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t>  
                             </p>
 
                             <div class="row" style="float:right;">
@@ -124,13 +138,12 @@
             </record>
 
             <report 
-                id="invoice_pdf_format6"
+                id="invoice_pdf_format6_name"
                 model="account.move"
-                string="2° FORMATO DE AVISO CAMBIO FORMA DE COBRO A TRANSFERENCIA"
+                string = "FORMATO DE NOTIFICACIÓN DE CHEQUE DEVUELTO"
                 report_type="qweb-pdf"
                 name="jt_income.invoice_format_6"
                 file="jt_income.invoice_format_6"
-                print_report_name="object.name"
                 paperformat="jt_income.paperformat_invoice_format_6"
             />
 

@@ -62,11 +62,23 @@
 
                             <td style="width:50%;">
                                 <div style="text-align:left;font-size:21px;margin_left:20px;">
-                                    <b>Dirección General de Finanzas<br/> Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos<br/>Of. No. <span t-field="o.legal_number"/><br/>Asunto: No Aplicación del 20% por Indemnización</b>
+                                    <b>Dirección General de Finanzas<br/> Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos
+                                    </b>
                                 </div>
                             </td>
                         </tr>
-
+						<tr>
+							<td style="width:50%;">
+								<span t-set="sender_template" t-value="o.get_all_employee('application_form_20')"/>
+								<br/><b><span t-field="sender_template.recipient_title"/>&#160;<span t-if="sender_template.recipient_emp_id" t-field="sender_template.recipient_emp_id.name"/>
+									<br/><span t-field="sender_template.recipient_professional_title"/>
+								</b>
+							</td>
+							<td style="width:50%;">
+								<b>Of. No. <span t-field="o.trade_no"/><br/>Subject: 20% Indemnity</b>
+							</td>
+							
+						</tr>
                         <tr>
                             <br/><br/><br/>
                             <td style="text-align:left;font-size:15px;">
@@ -79,9 +91,9 @@
                     </table>
 
                     <table style="width:100%;">
-
+						<span t-set="account_name" t-value="o.get_line_accounts_for_report()"/>
                         <p class="tab1">
-                            En relación a los siguientes oficios de Cheques Devueltos de la <b> <span t-field="o.dependancy_id.description"/></b> le informo que <b>el 20% de indemnización </b>fue liquidada, por lo cual la dependencia solicita su reintegro a la cuenta de Ingresos Extraordinarios <b><span t-field="o.bank_status_account"/></b>
+                            En relación a los siguientes oficios de Cheques Devueltos de la <b> <span t-field="o.dependancy_id.description"/></b> le informo que <b>el 20% de indemnización </b>fue liquidada, por lo cual la dependencia solicita su reintegro a la cuenta de Ingresos Extraordinarios <b><span t-esc="account_name"/></b>
                         </p>
                     </table>
 
@@ -126,7 +138,7 @@
                     <table style="width:100%;">
                         <br/>
                         <p style="font-size:20px;">
-                            Anexamos copia del oficio <b> DGIRI/UA/838/21018 Y DGIR/UA/845/2018</b> y antecedentes.
+                            Anexamos copia del oficio <b> <span t-field="o.legal_compensation"/></b> y antecedentes.
                         </p><br/>
 
                         <p style="font-size:20px;">
@@ -136,7 +148,10 @@
                         <p style="font-size:20px;">
                             Atentamente<br/>
                             “POR MI RAZA HABLARA EL ESPIRITU”<br/>
-                            Cd. Universitaria, Cd. Mx., <span t-field="o.invoice_date" t-options='{"format": "MMMM ,d y"}'/><br/>
+                            Cd. Universitaria, Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
+                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
+                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t> 
+                            <br/>
                         </p>
 
                         <div class="row" style="float:right;">
@@ -175,13 +190,12 @@
             </record>
 
             <report 
-                id="invoice_pdf_format1"
+                id="invoice_pdf_format1_name"
                 model="account.move"
                 string="FORMATO DE APLICACIÓN 20%"
                 report_type="qweb-pdf"
                 name="jt_income.invoice_format_1"
                 file="jt_income.invoice_format_1"
-                print_report_name="object.name"
                 paperformat="jt_income.paperformat_invoice_format_1"
             />
 

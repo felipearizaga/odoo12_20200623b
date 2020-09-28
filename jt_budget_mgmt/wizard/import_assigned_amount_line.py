@@ -56,7 +56,10 @@ class ImportAssignedAmountLine(models.TransientModel):
     @api.constrains('folio')
     def _check_folio(self):
         if not str(self.folio).isnumeric():
-            raise ValidationError('Folio Must be numeric value!')
+            if self.env.user.lang == 'es_MX':
+                raise ValidationError('Folio Debe ser un valor numérico!')
+            else:
+                raise ValidationError('Folio Must be numeric value!')
 
     def download_file(self):
         file_path = get_resource_path(

@@ -972,24 +972,32 @@ msgstr "Estimado"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_account_journal__conac_estimated_credit_account_id
+#: model:ir.model.fields,field_description:jt_finance.field_account_journal__conac_collected_credit_account_id
 msgid "CONAC Credit Account"
 msgstr "Cuenta de crédito CONAC"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_account_journal__conac_estimated_debit_account_id
+#: model:ir.model.fields,field_description:jt_finance.field_account_journal__conac_collected_debit_account_id
 msgid "CONAC Debit Account"
 msgstr "Cuenta de débito CONAC"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_account_journal__estimated_credit_account_id
+#: model:ir.model.fields,field_description:jt_finance.field_account_journal__collected_credit_account_id
 msgid "Default Credit Account"
 msgstr "Cuenta acreedora por defecto"
 
 #. module: jt_finance
 #: model:ir.model.fields,field_description:jt_finance.field_account_journal__estimated_debit_account_id
+#: model:ir.model.fields,field_description:jt_finance.field_account_journal__collected_debit_account_id
 msgid "Default Debit Account"
 msgstr "Cuenta deudora por defecto"
 
+#. module: jt_finance
+#: model_terms:ir.ui.view,arch_db:jt_finance.inherited_account_journal_form_view_calendar
+msgid "Collected"
+msgstr "Recaudado"
 
 
 

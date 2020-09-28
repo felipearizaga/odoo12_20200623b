@@ -58,6 +58,7 @@
         'wizard/liquid_adjstments_manual_deposite_view.xml',
         
         'reports/income_annual_report_view.xml',
+        'reports/income_by_item_month.xml',
 
     ],
     'application': True,

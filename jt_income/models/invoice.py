@@ -203,7 +203,26 @@ class Invoice(models.Model):
     def onchange_type_of_revenue_collection(self):
         if self.type_of_revenue_collection:
             self.journal_id = self.get_related_journal(self.journal_id, self.type_of_revenue_collection)
-            
+
+    def get_line_accounts_for_report(self):
+        accout_name = False
+        account_ids = self.invoice_line_ids.mapped('account_id')
+        for account in account_ids:
+            if accout_name:
+                accout_name += ","+account.display_name
+            else:
+                accout_name =account.display_name
+                
+        if accout_name:
+            return accout_name
+        else:
+            return ''
+        
+    def get_all_employee(self,template):
+        sender_template = self.env['sender.recipient.trades'].search([('template','=',template)],limit=1)
+        return sender_template
+
+    
 class AccountMoveLine(models.Model):
     
     _inherit = 'account.move.line'
@@ -227,17 +246,17 @@ class AccountMoveLine(models.Model):
     account_ie_id = fields.Many2one('association.distribution.ie.accounts','Account I.E.')
 
 
-#     @api.depends('product_id')
-#     def get_ie_accounts_ids(self):
-#         for rec in self:
-#             if rec.product_id:
-#                 rec.account_ie_ids = [(6,0,rec.product_id.ie_account_id.ids)]
-    
-    account_ie_ids = fields.Many2many('association.distribution.ie.accounts','ie_account_move_line','line_id','ie_id')
+    def get_account_list(self):
+        for rec in self:
+            if rec.product_id:
+                rec.account_ie_ids = [(6,0,rec.product_id.ie_account_id.ids)]
+            else:
+                ie_acount_ids = self.env['association.distribution.ie.accounts'].search([])
+                rec.account_ie_ids = [(6,0,ie_acount_ids.ids)]
+    account_ie_ids = fields.Many2many('association.distribution.ie.accounts','ie_account_move_line','line_id','ie_id',compute="get_account_list")
     
     @api.onchange('product_id')
     def get_ie_accounts_ids(self):
-        if self.product_id:
-            self.account_ie_ids = [(6,0,self.product_id.ie_account_id.ids)]
+        self.get_account_list()
     
 

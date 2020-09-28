@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <template id="invoice_format_3_document">
-            <t t-call="jt_income.external_layout_2">
+            <t t-call="jt_income.external_layout_3">
                 </t>
                 <t t-set="o" t-value="o.with_context(lang=lang)" />
                 <br/><br/><br/><br/><br/><br/><br/>
@@ -47,10 +47,22 @@
                             <td style="width:50%;">
                                 <div style="text-align:left;font-size:20px;">
                                     <b>Dirección General de Finanzas<br/>
-                                    Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos<br/>Of. No. <span t-field="o.legal_number"/><br/>Asunto: 20% de Indemnización</b>
+                                    Dirección de Ingresos y Op. Financiera<br/>Departamento de Ingresos<br/></b>
                                 </div>
                             </td>
                         </tr>
+							<tr>
+								<td style="width:50%;">
+									<span t-set="sender_template" t-value="o.get_all_employee('format_notice_change')"/>
+									<br/><b><span t-field="sender_template.recipient_title"/>&#160;<span t-if="sender_template.recipient_emp_id" t-field="sender_template.recipient_emp_id.name"/>
+										<br/><span t-field="sender_template.recipient_professional_title"/>
+									</b>
+								</td>
+								<td style="width:50%;">
+									<b>Of. No. <span t-field="o.trade_no"/><br/>Asunto: 20% de Indemnización</b>
+								</td>
+							</tr>
+                        
                     </table>
 
                     <table style="width:100%;">
@@ -74,7 +86,9 @@
                         <p style="font-size:20px;">
                             <b>A t e n t a m e n t e<br/>
                             “POR MI RAZA HABLARÁ EL ESPÍRITU”</b><br/>
-                            Ciudad Universitaria, Cd. Mex., <span t-field="o.invoice_date" t-options='{"format": "MMMM ,d y"}'/>.
+                            Ciudad Universitaria, Cd. Mex., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
+                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
+                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t> 
                         </p>
 
                         <div class="row" style="float:right;">
@@ -113,13 +127,12 @@
             </record>
 
             <report 
-                id="invoice_pdf_format3"
+                id="invoice_pdf_format3_name"
                 model="account.move"
                 string="FORMATO DE AVISO CAMBIO FORMA DE COBRO A TRANSFERENCIA"
                 report_type="qweb-pdf"
                 name="jt_income.invoice_format_3"
                 file="jt_income.invoice_format_3"
-                print_report_name="object.name"
                 paperformat="jt_income.paperformat_invoice_format_3"
             />
 
