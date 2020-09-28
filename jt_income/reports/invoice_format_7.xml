@@ -110,7 +110,7 @@
             file="jt_income.invoice_format_7"
         />
 
-        <record id="jt_income.invoice_pdf_format7" model="ir.actions.report">
+        <record id="jt_income.invoice_pdf_format7_name" model="ir.actions.report">
             <field name="paperformat_id" ref="jt_income.paperformat_invoice_format_7"></field>
         </record>
 
