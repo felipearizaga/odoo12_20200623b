@@ -77,7 +77,8 @@
 
                     <table style="width:100%;">
                         <p class="tab1">
-                            Con relación al oficio No. <span t-field="o.legal_compensation"/>., referente al cheque devuelto <b><span t-field="o.number_of_returned_check"/></b> del banco <b><span t-field="o.income_bank_journal_id.name"/>
+                        	<t t-set="number_of_return_check" t-value="o.number_of_return_check_char()"/>
+                            Con relación al oficio No. <span t-field="o.legal_compensation"/>., referente al cheque devuelto No.<b><span t-esc="number_of_return_check"/></b> del banco <b><span t-field="o.income_bank_journal_id.name"/>
                             </b> le informo que  <b>se  condona  el  20% de  indemnización</b> por un importe de  
                             <b><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
                         </p><br/>
@@ -89,13 +90,11 @@
                         <p style="font-size:20px;">
                             Sin más por el momento, quedo de usted enviándole un cordial saludo.
                         </p><br/>
-
+						<t t-set="invoice_date" t-value="o.get_invoice_date_in_pdf()"/>
                         <p style="font-size:20px;">
                             A t e n t a m e n t e <br/>
                             "POR MI RAZA HABLARÁ EL ESPÍRITU"<br/>
-                            Ciudad Universitaria,  Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
-                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
-                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t> <br/>
+                            Ciudad Universitaria,  Cd. Mx., <span t-esc="invoice_date"/> <br/>
                         </p>
 
                         <div class="row" style="float:right;">

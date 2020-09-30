@@ -1,5 +1,7 @@
 from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
+from odoo.tools.misc import formatLang, format_date, get_lang
+from babel.dates import format_datetime, format_date
 
 class Invoice(models.Model):
 
@@ -209,9 +211,9 @@ class Invoice(models.Model):
         account_ids = self.invoice_line_ids.mapped('account_id')
         for account in account_ids:
             if accout_name:
-                accout_name += ","+account.display_name
+                accout_name += ","+account.code
             else:
-                accout_name =account.display_name
+                accout_name =account.code
                 
         if accout_name:
             return accout_name
@@ -222,7 +224,52 @@ class Invoice(models.Model):
         sender_template = self.env['sender.recipient.trades'].search([('template','=',template)],limit=1)
         return sender_template
 
-    
+    def number_of_return_check_char(self):
+        if self.number_of_returned_check:
+            return str(self.number_of_returned_check)
+        else:
+            return ''
+        
+    def get_my_amount_to_text(self,amount):
+        return self.currency_id.amount_to_text(amount)
+        
+    def get_invoice_date_in_pdf(self):
+        invoice_date = ''
+        if self.invoice_date:
+            month_name = format_datetime(self.invoice_date, 'MMMM', locale=get_lang(self.env).code)
+            dateyear = self.invoice_date.strftime('%Y')
+            dateday = self.invoice_date.strftime('%d')
+            if self.env.user.lang == 'es_MX':
+                if self.invoice_date.month==1:
+                    month_name = 'Enero'
+                elif self.invoice_date.month==2:
+                    month_name = 'Febrero'
+                elif self.invoice_date.month==3:
+                    month_name = 'Marzo'
+                elif self.invoice_date.month==4:
+                    month_name = 'Abril'
+                elif self.invoice_date.month==5:
+                    month_name = 'Mayo'
+                elif self.invoice_date.month==6:
+                    month_name = 'Junio'
+                elif self.invoice_date.month==7:
+                    month_name = 'Julio'
+                elif self.invoice_date.month==8:
+                    month_name = 'Agosto'
+                elif self.invoice_date.month==9:
+                    month_name = 'Septiembre'
+                elif self.invoice_date.month==10:
+                    month_name = 'Octubre'
+                elif self.invoice_date.month==11:
+                    month_name = 'Noviembre'
+                elif self.invoice_date.month==12:
+                    month_name = 'Diciembre'
+            
+            invoice_date = str(dateday) + " de " + month_name + " de " + str(dateyear)
+            
+        return invoice_date
+            
+        
 class AccountMoveLine(models.Model):
     
     _inherit = 'account.move.line'

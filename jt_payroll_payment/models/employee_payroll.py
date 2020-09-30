@@ -22,7 +22,8 @@
 ##############################################################################
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from datetime import datetime
+from odoo.tools.misc import formatLang, format_date, get_lang
+from babel.dates import format_datetime, format_date
 
 class Employee(models.Model):
     
@@ -51,7 +52,18 @@ class EmployeePayroll(models.Model):
     _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     _description = "Upload Files"
 
-    name = fields.Char("Name")
+    def get_upload_file_name(self):
+        for rec in self:
+            name = "Nómina salarial"
+            if rec.employee_id:
+                name += "-"+rec.employee_id.name
+            if rec.period_start:
+                datetimemonth = format_datetime(rec.period_start, 'MMMM', locale=get_lang(self.env).code)
+                dateyear = rec.period_start.strftime('%Y')
+                name += "-"+ datetimemonth +" "+str(dateyear) 
+            rec.name = name
+             
+    name = fields.Char("Name",compute="get_upload_file_name")
     employee_id = fields.Many2one('hr.employee', "Employee")
     employee_number = fields.Char(related='employee_id.worker_number', string="Employee Number")
     fornight = fields.Selection([('01', '01'), ('02', '02'), ('03', '03'), ('04', '04'), ('05', '05'),
@@ -68,7 +80,6 @@ class EmployeePayroll(models.Model):
     receiving_bank_acc_pay_id = fields.Many2one('res.partner.bank', string="Receiving bank account for payment")
     bank_acc_payment_insur_id = fields.Many2one('res.partner.bank', string="Bank account of payment issuance")
     amount_payable = fields.Float("Amount Payable",tracking=True)
-    batch_folio = fields.Integer("Batch Folio")
     request_type = fields.Selection([('university', 'Payment to University Worker'),
                                      ('add_benifit', 'Additional Benifit'),
                                      ('alimony', 'Payment Special payroll payments Alimony'),

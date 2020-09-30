@@ -63,7 +63,6 @@
                                 <field name="name" readonly="1"/>
                                 <field name="payment_place_id"/>
                                 <field name="employee_number"/>
-                                <field name="batch_folio" readonly="1"/>
                                 <field name="request_type" attrs="{'readonly':[('state','=','done')]}"/>
                                 <field name="payroll_adjustment" attrs="{'readonly':[('state','=','done')]}"/>
                                 <field name="due_to_inappropriate" attrs="{'readonly':[('state','=','done')]}"/>

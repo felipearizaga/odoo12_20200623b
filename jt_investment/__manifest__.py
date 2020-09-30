@@ -37,6 +37,7 @@
         'views/cetes_view.xml',
         'views/udibonos.xml',
         'views/bonds.xml',
+        'views/will_pay.xml',
     ],
     'application': True,
     'installable': True,

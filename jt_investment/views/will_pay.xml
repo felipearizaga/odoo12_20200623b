@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="investment_will_pay_tree" model="ir.ui.view">
+            <field name="name">investment.will.pay.tree.view</field>
+            <field name="model">investment.will.pay</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="investment_will_pay_form" model="ir.ui.view">
+            <field name="name">investment.will.pay.form.view</field>
+            <field name="model">investment.will.pay</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <notebook>
+                        	<page string="General Information">
+                        		<group>
+                        			<group>
+                        				<field name="kind_of_product"/>
+                        				<field name="key"/>
+                        				<field name="investment_date"/>
+                        				<field name="due_date"/>
+                        				<field name="amount"/>
+                        				<field name="interest_rate"/>
+                        				<field name="simple_interest"/>
+                        				<field name="compound_interest"/>
+                        			</group>
+                        			<group>
+                        				<field name="annual_term"/>
+                        				<field name="monthly_term"/>
+                        				<field name="term_days"/>
+                        		</group>
+                        	</group>
+                        	</page>
+                        	<page string="Returns">
+                        	</page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+          <record id="investment_will_pay_search" model="ir.ui.view">
+            <field name="name">investment.will.pay.search.view</field>
+            <field name="model">investment.will.pay</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+         <record id="action_investment_will_pay" model="ir.actions.act_window">
+            <field name="name">I WILL PAY</field>
+            <field name="res_model">investment.will.pay</field>
+        </record>
+
+        <menuitem id="menu_investment_will_pay" name="I WILL PAY" sequence="8"
+            parent="submenu_menu_investment_money_market" action="action_investment_will_pay"/>
+    </data>
+</odoo>

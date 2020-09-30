@@ -42,9 +42,11 @@
                     <table style="width:100%">
                         <tr>
                             <td style="width:50%;"> <br/><br/>
+                            	<!-- 
                                 <div class="main_box">
                                     <div class="box"><b>FORMATO DE NOTIFICACIÓN DE<br/>CHEQUE DEVUELTO</b></div>
                                 </div>
+                                 -->
                             </td>
 
                             <td style="width:50%;">
@@ -78,10 +80,10 @@
                     </table>
 
                     <table style="width:100%">
-
+						<t t-set="number_of_return_check" t-value="o.number_of_return_check_char()"/>
                         <tr>
                             <p class="tab1">
-                                Se anexa al presente el cheque devuelto <b><u>No. <span t-field="o.number_of_returned_check"/></u></b> del <b><span t-field="o.income_bank_journal_id.name"/>,(CHEQUERA CONACYT)</b> como se indica en el estado de cuenta <b><span t-field="o.bank_status_account"/>;</b> por un importe de <b> <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
+                                Se anexa al presente el cheque devuelto <b><u>No. <span t-esc="number_of_return_check"/></u></b> del banco <b><span t-field="o.income_bank_journal_id.name"/>,(CHEQUERA CONACYT)</b> como se indica en el estado de cuenta <b><span t-field="o.bank_status_account"/>;</b> por un importe de <b> <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
                             </p>
 
                             <br/>
@@ -95,11 +97,9 @@
                                 Sin otro particular por el momento, le envió un cordial saludo.
                             </p>
                             <br/>
-
+							<t t-set="invoice_date" t-value="o.get_invoice_date_in_pdf()"/>
                             <p style="font-size:20px;">
-                                Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
-                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
-                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t>  
+                                Atentamente<br/>“POR MI RAZA HABLARA EL ESPIRITU”<br/>Cd. Universitaria, Cd. Mx., <span t-esc="invoice_date"/>
                             </p>
 
                             <div class="row" style="float:right;">

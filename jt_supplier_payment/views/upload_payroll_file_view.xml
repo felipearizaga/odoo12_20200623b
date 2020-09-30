@@ -9,7 +9,6 @@
             <field name="arch" type="xml">
             	<xpath expr="//filter[@name='group_by_state']" position="before">
    	             	<filter string="Payment Method" name="group_by_payment_method" context="{'group_by': 'l10n_mx_edi_payment_method_id'}"/>
-   	
             	</xpath>
 			</field>
 		</record>	
@@ -18,10 +17,12 @@
             <field name="model">employee.payroll.file</field>
             <field name="inherit_id" ref="jt_payroll_payment.employee_payroll_file_form"/>
             <field name="arch" type="xml">
-            	<field name="batch_folio" position="before">
+            	<field name="request_type" position="before">
             		<field name="l10n_mx_edi_payment_method_id" attrs="{'readonly':[('state','=','done')]}"/>
-            		<field name="substate"/>
+            		<field name="substate"/>            	
+            		<field name="batch_folio" readonly="1"/>
             	</field>
+            	
 			</field>
 		</record>
 		

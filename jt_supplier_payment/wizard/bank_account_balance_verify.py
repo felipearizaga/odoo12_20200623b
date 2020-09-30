@@ -74,7 +74,10 @@ class BankBalanceCheck(models.TransientModel):
                      'payment_state': 'for_payment_procedure',
                      'payment_request_id':rec.id,
                      'l10n_mx_edi_payment_method_id':rec.l10n_mx_edi_payment_method_id and rec.l10n_mx_edi_payment_method_id.id or False,
-                     'payment_request_type' : payment_request_type
+                     'payment_request_type' : payment_request_type,
+                     'fornight' : rec.fornight,
+                      'payroll_request_type' : rec.payroll_request_type,
+
                      }) 
         if payment_date:
             data.update({'payment_date':payment_date})

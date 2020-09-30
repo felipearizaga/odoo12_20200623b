@@ -48,7 +48,7 @@ class PaymentPlace(models.Model):
     @api.model
     def create(self, vals):
         res = super(PaymentPlace, self).create(vals)
-        if vals.get('dependancy_id') and vals.get('sub_dependancy_id'):
+        if not vals.get('name') and vals.get('dependancy_id') and vals.get('sub_dependancy_id'):
             dependency = self.env['dependency'].browse(vals.get('dependancy_id'))
             sub_dependency = self.env['sub.dependency'].browse(vals.get('sub_dependancy_id'))
             res.name = dependency.dependency + sub_dependency.sub_dependency

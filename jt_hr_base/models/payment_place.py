@@ -28,7 +28,7 @@ class PaymentPlace(models.Model):
     _name = 'payment.place'
     _description = 'Place of Payment'
 
-    name = fields.Char('Name', size=5)
+    name = fields.Char('Name', size=8)
     description = fields.Text('Description')
 
     @api.constrains('name')

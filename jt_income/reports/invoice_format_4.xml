@@ -39,9 +39,11 @@
                         <table style="width:100%">
                             <tr>
                                 <td style="width:50%;">
+                                	<!-- 
                                     <div class="main_box">
                                         <div class="box"><b>2° FORMATO DE APLICACIÓN 20 %</b></div>
                                     </div>
+                                     -->
                                 </td>
                                 <td style="width:50px;">
                                     <div style="text-align:left;font-size:20px;">
@@ -79,9 +81,12 @@
                     <table style="width:100%">
                     	<t t-set="total_5_times" t-value="o.amount_total*5" />
                     	<span t-set="account_name" t-value="o.get_line_accounts_for_report()"/>
+                    	<t t-set="number_of_return_check" t-value="o.number_of_return_check_char()"/>
+                    	<t t-set="amount_in_text" t-value="o.get_my_amount_to_text(o.amount_total)"/>
+                    	
                         <p style="font-size:20px;">
-                            Con relación al oficio <b><span t-field="o.legal_compensation"/>.,</b> referente al cheque devuelto No. <span t-field="o.number_of_returned_check"/> por un importe de <t t-if="o.currency_id"><span t-field="o.currency_id.symbol"/> </t><span t-esc="'%.2f'%total_5_times"/> del banco <span t-field="o.income_bank_journal_id.name"/>; le  informo  que  la dependencia <b><span t-field="o.dependancy_id.description"/> </b>con clave <b><span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/>;</b> absorberá el importe del 20% de indemnización por un importe de  -------  <b><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                            (CINCO MIL PESOS 00/100 M.N.);</b> los cuales se hará el cargo a la cuenta de Ingresos Extraordinarios número <b> <span t-esc="account_name"/></b>
+                            Con relación al oficio <b><span t-field="o.legal_compensation"/>.,</b> referente al cheque devuelto No. <span t-esc="number_of_return_check"/> por un importe de <t t-if="o.currency_id"><span t-field="o.currency_id.symbol"/> </t><span t-esc="total_5_times" t-options='{"widget": "float", "precision": 2}'/> del banco <span t-field="o.income_bank_journal_id.name"/>; le  informo  que  la dependencia <b><span t-field="o.dependancy_id.description"/> </b>con clave <b><span t-field="o.dependancy_id.dependency"/>.<span t-field="o.sub_dependancy_id.sub_dependency"/>;</b> absorberá el importe del 20% de indemnización por un importe de  -------  <b><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            <span t-esc="amount_in_text"/>;</b> los cuales se hará el cargo a la cuenta de Ingresos Extraordinarios número <b> <span t-esc="account_name"/></b>
                         </p><br/>
 
                         <p style="font-size:20px;">
@@ -89,11 +94,10 @@
                         </p><br/>
 
                         <p style="font-size:20px;">
+                        	<t t-set="invoice_date" t-value="o.get_invoice_date_in_pdf()"/>
                             <b>A t e n t a m e n t e <br/>
                             "POR MI RAZA HABLARÁ EL ESPÍRITU"</b><br/>
-                            Ciudad Universitaria,  Cd. Mx., <t t-if="o.invoice_date"><span t-field="o.invoice_date" t-options='{"format": "d"}'/> de 
-                            <span t-field="o.invoice_date" t-options='{"format": "MMMM"}'/> de
-                            <span t-field="o.invoice_date" t-options='{"format": "y"}'/></t>
+                            Ciudad Universitaria,  Cd. Mx., <span t-esc="invoice_date"/>
                         </p>
 
                         <div class="row" style="float:right;">

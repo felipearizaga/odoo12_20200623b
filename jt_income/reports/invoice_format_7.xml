@@ -49,8 +49,8 @@
 
                     <table style="width:100%">
                         <tr class="style1">
-
-                            <p class="tab1">Se  anexa  al  presente  el  cheque  devuelto  <b><u>No.  <span t-field="o.number_of_returned_check"/></u></b>   del  banco<b>  <span t-field="o.bank_account_statement"/>, (CHEQUERA  CONACYT) </b>como  se  indica  en  el estado  de  cuenta  <b><span t-field="o.income_bank_journal_id.name"/>; </b> por  un  importe de  <b><u><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></u></b>
+							<t t-set="number_of_return_check" t-value="o.number_of_return_check_char()"/>
+                            <p class="tab1">Se  anexa  al  presente  el  cheque  devuelto  <b><u>No.  <span t-esc="number_of_return_check"/></u></b>   del  banco<b>  <span t-field="o.bank_account_statement"/>, (CHEQUERA  CONACYT) </b>como  se  indica  en  el estado  de  cuenta  <b><span t-field="o.income_bank_journal_id.name"/>; </b> por  un  importe de  <b><u><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></u></b>
                             </p>
                             <br/>
                         

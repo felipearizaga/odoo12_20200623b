@@ -34,6 +34,7 @@ class EmployeePayroll(models.Model):
         help='Indicates the way the payment was/will be received, where the '
         'options could be: Cash, Nominal Check, Credit Card, etc.')
     substate = fields.Selection(related="move_id.payment_state",string="SubState")
+    batch_folio = fields.Integer(related="move_id.batch_folio",string="Batch Folio")
     
     def action_reviewed(self):
         if any(self.filtered(lambda x:x.state not in ('draft','revised'))):
@@ -62,7 +63,9 @@ class EmployeePayroll(models.Model):
                 'type' : 'in_invoice',
                 'journal_id' : journal and journal.id or False,
                 'invoice_date' : fields.Date.today(),
-                'invoice_line_ids':[(0,0,invoice_line_vals)]
+                'invoice_line_ids':[(0,0,invoice_line_vals)],
+                'fornight' : self.fornight,
+                'payroll_request_type' : self.request_type,
                 }
         return vals
     
